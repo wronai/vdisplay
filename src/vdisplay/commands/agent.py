@@ -37,6 +37,11 @@ def register(sub: argparse._SubParsersAction) -> None:
         default=120.0,
         help="Portal dialog timeout in seconds (default: 120)",
     )
+    sc_start.add_argument(
+        "--all-monitors",
+        action="store_true",
+        help="Request all monitors in one ScreenCast stream (portal: pick All Screens)",
+    )
     sc_start.set_defaults(func=handle, sc_action="start")
 
     sc_stop = sc_sub.add_parser("stop", help="Stop active ScreenCast session")
@@ -91,6 +96,7 @@ def handle(args: argparse.Namespace) -> int:
                 client.start_screencast(
                     interactive=not args.no_interactive,
                     timeout_s=args.timeout,
+                    multiple=True if args.all_monitors else None,
                 )
             )
             return 0

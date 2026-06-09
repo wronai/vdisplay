@@ -37,6 +37,61 @@ def _monitor_source_name(display: str, monitor: int, source: str) -> str:
     return str(monitors[0]["name"])
 
 
+def resolve_window_region(
+    display: str,
+    *,
+    match_title: str | None = None,
+    window_id: str | None = None,
+    match_class: str | None = None,
+    match_pid: int | None = None,
+    match_app: str | None = None,
+) -> tuple[tuple[int, int, int, int], dict[str, Any]]:
+    """Resolve absolute root-window region for a visible window."""
+    from ..windows import find_windows, pick_best_window
+
+    window: dict[str, Any] | None = None
+    if window_id:
+        for candidate in find_windows(display, apps_only=False):
+            if str(candidate.get("window_id")) == str(window_id):
+                window = candidate
+                break
+        if window is None:
+            raise VDisplayError(f"window not found: {window_id}")
+    else:
+        matches = find_windows(
+            display,
+            match_title=match_title,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
+            apps_only=True,
+        )
+        window = pick_best_window(matches)
+        if window is None:
+            raise VDisplayError(
+                "no window matched relay screenshot filters — "
+                "run: vdisplay windows --apps-only"
+            )
+
+    x, y = window.get("x"), window.get("y")
+    width, height = window.get("width"), window.get("height")
+    if None in (x, y, width, height) or int(width) <= 0 or int(height) <= 0:
+        raise VDisplayError("window geometry unavailable for relay screenshot")
+    region = (int(x), int(y), int(width), int(height))
+    return region, {
+        "window_id": window.get("window_id"),
+        "title": window.get("title") or window.get("name"),
+        "app_label": window.get("app_label"),
+        "pid": window.get("pid"),
+        "region": {
+            "x": region[0],
+            "y": region[1],
+            "width": region[2],
+            "height": region[3],
+        },
+    }
+
+
 def _monitor_capture_region(display: str, output_name: str) -> tuple[int, int, int, int] | None:
     for output in list_monitors(display):
         if output.get("name") != output_name:
@@ -192,6 +247,7 @@ def capture_host_png(
     target: str | None = None,
     prefer_mirror: bool = False,
     screencast_session=None,
+    region: tuple[int, int, int, int] | None = None,
 ) -> tuple[bytes, dict[str, Any]]:
     """
     Capture host desktop via driver-level providers, optionally via mirror session.
@@ -210,7 +266,8 @@ def capture_host_png(
         "target": target,
     }
     errors: list[str] = []
-    region = _monitor_capture_region(resolved, source_name)
+    if region is None:
+        region = _monitor_capture_region(resolved, source_name)
 
     def _try_screencast() -> tuple[bytes, dict[str, Any]] | None:
         try:
@@ -373,6 +430,7 @@ def capture_host_to_file(
     target: str | None = None,
     prefer_mirror: bool = False,
     screencast_session=None,
+    region: tuple[int, int, int, int] | None = None,
 ) -> dict[str, Any]:
     """Write host capture PNG to path; return metadata dict."""
     out = Path(path).expanduser()
@@ -384,6 +442,7 @@ def capture_host_to_file(
         target=target,
         prefer_mirror=prefer_mirror,
         screencast_session=screencast_session,
+        region=region,
     )
     out.write_bytes(png)
     meta["path"] = str(out.resolve())

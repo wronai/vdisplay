@@ -182,7 +182,54 @@ def relay_screenshot(
     monitor: int = 1,
     display: str | None = None,
     source: str | None = None,
+    match_title: str | None = None,
+    window_id: str | None = None,
+    match_class: str | None = None,
+    match_pid: int | None = None,
+    match_app: str | None = None,
 ) -> dict[str, Any]:
+    import os
+
+    from ...capture.host import capture_host_to_file, resolve_window_region
+    from ...discovery import resolve_host_display
+
+    resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
+    has_window_filter = any(
+        [match_title, window_id, match_class, match_pid is not None, match_app]
+    )
+    if has_window_filter:
+        region, window_meta = resolve_window_region(
+            resolved,
+            match_title=match_title,
+            window_id=window_id,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
+        )
+        from ...agent_config import resolve_agent_url
+        from ...client import AgentClient
+
+        agent_url = resolve_agent_url(allow_auto=True)
+        if agent_url:
+            payload = AgentClient(agent_url).capture_frame(
+                output=output,
+                display=resolved,
+                region=region,
+            )
+            payload.pop("png_base64", None)
+            payload["mode"] = "relay"
+            payload["relay_window"] = window_meta
+            return payload
+
+        meta = capture_host_to_file(
+            output,
+            display=resolved,
+            region=region,
+        )
+        meta["mode"] = "relay"
+        meta["relay_window"] = window_meta
+        return meta
+
     from . import capture as capture_svc
 
     return capture_svc.capture_screenshot(

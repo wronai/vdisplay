@@ -23,6 +23,10 @@ class SessionStore:
     sessions: dict[str, SessionRecord] = field(default_factory=dict)
     relay: WindowRelaySession | None = None
     screencast: Any | None = None
+    screencast_multiple: bool = False
+    virtual: Any | None = None
+    virtual_key: tuple[str, int, int] | None = None
+    sampler: Any | None = None
 
     def register(self, *, kind: str, handle: Any, prefix: str) -> SessionRecord:
         session_id = f"{prefix}-{uuid.uuid4().hex[:12]}"

@@ -117,6 +117,7 @@ def create_app(runtime: AgentRuntime | None = None):
                 broker.start_screencast,
                 interactive=bool(body.get("interactive", True)),
                 timeout_s=float(body.get("timeout_s", 120)),
+                multiple=body.get("multiple"),
             )
             return json_from_runtime(S.ACTION_SCREENCAST_START, payload)
         except Exception as exc:
@@ -149,6 +150,34 @@ def create_app(runtime: AgentRuntime | None = None):
             return json_from_runtime(S.ACTION_SESSION_STOP, broker.stop_session(session_id))
         except Exception as exc:
             return json_error(S.ACTION_SESSION_STOP, exc)
+
+    @app.post("/sampler/start")
+    async def sampler_start(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        _check_auth(authorization)
+        try:
+            return json_from_runtime(S.ACTION_SAMPLER_START, broker.start_sampler(body))
+        except Exception as exc:
+            return json_error(S.ACTION_SAMPLER_START, exc)
+
+    @app.post("/sampler/stop")
+    def sampler_stop(
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        _check_auth(authorization)
+        try:
+            return json_from_runtime(S.ACTION_SAMPLER_STOP, broker.stop_sampler())
+        except Exception as exc:
+            return json_error(S.ACTION_SAMPLER_STOP, exc)
+
+    @app.get("/sampler/status")
+    def sampler_status(
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _check_auth(authorization)
+        return success(S.ACTION_SAMPLER_STATUS, strip_ok(broker.sampler_status()))
 
     @app.post("/capture/frame")
     async def capture_frame(
@@ -185,6 +214,84 @@ def create_app(runtime: AgentRuntime | None = None):
             return json_from_runtime(S.ACTION_WINDOW_RELEASE, broker.release_window(body))
         except Exception as exc:
             return json_error(S.ACTION_WINDOW_RELEASE, exc)
+
+    @app.get("/diagnostics/control")
+    def diagnostics_control(
+        display: str | None = Query(default=None),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        _check_auth(authorization)
+        return success(S.ACTION_CONTROL_DIAGNOSTICS, strip_ok(broker.diagnose_control(display=display)))
+
+    @app.post("/controls/list")
+    async def controls_list(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        import asyncio
+
+        _check_auth(authorization)
+        try:
+            payload = await asyncio.to_thread(broker.list_controls, body)
+            return json_from_runtime(S.ACTION_CONTROLS_LIST, payload)
+        except Exception as exc:
+            return json_error(S.ACTION_CONTROLS_LIST, exc)
+
+    @app.post("/controls/find")
+    async def controls_find(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        import asyncio
+
+        _check_auth(authorization)
+        try:
+            payload = await asyncio.to_thread(broker.find_controls, body)
+            return json_from_runtime(S.ACTION_CONTROLS_FIND, payload)
+        except Exception as exc:
+            return json_error(S.ACTION_CONTROLS_FIND, exc)
+
+    @app.post("/control/invoke")
+    async def control_invoke(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        import asyncio
+
+        _check_auth(authorization)
+        try:
+            payload = await asyncio.to_thread(broker.invoke_control, body)
+            return json_from_runtime(S.ACTION_CONTROL_INVOKE, payload)
+        except Exception as exc:
+            return json_error(S.ACTION_CONTROL_INVOKE, exc)
+
+    @app.post("/control/focus")
+    async def control_focus(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        import asyncio
+
+        _check_auth(authorization)
+        try:
+            payload = await asyncio.to_thread(broker.focus_control, body)
+            return json_from_runtime(S.ACTION_CONTROL_FOCUS, payload)
+        except Exception as exc:
+            return json_error(S.ACTION_CONTROL_FOCUS, exc)
+
+    @app.post("/control/set-value")
+    async def control_set_value(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        import asyncio
+
+        _check_auth(authorization)
+        try:
+            payload = await asyncio.to_thread(broker.set_control_value, body)
+            return json_from_runtime(S.ACTION_CONTROL_SET_VALUE, payload)
+        except Exception as exc:
+            return json_error(S.ACTION_CONTROL_SET_VALUE, exc)
 
     @app.on_event("shutdown")
     def _shutdown() -> None:

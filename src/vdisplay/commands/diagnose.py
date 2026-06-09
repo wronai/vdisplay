@@ -15,10 +15,20 @@ def register(sub: argparse._SubParsersAction) -> None:
         action="store_true",
         help="Assess prompt-free continuous capture (sampler / watch)",
     )
+    parser.add_argument(
+        "--control",
+        action="store_true",
+        help="Assess accessibility-first control backends (AT-SPI / x11 fallback)",
+    )
     parser.set_defaults(func=handle)
 
 
 def handle(args: argparse.Namespace) -> int:
+    if args.control:
+        from ..application.services import control as control_svc
+
+        print_json(control_svc.diagnose_control(display=args.display))
+        return 0
     if args.unattended:
         print_json(discovery.diagnose_unattended(args.display))
         return 0

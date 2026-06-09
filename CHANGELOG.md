@@ -175,6 +175,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.6] - 2026-06-09
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/control.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/fixtures/gtk_demo_app.py
+- Update tests/test_agent_sampler.py
+- Update tests/test_control_agent.py
+- Update tests/test_control_atspi.py
+- Update tests/test_control_policy.py
+- Update tests/test_control_selector.py
+- Update tests/test_relay_window_region.py
+- Update tests/test_sampler_policy.py
+- Update tests/test_sampler_recovery.py
+- Update tests/test_screencast_multiple.py
+
+### Other
+- Update .code2llm_cache/__init___1781026677507577094_830.pkl
+- Update .code2llm_cache/__init___1781027803458650394_159.pkl
+- Update .code2llm_cache/__init___1781027816848869976_517.pkl
+- Update .code2llm_cache/__init___1781027828306058007_865.pkl
+- Update .code2llm_cache/agent_1781027199231044175_4125.pkl
+- Update .code2llm_cache/atspi_1781027941715925920_6200.pkl
+- Update .code2llm_cache/atspi_impl_1781027944939979185_7988.pkl
+- Update .code2llm_cache/base_1781027798117562860_1044.pkl
+- Update .code2llm_cache/capabilities_1781027841269270912_2118.pkl
+- Update .code2llm_cache/capture_1781027391696687734_3292.pkl
+- ... and 63 more files
+
 ## [0.1.5] - 2026-06-09
 
 ### Docs

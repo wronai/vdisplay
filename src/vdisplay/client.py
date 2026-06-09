@@ -202,12 +202,17 @@ class AgentClient:
     def start_relay(self, *, display: str | None = None) -> dict[str, Any]:
         return self._request("POST", "/session/relay/start", body={"display": display})
 
-    def start_screencast(self, *, interactive: bool = True, timeout_s: float = 120.0) -> dict[str, Any]:
-        return self._request(
-            "POST",
-            "/session/screencast/start",
-            body={"interactive": interactive, "timeout_s": timeout_s},
-        )
+    def start_screencast(
+        self,
+        *,
+        interactive: bool = True,
+        timeout_s: float = 120.0,
+        multiple: bool | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"interactive": interactive, "timeout_s": timeout_s}
+        if multiple is not None:
+            body["multiple"] = multiple
+        return self._request("POST", "/session/screencast/start", body=body)
 
     def stop_screencast(self) -> dict[str, Any]:
         return self._request("POST", "/session/screencast/stop")
@@ -217,6 +222,66 @@ class AgentClient:
 
     def stop_session(self, session_id: str) -> dict[str, Any]:
         return self._request("POST", f"/session/{session_id}/stop")
+
+    def sampler_start(
+        self,
+        *,
+        interval_s: float = 1.0,
+        mode: str = "desktop",
+        source: str | None = None,
+        display: str | None = None,
+        vd_display: str = ":99",
+        out_dir: str = "./captures",
+        max_frames: int | None = None,
+        dedupe: bool = True,
+        width: int = 1280,
+        height: int = 720,
+        format: str = "png",
+    ) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            "/sampler/start",
+            body={
+                "interval_s": interval_s,
+                "mode": mode,
+                "source": source,
+                "display": display,
+                "vd_display": vd_display,
+                "out_dir": out_dir,
+                "max_frames": max_frames,
+                "dedupe": dedupe,
+                "width": width,
+                "height": height,
+                "format": format,
+            },
+        )
+
+    def sampler_stop(self) -> dict[str, Any]:
+        return self._request("POST", "/sampler/stop")
+
+    def sampler_status(self) -> dict[str, Any]:
+        return self._request("GET", "/sampler/status")
+
+    def diagnose_control(self, *, display: str | None = None) -> dict[str, Any]:
+        params = {}
+        if display:
+            params["display"] = display
+        return self._request("GET", "/diagnostics/control", params=params)
+
+    def list_controls(self, body: dict[str, Any] | None = None) -> dict[str, Any]:
+        return self._request("POST", "/controls/list", body=body or {})
+
+    def find_controls(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", "/controls/find", body=body)
+
+    def invoke_control(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", "/control/invoke", body=body)
+
+    def focus_control(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", "/control/focus", body=body)
+
+    def set_control_value(self, body: dict[str, Any]) -> dict[str, Any]:
+        return self._request("POST", "/control/set-value", body=body)
 
     def capture_frame(
         self,
@@ -230,22 +295,22 @@ class AgentClient:
         all_monitors: bool = False,
         out_dir: str | None = None,
         output: str | None = None,
+        region: tuple[int, int, int, int] | list[int] | dict[str, int] | None = None,
     ) -> dict[str, Any]:
-        return self._request(
-            "POST",
-            "/capture/frame",
-            body={
-                "session_id": session_id,
-                "monitor": monitor,
-                "source": source,
-                "target": target,
-                "display": display,
-                "prefer_mirror": prefer_mirror,
-                "all_monitors": all_monitors,
-                "out_dir": out_dir,
-                "output": output,
-            },
-        )
+        body: dict[str, Any] = {
+            "session_id": session_id,
+            "monitor": monitor,
+            "source": source,
+            "target": target,
+            "display": display,
+            "prefer_mirror": prefer_mirror,
+            "all_monitors": all_monitors,
+            "out_dir": out_dir,
+            "output": output,
+        }
+        if region is not None:
+            body["region"] = region
+        return self._request("POST", "/capture/frame", body=body)
 
     def capture_png_bytes(self, **kwargs: Any) -> tuple[bytes, dict[str, Any]]:
         payload = self.capture_frame(**kwargs)

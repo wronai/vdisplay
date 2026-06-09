@@ -52,11 +52,30 @@ def _capture_all_monitors(store: SessionStore, body: dict[str, Any]) -> dict[str
     return {"ok": True, "out_dir": out_dir, **bulk}
 
 
+def _region_from_body(body: dict[str, Any]) -> tuple[int, int, int, int] | None:
+    raw = body.get("region")
+    if raw is None:
+        return None
+    if isinstance(raw, dict):
+        values = (raw.get("x"), raw.get("y"), raw.get("width"), raw.get("height"))
+    elif isinstance(raw, (list, tuple)) and len(raw) == 4:
+        values = tuple(raw)
+    else:
+        return None
+    if None in values:
+        return None
+    x, y, width, height = (int(values[0]), int(values[1]), int(values[2]), int(values[3]))
+    if width <= 0 or height <= 0:
+        return None
+    return x, y, width, height
+
+
 def _capture_host(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
     output = body.get("output") or body.get("path")
     if not output:
         raise VDisplayError("capture requires session_id, all_monitors, or output path")
     try:
+        region = _region_from_body(body)
         meta = capture_host_to_file(
             output,
             monitor=int(body.get("monitor") or 1),
@@ -65,6 +84,7 @@ def _capture_host(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
             target=body.get("target"),
             prefer_mirror=bool(body.get("prefer_mirror")),
             screencast_session=store.screencast,
+            region=region,
         )
     except VDisplayError:
         if store.screencast is not None and not store.screencast.is_ready:

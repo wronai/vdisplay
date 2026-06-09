@@ -59,12 +59,19 @@ def start_screencast(
     *,
     interactive: bool = True,
     timeout_s: float = 120.0,
+    multiple: bool | None = None,
 ) -> dict[str, Any]:
-    from vdisplay.capture.portal_screencast import start_screencast_session
+    from vdisplay.capture.portal_screencast import _screencast_multiple, start_screencast_session
 
-    session = start_screencast_session(interactive=interactive, timeout_s=timeout_s)
+    allow_multiple = _screencast_multiple(multiple)
+    session = start_screencast_session(
+        interactive=interactive,
+        timeout_s=timeout_s,
+        multiple=allow_multiple,
+    )
     store.screencast = session
-    return {"ok": True, **session.status()}
+    store.screencast_multiple = allow_multiple
+    return {"ok": True, "multiple": allow_multiple, **session.status()}
 
 
 def stop_screencast(store: SessionStore) -> dict[str, Any]:
@@ -98,7 +105,15 @@ def stop_session(store: SessionStore, session_id: str) -> dict[str, Any]:
 def shutdown(store: SessionStore) -> None:
     from vdisplay.capture.portal_screencast import stop_screencast_session
 
+    from . import sampler as sampler_svc
+
+    sampler_svc.stop_sampler(store)
     store.screencast = None
+    store.screencast_multiple = False
+    if store.virtual is not None:
+        store.virtual.stop()
+        store.virtual = None
+        store.virtual_key = None
     stop_screencast_session()
     for session_id in list(store.sessions):
         try:

@@ -6,6 +6,7 @@ import os
 import fcntl
 import shutil
 import subprocess
+import warnings
 import sys
 import tempfile
 import threading
@@ -46,8 +47,14 @@ class PortalScreenCastSession:
     def is_ready(self) -> bool:
         return self.active and bool(self.node_ids) and bool(self.session_path)
 
-    def start(self, *, interactive: bool = True, timeout_s: float = 120.0) -> dict[str, Any]:
-        payload = _start_screencast(interactive=interactive, timeout_s=timeout_s)
+    def start(
+        self,
+        *,
+        interactive: bool = True,
+        timeout_s: float = 120.0,
+        multiple: bool | None = None,
+    ) -> dict[str, Any]:
+        payload = _start_screencast(interactive=interactive, timeout_s=timeout_s, multiple=multiple)
         if not payload.get("ok"):
             raise VDisplayError(str(payload.get("error") or "screencast start failed"))
 
@@ -129,7 +136,22 @@ def _set_active_if_self(session: PortalScreenCastSession) -> bool:
         return _ACTIVE is session
 
 
-def start_screencast_session(*, interactive: bool = True, timeout_s: float = 120.0) -> PortalScreenCastSession:
+def _screencast_multiple(explicit: bool | None) -> bool:
+    if explicit is not None:
+        return explicit
+    return os.environ.get("VDISPLAY_SCREENCAST_MULTIPLE", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
+def start_screencast_session(
+    *,
+    interactive: bool = True,
+    timeout_s: float = 120.0,
+    multiple: bool | None = None,
+) -> PortalScreenCastSession:
     from .linux_xwd import is_blank_png
 
     existing = get_active_screencast()
@@ -144,7 +166,7 @@ def start_screencast_session(*, interactive: bool = True, timeout_s: float = 120
     elif existing is not None:
         invalidate_screencast_session(existing)
     session = PortalScreenCastSession()
-    session.start(interactive=interactive, timeout_s=timeout_s)
+    session.start(interactive=interactive, timeout_s=timeout_s, multiple=multiple)
     return session
 
 
@@ -221,15 +243,29 @@ def _open_screencast_pipewire_fd(session_path: str) -> int:
     return owned_fd
 
 
-def _start_screencast(*, interactive: bool, timeout_s: float) -> dict[str, Any]:
+def _start_screencast(
+    *,
+    interactive: bool,
+    timeout_s: float,
+    multiple: bool | None = None,
+) -> dict[str, Any]:
+    allow_multiple = _screencast_multiple(multiple)
     try:
         _ensure_portal_deps()
         import dbus  # noqa: F401
         from gi.repository import GLib  # noqa: F401
 
-        return _start_screencast_impl(interactive=interactive, timeout_s=timeout_s)
+        return _start_screencast_impl(
+            interactive=interactive,
+            timeout_s=timeout_s,
+            multiple=allow_multiple,
+        )
     except ImportError:
-        return _start_screencast_subprocess(interactive=interactive, timeout_s=timeout_s)
+        return _start_screencast_subprocess(
+            interactive=interactive,
+            timeout_s=timeout_s,
+            multiple=allow_multiple,
+        )
 
 
 def _portal_request_path(bus, token: str) -> str:
@@ -280,7 +316,12 @@ def _close_pipewire_fd(fd: int) -> None:
         pass
 
 
-def _start_screencast_impl(*, interactive: bool, timeout_s: float) -> dict[str, Any]:
+def _start_screencast_impl(
+    *,
+    interactive: bool,
+    timeout_s: float,
+    multiple: bool = False,
+) -> dict[str, Any]:
     try:
         import dbus
         from dbus.mainloop.glib import DBusGMainLoop
@@ -400,7 +441,7 @@ def _start_screencast_impl(*, interactive: bool, timeout_s: float) -> dict[str, 
                 {
                     "handle_token": select_token,
                     "types": dbus.UInt32(1),
-                    "multiple": dbus.Boolean(False),
+                    "multiple": dbus.Boolean(multiple),
                     "cursor_mode": dbus.UInt32(int(os.environ.get("VDISPLAY_SCREENCAST_CURSOR", "2"))),
                     "interactive": dbus.Boolean(interactive),
                 },
@@ -556,24 +597,26 @@ def _capture_pipewire_frame_gi_subprocess(
 ) -> bool:
     system_py = _system_python()
     try:
-        completed = subprocess.run(
-            [
-                system_py,
-                "-c",
-                _CAPTURE_FRAME_SCRIPT,
-                str(cap_fd),
-                str(node_id),
-                target_object or "",
-                str(out),
-                str(timeout_s),
-            ],
-            capture_output=True,
-            text=True,
-            timeout=timeout_s + 5.0,
-            check=False,
-            close_fds=False,
-            pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
-        )
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="pass_fds overriding close_fds", category=RuntimeWarning)
+            completed = subprocess.run(
+                [
+                    system_py,
+                    "-c",
+                    _CAPTURE_FRAME_SCRIPT,
+                    str(cap_fd),
+                    str(node_id),
+                    target_object or "",
+                    str(out),
+                    str(timeout_s),
+                ],
+                capture_output=True,
+                text=True,
+                timeout=timeout_s + 5.0,
+                check=False,
+                close_fds=False,
+                pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
+            )
     except subprocess.TimeoutExpired:
         return False
     if completed.returncode == 0 and out.is_file() and out.stat().st_size > 64:
@@ -604,33 +647,35 @@ def _capture_pipewire_frame_gst_launch(
         src_args.append(f"target-object={target_object}")
     else:
         src_args.append(f"path={node_id}")
-    completed = subprocess.run(
-        [
-            gst,
-            "-e",
-            *src_args,
-            "!",
-            "queue",
-            "max-size-buffers=1",
-            "max-size-time=0",
-            "max-size-bytes=0",
-            "leaky=downstream",
-            "!",
-            "videoconvert",
-            "!",
-            "pngenc",
-            "!",
-            "filesink",
-            f"location={out}",
-            "sync=false",
-            "async=false",
-        ],
-        capture_output=True,
-        timeout=timeout_s,
-        check=False,
-        close_fds=False,
-        pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
-    )
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="pass_fds overriding close_fds", category=RuntimeWarning)
+        completed = subprocess.run(
+            [
+                gst,
+                "-e",
+                *src_args,
+                "!",
+                "queue",
+                "max-size-buffers=1",
+                "max-size-time=0",
+                "max-size-bytes=0",
+                "leaky=downstream",
+                "!",
+                "videoconvert",
+                "!",
+                "pngenc",
+                "!",
+                "filesink",
+                f"location={out}",
+                "sync=false",
+                "async=false",
+            ],
+            capture_output=True,
+            timeout=timeout_s,
+            check=False,
+            close_fds=False,
+            pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
+        )
     if completed.returncode == 0 and out.is_file() and out.stat().st_size > 64:
         return out.read_bytes()
     err = (completed.stderr or b"").decode("utf-8", errors="replace").strip()
@@ -649,7 +694,12 @@ def _vdisplay_src_path() -> Path:
     return root.parent if root.name == "vdisplay" and (root.parent / "vdisplay").is_dir() else root
 
 
-def _start_screencast_subprocess(*, interactive: bool, timeout_s: float) -> dict[str, Any]:
+def _start_screencast_subprocess(
+    *,
+    interactive: bool,
+    timeout_s: float,
+    multiple: bool = False,
+) -> dict[str, Any]:
     src_path = _vdisplay_src_path()
     env = os.environ.copy()
     env["PYTHONPATH"] = str(src_path) + os.pathsep + env.get("PYTHONPATH", "")
@@ -658,8 +708,9 @@ def _start_screencast_subprocess(*, interactive: bool, timeout_s: float) -> dict
 import json, sys
 interactive = sys.argv[1].lower() in {"1", "true", "yes"}
 timeout_s = float(sys.argv[2])
+multiple = sys.argv[3].lower() in {"1", "true", "yes"}
 from vdisplay.capture.portal_screencast import _start_screencast_impl
-result = _start_screencast_impl(interactive=interactive, timeout_s=timeout_s)
+result = _start_screencast_impl(interactive=interactive, timeout_s=timeout_s, multiple=multiple)
 if isinstance(result, dict) and result.get("pipewire_fd") is not None:
     result = dict(result)
     result.pop("pipewire_fd", None)
@@ -668,7 +719,7 @@ print(json.dumps(result))
     system_py = _system_python()
     try:
         completed = subprocess.run(
-            [system_py, "-c", script, str(interactive).lower(), str(timeout_s)],
+            [system_py, "-c", script, str(interactive).lower(), str(timeout_s), str(multiple).lower()],
             capture_output=True,
             text=True,
             timeout=timeout_s + 10,

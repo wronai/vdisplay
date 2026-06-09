@@ -20,6 +20,9 @@ def platform_capabilities() -> dict[str, Any]:
     from vdisplay.capture.portal_screencast import get_active_screencast
 
     screencast = get_active_screencast()
+    from vdisplay.control.policy import assess_control_capability
+
+    control_contract = assess_control_capability()
     return {
         "platform": platform.system().lower(),
         "python": platform.python_version(),
@@ -34,6 +37,7 @@ def platform_capabilities() -> dict[str, Any]:
         },
         "window_relay": sys.platform.startswith("linux"),
         "input_control": sys.platform.startswith("linux"),
+        "control": control_contract.to_dict(),
         "requires_admin_install": False,
         "requires_user_runtime_prompt": session_type == "wayland",
         "supports_protected_content": False,

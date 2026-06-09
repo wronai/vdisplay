@@ -8,6 +8,7 @@ from collections.abc import Callable
 from . import (
     agent,
     all_cmd,
+    control,
     diagnose,
     info,
     mirror,
@@ -28,6 +29,7 @@ _COMMAND_MODULES: list[Callable[[argparse._SubParsersAction], None]] = [
     virtual.register,
     mirror.register,
     relay.register,
+    control.register,
     diagnose.register,
     sampler.register,
     screenshot.register,

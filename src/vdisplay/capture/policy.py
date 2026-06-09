@@ -38,8 +38,22 @@ def assess_unattended_capture(
     screencast_ready: bool | None = None,
 ) -> CaptureCapabilityContract:
     """Assess host for continuous capture without repeated portal prompts."""
-    resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
     reasons: list[str] = []
+
+    if display and _looks_like_xvfb_only(display):
+        return CaptureCapabilityContract(
+            supports_unattended_capture=True,
+            requires_user_consent=False,
+            supports_persistent_restore=True,
+            capture_latency_class="low",
+            safe_polling_hz=10.0,
+            recommended_profile="virtual",
+            recommended_mode="strict",
+            session_type="virtual",
+            reasons=[f"explicit virtual display {display} — xwd capture without portal"],
+        )
+
+    resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
 
     if _looks_like_xvfb_only(resolved):
         return CaptureCapabilityContract(
@@ -56,6 +70,15 @@ def assess_unattended_capture(
 
     if _is_wayland_session():
         ready = screencast_ready
+        if ready is None:
+            try:
+                from .portal_screencast import get_active_screencast
+
+                session = get_active_screencast()
+                if session is not None and session.is_ready:
+                    ready = True
+            except Exception:
+                pass
         if ready is None and agent_url:
             try:
                 from ..client import AgentClient
@@ -64,6 +87,8 @@ def assess_unattended_capture(
                 ready = bool(status.get("active") and status.get("ready"))
             except Exception:
                 ready = False
+        if ready is None:
+            ready = False
 
         if ready:
             return CaptureCapabilityContract(

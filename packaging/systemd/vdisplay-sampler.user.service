@@ -1,0 +1,16 @@
+[Unit]
+Description=vdisplay frame sampler (requires vdisplay-agent + screencast)
+After=vdisplay-agent.service
+Requires=vdisplay-agent.service
+Documentation=file:%h/github/wronai/vdisplay/docs/agent-broker.md
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+# Adjust path and monitor source for your host
+ExecStart=%h/github/wronai/vdisplay/venv/bin/vdisplay sampler start --mode desktop --interval 1 --source DP-2 --out-dir %h/captures --format webp --wait
+ExecStop=%h/github/wronai/vdisplay/venv/bin/vdisplay sampler stop
+
+[Install]
+WantedBy=default.target

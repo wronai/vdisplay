@@ -36,8 +36,16 @@ def register(sub: argparse._SubParsersAction) -> None:
     rlist.add_argument("--display", default=None)
     rlist.set_defaults(func=handle)
 
-    rshot = relay_sub.add_parser("screenshot", help="Capture host monitor screenshot")
+    rshot = relay_sub.add_parser(
+        "screenshot",
+        help="Capture window region (or host monitor when no window filter)",
+    )
     rshot.add_argument("-o", "--output", required=True)
+    rshot.add_argument("--title", help="Match window title for region crop")
+    rshot.add_argument("--window-id", help="Capture specific window by X11 id")
+    rshot.add_argument("--class", dest="wm_class", help="Match WM_CLASS / instance")
+    rshot.add_argument("--pid", type=int, help="Match process ID")
+    rshot.add_argument("--app", help="Match app_label / process_name")
     rshot.add_argument("--monitor", type=int, default=1, help="Monitor index (1-based)")
     rshot.add_argument("--source", default=None, help="Monitor name (overrides --monitor)")
     rshot.add_argument("--display", default=None)
@@ -90,6 +98,11 @@ def handle(args: argparse.Namespace) -> int:
                 monitor=args.monitor,
                 display=args.display,
                 source=args.source,
+                match_title=args.title,
+                window_id=args.window_id,
+                match_class=args.wm_class,
+                match_pid=args.pid,
+                match_app=args.app,
             )
         )
         return 0

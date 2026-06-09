@@ -1,42 +1,42 @@
-# vdisplay | 577 func | 100f | 15227L | python | 2026-06-09
+# vdisplay | 701 func | 116f | 17883L | python | 2026-06-09
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.1  critical=30 (limit:10)  dup=0  cycles=0
+  CC̄=3.2  critical=40 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
+  !!! high_fan_out     create_app = 39 (limit:10)
   !!! high_fan_out     _start_screencast_impl = 36 (limit:10)
-  !!! high_fan_out     create_app = 35 (limit:10)
   !!! high_fan_out     capture_host_png = 26 (limit:10)
   !!! high_fan_out     create_app = 23 (limit:10)
   !!! high_fan_out     _portal_impl = 23 (limit:10)
+  !!! high_fan_out     snapshot_dict = 23 (limit:10)
   !!! high_fan_out     main = 22 (limit:10)
+  !!! high_fan_out     SamplerLoop._run = 22 (limit:10)
   !!! high_fan_out     main = 20 (limit:10)
   !!! high_fan_out     capture_all_monitors = 20 (limit:10)
-  !!  cc_exceeded      capture_all_monitors = 21 (limit:15)
-  !!  high_fan_out     main = 19 (limit:10)
 
-MODULES[157] (top by size):
+MODULES[174] (top by size):
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/capture/portal_screencast.py] 690L C:1 F:30 CC↑19 D:3 (python)
+  M[src/vdisplay/capture/portal_screencast.py] 741L C:1 F:31 CC↑19 D:5 (python)
   M[examples/host-relay/output/after_adopt.png.meta.json] 584L C:0 F:0 CC↑0 D:0 (json)
   M[examples/host-relay/output/after_release.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
   M[examples/host-relay/output/before_automation.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
+  M[src/vdisplay/capture/host.py] 543L C:0 F:10 CC↑21 D:4 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/capture/host.py] 484L C:0 F:9 CC↑21 D:2 (python)
   M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
-  M[src/vdisplay/discovery.py] 352L C:0 F:13 CC↑10 D:12 (python)
-  M[src/vdisplay/capture/linux_xwd.py] 320L C:0 F:21 CC↑12 D:10 (python)
-  M[src/vdisplay/client.py] 263L C:1 F:25 CC↑14 D:0 (python)
+  M[src/vdisplay/discovery.py] 352L C:0 F:13 CC↑10 D:16 (python)
+  M[src/vdisplay/client.py] 328L C:1 F:34 CC↑14 D:0 (python)
+  M[src/vdisplay/capture/linux_xwd.py] 320L C:0 F:21 CC↑12 D:11 (python)
+  M[packages/vdisplay-agent/src/vdisplay_agent/server.py] 301L C:0 F:1 CC↑3 D:0 (python)
+  M[src/vdisplay/application/services/sampler_loop.py] 277L C:3 F:10 CC↑17 D:1 (python)
   M[src/vdisplay/backends/linux_x11_mirror.py] 259L C:1 F:17 CC↑10 D:1 (python)
-  M[tree.txt] 241L C:0 F:0 CC↑0 D:0 (txt)
-  M[src/vdisplay/capture/portal.py] 221L C:1 F:7 CC↑11 D:1 (python)
-  M[src/vdisplay/windows/query.py] 209L C:0 F:6 CC↑9 D:2 (python)
-  LANGS: python:112/json:14/toml:8/shell:7/other:5/yml:5/yaml:4/xml:1/txt:1
+  M[src/vdisplay/application/services/session.py] 245L C:0 F:10 CC↑4 D:0 (python)
+  LANGS: python:130/json:14/toml:8/shell:7/other:5/yml:5/yaml:4/txt:1
 
 HOTSPOTS[10]:
+  ★ create_app fan=39  // Orchestrates 39 calls
   ★ _start_screencast_impl fan=36  // Orchestrates 36 calls
-  ★ create_app fan=35  // Orchestrates 35 calls
   ★ capture_host_png fan=26  // Capture host desktop via driver-level providers, optionally via mirror session.
 
   ★ create_app fan=23  // REST adapter for vdisplay.
@@ -44,12 +44,12 @@ HOTSPOTS[10]:
 When VDISPLAY_AGENT_URL is set (or --agent-url), DSL
   ★ _portal_impl fan=23  // Orchestrates 23 calls
 
-REFACTOR[11]:
-  [1] H/H Split god module src/vdisplay/capture/portal_screencast.py (690L, 1 classes)
-  [2] H/H Split god module examples/host-relay/output/after_adopt.png.meta.json (584L, 0 classes)
-  [3] H/H Split god module examples/host-relay/output/after_release.png.meta.json (551L, 0 classes)
-  [4] H/H Split god module examples/host-relay/output/before_automation.png.meta.json (551L, 0 classes)
-  [5] H/H Split god module goal.yaml (512L, 0 classes)
+REFACTOR[15]:
+  [1] H/H Split god module src/vdisplay/capture/host.py (543L, 0 classes)
+  [2] H/H Split god module src/vdisplay/capture/portal_screencast.py (741L, 1 classes)
+  [3] H/H Split god module examples/host-relay/output/after_adopt.png.meta.json (584L, 0 classes)
+  [4] H/H Split god module examples/host-relay/output/after_release.png.meta.json (551L, 0 classes)
+  [5] H/H Split god module examples/host-relay/output/before_automation.png.meta.json (551L, 0 classes)
 
 EVOLUTION:
-  2026-06-09 CC̄=3.1 crit=30 15227L // Automated analysis
+  2026-06-09 CC̄=3.2 crit=40 17883L // Automated analysis

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from .services import capabilities, capture, outputs, relay, sessions, windows
+from .services import capabilities, capture, control, outputs, relay, sampler, sessions, windows
 from .session_store import SessionRecord, SessionStore
 
 __all__ = ["AgentRuntime", "SessionRecord", "SessionStore"]
@@ -58,8 +58,35 @@ class AgentRuntime:
     def stop_session(self, session_id: str) -> dict[str, Any]:
         return sessions.stop_session(self.store, session_id)
 
+    def start_sampler(self, body: dict[str, Any]) -> dict[str, Any]:
+        return sampler.start_sampler(self.store, body)
+
+    def stop_sampler(self) -> dict[str, Any]:
+        return sampler.stop_sampler(self.store)
+
+    def sampler_status(self) -> dict[str, Any]:
+        return sampler.sampler_status(self.store)
+
     def capture_frame(self, body: dict[str, Any]) -> dict[str, Any]:
         return capture.capture_frame(self.store, body)
+
+    def diagnose_control(self, *, display: str | None = None) -> dict[str, Any]:
+        return control.diagnose_control(display=display)
+
+    def list_controls(self, body: dict[str, Any]) -> dict[str, Any]:
+        return control.list_controls(body)
+
+    def find_controls(self, body: dict[str, Any]) -> dict[str, Any]:
+        return control.find_controls(body)
+
+    def invoke_control(self, body: dict[str, Any]) -> dict[str, Any]:
+        return control.invoke_control(body)
+
+    def focus_control(self, body: dict[str, Any]) -> dict[str, Any]:
+        return control.focus_control(body)
+
+    def set_control_value(self, body: dict[str, Any]) -> dict[str, Any]:
+        return control.set_control_value(body)
 
     def adopt_window(self, body: dict[str, Any]) -> dict[str, Any]:
         return relay.adopt_window(self.store, body)

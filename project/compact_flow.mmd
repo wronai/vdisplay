@@ -12,9 +12,10 @@ flowchart TD
     packages__nlp2vdisplay["packages.nlp2vdisplay<br/>3 funcs"]
     packages__rest2vdisplay["packages.rest2vdisplay<br/>2 funcs"]
     packages__uri2vdisplay["packages.uri2vdisplay<br/>2 funcs"]
-    packages__vdisplay_agent["packages.vdisplay-agent<br/>58 funcs"]
-    src__vdisplay["src.vdisplay<br/>436 funcs"]
-    packages__vdisplay_agent ==>|16| src__vdisplay
+    packages__vdisplay_agent["packages.vdisplay-agent<br/>81 funcs"]
+    src__vdisplay["src.vdisplay<br/>535 funcs"]
+    packages__vdisplay_agent ==>|22| src__vdisplay
+    src__vdisplay ==>|6| packages__dsl2vdisplay
     packages__dsl2vdisplay ==>|5| src__vdisplay
     packages__mcp2vdisplay ==>|4| src__vdisplay
     packages__rest2vdisplay ==>|4| packages__dsl2vdisplay
@@ -28,7 +29,6 @@ flowchart TD
     packages__rest2vdisplay -->|2| src__vdisplay
     examples__headless_virtual -->|2| examples__common
     examples__ci_agent -->|2| examples__common
-    src__vdisplay -->|2| packages__dsl2vdisplay
     packages__mcp2vdisplay -->|1| packages__nlp2vdisplay
     packages__uri2vdisplay -->|1| packages__dsl2vdisplay
     packages__nlp2vdisplay -->|1| src__vdisplay
