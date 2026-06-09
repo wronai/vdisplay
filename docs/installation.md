@@ -10,10 +10,12 @@ pip install vdisplay
 # recommended on Linux (faster PNG encoding)
 pip install "vdisplay[pillow]"
 
-# from source
+# from source — install core + adapters together (editable)
 git clone https://github.com/wronai/vdisplay.git
 cd vdisplay
 pip install -e ".[pillow,dev]"
+pip install -e "packages/vdisplay-agent[serve]"
+pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 ```
 
 Requires **Python ≥ 3.10**.
@@ -51,6 +53,7 @@ pytest tests/ -v   # when installed from source with [dev]
 For desktop hosts where multiple apps (CLI, REST, MCP, Koru) share one capture/runtime:
 
 ```bash
+pip install -e ".[pillow,dev]"
 pip install -e "packages/vdisplay-agent[serve]"
 pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 
@@ -64,7 +67,7 @@ Try the runnable demo: [examples/agent-broker](../examples/agent-broker/)
 
 Optional systemd user service: [packaging/systemd/vdisplay-agent.user.service](../packaging/systemd/vdisplay-agent.user.service)
 
-See [agent-broker.md](agent-broker.md) for env vars, HTTP API, ScreenCast, and adapter setup.
+See [agent-broker.md](agent-broker.md), [architecture.md](architecture.md).
 
 ## Platform support
 

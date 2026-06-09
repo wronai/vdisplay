@@ -9,7 +9,47 @@ import urllib.request
 from typing import Any
 
 from .agent_config import resolve_agent_token
+from .agent_envelope import flatten_agent_envelope
+from .application.commands import CommandRequest, CommandResult, CommandVerb
+from .application.errors import ApplicationError, ErrorCode, error_from_exception
 from .exceptions import VDisplayError
+
+
+def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
+    """Map CommandRequest to broker HTTP (method, path, body)."""
+    verb = cmd.verb
+    if verb == CommandVerb.HEALTH:
+        return "GET", "/health", None
+    if verb == CommandVerb.CAPABILITIES:
+        return "GET", "/capabilities", None
+    if verb in {CommandVerb.MONITORS, CommandVerb.OUTPUTS}:
+        query: list[str] = []
+        if cmd.display:
+            query.append(f"display={cmd.display}")
+        if not cmd.include_all:
+            query.append("include_all=false")
+        suffix = f"?{'&'.join(query)}" if query else ""
+        return "GET", f"/outputs{suffix}", None
+    if verb == CommandVerb.WINDOWS:
+        params = {
+            "display": cmd.display,
+            "include_all": str(cmd.include_all).lower(),
+            "match_class": cmd.match_class,
+            "match_pid": cmd.match_pid,
+            "match_app": cmd.match_app,
+            "min_width": cmd.min_width or None,
+            "min_height": cmd.min_height or None,
+        }
+        query = [f"{key}={value}" for key, value in params.items() if value is not None]
+        suffix = f"?{'&'.join(query)}" if query else ""
+        return "GET", f"/windows{suffix}", None
+    if verb == CommandVerb.VIRTUAL_START:
+        return (
+            "POST",
+            "/session/virtual/start",
+            {"width": cmd.width, "height": cmd.height, "display": cmd.vd_display},
+        )
+    raise VDisplayError(f"agent request has no direct route for verb: {verb.value}")
 
 
 class AgentClient:
@@ -27,6 +67,35 @@ class AgentClient:
         *,
         body: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
+        raw = self._send(method, path, body=body)
+        if not raw.strip():
+            return {}
+        payload = self._normalize_payload(json.loads(raw))
+        self._raise_on_error(payload)
+        return payload
+
+    def _send(self, method: str, path: str, *, body: dict[str, Any] | None = None) -> str:
+        request = self._build_request(method, path, body=body)
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout) as response:
+                return response.read().decode("utf-8")
+        except urllib.error.HTTPError as exc:
+            raise VDisplayError(
+                f"vdisplay-agent {method} {path}: {self._http_error_message(exc)}"
+            ) from exc
+        except urllib.error.URLError as exc:
+            raise VDisplayError(
+                f"vdisplay-agent unreachable at {self.base_url}. "
+                "Start: vdisplay-agent serve (or vdisplay agent serve)"
+            ) from exc
+
+    def _build_request(
+        self,
+        method: str,
+        path: str,
+        *,
+        body: dict[str, Any] | None,
+    ) -> urllib.request.Request:
         url = f"{self.base_url}{path}"
         data = None
         headers = {"Accept": "application/json"}
@@ -35,45 +104,50 @@ class AgentClient:
             headers["Content-Type"] = "application/json"
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
+        return urllib.request.Request(url, data=data, headers=headers, method=method)
 
-        request = urllib.request.Request(url, data=data, headers=headers, method=method)
+    @staticmethod
+    def _http_error_message(exc: urllib.error.HTTPError) -> str:
+        detail = exc.read().decode("utf-8", errors="replace")
         try:
-            with urllib.request.urlopen(request, timeout=self.timeout) as response:
-                raw = response.read().decode("utf-8")
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            try:
-                payload = json.loads(detail)
-                message = payload.get("error") or payload.get("detail") or detail
-            except json.JSONDecodeError:
-                message = detail or str(exc)
-            raise VDisplayError(f"vdisplay-agent {method} {path}: {message}") from exc
-        except urllib.error.URLError as exc:
-            raise VDisplayError(
-                f"vdisplay-agent unreachable at {self.base_url}. "
-                "Start: vdisplay-agent serve (or vdisplay agent serve)"
-            ) from exc
+            payload = json.loads(detail)
+            return str(payload.get("error") or payload.get("detail") or detail)
+        except json.JSONDecodeError:
+            return detail or str(exc)
 
-        if not raw.strip():
-            return {}
-        payload = json.loads(raw)
-        payload = self._normalize_payload(payload)
-        if isinstance(payload, dict) and payload.get("ok") is False:
-            error = payload.get("error")
-            if isinstance(error, dict):
-                message = error.get("message") or str(error)
-            else:
-                message = str(error or "agent request failed")
-            raise VDisplayError(message)
-        return payload
+    @staticmethod
+    def _raise_on_error(payload: dict[str, Any]) -> None:
+        if payload.get("ok") is not False:
+            return
+        error = payload.get("error")
+        if isinstance(error, dict):
+            message = error.get("message") or str(error)
+        else:
+            message = str(error or "agent request failed")
+        raise VDisplayError(message)
 
     @staticmethod
     def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
+        return flatten_agent_envelope(payload)
+
+    def request(self, cmd: CommandRequest) -> CommandResult:
+        """Execute a CommandRequest via a single broker HTTP call."""
         try:
-            from vdisplay_agent.envelope import flatten_envelope
-        except ImportError:
-            return payload
-        return flatten_envelope(payload)
+            method, path, body = _route_command(cmd)
+            data = self._request(method, path, body=body)
+            return CommandResult.success(action=cmd.action, data=data, command=cmd.line)
+        except VDisplayError as exc:
+            return CommandResult.failure(
+                action=cmd.action,
+                error=error_from_exception(exc),
+                command=cmd.line,
+            )
+        except Exception as exc:
+            return CommandResult.failure(
+                action=cmd.action,
+                error=ApplicationError(ErrorCode.INTERNAL, str(exc)),
+                command=cmd.line,
+            )
 
     def health(self) -> dict[str, Any]:
         return self._request("GET", "/health")
@@ -81,8 +155,9 @@ class AgentClient:
     def capabilities(self) -> dict[str, Any]:
         return self._request("GET", "/capabilities")
 
-    def diagnostics(self) -> dict[str, Any]:
-        return self._request("GET", "/diagnostics")
+    def diagnostics(self, *, display: str | None = None) -> dict[str, Any]:
+        suffix = f"?display={display}" if display else ""
+        return self._request("GET", f"/diagnostics{suffix}")
 
     def outputs(self, *, display: str | None = None, include_all: bool = True) -> dict[str, Any]:
         query = []

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.4-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$1.01-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.5-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$2.18-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $1.0142 (3 commits)
-- 👤 **Human dev:** ~$256 (2.6h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $2.1795 (4 commits)
+- 👤 **Human dev:** ~$306 (3.1h @ $100/h, 30min dedup)
 
 Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -17,15 +17,16 @@ Cross-platform **virtual display orchestration API** for Python.
 
 One unified API, multiple OS backends with different capabilities. Monitors and windows include an **`nl`** field — a natural-language description of what they contain.
 
-CLI, DSL, REST, MCP, and the local **vdisplay-agent** broker all route through the same **application services** layer (`src/vdisplay/application/services/`).
+CLI, DSL, REST, MCP, and the local **vdisplay-agent** broker all route through **`application.executor`** and shared **application services** (`src/vdisplay/application/`).
 
 ## Quick start
 
 ```bash
 pip install "vdisplay[pillow]"
-# or from source:
-pip install -e ".[dev]"
-pip install -e packages/dsl2vdisplay packages/vdisplay-agent
+# or from source (recommended for development):
+pip install -e ".[pillow,dev]"
+pip install -e "packages/vdisplay-agent[serve]"
+pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 ```
 
 ```bash
@@ -45,6 +46,7 @@ vdisplay windows --apps-only
 | [docs/examples.md](docs/examples.md) | All usage examples by environment |
 | [docs/troubleshooting.md](docs/troubleshooting.md) | Common errors and fixes |
 | [docs/agent-broker.md](docs/agent-broker.md) | **vdisplay-agent** — install-once broker, env vars, REST/MCP |
+| [docs/architecture.md](docs/architecture.md) | CommandRequest + executor routing (local vs agent) |
 | [examples/README.md](examples/README.md) | Runnable example projects |
 | [packages/README.md](packages/README.md) | Control layer — DSL, MCP, REST, NL, agent |
 
@@ -138,27 +140,72 @@ Window:
 
 ## Screenshots
 
+### Quick reference
+
+| Goal | Command |
+|------|---------|
+| One monitor (host) | `vdisplay screenshot -o screen.png --source DP-2` |
+| All monitors | `vdisplay screenshot --all-monitors --out-dir ./captures` |
+| Virtual Xvfb (no portal) | `vdisplay virtual screenshot -o screen.png --display :99` |
+| Mirror + capture | `vdisplay mirror screenshot -o mirror.png --source primary --target DP-1` |
+| Describe saved PNG (`img2nl`) | `vdisplay screenshot -o screen.png` → JSON field `nl` |
+| Loop every 1s (after screencast) | see [Continuous capture](#continuous-capture-wayland) below |
+
 With **`VDISPLAY_AGENT_URL`** set, screenshots route through the broker (same providers, one runtime).
 
 ```bash
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 
-# single monitor (host; on Wayland start screencast session first — see agent-broker docs)
+# single monitor — use output name from: vdisplay monitors
 vdisplay screenshot -o screen.png --monitor 1
 vdisplay screenshot -o screen.png --source DP-2
 
-# all connected monitors
+# all connected monitors (DP-2.png, DP-1.png, HDMI-1.png, …)
 vdisplay screenshot --all-monitors --out-dir ./captures
 
-# isolated Xvfb session (works without portal)
+# isolated Xvfb session (works without portal / on headless CI)
 vdisplay virtual screenshot -o screen.png --display :99
 vdisplay screenshot -o vd.png --mode virtual --vd-display :99
 
-# mirror session helper
-vdisplay mirror screenshot -o mirror.png --source primary
+# mirror: prefer mirror screenshot on Wayland (uses ScreenCast when active)
+vdisplay mirror screenshot -o mirror.png --source primary --target DP-1
 ```
 
-**Wayland host:** one-time ScreenCast in the agent, then many captures:
+### Wayland host (GNOME) — start here
+
+On **GNOME Wayland**, `DISPLAY=:0` is XWayland — direct X11/DRM capture often yields **black PNGs** (especially with NVIDIA).
+
+**One-time setup** — needs **two terminals** (broker must stay running):
+
+```bash
+# terminal 1 — leave this running (blocks the shell)
+vdisplay agent serve
+# same as: vdisplay-agent serve
+```
+
+```bash
+# terminal 2 — all capture commands go here
+vdisplay agent health                    # should return {"status":"ok",...}
+vdisplay agent screencast start          # pick monitor in portal dialog (once)
+# GNOME: Settings → Privacy → Screen Recording → allow vdisplay-agent / terminal
+```
+
+> **Common mistake:** running `vdisplay agent screencast start` before `vdisplay agent serve`
+> gives `Set VDISPLAY_AGENT_URL … or start: vdisplay-agent serve`. Start the broker first.
+
+`VDISPLAY_AGENT_URL` is optional when the broker listens on `127.0.0.1:8765` (auto-detect).
+Explicit export still works: `export VDISPLAY_AGENT_URL=http://127.0.0.1:8765`
+
+**Then capture as often as you like** (no new prompts):
+
+```bash
+vdisplay screenshot -o host.png --source DP-2
+vdisplay screenshot -o host.png --source primary
+vdisplay mirror screenshot -o mirror.png --source primary --target DP-1
+vdisplay relay screenshot -o relay.png --source DP-2
+```
+
+REST equivalent:
 
 ```bash
 curl -X POST http://127.0.0.1:8765/session/screencast/start \
@@ -166,24 +213,117 @@ curl -X POST http://127.0.0.1:8765/session/screencast/start \
 vdisplay screenshot -o host.png --source DP-1
 ```
 
+> **Note:** `vdisplay mirror start -o mirror.png` runs xrandr mirror then tries driver-level capture directly.
+> On Wayland use **`vdisplay mirror screenshot`** (or `vdisplay screenshot`) after screencast is active.
+
+### Continuous capture (Wayland)
+
+After `vdisplay agent screencast start`, grab frames every second without portal prompts:
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+mkdir -p ./captures
+i=0
+while true; do
+  vdisplay screenshot -o "./captures/frame-$(printf '%04d' "$i").png" --source DP-2
+  i=$((i + 1))
+  sleep 1
+done
+```
+
+Python (virtual display — no portal needed):
+
+```python
+import time
+from pathlib import Path
+from vdisplay import VirtualDisplaySession
+
+vd = VirtualDisplaySession.create(display=":99")
+vd.start()
+try:
+    for i in range(60):
+        vd.save_screenshot(f"frame-{i:04d}.png")
+        time.sleep(1)
+finally:
+    vd.stop()
+```
+
+See also [examples/ci-agent/](examples/ci-agent/) (`VD_FRAMES=60` in Docker).
+
+### Describe a screenshot (`img2nl`)
+
+By default, `vdisplay screenshot` enriches JSON with an **`nl`** field — a natural-language description of the saved PNG (Polish locale by default):
+
+```bash
+vdisplay screenshot -o screen.png --source DP-2 | jq '{path, nl, img2nl}'
+```
+
+Requires optional package: `pip install img2nl[analyze]`. Disable with `VDISPLAY_IMG2NL=0` or `vdisplay screenshot --no-img2nl`.
+
+To describe an **existing** image file:
+
+```python
+from vdisplay.application.services.img2nl_enrich import describe_screenshot_image
+print(describe_screenshot_image("screen.png")["text"])
+```
+
 ## Actions — virtual, mirror, relay
 
 ```bash
 # virtual display (isolated Xvfb)
 vdisplay virtual start --width 1920 --height 1080 --display :99
-vdisplay virtual launch xterm -hold
+vdisplay virtual launch xterm -hold          # flags after the command name are OK
 vdisplay virtual screenshot -o screen.png --display :99
 
 # mirror — needs two monitors; list names first with: vdisplay monitors
-vdisplay mirror start --source primary --target DP-1 -o mirror.png
-VD_SOURCE=DP-2 VD_TARGET=HDMI-1 ./examples/host-mirror/run.sh
+vdisplay mirror start --source primary --target DP-1          # xrandr only (no PNG)
+vdisplay mirror screenshot -o mirror.png --source primary --target DP-1   # Wayland: screencast first
+VD_SOURCE=DP-2 VD_TARGET=HDMI-1 ./examples/host-mirror/run.sh   # Docker; black PNGs on Wayland
 
 # relay — hide window off-screen, restore later (separate CLI calls OK)
+# 1) find a window to move
+vdisplay windows --apps-only
+vdisplay windows --app "JetBrains" | jq '.windows[] | {window_id, app_label, nl}'
+
+# 2) adopt (move off-screen) — match by app, title, class, pid, or window-id
 vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay adopt-window --title "Firefox"
+vdisplay relay adopt-window --class jetbrains-toolbox --pid 32977
+vdisplay relay adopt-window --window-id 8388615
+
+# 3) move to another monitor instead of off-screen
+vdisplay relay adopt-window --app "Firefox" --target HDMI-1
+
+# 4) list adopted windows (persisted in ~/.cache/vdisplay/)
 vdisplay relay list
+vdisplay relay list | jq '.adopted[] | {window_id, app_label, title, nl}'
+
+# 5) restore — separate CLI call works (geometry saved on adopt)
 vdisplay relay release-window --app "JetBrains"
-vdisplay relay screenshot -o host.png --monitor 1
+vdisplay relay release-window --window-id 8388615
+
+# 6) screenshot while relaying (Wayland: agent serve + screencast first)
+# terminal 1: vdisplay agent serve
+vdisplay agent screencast start
+vdisplay relay screenshot -o before.png --source DP-2
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay screenshot -o after-hide.png --source DP-2
+vdisplay relay release-window --app "JetBrains"
+vdisplay relay screenshot -o after-restore.png --source DP-2
+
+# 7) full host demo (before / after adopt / after release PNGs)
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+vdisplay agent screencast start
+WINDOW_APP=JetBrains ./examples/host-relay/run-host.sh
+# output: examples/host-relay/output/before_automation.png, after_adopt.png, after_release.png
 ```
+
+**Relay tips**
+
+- Adopted window positions **persist** across CLI calls (`~/.cache/vdisplay/__vdisplay_stash__-*.json`).
+- Relay moves windows within the **same X11 session** — it does not move apps into Xvfb `:99`.
+- On **Wayland**, window move uses XWayland; screenshots need **agent + screencast** (Docker `./run.sh` often yields black PNGs — use `./run-host.sh` instead).
+- Filter windows first: `vdisplay windows --app "Toolbox"` → use `--app`, `--title`, or `--window-id` from JSON.
 
 ## Natural language and DSL
 
@@ -197,9 +337,11 @@ dsl2vdisplay -c 'MONITORS DISPLAY :0'
 dsl2vdisplay -c 'WINDOWS DISPLAY :0 APPS_ONLY'
 dsl2vdisplay -c 'ALL DISPLAY :0'
 
-# NL package (thin wrapper)
+# NL package (thin wrapper; pip install -e packages/nlp2vdisplay)
 nlp2vdisplay to-dsl "list monitors on display zero"
-nlp2vdisplay run "show application windows on display zero"
+nlp2vdisplay apply "show application windows on display zero"
+# shorthand — bare prompt defaults to apply:
+nlp2vdisplay "show application windows on display zero"
 ```
 
 Legacy DSL verbs still work: `OUTPUTS` maps to `MONITORS`, `WINDOWS` unchanged.
@@ -254,7 +396,7 @@ Full reference: [docs/agent-broker.md](docs/agent-broker.md) · [packages/vdispl
 |------|---------|-----------|------------|-------------|
 | `virtual` | Private Xvfb session for agents | Yes | Yes | No (use `launch()`) |
 | `mirror` | Duplicate existing display output | No | Yes | N/A |
-| `relay` | Move window within same X11 session | Partial | No | Yes |
+| `relay` | Move window within same X11 session | Partial | Yes (`relay screenshot`) | Yes |
 | `screencast` | Portal ScreenCast in agent (Wayland) | No | Yes (after consent) | N/A |
 
 ## Requirements (Linux v0.1)
@@ -299,9 +441,10 @@ vd.save_screenshot("screen.png")
 vd.stop()
 
 # Mirror existing desktop (same session, no isolation)
+# On GNOME Wayland: start agent screencast before save_screenshot, or use capture_host_to_file()
 m = MirrorSession.create(source="primary", target="DP-1")
 m.start()
-m.save_screenshot("mirror.png")
+m.save_screenshot("mirror.png")   # needs ScreenCast on Wayland
 m.stop()
 
 # Relay window off-screen and restore (persists across CLI calls)
@@ -312,23 +455,32 @@ r.release_window(match_app="JetBrains")
 r.stop()
 ```
 
-### Application services (shared by CLI / DSL / agent)
+### Application layer (shared by CLI / DSL / REST / MCP / agent)
 
 ```python
+from vdisplay.application.commands import CommandRequest
+from vdisplay.application.executor import execute
 from vdisplay.application.services import discovery, capture, session, info
 
-# Same payloads the CLI prints as JSON
+# Single execution entry (routes to agent when VDISPLAY_AGENT_URL is set)
+result = execute(CommandRequest.from_dsl({"verb": "MONITORS"}, line="MONITORS"))
+print(result.data)
+
+# Direct service use-cases (always in-process)
 monitors = discovery.list_monitors(display=":0")
-windows = discovery.list_windows_payload(display=":0", include_all=False)
-state = discovery.list_all(display=":0")
-
-# Screenshot use-case (agent or local, depending on VDISPLAY_AGENT_URL)
 meta = capture.capture_screenshot(output="screen.png", monitor=1)
-
-# Session use-cases
 session.virtual_start(width=1280, height=720, display=":99")
-session.relay_adopt(display=":0", match_app="Firefox")
 caps = info.platform_info()
+```
+
+Via broker SDK:
+
+```python
+from vdisplay.client import AgentClient
+
+client = AgentClient("http://127.0.0.1:8765")
+client.outputs()
+client.start_screencast(interactive=True)
 ```
 
 ### Window heuristics (testable submodules)
@@ -343,15 +495,22 @@ from vdisplay.windows.filter import is_internal_window
 
 ```
 src/vdisplay/
-├── application/services/   # use-cases: discovery, capture, session, info
+├── application/
+│   ├── commands.py         # CommandRequest / CommandResult / CommandVerb
+│   ├── executor.py         # single entry: execute() → local or agent
+│   ├── handlers/           # local + agent command handlers
+│   └── services/           # discovery, capture, session, info
 ├── commands/               # CLI registry (set_defaults per subcommand)
 ├── windows/                # scan → normalize → filter → rank → query
-├── capture/providers/      # capture provider engine (x11, drm, portal, …)
-├── backends/               # virtual, mirror, relay backends
+├── capture/
+│   ├── providers/          # drm, fbdev, mss, x11, portal (opt-in)
+│   └── portal_screencast.py  # persistent ScreenCast (Wayland)
+├── backends/               # virtual, mirror, relay
+├── client.py               # AgentClient SDK
 └── cli.py                  # thin entry: register_all + args.func(args)
 
 packages/
-├── dsl2vdisplay/           # grammar + CQRS bus
+├── dsl2vdisplay/           # grammar + CQRS bus → executor
 ├── vdisplay-agent/         # localhost broker (privileged runtime)
 ├── rest2vdisplay/          # HTTP → DSL
 ├── mcp2vdisplay/           # MCP tools
@@ -400,11 +559,15 @@ Troubleshooting: [docs/troubleshooting.md](docs/troubleshooting.md)
 ## Development
 
 ```bash
-pip install -e ".[dev]"
-pip install -e packages/dsl2vdisplay packages/vdisplay-agent
-pytest tests/ -v
+pip install -e ".[pillow,dev]"
+pip install -e "packages/vdisplay-agent[serve]"
+pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
+pytest tests/ -q
+./examples/agent-broker/run.sh
 ./examples/run_all_examples.sh   # where host X11 is available
 ```
+
+Architecture: [docs/architecture.md](docs/architecture.md)
 
 ## License
 

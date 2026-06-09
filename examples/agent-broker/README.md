@@ -7,6 +7,14 @@ Install the broker **once** on a desktop host; point CLI, DSL, REST, and MCP at 
 
 ## Run
 
+Install from source first (editable packages):
+
+```bash
+pip install -e ".[dev]" -e "packages/vdisplay-agent[serve]" -e packages/dsl2vdisplay
+```
+
+Then:
+
 ```bash
 cd examples/agent-broker
 chmod +x run.sh

@@ -10,9 +10,17 @@ from .io import print_json
 def register(sub: argparse._SubParsersAction) -> None:
     parser = sub.add_parser("diagnose", help="Diagnose DISPLAY and monitor visibility")
     add_display_arg(parser)
+    parser.add_argument(
+        "--unattended",
+        action="store_true",
+        help="Assess prompt-free continuous capture (sampler / watch)",
+    )
     parser.set_defaults(func=handle)
 
 
 def handle(args: argparse.Namespace) -> int:
+    if args.unattended:
+        print_json(discovery.diagnose_unattended(args.display))
+        return 0
     print_json(discovery.diagnose(args.display))
     return 0

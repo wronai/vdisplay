@@ -19,11 +19,15 @@ def register(sub: argparse._SubParsersAction) -> None:
     vstart.set_defaults(func=handle)
 
     vlaunch = virtual_sub.add_parser("launch", help="Launch command on active virtual display")
-    vlaunch.add_argument("command", nargs="+")
     vlaunch.add_argument("--backend", default="xvfb")
     vlaunch.add_argument("--width", type=int, default=1920)
     vlaunch.add_argument("--height", type=int, default=1080)
     vlaunch.add_argument("--display", default=":99")
+    vlaunch.add_argument(
+        "command",
+        nargs=argparse.REMAINDER,
+        help="Command and args (e.g. xterm -hold). Optional leading -- is stripped.",
+    )
     vlaunch.set_defaults(func=handle)
 
     vshot = virtual_sub.add_parser("screenshot", help="Capture virtual display screenshot")
@@ -47,9 +51,14 @@ def handle(args: argparse.Namespace) -> int:
         )
         return 0
     if args.action == "launch":
+        command = list(args.command)
+        if command[:1] == ["--"]:
+            command = command[1:]
+        if not command:
+            raise VDisplayError("virtual launch requires a command (e.g. xterm -hold)")
         print_json(
             session.virtual_launch(
-                args.command,
+                command,
                 width=args.width,
                 height=args.height,
                 backend=args.backend,

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.4"
+version = "0.1.5"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -37,6 +37,9 @@ agent = [
     "vdisplay-agent",
     "fastapi>=0.110",
     "uvicorn>=0.27",
+]
+img2nl = [
+    "img2nl[analyze]",
 ]
 
 [project.urls]
@@ -114,3 +117,11 @@ max_commits = 500
 
 # Cost thresholds for badge colors (USD)
 badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0 }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
+    "ignore:on_event is deprecated:DeprecationWarning",
+]

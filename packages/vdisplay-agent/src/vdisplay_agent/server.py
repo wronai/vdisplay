@@ -109,15 +109,16 @@ def create_app(runtime: AgentRuntime | None = None):
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
     ) -> JSONResponse:
+        import asyncio
+
         _check_auth(authorization)
         try:
-            return json_from_runtime(
-                S.ACTION_SCREENCAST_START,
-                broker.start_screencast(
-                    interactive=bool(body.get("interactive", True)),
-                    timeout_s=float(body.get("timeout_s", 120)),
-                ),
+            payload = await asyncio.to_thread(
+                broker.start_screencast,
+                interactive=bool(body.get("interactive", True)),
+                timeout_s=float(body.get("timeout_s", 120)),
             )
+            return json_from_runtime(S.ACTION_SCREENCAST_START, payload)
         except Exception as exc:
             return json_error(S.ACTION_SCREENCAST_START, exc)
 
@@ -154,9 +155,12 @@ def create_app(runtime: AgentRuntime | None = None):
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
     ) -> JSONResponse:
+        import asyncio
+
         _check_auth(authorization)
         try:
-            return json_from_runtime(S.ACTION_CAPTURE_FRAME, broker.capture_frame(body))
+            payload = await asyncio.to_thread(broker.capture_frame, body)
+            return json_from_runtime(S.ACTION_CAPTURE_FRAME, payload)
         except Exception as exc:
             return json_error(S.ACTION_CAPTURE_FRAME, exc)
 

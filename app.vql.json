@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "render_target": "svg",
+  "scene": {
+    "width": 10.0,
+    "height": 10.0,
+    "background": "#FFFFFF",
+    "url": "file:///tmp/screen.png",
+    "app": "desktop",
+    "layers": [
+      {
+        "id": "screen_regions",
+        "objects": [],
+        "visible": true
+      },
+      {
+        "id": "windows",
+        "objects": [
+          {
+            "id": "window_0",
+            "primitives": [
+              {
+                "shape_type": "rectangle",
+                "params": {
+                  "width": 10.0,
+                  "height": 10.0
+                }
+              }
+            ],
+            "style": {
+              "color": "#4A90D9",
+              "fill": false,
+              "stroke_width": 2.0,
+              "opacity": 0.9
+            },
+            "transform": {
+              "translate_x": 0.0,
+              "translate_y": 0.0,
+              "scale_x": 1.0,
+              "scale_y": 1.0,
+              "rotate_deg": 0.0
+            },
+            "center_x": 5.0,
+            "center_y": 5.0,
+            "anchors": [],
+            "constraints": [],
+            "metadata": {
+              "role": "window",
+              "label": "window_0",
+              "location": "center",
+              "bbox": [
+                0,
+                0,
+                10,
+                10
+              ],
+              "bbox_norm": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+              ],
+              "confidence": 0.8,
+              "source": "imgl",
+              "z": 1,
+              "title": null
+            }
+          }
+        ],
+        "visible": true
+      }
+    ],
+    "relations": []
+  },
+  "validation": null,
+  "metadata": {
+    "source": "imgl",
+    "image": "/tmp/screen.png",
+    "element_count": 0,
+    "by_role": {},
+    "detect_source": "img2vql",
+    "ocr_backend": "tesseract",
+    "lang": "eng+pol",
+    "analyzed_at": "2026-06-09T16:34:57.313113+00:00",
+    "img2nl_text": "Obraz 10×10 px. Wygląda na jednokolorowy lub prawie jednokolorowy. Jasność 1–1 (zakres dynamiki 0). Niski kontrast. Płaska powierzchnia, mało szumu. Wykryto 1 dużych regionów/obiektów. Scena: pusty lub ciemny ekran.",
+    "scene_class": "empty_dark_screen",
+    "llm_hint": {
+      "send_to_llm": false,
+      "confidence": 0.0,
+      "reasons": [
+        "empty_dark_screen",
+        "monochrome_or_dark",
+        "low_contrast_flat",
+        "flat_blank_like",
+        "large_regions",
+        "blurry_capture"
+      ],
+      "recommendation": "skip_or_use_thumbnail_only"
+    },
+    "special_hits": {
+      "has_qr": false,
+      "has_text": false,
+      "barcode_count": 0,
+      "ocr_preview": ""
+    },
+    "fingerprint": {
+      "available": true,
+      "phash": "8000000000000000",
+      "dhash": "0000000000000000",
+      "whash": "0000000000000000"
+    },
+    "vql_method": "imgl",
+    "pipeline": {
+      "analyzed_at": "2026-06-09T16:34:57.367547+00:00",
+      "levels_run": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ],
+      "adopt_method": "imgl",
+      "recommendation": "skip_unchanged_screen"
+    }
+  }
+}

@@ -27,6 +27,7 @@ def _load_common() -> None:
 
 
 _load_common()
+from host_capture import capture_host_screenshot  # noqa: E402
 from screenshot_meta import print_artifact, write_screenshot_meta  # noqa: E402
 
 
@@ -55,8 +56,16 @@ def main() -> None:
     session = MirrorSession.create(source=source, target=target, display=resolved)
     session.start()
     try:
-        path = session.save_screenshot(str(out_file))
         info = session.info()
+        resolved_source = str(info.get("source") or source)
+        capture_host_screenshot(
+            out_file,
+            display=resolved,
+            source=resolved_source,
+            target=info.get("target") or target,
+            mode="host",
+        )
+        path = str(out_file)
         meta = write_screenshot_meta(
             path,
             label="Host mirror capture after xrandr same-as",

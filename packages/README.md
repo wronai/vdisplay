@@ -32,24 +32,27 @@ flowchart TB
     MCP[mcp2vdisplay]
     REST[rest2vdisplay]
   end
-  subgraph control [Control]
-    DSL[dsl2vdisplay.dispatch]
+  subgraph control [Control layer]
+    REQ[CommandRequest]
+    EXEC[application.executor]
   end
   subgraph broker [vdisplay-agent localhost]
-    AG[AgentRuntime + providers]
+    AG[AgentRuntime + providers + ScreenCast]
   end
   URI --> DSL
   NLP --> DSL
   CLI --> DSL
   MCP --> DSL
   REST --> DSL
-  DSL -->|VDISPLAY_AGENT_URL| AG
-  DSL -->|no URL| LOCAL[vdisplay in-process]
+  DSL --> REQ
+  REQ --> EXEC
+  EXEC -->|VDISPLAY_AGENT_URL| AG
+  EXEC -->|no URL| LOCAL[vdisplay in-process]
 ```
 
-When `VDISPLAY_AGENT_URL` is set, `dispatch()` routes to `vdisplay.agent_dispatch` — clients never call portal/DRM/X11 directly. Without the URL, the same DSL runs in-process (development / tests).
+When `VDISPLAY_AGENT_URL` is set, `dispatch()` → `CommandRequest` → `executor.execute()` routes to the broker via `AgentClient`. Without the URL, the same commands run in-process (development / tests).
 
-Inside the broker, `VDISPLAY_AGENT_BROKER=1` prevents recursive HTTP calls back to itself.
+Inside the broker, `VDISPLAY_AGENT_BROKER=1` prevents recursive HTTP calls back to itself. See [docs/architecture.md](../docs/architecture.md).
 
 ## DSL verbs
 
@@ -60,9 +63,7 @@ Inside the broker, `VDISPLAY_AGENT_BROKER=1` prevents recursive HTTP calls back 
 ## Install
 
 ```bash
-pip install -e .
-pip install -e ".[control]"   # dsl2vdisplay + nlp2vdisplay from packages/
-# broker + adapters:
+pip install -e ".[pillow,dev]"
 pip install -e "packages/vdisplay-agent[serve]"
 pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 ```

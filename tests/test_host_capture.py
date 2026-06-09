@@ -19,6 +19,7 @@ def test_capture_host_png_prefers_mirror(monkeypatch: pytest.MonkeyPatch) -> Non
         ],
     )
     monkeypatch.setattr("vdisplay.capture.host.resolve_host_display", lambda _d: ":0")
+    monkeypatch.setattr("vdisplay.capture.host._wayland_host_session", lambda _d: False)
     monkeypatch.setattr("vdisplay.capture.host.is_blank_png", lambda _data: False)
     monkeypatch.setattr(
         "vdisplay.capture.host.capture_display_png",

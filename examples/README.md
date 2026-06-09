@@ -31,9 +31,14 @@ cd examples/headless-virtual
 docker compose up --build
 ls output/screen.png
 
-# host mirror (Linux + X11/Wayland with agent screencast on Wayland)
-export VDISPLAY_AGENT_URL=http://127.0.0.1:8765   # after: vdisplay-agent serve
-cd examples/host-mirror && ./run.sh
+# all examples (Docker + host; Wayland uses agent for mirror/relay)
+./examples/run_all_examples.sh
+
+# host mirror — Wayland: run-host.sh + agent screencast; X11: ./run.sh (Docker)
+vdisplay agent serve                              # terminal 1
+vdisplay agent screencast start                   # terminal 2, once
+cd examples/host-mirror && ./run-host.sh          # Wayland
+# cd examples/host-mirror && ./run.sh             # X11 only
 
 # host relay — CLI on host
 vdisplay all

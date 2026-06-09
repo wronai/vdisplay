@@ -291,6 +291,29 @@ def diagnose_display(display: str | None = None) -> dict:
         payload["capture_providers"] = list_capture_providers(resolved)
     except Exception as exc:
         payload["capture_providers_error"] = str(exc)
+    from .capture.linux_xwd import _is_wayland_session
+
+    if _is_wayland_session():
+        payload["session_type"] = "wayland"
+        payload["host_capture_hint"] = (
+            "vdisplay agent serve → vdisplay agent screencast start → vdisplay screenshot"
+        )
+        try:
+            from .agent_config import resolve_agent_url
+            from .client import AgentClient
+
+            url = resolve_agent_url(allow_auto=True)
+            if url:
+                sc = AgentClient(url).screencast_status()
+                payload["agent_url"] = url
+                payload["screencast_ready"] = bool(sc.get("active") and sc.get("ready"))
+                if not payload["screencast_ready"]:
+                    payload["host_capture_hint"] += " (screencast not ready)"
+            else:
+                payload["screencast_ready"] = False
+                payload["host_capture_hint"] += " (agent not running)"
+        except Exception:
+            payload["screencast_ready"] = False
     return payload
 
 

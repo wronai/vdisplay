@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+
+_DRM_CAPTURE_TIMEOUT_S = 2 if os.environ.get("PYTEST_CURRENT_TEST") else 20
 
 from ...exceptions import VDisplayError
 from ...utils import require_command
@@ -69,7 +72,7 @@ class DrmProvider:
                     args,
                     capture_output=True,
                     text=True,
-                    timeout=20,
+                    timeout=_DRM_CAPTURE_TIMEOUT_S,
                     check=False,
                 )
                 if result.returncode != 0 or not out.is_file() or out.stat().st_size < 64:

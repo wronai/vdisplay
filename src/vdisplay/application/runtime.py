@@ -5,17 +5,18 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Literal
 
-from ..agent_config import resolve_agent_url, use_agent
+from ..agent_config import resolve_agent_url, use_agent, _default_agent_base
+
+from .commands import CommandRequest, CommandVerb
 
 if TYPE_CHECKING:
     from ..client import AgentClient
-    from .commands import CommandRequest
 
 Route = Literal["agent", "local"]
 
 
-def agent_client_optional() -> AgentClient | None:
-    url = resolve_agent_url()
+def agent_client_optional(*, allow_auto: bool = True) -> AgentClient | None:
+    url = resolve_agent_url(allow_auto=allow_auto)
     if not url:
         return None
     from ..client import AgentClient
@@ -23,12 +24,15 @@ def agent_client_optional() -> AgentClient | None:
     return AgentClient(url)
 
 
-def agent_client_required() -> AgentClient:
-    client = agent_client_optional()
+def agent_client_required(*, allow_auto: bool = True) -> AgentClient:
+    client = agent_client_optional(allow_auto=allow_auto)
     if client is None:
         from ..exceptions import VDisplayError
 
-        raise VDisplayError("VDISPLAY_AGENT_URL is not set")
+        raise VDisplayError(
+            "VDISPLAY_AGENT_URL is not set and no local agent responded on "
+            f"{_default_agent_base()} (try: vdisplay-agent serve)"
+        )
     return client
 
 
@@ -58,14 +62,16 @@ class ExecutionPolicy:
             return "local"
         if os.environ.get("VDISPLAY_AGENT_BROKER", "").strip().lower() in {"1", "true", "yes"}:
             return "local"
-        if resolve_agent_url() is not None:
+        if cmd.verb == CommandVerb.SCREENSHOT and cmd.mode == "virtual":
+            return "local"
+        if resolve_agent_url(allow_auto=True) is not None:
             return "agent"
         return "local"
 
     def meta_for(self, route: Route) -> dict[str, str]:
         return {
             "route": route,
-            "agent_url": resolve_agent_url() or "",
+            "agent_url": resolve_agent_url(allow_auto=True) or "",
         }
 
 

@@ -201,3 +201,36 @@ def diagnose(display: str | None = None) -> dict[str, Any]:
     if "outputs" in payload:
         payload["monitors"] = payload.pop("outputs")
     return payload
+
+
+def diagnose_unattended(display: str | None = None) -> dict[str, Any]:
+    from ...agent_config import resolve_agent_url
+    from ...capture.policy import assess_unattended_capture
+
+    base = diagnose(display)
+    url = resolve_agent_url(allow_auto=True)
+    screencast_ready = base.get("screencast_ready")
+    contract = assess_unattended_capture(
+        display=display,
+        agent_url=url,
+        screencast_ready=screencast_ready if isinstance(screencast_ready, bool) else None,
+    )
+    return {
+        **base,
+        "unattended": contract.to_dict(),
+        "sampler_hint": _sampler_hint(contract),
+    }
+
+
+def _sampler_hint(contract) -> str:
+    if contract.recommended_mode == "strict":
+        return "vdisplay sampler start --mode strict --vd-display :99 --interval 1"
+    if contract.supports_unattended_capture:
+        return (
+            "vdisplay sampler start --mode desktop --interval 1 --source DP-2 "
+            "--out-dir ./captures --progress"
+        )
+    return (
+        "vdisplay agent serve && vdisplay agent screencast start && "
+        "vdisplay sampler start --mode desktop --interval 1"
+    )

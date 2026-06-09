@@ -1,16 +1,16 @@
-# redup/duplication | 8 groups | 96f 8654L | 2026-06-09
+# redup/duplication | 8 groups | 111f 10077L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 96
-  total_lines:   8654
+  files_scanned: 111
+  total_lines:   10077
   dup_groups:    8
   dup_fragments: 20
   saved_lines:   109
-  scan_ms:       2303
+  scan_ms:       2384
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/payloads.py  dup=46L  groups=1  frags=2  (0.5%)
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py  dup=34L  groups=1  frags=2  (0.4%)
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py  dup=34L  groups=1  frags=2  (0.3%)
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py  dup=20L  groups=1  frags=2  (0.2%)
   src/vdisplay/api.py  dup=12L  groups=1  frags=3  (0.1%)
   examples/ci-agent/agent.py  dup=11L  groups=1  frags=1  (0.1%)
@@ -22,7 +22,7 @@ DUPLICATES[8] (ranked by impact):
       examples/ci-agent/agent.py:15-25  (_load_common)
       examples/headless-virtual/run_virtual.py:13-23  (_load_common)
       examples/host-mirror/mirror_demo.py:16-26  (_load_common)
-      examples/host-relay/relay_demo.py:18-28  (_load_common)
+      examples/host-relay/relay_demo.py:17-27  (_load_common)
   [673d29d90b55293e]   STRU  local_windows_payload  L=23 N=2 saved=23 sim=1.00
       src/vdisplay/payloads.py:14-36  (local_windows_payload)
       src/vdisplay/payloads.py:39-61  (windows_payload)
@@ -42,7 +42,7 @@ DUPLICATES[8] (ranked by impact):
       src/vdisplay/api.py:25-28  (_default_relay_backend)
   [7168a023bfc45913]   EXAC  _system_python  L=5 N=2 saved=5 sim=1.00
       src/vdisplay/capture/portal.py:81-85  (_system_python)
-      src/vdisplay/capture/portal_screencast.py:123-127  (_system_python)
+      src/vdisplay/capture/portal_screencast.py:176-180  (_system_python)
   [f5bfacfda8981cef]   STRU  looks_like_internal_class  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/windows/filter.py:8-10  (looks_like_internal_class)
       src/vdisplay/windows/filter.py:13-15  (looks_like_internal_name)

@@ -1,54 +1,9 @@
 from __future__ import annotations
 
-import socket
-import threading
-import time
-import urllib.error
-import urllib.request
-
 import pytest
 
 pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient
-
-
-def _wait_for_url(url: str, *, timeout: float = 5.0) -> None:
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        try:
-            with urllib.request.urlopen(url, timeout=0.3) as response:
-                if response.status == 200:
-                    return
-        except (urllib.error.URLError, TimeoutError):
-            time.sleep(0.05)
-    raise RuntimeError(f"service not ready: {url}")
-
-
-@pytest.fixture
-def live_agent_url():
-    import uvicorn
-    from vdisplay_agent.runtime import AgentRuntime
-    from vdisplay_agent.server import create_app
-
-    runtime = AgentRuntime()
-    app = create_app(runtime)
-
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.bind(("127.0.0.1", 0))
-    port = sock.getsockname()[1]
-    sock.close()
-
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="error")
-    server = uvicorn.Server(config)
-    thread = threading.Thread(target=server.run, daemon=True)
-    thread.start()
-
-    base = f"http://127.0.0.1:{port}"
-    _wait_for_url(f"{base}/health")
-    yield base
-
-    server.should_exit = True
-    thread.join(timeout=5)
 
 
 def test_agent_client_round_trip_monitors(live_agent_url: str, monkeypatch: pytest.MonkeyPatch) -> None:

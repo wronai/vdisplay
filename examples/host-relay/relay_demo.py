@@ -9,7 +9,6 @@ import time
 from pathlib import Path
 
 from vdisplay import WindowRelaySession
-from vdisplay.capture.linux_xwd import capture_display_png
 from vdisplay.discovery import resolve_host_display
 from vdisplay.exceptions import VDisplayError
 from vdisplay.payloads import all_payload, windows_payload
@@ -29,7 +28,8 @@ def _load_common() -> None:
 
 
 _load_common()
-from screenshot_meta import print_artifact, save_png_with_meta  # noqa: E402
+from host_capture import capture_host_screenshot  # noqa: E402
+from screenshot_meta import print_artifact, write_screenshot_meta  # noqa: E402
 
 
 def _capture_phase(
@@ -40,11 +40,10 @@ def _capture_phase(
     label: str,
 ) -> dict:
     state = all_payload(display)
-    png = capture_display_png(display)
     path = output_dir / f"{phase}.png"
-    meta = save_png_with_meta(
+    capture_host_screenshot(path, display=display, mode="host")
+    meta = write_screenshot_meta(
         path,
-        png,
         label=label,
         session_kind="relay",
         display=display,

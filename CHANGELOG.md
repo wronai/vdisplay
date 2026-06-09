@@ -153,6 +153,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `pyproject.toml` — replace `file:packages/...` optional-deps with uv workspace members so `uv sync` / `goal -a` can resolve editable metadata
 
 ### Changed
+- `client.py` — `AgentClient.request(CommandRequest)` maps verbs to broker HTTP; simple agent handlers delegate to it
+- `vdisplay_agent/runtime.py` — thin `AgentRuntime` facade; domain logic in `session_store.py` + `services/{capabilities,outputs,windows,sessions,capture,relay}.py` (fan-out split)
+- `application/executor.py` — thin router; per-verb handlers in `application/handlers/{local,agent}.py` (CC split)
+- `client.py` — `_request` split into `_send`, `_build_request`, `_http_error_message`, `_raise_on_error`
 - `application/runtime.py` — `ExecutionPolicy` is the only agent-vs-local decision point
 - `application/services/discovery.py` — local implementations (`*_local`) + routing via executor
 - `application/services/capture.py` — `capture_screenshot_local()`; public API routes through executor
@@ -170,6 +174,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
+
+## [0.1.5] - 2026-06-09
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/agent-broker.md
+- Update docs/architecture.md
+- Update docs/index.md
+- Update docs/installation.md
+- Update docs/troubleshooting.md
+- ... and 5 more files
+
+### Test
+- Update tests/conftest.py
+- Update tests/test_agent_client.py
+- Update tests/test_agent_dispatch.py
+- Update tests/test_agent_integration.py
+- Update tests/test_agent_serve_port.py
+- Update tests/test_capture_all_monitors.py
+- Update tests/test_client_request.py
+- Update tests/test_execution_policy.py
+- Update tests/test_host_capture.py
+- Update tests/test_host_capture_errors.py
+- ... and 4 more files
+
+### Other
+- Update .code2llm_cache/agent_1781026162305431040_3882.pkl
+- Update .code2llm_cache/agent_envelope_1781025998955988430_551.pkl
+- Update .code2llm_cache/capture_1781026000963209215_5317.pkl
+- Update .code2llm_cache/capture_1781026165730443343_2623.pkl
+- Update .code2llm_cache/cli_1781026163053578358_1511.pkl
+- Update .code2llm_cache/client_1781025999650000677_9742.pkl
+- Update .code2llm_cache/discovery_1781025818419890582_11949.pkl
+- Update .code2llm_cache/host_1781026172795469681_16945.pkl
+- Update .code2llm_cache/info_1781025815166749058_2019.pkl
+- Update .code2llm_cache/policy_1781026667249685781_4114.pkl
+- ... and 51 more files
 
 ## [0.1.4] - 2026-06-09
 

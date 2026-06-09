@@ -21,8 +21,18 @@ def main(argv: list[str] | None = None) -> int:
             raise SystemExit(
                 "Install serve extras: pip install -e packages/vdisplay-agent[serve]"
             ) from exc
+        from vdisplay_agent.serve_port import ensure_broker_port_free
         from vdisplay_agent.server import create_app
 
+        try:
+            ensure_broker_port_free(args.host, args.port)
+        except RuntimeError as exc:
+            raise SystemExit(str(exc)) from exc
+
+        print(
+            "Wayland host capture: run `vdisplay agent screencast start` after each serve",
+            file=__import__("sys").stderr,
+        )
         app = create_app()
         uvicorn.run(app, host=args.host, port=args.port, reload=args.reload)
         return 0

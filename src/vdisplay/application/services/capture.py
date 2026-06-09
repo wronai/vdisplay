@@ -9,6 +9,21 @@ from ...exceptions import VDisplayError
 from ..commands import CommandRequest, CommandVerb
 
 
+def resolve_screenshot_routing(cmd: CommandRequest) -> tuple[str, str | None, str]:
+    """Return (mode, display, vd_display) for host vs virtual capture."""
+    from ...discovery import resolve_host_display
+
+    host_display = resolve_host_display(None)
+
+    if cmd.mode == "virtual":
+        return "virtual", None, cmd.vd_display or cmd.display or ":99"
+
+    if cmd.display is not None and cmd.display != host_display:
+        return "virtual", None, cmd.display
+
+    return cmd.mode, cmd.display or host_display, cmd.vd_display
+
+
 def capture_screenshot(
     *,
     output: str | None = None,
@@ -22,6 +37,7 @@ def capture_screenshot(
     width: int = 1280,
     height: int = 720,
     vd_display: str = ":99",
+    skip_img2nl: bool = False,
 ) -> dict[str, Any]:
     from ..executor import execute
 
@@ -39,6 +55,7 @@ def capture_screenshot(
             width=width,
             height=height,
             vd_display=vd_display,
+            extra={"skip_img2nl": skip_img2nl},
         )
     )
     if not result.ok:
@@ -75,13 +92,13 @@ def capture_screenshot_local(
 
     if all_monitors:
         directory = out_dir or "."
-        captures = capture_all_monitors(
+        bulk = capture_all_monitors(
             display=display,
             out_dir=directory,
             target=target,
             prefer_mirror=mode == "mirror",
         )
-        return {"mode": mode, "out_dir": str(directory), "captures": captures, "count": len(captures)}
+        return {"mode": mode, "out_dir": str(directory), **bulk}
 
     if not output:
         raise VDisplayError("screenshot requires -o/--output (or use --all-monitors --out-dir)")
@@ -115,7 +132,12 @@ def _capture_via_agent(
 ) -> dict[str, Any]:
     if mode == "virtual":
         started = client.start_virtual(width=width, height=height, display=vd_display)
-        session_id = started["session_id"]
+        session_id = started.get("session_id")
+        if not session_id:
+            raise VDisplayError(
+                "agent virtual start response missing session_id "
+                f"(keys={sorted(started)})"
+            )
         try:
             out = output or "screen.png"
             payload = client.capture_frame(session_id=session_id, output=out)

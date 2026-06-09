@@ -157,3 +157,16 @@ Ensure `rest2vdisplay` is up to date. Route expects raw DSL body (`text/plain`) 
 curl -s http://127.0.0.1:8216/health | jq .
 curl -s -X POST http://127.0.0.1:8216/v1/dsl -H 'content-type: text/plain' -d 'HEALTH'
 ```
+
+### Stale `dsl2vdisplay` / wrong agent routing
+
+Symptoms: `VDISPLAY_AGENT_URL` is set but DSL runs in-process; deprecation warning mentions `agent_dispatch`; tests pass locally but CLI behaves differently.
+
+Cause: an old `dsl2vdisplay` from site-packages instead of the repo.
+
+Fix:
+
+```bash
+pip install -e ".[pillow,dev]" -e packages/dsl2vdisplay
+python3 -c "import dsl2vdisplay.bus as b; print(b.__file__)"  # should point into packages/dsl2vdisplay/src
+```

@@ -25,6 +25,11 @@ def register(sub: argparse._SubParsersAction) -> None:
     parser.add_argument("--width", type=int, default=1280, help="Virtual mode width")
     parser.add_argument("--height", type=int, default=720, help="Virtual mode height")
     parser.add_argument("--vd-display", default=":99", help="Virtual mode DISPLAY")
+    parser.add_argument(
+        "--no-img2nl",
+        action="store_true",
+        help="Skip img2nl scene description in JSON output",
+    )
     parser.set_defaults(func=handle)
 
 
@@ -42,6 +47,7 @@ def handle(args: argparse.Namespace) -> int:
             width=args.width,
             height=args.height,
             vd_display=args.vd_display,
+            skip_img2nl=args.no_img2nl,
         )
     )
     return 0

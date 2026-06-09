@@ -1,0 +1,191 @@
+"""Agent-broker command handlers."""
+
+from __future__ import annotations
+
+import shutil
+from collections.abc import Callable
+from typing import Any
+
+from ...agent_config import resolve_agent_url
+from ...client import AgentClient
+from ...exceptions import VDisplayError
+from ..commands import CommandRequest, CommandVerb
+from ..runtime import agent_client_required
+
+AgentHandler = Callable[[AgentClient, CommandRequest], dict[str, Any]]
+
+_INFO_KEYS = (
+    "platform",
+    "python",
+    "session_type",
+    "virtual_backend",
+    "mirror_backend",
+    "relay_backend",
+)
+
+
+def _strip_ok(payload: dict[str, Any]) -> dict[str, Any]:
+    data = dict(payload)
+    data.pop("ok", None)
+    return data
+
+
+def _health(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return client.request(cmd).data
+
+
+def _info(client: AgentClient, _cmd: CommandRequest) -> dict[str, Any]:
+    caps = client.capabilities()
+    return {
+        "platform": {k: caps.get(k) for k in _INFO_KEYS if k in caps},
+        "agent": caps,
+    }
+
+
+def _monitors(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return _strip_ok(client.request(cmd).data)
+
+
+def _windows(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return _strip_ok(client.request(cmd).data)
+
+
+def _all(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from ..services.discovery import list_adopted
+
+    monitors = client.outputs(display=cmd.display, include_all=cmd.include_all)
+    windows = client.windows(
+        display=cmd.display,
+        include_all=str(cmd.include_all).lower(),
+        match_class=cmd.match_class,
+        match_pid=cmd.match_pid,
+        match_app=cmd.match_app,
+        min_width=cmd.min_width or None,
+        min_height=cmd.min_height or None,
+    )
+    adopted = list_adopted(cmd.display)
+    return {
+        "requested_display": monitors.get("requested_display"),
+        "resolved_display": monitors.get("resolved_display"),
+        "monitor_count": monitors.get("monitor_count"),
+        "window_count": windows.get("window_count"),
+        "adopted_count": len(adopted),
+        "monitors": monitors.get("monitors"),
+        "windows": windows.get("windows"),
+        "adopted": adopted,
+    }
+
+
+def _capabilities(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return _strip_ok(client.request(cmd).data)
+
+
+def _validate(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    diag = client.diagnostics(display=cmd.display)
+    tools = {
+        "Xvfb": shutil.which("Xvfb"),
+        "xwd": shutil.which("xwd"),
+        "xrandr": shutil.which("xrandr"),
+        "xdotool": shutil.which("xdotool"),
+    }
+    missing = [k for k, v in tools.items() if v is None]
+    if missing:
+        raise VDisplayError(f"missing tools: {', '.join(missing)}")
+    return {
+        "tools": tools,
+        "missing": missing,
+        "diagnostic": diag,
+        "agent_url": resolve_agent_url(),
+    }
+
+
+def _screenshot(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import capture
+
+    mode, display, vd_display = capture.resolve_screenshot_routing(cmd)
+    return capture.capture_screenshot_via_client(
+        client,
+        output=cmd.output or "screen.png",
+        display=None if mode == "virtual" else display,
+        mode=mode,
+        vd_display=vd_display,
+        width=cmd.width,
+        height=cmd.height,
+        monitor=cmd.monitor,
+        source=cmd.source,
+        target=cmd.target,
+        all_monitors=cmd.all_monitors,
+        out_dir=cmd.out_dir,
+    )
+
+
+def _virtual_start(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return client.request(cmd).data
+
+
+def _mirror(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    source = cmd.source or "primary"
+    monitors = client.outputs(display=cmd.display)
+    if int(monitors.get("monitor_count") or 0) < 2:
+        raise VDisplayError(f"mirror needs 2+ outputs, found {monitors.get('monitor_count')}")
+    started = client.start_mirror(source=source, target=cmd.target, display=cmd.display)
+    session_id = started["session_id"]
+    try:
+        data: dict[str, Any] = {"info": started.get("info"), "session_id": session_id}
+        if cmd.output:
+            shot = client.capture_frame(session_id=session_id, output=cmd.output)
+            shot.pop("png_base64", None)
+            data["saved"] = shot.get("path") or cmd.output
+        return data
+    finally:
+        client.stop_session(session_id)
+
+
+def _adopt(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    relay = client.start_relay(display=cmd.display)
+    return client.adopt_window(
+        session_id=relay["session_id"],
+        match_title=cmd.match_title,
+        window_id=cmd.window_id,
+        match_class=cmd.match_class,
+        match_pid=cmd.match_pid,
+        match_app=cmd.match_app,
+        target=cmd.target or "offscreen",
+    )
+
+
+def _release(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    relay = client.start_relay(display=cmd.display)
+    return client.release_window(
+        session_id=relay["session_id"],
+        match_title=cmd.match_title,
+        window_id=cmd.window_id,
+        match_class=cmd.match_class,
+        match_pid=cmd.match_pid,
+        match_app=cmd.match_app,
+    )
+
+
+_AGENT_HANDLERS: dict[CommandVerb, AgentHandler] = {
+    CommandVerb.HEALTH: _health,
+    CommandVerb.INFO: _info,
+    CommandVerb.MONITORS: _monitors,
+    CommandVerb.OUTPUTS: _monitors,
+    CommandVerb.WINDOWS: _windows,
+    CommandVerb.ALL: _all,
+    CommandVerb.CAPABILITIES: _capabilities,
+    CommandVerb.VALIDATE: _validate,
+    CommandVerb.SCREENSHOT: _screenshot,
+    CommandVerb.VIRTUAL_START: _virtual_start,
+    CommandVerb.MIRROR: _mirror,
+    CommandVerb.ADOPT: _adopt,
+    CommandVerb.RELEASE: _release,
+}
+
+
+def execute_agent(cmd: CommandRequest) -> dict[str, Any]:
+    client = agent_client_required()
+    handler = _AGENT_HANDLERS.get(cmd.verb)
+    if handler is None:
+        raise VDisplayError(f"unknown verb: {cmd.verb.value}")
+    return handler(client, cmd)

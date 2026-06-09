@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 from ...api import MirrorSession, VirtualDisplaySession, WindowRelaySession
-from ...capture.host import capture_host_to_file
 from ...exceptions import VDisplayError
 
 
@@ -101,12 +100,18 @@ def mirror_screenshot(
     target: str | None = None,
     display: str | None = None,
 ) -> dict[str, Any]:
-    meta = capture_host_to_file(
-        output,
+    from . import capture as capture_svc
+
+    from ...capture.linux_xwd import _is_wayland_session
+
+    # On Wayland, xrandr mirror sessions cannot drive-level screenshot; use ScreenCast crop.
+    capture_mode = "host" if _is_wayland_session() else "mirror"
+    meta = capture_svc.capture_screenshot(
+        output=output,
         display=display,
         source=source,
         target=target,
-        prefer_mirror=True,
+        mode=capture_mode,
     )
     meta["info"] = MirrorSession.create(source=source, target=target, display=display).info()
     return meta
@@ -178,11 +183,14 @@ def relay_screenshot(
     display: str | None = None,
     source: str | None = None,
 ) -> dict[str, Any]:
-    return capture_host_to_file(
-        output,
+    from . import capture as capture_svc
+
+    return capture_svc.capture_screenshot(
+        output=output,
         monitor=monitor,
         display=display,
         source=source,
+        mode="host",
     )
 
 

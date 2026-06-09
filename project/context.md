@@ -5,12 +5,12 @@
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 97, json: 14, toml: 8, shell: 6, yml: 5
+- **Languages**: python: 113, json: 14, toml: 8, shell: 7, yml: 5
 - **Analysis Mode**: static
-- **Total Functions**: 478
-- **Total Classes**: 34
-- **Modules**: 140
-- **Entry Points**: 259
+- **Total Functions**: 579
+- **Total Classes**: 36
+- **Modules**: 158
+- **Entry Points**: 317
 
 ## Architecture by Module
 
@@ -18,6 +18,16 @@
 - **Functions**: 32
 - **Classes**: 3
 - **File**: `api.py`
+
+### src.vdisplay.capture.portal_screencast
+- **Functions**: 30
+- **Classes**: 1
+- **File**: `portal_screencast.py`
+
+### src.vdisplay.client
+- **Functions**: 25
+- **Classes**: 1
+- **File**: `client.py`
 
 ### src.vdisplay.backends.linux_x11_relay
 - **Functions**: 24
@@ -28,25 +38,15 @@
 - **Functions**: 21
 - **File**: `linux_xwd.py`
 
-### src.vdisplay.client
-- **Functions**: 19
-- **Classes**: 1
-- **File**: `client.py`
-
 ### src.vdisplay.backends.linux_x11_mirror
 - **Functions**: 17
 - **Classes**: 1
 - **File**: `linux_x11_mirror.py`
 
 ### packages.vdisplay-agent.src.vdisplay_agent.runtime
-- **Functions**: 16
-- **Classes**: 2
-- **File**: `runtime.py`
-
-### src.vdisplay.capture.portal_screencast
-- **Functions**: 16
+- **Functions**: 15
 - **Classes**: 1
-- **File**: `portal_screencast.py`
+- **File**: `runtime.py`
 
 ### src.vdisplay.nlp
 - **Functions**: 14
@@ -57,9 +57,17 @@
 - **Classes**: 1
 - **File**: `linux_xvfb.py`
 
+### src.vdisplay.application.handlers.agent
+- **Functions**: 14
+- **File**: `agent.py`
+
 ### src.vdisplay.discovery
 - **Functions**: 13
 - **File**: `discovery.py`
+
+### src.vdisplay.application.handlers.local
+- **Functions**: 13
+- **File**: `local.py`
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 12
@@ -78,29 +86,21 @@
 - **Functions**: 10
 - **File**: `session.py`
 
-### examples.common.screenshot_meta
-- **Functions**: 9
-- **File**: `screenshot_meta.py`
-
 ### packages.vdisplay-agent.src.vdisplay_agent.envelope
 - **Functions**: 9
 - **File**: `envelope.py`
 
-### src.vdisplay.application.services.discovery
+### packages.vdisplay-agent.src.vdisplay_agent.services.sessions
 - **Functions**: 9
-- **File**: `discovery.py`
+- **File**: `sessions.py`
 
-### packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-- **Functions**: 8
-- **File**: `query.py`
+### examples.run_all_examples
+- **Functions**: 9
+- **File**: `run_all_examples.sh`
 
-### src.vdisplay.nl
-- **Functions**: 8
-- **File**: `nl.py`
-
-### packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-- **Functions**: 7
-- **File**: `command.py`
+### examples.common.screenshot_meta
+- **Functions**: 9
+- **File**: `screenshot_meta.py`
 
 ## Key Entry Points
 
@@ -109,14 +109,14 @@ Main execution flows into the system:
 ### packages.vdisplay-agent.src.vdisplay_agent.server.create_app
 - **Calls**: FastAPI, None.strip, app.get, app.get, app.get, app.get, app.get, app.post
 
-### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame
-- **Calls**: body.get, body.get, src.vdisplay.capture.host.capture_host_to_file, None.read_bytes, None.decode, self.sessions.get, record.handle.screenshot_bytes, src.vdisplay.capture.host.capture_all_monitors
-
 ### examples.agent-broker.broker_demo.main
 - **Calls**: src.vdisplay.agent_config.resolve_agent_url, AgentClient, print, print, print, client.outputs, print, print
 
 ### examples.host-relay.relay_demo.main
 - **Calls**: os.environ.get, src.vdisplay.discovery.resolve_host_display, Path, output_dir.mkdir, print, examples.host-relay.relay_demo._capture_phase, WindowRelaySession.create, session.start
+
+### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
+- **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
 
 ### src.vdisplay.commands.relay.register
 - **Calls**: sub.add_parser, parser.add_subparsers, relay_sub.add_parser, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument
@@ -130,11 +130,14 @@ Main execution flows into the system:
 ### src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
 - **Calls**: src.vdisplay.backends.linux_x11_relay._window_geometry, src.vdisplay.backends.linux_x11_relay._move_window, WindowState, src.vdisplay.windows.query.find_companion_frames, src.vdisplay.backends.linux_x11_relay._save_stash, CapabilityError, src.vdisplay.backends.linux_x11_relay._window_metadata, src.vdisplay.backends.linux_x11_relay._find_window_id
 
-### src.vdisplay.client.AgentClient._request
-- **Calls**: urllib.request.Request, json.loads, self._normalize_payload, None.encode, raw.strip, isinstance, payload.get, isinstance
+### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
+- **Calls**: src.vdisplay.capture.portal_screencast._start_screencast, str, list, payload.get, src.vdisplay.capture.portal_screencast._set_active, payload.get, VDisplayError, int
 
 ### src.vdisplay.application.commands.CommandRequest.from_dsl
 - **Calls**: None.upper, bool, cls, CommandVerb, cmd.get, str, cmd.get, cmd.get
+
+### src.vdisplay.commands.agent.handle
+- **Calls**: VDisplayError, print, uvicorn.run, src.vdisplay.cli_handlers.print_json, src.vdisplay.commands.agent._agent_client, VDisplayError, os.environ.get, int
 
 ### src.vdisplay.commands.virtual.register
 - **Calls**: sub.add_parser, parser.add_subparsers, virtual_sub.add_parser, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.set_defaults
@@ -142,32 +145,45 @@ Main execution flows into the system:
 ### src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
 - **Calls**: src.vdisplay.capture.providers.fbdev._fb_info, io.BytesIO, image.save, buf.getvalue, VDisplayError, Image.frombuffer, max, max
 
-### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
-- **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, src.vdisplay.agent_config.resolve_agent_url, None.health, None.capabilities
-
-### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows
+### packages.vdisplay-agent.src.vdisplay_agent.services.windows.list_windows
 - **Calls**: filters.get, filters.get, filters.get, discovery.list_windows_local, None.lower, None.strip, int, None.lower
 
 ### src.vdisplay.capture.providers.drm.DrmProvider._capture
 - **Calls**: src.vdisplay.utils.require_command, src.vdisplay.capture.providers.drm._drm_devices, VDisplayError, VDisplayError, tempfile.NamedTemporaryFile, Path, args.extend, subprocess.run
 
+### packages.vdisplay-agent.src.vdisplay_agent.cli.main
+- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, print
+
 ### examples.headless-virtual.run_virtual.main
 - **Calls**: Path, output_dir.mkdir, int, int, os.environ.get, VirtualDisplaySession.create, session.start, os.environ.get
 
-### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
-- **Calls**: src.vdisplay.capture.portal_screencast._start_screencast, str, list, src.vdisplay.capture.portal_screencast._set_active, payload.get, VDisplayError, int, str
+### src.vdisplay.commands.agent.register
+- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
+
+### src.vdisplay.application.services.info.platform_info
+- **Calls**: VirtualDisplaySession.create, src.vdisplay.capture.linux_xwd._is_wayland_session, src.vdisplay.api.platform_summary, session.capabilities, None.capabilities, None.capabilities, src.vdisplay.discovery.list_outputs, src.vdisplay.agent_config.resolve_agent_url
 
 ### packages.cli2vdisplay.src.cli2vdisplay.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, exec_p.add_argument, sub.add_parser, parser.parse_args, packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch, print
 
+### src.vdisplay.commands.mirror.register
+- **Calls**: sub.add_parser, parser.add_subparsers, mirror_sub.add_parser, mstart.add_argument, mstart.add_argument, mstart.add_argument, mstart.add_argument, mstart.add_argument
+
+### src.vdisplay.capture.policy.assess_unattended_capture
+> Assess host for continuous capture without repeated portal prompts.
+- **Calls**: src.vdisplay.discovery.resolve_host_display, src.vdisplay.discovery._looks_like_xvfb_only, src.vdisplay.capture.linux_xwd._is_wayland_session, reasons.append, CaptureCapabilityContract, CaptureCapabilityContract, reasons.extend, CaptureCapabilityContract
+
 ### packages.nlp2vdisplay.src.nlp2vdisplay.cli.main
 - **Calls**: list, argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, to_dsl.add_argument, to_dsl.add_argument, sub.add_parser, apply_p.add_argument
 
+### packages.vdisplay-agent.src.vdisplay_agent.services.relay.adopt_window
+- **Calls**: store.relay_session, relay.adopt_window, body.get, relay.list_adopted, body.get, body.get, body.get, body.get
+
+### src.vdisplay.commands.screenshot.register
+- **Calls**: sub.add_parser, src.vdisplay.commands.common.add_display_arg, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
+
 ### src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
 - **Calls**: src.vdisplay.backends.linux_xvfb._probe_display, src.vdisplay.backends.linux_xvfb._display_candidates, BackendNotAvailableError, subprocess.Popen, time.sleep, src.vdisplay.backends.linux_xvfb._probe_display, proc.terminate, proc.wait
-
-### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.adopt_window
-- **Calls**: self._relay_session, relay.adopt_window, body.get, relay.list_adopted, body.get, body.get, body.get, body.get
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
 - **Calls**: src.vdisplay.discovery.resolve_host_display, src.vdisplay.discovery.list_outputs, packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok, cmd.get, len, packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err, session.mirror_start, packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
@@ -178,23 +194,8 @@ Main execution flows into the system:
 ### packages.uri2vdisplay.src.uri2vdisplay.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, dec.add_argument, sub.add_parser, run.add_argument, parser.parse_args, packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl
 
-### packages.vdisplay-agent.src.vdisplay_agent.cli.main
-- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-
-### src.vdisplay.commands.screenshot.register
-- **Calls**: sub.add_parser, src.vdisplay.commands.common.add_display_arg, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument, parser.add_argument
-
-### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.release_window
-- **Calls**: self._relay_session, relay.release_window, body.get, relay.list_adopted, body.get, body.get, body.get, body.get
-
-### packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
-- **Calls**: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok, session.relay_release, packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err, src.vdisplay.discovery.resolve_host_display, cmd.get, cmd.get, cmd.get, cmd.get
-
-### src.vdisplay.commands.agent.handle
-- **Calls**: VDisplayError, uvicorn.run, src.vdisplay.agent_config.resolve_agent_url, src.vdisplay.cli_handlers.print_json, os.environ.get, int, packages.rest2vdisplay.src.rest2vdisplay.app.create_app, VDisplayError
-
-### packages.rest2vdisplay.src.rest2vdisplay.cli.main
-- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, uvicorn.run
+### packages.vdisplay-agent.src.vdisplay_agent.services.relay.release_window
+- **Calls**: store.relay_session, relay.release_window, body.get, relay.list_adopted, body.get, body.get, body.get, body.get
 
 ## Process Flows
 
@@ -205,19 +206,18 @@ Key execution flows identified:
 create_app [packages.vdisplay-agent.src.vdisplay_agent.server]
 ```
 
-### Flow 2: capture_frame
-```
-capture_frame [packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime]
-  └─ →> capture_host_to_file
-      └─> capture_host_png
-          └─> _monitor_source_name
-          └─> _monitor_capture_region
-```
-
-### Flow 3: main
+### Flow 2: main
 ```
 main [examples.agent-broker.broker_demo]
   └─ →> resolve_agent_url
+      └─> _probe_default_agent
+          └─> _probe_agent_url
+          └─> _default_agent_base
+```
+
+### Flow 3: create_server
+```
+create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
 ```
 
 ### Flow 4: register
@@ -238,9 +238,13 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
           └─ →> require_command
 ```
 
-### Flow 6: _request
+### Flow 6: start
 ```
-_request [src.vdisplay.client.AgentClient]
+start [src.vdisplay.capture.portal_screencast.PortalScreenCastSession]
+  └─ →> _start_screencast
+      └─> _ensure_portal_deps
+      └─> _start_screencast_impl
+  └─ →> _set_active
 ```
 
 ### Flow 7: from_dsl
@@ -248,33 +252,38 @@ _request [src.vdisplay.client.AgentClient]
 from_dsl [src.vdisplay.application.commands.CommandRequest]
 ```
 
-### Flow 8: _capture
+### Flow 8: handle
+```
+handle [src.vdisplay.commands.agent]
+  └─> _agent_client
+      └─ →> resolve_agent_url
+          └─> _probe_default_agent
+          └─> agent_auto_enabled
+  └─ →> print_json
+```
+
+### Flow 9: _capture
 ```
 _capture [src.vdisplay.capture.providers.fbdev.FbdevProvider]
   └─ →> _fb_info
 ```
 
-### Flow 9: create_server
-```
-create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
-```
-
 ### Flow 10: list_windows
 ```
-list_windows [packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime]
+list_windows [packages.vdisplay-agent.src.vdisplay_agent.services.windows]
 ```
 
 ## Key Classes
 
 ### src.vdisplay.client.AgentClient
 > HTTP client for the local vdisplay-agent broker.
-- **Methods**: 19
-- **Key Methods**: src.vdisplay.client.AgentClient.__init__, src.vdisplay.client.AgentClient._request, src.vdisplay.client.AgentClient._normalize_payload, src.vdisplay.client.AgentClient.health, src.vdisplay.client.AgentClient.capabilities, src.vdisplay.client.AgentClient.diagnostics, src.vdisplay.client.AgentClient.outputs, src.vdisplay.client.AgentClient.windows, src.vdisplay.client.AgentClient.start_virtual, src.vdisplay.client.AgentClient.start_mirror
+- **Methods**: 24
+- **Key Methods**: src.vdisplay.client.AgentClient.__init__, src.vdisplay.client.AgentClient._request, src.vdisplay.client.AgentClient._send, src.vdisplay.client.AgentClient._build_request, src.vdisplay.client.AgentClient._http_error_message, src.vdisplay.client.AgentClient._raise_on_error, src.vdisplay.client.AgentClient._normalize_payload, src.vdisplay.client.AgentClient.request, src.vdisplay.client.AgentClient.health, src.vdisplay.client.AgentClient.capabilities
 
 ### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime
-> Privileged runtime: owns sessions and native capture providers.
-- **Methods**: 16
-- **Key Methods**: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_virtual, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_mirror, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_relay, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_screencast, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.screencast_status
+> Privileged runtime: owns session store and broker services.
+- **Methods**: 17
+- **Key Methods**: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.sessions, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.relay, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_virtual, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_mirror, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_relay, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast
 
 ### src.vdisplay.api.VirtualDisplaySession
 - **Methods**: 11
@@ -312,14 +321,18 @@ list_windows [packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime]
 - **Methods**: 6
 - **Key Methods**: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.__init__, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput._env, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
 
-### src.vdisplay.capture.providers.mss.MssProvider
+### packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore
 - **Methods**: 5
-- **Key Methods**: src.vdisplay.capture.providers.mss.MssProvider.__init__, src.vdisplay.capture.providers.mss.MssProvider.available, src.vdisplay.capture.providers.mss.MssProvider.capture_full, src.vdisplay.capture.providers.mss.MssProvider.capture_region, src.vdisplay.capture.providers.mss.MssProvider._grab
+- **Key Methods**: packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.register, packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.get, packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.pop, packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.relay_session, packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.clear_relay
 
 ### src.vdisplay.capture.portal_screencast.PortalScreenCastSession
 > Hold an open portal ScreenCast session and grab PNG frames from PipeWire.
 - **Methods**: 5
 - **Key Methods**: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.is_ready, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.status, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+
+### src.vdisplay.capture.providers.mss.MssProvider
+- **Methods**: 5
+- **Key Methods**: src.vdisplay.capture.providers.mss.MssProvider.__init__, src.vdisplay.capture.providers.mss.MssProvider.available, src.vdisplay.capture.providers.mss.MssProvider.capture_full, src.vdisplay.capture.providers.mss.MssProvider.capture_region, src.vdisplay.capture.providers.mss.MssProvider._grab
 
 ### src.vdisplay.backends.mirror_stub.MirrorStubBackend
 - **Methods**: 4
@@ -351,11 +364,6 @@ list_windows [packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime]
 - **Methods**: 3
 - **Key Methods**: src.vdisplay.capture.providers.base.CaptureProvider.available, src.vdisplay.capture.providers.base.CaptureProvider.capture_full, src.vdisplay.capture.providers.base.CaptureProvider.capture_region
 - **Inherits**: Protocol
-
-### src.vdisplay.application.runtime.ExecutionPolicy
-> Decide whether a command runs via vdisplay-agent or in-process.
-- **Methods**: 2
-- **Key Methods**: src.vdisplay.application.runtime.ExecutionPolicy.route, src.vdisplay.application.runtime.ExecutionPolicy.meta_for
 
 ## Data Transformation Functions
 
@@ -394,6 +402,9 @@ Key functions that process and transform data:
 ### packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.parse_display
 - **Output to**: None.parse_display, __import__
 
+### packages.vdisplay-agent.src.vdisplay_agent.serve_port._parse_ss_pids
+- **Output to**: re.finditer, pids.append, int, match.group
+
 ### examples.run_all_examples.validate_dir
 
 ### examples.common.validate_artifacts.validate_image_and_meta
@@ -414,71 +425,76 @@ Key functions that process and transform data:
 ### src.vdisplay.discovery._parse_xrandr_query
 - **Output to**: src.vdisplay.utils.run_command, result.stdout.splitlines, None.strip, re.match, re.match
 
-### src.vdisplay.windows.scan.format_window_id
-- **Output to**: window_id.startswith, hex, int
-
-### src.vdisplay.windows.scan.decode_xprop_value
-- **Output to**: raw.strip, re.findall, None.join, raw.startswith, raw.endswith
-
-### src.vdisplay.windows.normalize.parse_wm_class
-- **Output to**: re.findall, len, len, raw.strip, raw.strip
-
-### src.vdisplay.windows.normalize.process_info
-- **Output to**: Path, Path, cmdline.exists, comm.exists, None.strip
-
 ### src.vdisplay.capture.linux_xwd._parse_xwd_header
 - **Output to**: struct.unpack, src.vdisplay.capture.linux_xwd._header_fields, len, VDisplayError, VDisplayError
 
 ### src.vdisplay.capture.linux_xwd._decode_pixels
 - **Output to**: bytearray, range, bytes, range, bytes
 
+### src.vdisplay.capture.portal_screencast.invalidate_screencast_session
+> Drop a stale ScreenCast session so the next start opens a fresh portal stream.
+- **Output to**: src.vdisplay.capture.portal_screencast._set_active, session.stop, src.vdisplay.capture.portal_screencast._set_active_if_self, src.vdisplay.capture.portal_screencast._set_active
+
+### src.vdisplay.capture.portal_screencast._capture_pipewire_frame_gi_subprocess
+- **Output to**: src.vdisplay.capture.portal_screencast._system_python, subprocess.run, out.is_file, str, str
+
 ### src.vdisplay.capture.portal_screencast._start_screencast_subprocess
-- **Output to**: os.environ.copy, src.vdisplay.capture.portal_screencast._system_python, None.strip, env.get, subprocess.run
+- **Output to**: src.vdisplay.capture.portal_screencast._vdisplay_src_path, os.environ.copy, env.setdefault, src.vdisplay.capture.portal_screencast._system_python, None.strip
+
+### src.vdisplay.application.handlers.local._validate
+- **Output to**: discovery.diagnose, shutil.which, shutil.which, shutil.which, shutil.which
+
+## Behavioral Patterns
+
+### recursion_enrich_screenshot_payload
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
 
 ## Public API Surface
 
 Functions exposed as public API (no underscore prefix):
 
 - `packages.vdisplay-agent.src.vdisplay_agent.server.create_app` - 103 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame` - 41 calls
+- `src.vdisplay.capture.host.capture_host_png` - 44 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
-- `src.vdisplay.capture.host.capture_host_png` - 37 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
 - `examples.host-relay.relay_demo.main` - 33 calls
+- `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.relay.register` - 32 calls
-- `examples.host-mirror.mirror_demo.main` - 28 calls
+- `examples.host-mirror.mirror_demo.main` - 31 calls
+- `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
 - `src.vdisplay.discovery.list_outputs` - 27 calls
 - `src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window` - 27 calls
-- `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
+- `src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start` - 26 calls
 - `src.vdisplay.application.commands.CommandRequest.from_dsl` - 25 calls
+- `src.vdisplay.commands.agent.handle` - 23 calls
+- `src.vdisplay.capture.host.capture_all_monitors` - 23 calls
 - `examples.common.validate_artifacts.validate_image_and_meta` - 22 calls
 - `src.vdisplay.commands.virtual.register` - 22 calls
 - `src.vdisplay.windows.query.inspect_window` - 21 calls
-- `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 20 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows` - 20 calls
+- `packages.vdisplay-agent.src.vdisplay_agent.services.windows.list_windows` - 20 calls
+- `src.vdisplay.discovery.diagnose_display` - 19 calls
+- `packages.vdisplay-agent.src.vdisplay_agent.cli.main` - 18 calls
 - `examples.headless-virtual.run_virtual.main` - 18 calls
 - `src.vdisplay.nl.window_center_on_output` - 18 calls
-- `src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start` - 17 calls
+- `src.vdisplay.commands.agent.register` - 18 calls
+- `src.vdisplay.application.services.info.platform_info` - 17 calls
 - `packages.cli2vdisplay.src.cli2vdisplay.cli.main` - 16 calls
 - `src.vdisplay.nl.describe_window_nl` - 16 calls
 - `src.vdisplay.commands.mirror.register` - 16 calls
-- `src.vdisplay.capture.host.capture_all_monitors` - 16 calls
+- `src.vdisplay.capture.policy.assess_unattended_capture` - 16 calls
 - `packages.nlp2vdisplay.src.nlp2vdisplay.cli.main` - 15 calls
 - `examples.common.screenshot_meta.describe_screenshot_nl` - 15 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.adopt_window` - 14 calls
+- `packages.vdisplay-agent.src.vdisplay_agent.services.relay.adopt_window` - 14 calls
+- `src.vdisplay.commands.screenshot.register` - 14 calls
 - `src.vdisplay.capture.linux_xwd.is_blank_png` - 14 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror` - 13 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt` - 13 calls
 - `packages.uri2vdisplay.src.uri2vdisplay.cli.main` - 13 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.cli.main` - 13 calls
+- `packages.vdisplay-agent.src.vdisplay_agent.services.relay.release_window` - 13 calls
 - `src.vdisplay.nl.describe_output_nl` - 13 calls
-- `src.vdisplay.commands.screenshot.register` - 13 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.release_window` - 13 calls
-- `packages.dsl2vdisplay.src.dsl2vdisplay.grammar.to_text` - 12 calls
-- `packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release` - 12 calls
-- `packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl` - 12 calls
-- `src.vdisplay.discovery.diagnose_display` - 12 calls
 
 ## System Interactions
 
@@ -489,10 +505,6 @@ graph TD
     create_app --> FastAPI
     create_app --> strip
     create_app --> get
-    capture_frame --> get
-    capture_frame --> capture_host_to_file
-    capture_frame --> read_bytes
-    capture_frame --> decode
     main --> resolve_agent_url
     main --> AgentClient
     main --> print
@@ -500,6 +512,8 @@ graph TD
     main --> resolve_host_display
     main --> Path
     main --> mkdir
+    create_server --> FastMCP
+    create_server --> tool
     register --> add_parser
     register --> add_subparsers
     register --> add_argument
@@ -510,12 +524,14 @@ graph TD
     adopt_window --> WindowState
     adopt_window --> find_companion_frame
     adopt_window --> _save_stash
-    _request --> Request
-    _request --> loads
-    _request --> _normalize_payload
-    _request --> encode
-    _request --> strip
+    start --> _start_screencast
+    start --> str
+    start --> list
+    start --> get
+    start --> _set_active
     from_dsl --> upper
+    from_dsl --> bool
+    from_dsl --> cls
 ```
 
 ## Reverse Engineering Guidelines

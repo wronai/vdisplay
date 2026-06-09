@@ -9,6 +9,7 @@ Cross-platform virtual display orchestration for Python agents, CI pipelines, an
 | [README.md](../README.md) | Project overview, API summary, CLI reference |
 | [Installation](installation.md) | System dependencies and Python setup |
 | [Agent broker](agent-broker.md) | **vdisplay-agent** — install once, REST/MCP/DSL, ScreenCast |
+| [Architecture](architecture.md) | CommandRequest + executor (local vs agent routing) |
 | [Docker guide](docker-guide.md) | Running vdisplay in containers |
 | [Examples index](examples.md) | All usage examples by environment |
 | [Troubleshooting](troubleshooting.md) | Common CLI errors and fixes |
@@ -17,12 +18,14 @@ Cross-platform virtual display orchestration for Python agents, CI pipelines, an
 ## Recommended desktop setup
 
 ```bash
+pip install -e ".[pillow,dev]"
 pip install -e "packages/vdisplay-agent[serve]"
+pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 vdisplay-agent serve --port 8765
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 ```
 
-Try: [examples/agent-broker](../examples/agent-broker/) · full guide: [agent-broker.md](agent-broker.md)
+Try: [examples/agent-broker](../examples/agent-broker/) · [agent-broker.md](agent-broker.md) · [architecture.md](architecture.md)
 
 ## Modes
 
@@ -101,7 +104,7 @@ With broker (recommended on a desktop host):
 ```bash
 vdisplay-agent serve --port 8765
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
-dsl2vdisplay -c 'MONITORS'
+dsl2vdisplay -c 'MONITORS'    # CommandRequest → executor → agent
 rest2vdisplay serve --port 8216 --agent-url $VDISPLAY_AGENT_URL
 mcp2vdisplay serve
 ```
@@ -113,4 +116,4 @@ dsl2vdisplay -c 'MONITORS DISPLAY :0'
 nlp2vdisplay to-dsl "show windows on the primary monitor"
 ```
 
-See [packages/README.md](../packages/README.md) and [agent-broker.md](agent-broker.md).
+See [architecture.md](architecture.md), [packages/README.md](../packages/README.md), and [agent-broker.md](agent-broker.md).

@@ -14,28 +14,34 @@ flowchart TB
     REST[rest2vdisplay]
     MCP[mcp2vdisplay]
   end
-  subgraph control [Control bus]
-    BUS[dsl2vdisplay.dispatch]
+  subgraph control [Control layer]
+    REQ[CommandRequest]
+    EXEC[application.executor]
   end
   subgraph broker [vdisplay-agent 127.0.0.1:8765]
     RT[AgentRuntime]
-    CAP[capture providers]
+    CAP[capture providers + ScreenCast]
     DISC[discovery / sessions]
   end
-  CLI --> BUS
-  DSL --> BUS
-  REST --> BUS
-  MCP --> BUS
-  BUS -->|VDISPLAY_AGENT_URL| RT
+  CLI --> DSL
+  DSL --> REQ
+  REQ --> EXEC
+  REST --> DSL
+  MCP --> DSL
+  EXEC -->|VDISPLAY_AGENT_URL| RT
+  EXEC -->|no URL| LOCAL[vdisplay in-process]
   RT --> CAP
   RT --> DISC
 ```
 
-When `VDISPLAY_AGENT_URL` is set, `dispatch()` routes through `vdisplay.agent_dispatch`. The agent sets `VDISPLAY_AGENT_BROKER=1` internally so it never calls itself recursively.
+When `VDISPLAY_AGENT_URL` is set, `dsl2vdisplay.dispatch()` builds a `CommandRequest` and `application.executor.execute()` routes to the broker via `AgentClient`. The agent sets `VDISPLAY_AGENT_BROKER=1` internally so it never calls itself recursively.
+
+Legacy `vdisplay.agent_dispatch` still works but is **deprecated** — use `application.executor.execute` for new code.
 
 ## Install and run
 
 ```bash
+pip install -e ".[pillow,dev]"
 pip install -e "packages/vdisplay-agent[serve]"
 pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 
@@ -101,6 +107,9 @@ curl -s http://127.0.0.1:8765/outputs | jq '{monitor_count, monitors: [.monitors
 ```bash
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 vdisplay agent health
+vdisplay agent screencast status
+vdisplay agent screencast start
+vdisplay agent screencast stop
 vdisplay monitors
 vdisplay virtual screenshot -o /tmp/vd.png
 ```
@@ -155,6 +164,9 @@ Tools:
 | `vdisplay_run_command` | Single DSL line |
 | `vdisplay_run_dsl` | Multi-line DSL script |
 | `vdisplay_to_dsl` | NL → DSL (no side effects) |
+| `vdisplay_screencast_start` | Start portal ScreenCast on agent (Wayland) |
+| `vdisplay_screencast_stop` | Stop portal ScreenCast session |
+| `vdisplay_screencast_status` | ScreenCast session state |
 
 ## Capture providers (host)
 
@@ -175,13 +187,18 @@ curl -s -X POST http://127.0.0.1:8765/session/screencast/start \
   -H 'content-type: application/json' \
   -d '{"interactive": true}' | jq .
 
+# or via CLI (requires VDISPLAY_AGENT_URL)
+vdisplay agent screencast start
+
 curl -s http://127.0.0.1:8765/session/screencast/status | jq .
+vdisplay agent screencast status
 
 # host capture now uses the open PipeWire stream
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 vdisplay screenshot -o /tmp/host.png --source DP-1
 
 curl -s -X POST http://127.0.0.1:8765/session/screencast/stop | jq .
+vdisplay agent screencast stop
 ```
 
 Requirements on the agent host:
@@ -228,4 +245,5 @@ vdisplay screenshot --all-monitors --out-dir /tmp/shots --mode mirror
 - [Troubleshooting — agent and capture](troubleshooting.md#vdisplay-agent-and-capture)
 - [Installation — control layer](installation.md#control-layer-and-agent)
 - [Example: agent-broker](../examples/agent-broker/)
+- [Architecture](architecture.md)
 - [packages/vdisplay-agent/README.md](../packages/vdisplay-agent/README.md)
