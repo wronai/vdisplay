@@ -14,7 +14,7 @@ Runnable examples for different environments. Full index: [docs/examples.md](../
 
 | Directory | Description |
 |-----------|-------------|
-| [host-mirror/](host-mirror/) | Mirror host desktop via `xrandr` |
+| [host-mirror/](host-mirror/) | Mirror host desktop via `xrandr` + screenshot |
 | [host-relay/](host-relay/) | Move window off-screen and restore |
 
 ## Quick start
@@ -26,10 +26,13 @@ docker compose up --build
 ls output/screen.png
 
 # host mirror (Linux + X11)
-xhost +local:docker
-cd examples/host-mirror
-DISPLAY=$DISPLAY docker compose up --build
-xhost -local:docker
+cd examples/host-mirror && ./run.sh
+ls output/mirror.png
+
+# host relay — CLI on host (each window/monitor has "nl" description)
+vdisplay relay list-windows --apps-only
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay release-window --app "JetBrains"
 ```
 
-See also [docs/docker-guide.md](../docs/docker-guide.md) and [README.md](../README.md).
+See also [docs/docker-guide.md](../docs/docker-guide.md), [docs/index.md](../docs/index.md), and [README.md](../README.md).

@@ -537,3 +537,523 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
+  - id: ticket-74fd3f8a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/cli2vdisplay/src/cli2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/cli2vdisplay/src/cli2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-82e7f2eb
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/cli2vdisplay/src/cli2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/cli2vdisplay/src/cli2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2e96cf60
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-431b795f
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5bbd3ff7
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/dsl2vdisplay/src/dsl2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-02851731
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-dbbcee3c
+    name: Fix magic-numbers issues
+    description: Resolve 4 magic-numbers issues in packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
+    rule_id: magic-numbers
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-59a55157
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+    rule_id: string-concat
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-38942276
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f4243602
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-90e9f4ad
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/result.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/result.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-87bc811c
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6bc44888
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7640f391
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e1c31d79
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/mcp2vdisplay/src/mcp2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-394961c5
+    name: Fix unused-imports issues
+    description: Resolve 6 unused-imports issues in packages/nlp2vdisplay/src/nlp2vdisplay/cli.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - packages/nlp2vdisplay/src/nlp2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1fe3e097
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/nlp2vdisplay/src/nlp2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/nlp2vdisplay/src/nlp2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2a7ebc5d
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e655406d
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7e7d545f
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-82bb41c8
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-89f09005
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in packages/mcp2vdisplay/src/mcp2vdisplay/server.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/mcp2vdisplay/src/mcp2vdisplay/server.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-65a430e2
+    name: Fix unused-imports issues
+    description: Resolve 6 unused-imports issues in packages/mcp2vdisplay/src/mcp2vdisplay/server.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - packages/mcp2vdisplay/src/mcp2vdisplay/server.py
+    rule_id: unused-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1fd06f47
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in packages/rest2vdisplay/src/rest2vdisplay/app.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/app.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9db71dbc
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/rest2vdisplay/src/rest2vdisplay/app.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/app.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-8aa4ce34
+    name: Fix magic-numbers issues
+    description: Resolve 1 magic-numbers issues in packages/rest2vdisplay/src/rest2vdisplay/app.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/rest2vdisplay/src/rest2vdisplay/app.py
+    rule_id: magic-numbers
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cc9b0405
+    name: Fix unused-imports issues
+    description: Resolve 6 unused-imports issues in packages/uri2vdisplay/src/uri2vdisplay/cli.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - packages/uri2vdisplay/src/uri2vdisplay/cli.py
+    rule_id: unused-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-24602263
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in packages/uri2vdisplay/src/uri2vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/uri2vdisplay/src/uri2vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2bcde290
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/uri2vdisplay/src/uri2vdisplay/decode.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/uri2vdisplay/src/uri2vdisplay/decode.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ad4f17c1
+    name: Fix relative-imports issues
+    description: Resolve 8 relative-imports issues in src/vdisplay/discovery.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/discovery.py
+    rule_id: relative-imports
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-40befefa
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in src/vdisplay/discovery.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/discovery.py
+    rule_id: string-concat
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5e9348d3
+    name: Fix unused-imports issues
+    description: Resolve 6 unused-imports issues in src/vdisplay/discovery.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/discovery.py
+    rule_id: unused-imports
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e5e80c6a
+    name: Fix magic-numbers issues
+    description: Resolve 3 magic-numbers issues in src/vdisplay/discovery.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/discovery.py
+    rule_id: magic-numbers
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-bba442be
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/windows.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/windows.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-af5f09b0
+    name: Fix unused-imports issues
+    description: Resolve 10 unused-imports issues in src/vdisplay/windows.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/windows.py
+    rule_id: unused-imports
+    count: 10
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f1cb0adf
+    name: Fix magic-numbers issues
+    description: Resolve 9 magic-numbers issues in src/vdisplay/windows.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/windows.py
+    rule_id: magic-numbers
+    count: 9
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-342ce50a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in tests/test_mirror_primary.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_mirror_primary.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4454330d
+    name: Fix smart-return-type issues
+    description: Resolve 2 smart-return-type issues in tests/test_outputs_rotation.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_outputs_rotation.py
+    rule_id: smart-return-type
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7a204181
+    name: Fix smart-return-type issues
+    description: Resolve 4 smart-return-type issues in tests/test_windows.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - tests/test_windows.py
+    rule_id: smart-return-type
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cd6add99
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in tests/test_windows_dedupe.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_windows_dedupe.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced

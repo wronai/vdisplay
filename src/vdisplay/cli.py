@@ -65,6 +65,8 @@ def build_parser() -> argparse.ArgumentParser:
     rrelease = relay_sub.add_parser("release-window", help="Restore adopted window")
     rrelease.add_argument("--title")
     rrelease.add_argument("--window-id")
+    rrelease.add_argument("--class", dest="wm_class")
+    rrelease.add_argument("--pid", type=int)
     rrelease.add_argument("--app")
     rrelease.add_argument("--display", default=None)
 
@@ -219,6 +221,9 @@ def main(argv: list[str] | None = None) -> int:
                     wid = session.release_window(
                         match_title=args.title,
                         window_id=args.window_id,
+                        match_class=args.wm_class,
+                        match_pid=args.pid,
+                        match_app=args.app,
                     )
                     _print_json({"window_id": wid, "adopted": session.list_adopted()})
                     return 0

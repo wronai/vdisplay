@@ -8,6 +8,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-06-09
 
 ### Fixed
+- Fix unused-imports issues (ticket-74fd3f8a)
+- Fix ai-boilerplate issues (ticket-82e7f2eb)
+- Fix unused-imports issues (ticket-2e96cf60)
+- Fix unused-imports issues (ticket-431b795f)
+- Fix ai-boilerplate issues (ticket-5bbd3ff7)
+- Fix unused-imports issues (ticket-02851731)
+- Fix magic-numbers issues (ticket-dbbcee3c)
+- Fix string-concat issues (ticket-59a55157)
+- Fix unused-imports issues (ticket-38942276)
+- Fix unused-imports issues (ticket-f4243602)
+- Fix unused-imports issues (ticket-90e9f4ad)
+- Fix unused-imports issues (ticket-87bc811c)
+- Fix smart-return-type issues (ticket-6bc44888)
+- Fix unused-imports issues (ticket-7640f391)
+- Fix ai-boilerplate issues (ticket-e1c31d79)
+- Fix unused-imports issues (ticket-394961c5)
+- Fix ai-boilerplate issues (ticket-1fe3e097)
+- Fix unused-imports issues (ticket-2a7ebc5d)
+- Fix unused-imports issues (ticket-e655406d)
+- Fix magic-numbers issues (ticket-7e7d545f)
+- Fix ai-boilerplate issues (ticket-82bb41c8)
+- Fix smart-return-type issues (ticket-89f09005)
+- Fix unused-imports issues (ticket-65a430e2)
+- Fix smart-return-type issues (ticket-1fd06f47)
+- Fix unused-imports issues (ticket-9db71dbc)
+- Fix magic-numbers issues (ticket-8aa4ce34)
+- Fix unused-imports issues (ticket-cc9b0405)
+- Fix ai-boilerplate issues (ticket-24602263)
+- Fix unused-imports issues (ticket-2bcde290)
+- Fix relative-imports issues (ticket-ad4f17c1)
+- Fix string-concat issues (ticket-40befefa)
+- Fix unused-imports issues (ticket-5e9348d3)
+- Fix magic-numbers issues (ticket-e5e80c6a)
+- Fix relative-imports issues (ticket-bba442be)
+- Fix unused-imports issues (ticket-af5f09b0)
+- Fix magic-numbers issues (ticket-f1cb0adf)
+- Fix unused-imports issues (ticket-342ce50a)
+- Fix smart-return-type issues (ticket-4454330d)
+- Fix smart-return-type issues (ticket-7a204181)
+- Fix smart-return-type issues (ticket-cd6add99)
+
+## [0.1.10] - 2026-06-09
+
+### Fixed
 - Fix relative-imports issues (ticket-61cea448)
 - Fix relative-imports issues (ticket-edabd604)
 - Fix unused-imports issues (ticket-77784cbb)
@@ -50,6 +94,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix smart-return-type issues (ticket-c92056bf)
 
 ## [Unreleased]
+
+## [0.1.3] - 2026-06-09
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/examples.md
+- Update docs/index.md
+- Update docs/troubleshooting.md
+- Update examples/README.md
+- Update packages/README.md
+- ... and 2 more files
+
+### Test
+- Update tests/test_mirror_primary.py
+- Update tests/test_nl.py
+- Update tests/test_relay_release.py
+- Update tests/test_windows_dedupe.py
+
+### Other
+- Update app.doql.less
+- Update examples/host-mirror/Dockerfile
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
+- Update planfile.yaml
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- ... and 12 more files
 
 ## [0.1.2] - 2026-06-09
 

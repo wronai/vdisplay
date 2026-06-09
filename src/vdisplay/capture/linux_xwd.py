@@ -1,19 +1,48 @@
 from __future__ import annotations
 
 import io
+import shutil
 import struct
+import subprocess
+import tempfile
 import zlib
+from pathlib import Path
 from typing import BinaryIO
 
 from ..exceptions import VDisplayError
-from ..utils import require_command, run_command_bytes
+from ..utils import require_command, run_command, run_command_bytes
 
 XWD_VERSION = 7
 ZPIXMAP = 2
 LSB_FIRST = 0
 
 
-def capture_display_png(display: str) -> bytes:
+def capture_display_png(
+    display: str,
+    *,
+    region: tuple[int, int, int, int] | None = None,
+) -> bytes:
+    """Capture display as PNG. Optional region is (x, y, width, height)."""
+    if region is not None:
+        return _capture_scrot_png(display, region)
+
+    if shutil.which("xwd") is not None:
+        try:
+            return _capture_xwd_png(display)
+        except (subprocess.CalledProcessError, VDisplayError):
+            if shutil.which("scrot") is not None:
+                return _capture_scrot_png(display, None)
+            raise
+
+    if shutil.which("scrot") is not None:
+        return _capture_scrot_png(display, None)
+
+    raise VDisplayError(
+        "No capture tool available. Install x11-apps (xwd) or scrot."
+    )
+
+
+def _capture_xwd_png(display: str) -> bytes:
     require_command("xwd")
     xwd_data = run_command_bytes(
         ["xwd", "-root", "-display", display],
@@ -21,6 +50,21 @@ def capture_display_png(display: str) -> bytes:
         timeout=60,
     )
     return xwd_bytes_to_png(xwd_data)
+
+
+def _capture_scrot_png(
+    display: str,
+    region: tuple[int, int, int, int] | None,
+) -> bytes:
+    require_command("scrot")
+    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
+        args = ["scrot"]
+        if region is not None:
+            x, y, width, height = region
+            args.extend(["-a", f"{x},{y},{width},{height}"])
+        args.append(tmp.name)
+        run_command(args, env={"DISPLAY": display}, text=False, timeout=60)
+        return Path(tmp.name).read_bytes()
 
 
 def xwd_bytes_to_png(data: bytes) -> bytes:

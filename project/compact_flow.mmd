@@ -1,3 +1,18 @@
 flowchart TD
-%% generated in 0.00s
-    src__vdisplay["src.vdisplay<br/>104 funcs"]
+%% generated in 0.01s
+    examples__host_mirror["examples.host-mirror<br/>2 funcs"]
+    packages__cli2vdisplay["packages.cli2vdisplay<br/>1 funcs"]
+    packages__dsl2vdisplay["packages.dsl2vdisplay<br/>27 funcs"]
+    packages__mcp2vdisplay["packages.mcp2vdisplay<br/>3 funcs"]
+    packages__nlp2vdisplay["packages.nlp2vdisplay<br/>2 funcs"]
+    packages__rest2vdisplay["packages.rest2vdisplay<br/>2 funcs"]
+    packages__uri2vdisplay["packages.uri2vdisplay<br/>2 funcs"]
+    src__vdisplay["src.vdisplay<br/>145 funcs"]
+    packages__dsl2vdisplay ==>|9| src__vdisplay
+    packages__rest2vdisplay ==>|4| packages__dsl2vdisplay
+    packages__cli2vdisplay -->|2| packages__dsl2vdisplay
+    packages__mcp2vdisplay -->|2| packages__dsl2vdisplay
+    examples__host_mirror -->|2| src__vdisplay
+    packages__nlp2vdisplay -->|1| packages__dsl2vdisplay
+    packages__mcp2vdisplay -->|1| packages__nlp2vdisplay
+    packages__uri2vdisplay -->|1| packages__dsl2vdisplay

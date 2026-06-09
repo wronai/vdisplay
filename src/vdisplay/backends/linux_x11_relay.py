@@ -1,12 +1,21 @@
 from __future__ import annotations
 
+import json
 import os
 import re
 import shutil
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
+from pathlib import Path
 
 from ..discovery import find_window_suggestions, resolve_host_display
-from ..windows import find_companion_frames, find_windows, pick_best_window
+from ..nl import describe_window_nl
+from ..windows import (
+    _matches_app,
+    _matches_title,
+    find_companion_frames,
+    find_windows,
+    pick_best_window,
+)
 from ..exceptions import BackendNotAvailableError, CapabilityError, VDisplayError
 from ..models import Capabilities, SessionInfo
 from ..utils import require_command, run_command
@@ -59,6 +68,7 @@ class LinuxX11RelayBackend(BaseBackend):
     def start(self) -> None:
         if shutil.which("xdotool") is None:
             raise BackendNotAvailableError("xdotool is not installed")
+        self._adopted = _load_stash(self.display, self.stash_prefix)
         self._active = True
 
     def adopt_window(
@@ -94,7 +104,7 @@ class LinuxX11RelayBackend(BaseBackend):
         else:
             x, y = _output_origin(self.display, target)
 
-        moved = _move_window(self.display, wid, x, y)
+        _move_window(self.display, wid, x, y)
         self._adopted[key] = WindowState(
             window_id=wid,
             title=title,
@@ -106,8 +116,6 @@ class LinuxX11RelayBackend(BaseBackend):
             pid=meta.get("pid"),
             wm_class=meta.get("wm_class"),
         )
-        moved.append(wid)
-
         for frame in find_companion_frames(self.display, meta):
             frame_id = str(frame["window_id"])
             if frame_id in self._adopted:
@@ -126,7 +134,7 @@ class LinuxX11RelayBackend(BaseBackend):
                 pid=frame.get("pid"),
                 wm_class=frame.get("wm_class"),
             )
-            moved.append(frame_id)
+        _save_stash(self.display, self.stash_prefix, self._adopted)
         return wid
 
     def release_window(
@@ -134,54 +142,205 @@ class LinuxX11RelayBackend(BaseBackend):
         *,
         match_title: str | None = None,
         window_id: str | None = None,
+        match_class: str | None = None,
+        match_pid: int | None = None,
+        match_app: str | None = None,
     ) -> str:
         if not self._active:
             raise CapabilityError("Relay session is not active")
 
-        wid = window_id
-        if wid is None and match_title:
-            for state in self._adopted.values():
-                if match_title.lower() in state.title.lower():
-                    wid = state.window_id
-                    break
-                if state.app_label and match_title.lower() in state.app_label.lower():
-                    wid = state.window_id
-                    break
-        if wid is None:
-            wid, _meta = _find_window_id(self.display, match_title=match_title)
+        if not any([window_id, match_title, match_class, match_pid is not None, match_app]):
+            raise VDisplayError(
+                "Provide --title, --class, --pid, --app or --window-id. "
+                "Run: vdisplay relay list-windows --apps-only"
+            )
 
-        state = self._adopted.get(wid)
-        if state is None:
-            raise VDisplayError(f"Window {wid} was not adopted by this relay session")
+        to_release = _select_adopted_for_release(
+            self._adopted,
+            window_id=window_id,
+            match_title=match_title,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
+        )
+        if not to_release:
+            if window_id:
+                raise VDisplayError(
+                    f"Window {window_id} was not adopted by this relay session. "
+                    "Run: vdisplay relay list"
+                )
+            wid, _meta = _find_window_id(
+                self.display,
+                match_title=match_title,
+                match_class=match_class,
+                match_pid=match_pid,
+                match_app=match_app,
+            )
+            raise VDisplayError(
+                f"Window {wid} is visible but was not adopted by this relay session. "
+                "Run: vdisplay relay list"
+            )
 
-        run_command(
-            ["xdotool", "windowmove", wid, str(state.x), str(state.y)],
-            env={"DISPLAY": self.display},
-            text=True,
-        )
-        run_command(
-            ["xdotool", "windowsize", wid, str(state.width), str(state.height)],
-            env={"DISPLAY": self.display},
-            text=True,
-        )
-        del self._adopted[wid]
-        return wid
+        primary = _pick_primary_release_id(self._adopted, to_release)
+        for wid in to_release:
+            state = self._adopted[wid]
+            _restore_window(self.display, state)
+            del self._adopted[wid]
+        _save_stash(self.display, self.stash_prefix, self._adopted)
+        return primary
 
     def list_adopted(self) -> list[dict[str, str | int | None]]:
-        return [
-            {
-                "window_id": s.window_id,
-                "title": s.title,
-                "app_label": s.app_label,
-                "pid": s.pid,
-                "wm_class": s.wm_class,
-                "x": s.x,
-                "y": s.y,
-                "width": s.width,
-                "height": s.height,
+        adopted: list[dict[str, str | int | None]] = []
+        for state in self._adopted.values():
+            info = {
+                "window_id": state.window_id,
+                "title": state.title,
+                "app_label": state.app_label,
+                "pid": state.pid,
+                "wm_class": state.wm_class,
+                "x": state.x,
+                "y": state.y,
+                "width": state.width,
+                "height": state.height,
+                "type": "frame" if state.wm_class == "mutter-x11-frames" else "application",
             }
-            for s in self._adopted.values()
-        ]
+            info["nl"] = describe_window_nl(info)
+            adopted.append(info)
+        return adopted
+
+
+def _stash_path(display: str, stash_prefix: str) -> Path:
+    safe_display = display.lstrip(":").replace("/", "_") or "0"
+    cache = Path.home() / ".cache" / "vdisplay"
+    cache.mkdir(parents=True, exist_ok=True)
+    return cache / f"{stash_prefix}-{safe_display}.json"
+
+
+def _load_stash(display: str, stash_prefix: str) -> dict[str, WindowState]:
+    path = _stash_path(display, stash_prefix)
+    if not path.exists():
+        return {}
+    try:
+        payload = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+    adopted: dict[str, WindowState] = {}
+    for wid, raw in payload.items():
+        if isinstance(raw, dict):
+            adopted[str(wid)] = WindowState(**raw)
+    return adopted
+
+
+def _save_stash(display: str, stash_prefix: str, adopted: dict[str, WindowState]) -> None:
+    path = _stash_path(display, stash_prefix)
+    if not adopted:
+        if path.exists():
+            path.unlink()
+        return
+    path.write_text(json.dumps({wid: asdict(state) for wid, state in adopted.items()}, indent=2))
+
+
+def _state_as_match_info(state: WindowState) -> dict[str, object]:
+    return {
+        "app_label": state.app_label,
+        "title": state.title,
+        "name": state.title,
+        "wm_class": state.wm_class,
+        "wm_class_instance": state.wm_class,
+        "pid": state.pid,
+        "process_name": "",
+    }
+
+
+def _state_matches(
+    state: WindowState,
+    *,
+    match_title: str | None = None,
+    match_class: str | None = None,
+    match_pid: int | None = None,
+    match_app: str | None = None,
+) -> bool:
+    info = _state_as_match_info(state)
+    if match_pid is not None and state.pid != match_pid:
+        return False
+    if match_class and not (
+        state.wm_class and match_class.lower() in str(state.wm_class).lower()
+    ):
+        return False
+    if match_app and not _matches_app(info, match_app):
+        return False
+    if match_title and not _matches_title(info, match_title):
+        return False
+    return True
+
+
+def _select_adopted_for_release(
+    adopted: dict[str, WindowState],
+    *,
+    window_id: str | None = None,
+    match_title: str | None = None,
+    match_class: str | None = None,
+    match_pid: int | None = None,
+    match_app: str | None = None,
+) -> list[str]:
+    if window_id:
+        if window_id not in adopted:
+            return []
+        return _related_adopted_ids(adopted, window_id)
+
+    matched = [
+        wid
+        for wid, state in adopted.items()
+        if _state_matches(
+            state,
+            match_title=match_title,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
+        )
+    ]
+    if not matched:
+        return []
+
+    release_ids: set[str] = set()
+    for wid in matched:
+        release_ids.update(_related_adopted_ids(adopted, wid))
+    return list(release_ids)
+
+
+def _related_adopted_ids(adopted: dict[str, WindowState], seed_id: str) -> list[str]:
+    state = adopted.get(seed_id)
+    if state is None:
+        return []
+    label = str(state.app_label or "").strip().lower()
+    if not label:
+        return [seed_id]
+    return [
+        wid
+        for wid, candidate in adopted.items()
+        if str(candidate.app_label or "").strip().lower() == label
+    ]
+
+
+def _pick_primary_release_id(adopted: dict[str, WindowState], window_ids: list[str]) -> str:
+    for wid in window_ids:
+        state = adopted.get(wid)
+        if state and state.wm_class != "mutter-x11-frames":
+            return wid
+    return window_ids[0]
+
+
+def _restore_window(display: str, state: WindowState) -> None:
+    run_command(
+        ["xdotool", "windowmove", state.window_id, str(state.x), str(state.y)],
+        env={"DISPLAY": display},
+        text=True,
+    )
+    run_command(
+        ["xdotool", "windowsize", state.window_id, str(state.width), str(state.height)],
+        env={"DISPLAY": display},
+        text=True,
+    )
 
 
 def _find_window_id(

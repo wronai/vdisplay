@@ -7,6 +7,7 @@ RUN apt-get update \
         x11-utils \
         x11-xserver-utils \
         xdotool \
+        scrot \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

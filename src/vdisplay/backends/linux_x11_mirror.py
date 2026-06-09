@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import os
 import re
 import shutil
 
 from ..capture.linux_xwd import capture_display_png
-from ..exceptions import BackendNotAvailableError, CapabilityError
+from ..exceptions import BackendNotAvailableError, CapabilityError, VDisplayError
 from ..input.linux_xdotool import LinuxXdotoolInput
 from ..models import Capabilities, SessionInfo
-from ..discovery import resolve_host_display
+from ..discovery import list_outputs, resolve_host_display
 from ..utils import run_command
 from .base import BaseBackend
 
@@ -59,31 +58,44 @@ class LinuxX11MirrorBackend(BaseBackend):
         if not outputs:
             raise BackendNotAvailableError("No connected X11 outputs found")
 
-        source = _resolve_output(self.source, outputs)
-        target = self.target
-        if target is None:
-            candidates = [o for o in outputs if o != source]
-            if not candidates:
+        source = _resolve_output(self.source, outputs, self.display)
+        if self.target is None:
+            targets = _mirror_target_candidates(self.display, source, outputs)
+            if not targets:
                 raise BackendNotAvailableError(
                     "Mirror requires at least two connected outputs "
-                    f"(found: {', '.join(outputs)}). "
-                    "Run: vdisplay outputs. "
-                    "With one monitor use: vdisplay virtual screenshot"
+                    f"(found: {', '.join(outputs)}). Run: vdisplay outputs"
                 )
-            target = candidates[0]
         else:
-            target = _resolve_output(target, outputs)
+            targets = [_resolve_output(self.target, outputs, self.display)]
 
-        self._previous_target_mode = _output_mode(self.display, target)
-        run_command(
-            ["xrandr", "--output", target, "--same-as", source],
-            env={"DISPLAY": self.display},
-            text=True,
+        failures: list[str] = []
+        for target in targets:
+            self._previous_target_mode = _output_mode(self.display, target)
+            result = run_command(
+                ["xrandr", "--output", target, "--same-as", source],
+                env={"DISPLAY": self.display},
+                text=True,
+                check=False,
+            )
+            if result.returncode == 0:
+                self._resolved_source = source
+                self._resolved_target = target
+                self._active = True
+                return
+            err = (result.stderr or result.stdout or "").strip()
+            failures.append(
+                f"--output {target} --same-as {source}"
+                + (f": {err}" if err else "")
+            )
+
+        hint = ", ".join(o for o in outputs if o != source)
+        raise VDisplayError(
+            "xrandr mirror failed for all targets: "
+            + "; ".join(failures)
+            + f". Try: VD_TARGET={targets[0] if targets else 'HDMI-1'} ./run.sh"
+            + (f" (connected: {hint})" if hint else "")
         )
-
-        self._resolved_source = source
-        self._resolved_target = target
-        self._active = True
 
     def stop(self) -> None:
         if not self._active or self._resolved_target is None:
@@ -117,7 +129,8 @@ class LinuxX11MirrorBackend(BaseBackend):
     def screenshot_bytes(self) -> bytes:
         if not self._active:
             raise CapabilityError("Mirror session is not active")
-        return capture_display_png(self.display)
+        region = _output_capture_region(self.display, self._resolved_source)
+        return capture_display_png(self.display, region=region)
 
 
 def _list_connected_outputs(display: str) -> list[str]:
@@ -130,10 +143,10 @@ def _list_connected_outputs(display: str) -> list[str]:
     return outputs
 
 
-def _resolve_output(name: str, outputs: list[str]) -> str:
+def _resolve_output(name: str, outputs: list[str], display: str) -> str:
     normalized = name.strip().lower()
     if normalized in {"primary", "default"}:
-        primary = _primary_output(outputs)
+        primary = _primary_output_from_xrandr(display)
         if primary:
             return primary
         if outputs:
@@ -162,11 +175,37 @@ def _resolve_output(name: str, outputs: list[str]) -> str:
     raise BackendNotAvailableError(hint)
 
 
-def _primary_output(outputs: list[str]) -> str | None:
-    for output in outputs:
-        if output.lower() in {"edp", "edp-1", "lvds1", "lvds-1", "hdmi-1", "dp-1"}:
-            return output
-    return outputs[0] if outputs else None
+def _primary_output_from_xrandr(display: str) -> str | None:
+    result = run_command(["xrandr", "--query"], env={"DISPLAY": display}, text=True, check=False)
+    for line in result.stdout.splitlines():
+        match = re.match(r"^(\S+)\s+connected\s+primary\b", line)
+        if match:
+            return match.group(1)
+    return None
+
+
+def _output_capture_region(
+    display: str,
+    output_name: str | None,
+) -> tuple[int, int, int, int] | None:
+    if not output_name:
+        return None
+    for output in list_outputs(display):
+        if output.get("name") != output_name:
+            continue
+        x, y = output.get("x"), output.get("y")
+        width, height = output.get("width"), output.get("height")
+        if None in (x, y, width, height):
+            return None
+        return int(x), int(y), int(width), int(height)
+    return None
+
+
+def _mirror_target_candidates(display: str, source: str, outputs: list[str]) -> list[str]:
+    candidates = [o for o in outputs if o != source]
+    primary = _primary_output_from_xrandr(display)
+    non_primary = [c for c in candidates if c != primary]
+    return non_primary + [c for c in candidates if c == primary]
 
 
 def _output_mode(display: str, output: str) -> str | None:

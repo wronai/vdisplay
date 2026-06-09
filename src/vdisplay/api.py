@@ -161,8 +161,17 @@ class WindowRelaySession:
         *,
         match_title: str | None = None,
         window_id: str | None = None,
+        match_class: str | None = None,
+        match_pid: int | None = None,
+        match_app: str | None = None,
     ) -> str:
-        return self.backend.release_window(match_title=match_title, window_id=window_id)
+        return self.backend.release_window(
+            match_title=match_title,
+            window_id=window_id,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
+        )
 
     def list_adopted(self) -> list[dict]:
         return self.backend.list_adopted()

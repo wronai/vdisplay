@@ -2,12 +2,17 @@
 
 app {
   name: vdisplay;
-  version: 0.1.1;
+  version: 0.1.2;
 }
 
 dependencies {
   pillow: Pillow>=10.0;
   dev: "pytest>=8.0, Pillow>=10.0, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+}
+
+interface[type="api"] {
+  type: rest;
+  framework: fastapi;
 }
 
 interface[type="cli"] {
@@ -16,24 +21,9 @@ interface[type="cli"] {
 interface[type="cli"] page[name="vdisplay"] {
   entry: vdisplay.cli:main;
 }
-interface[type="cli"] page[name="dsl2vdisplay"] {
-  entry: dsl2vdisplay.cli:main;
-}
-interface[type="cli"] page[name="cli2vdisplay"] {
-  entry: cli2vdisplay.cli:main;
-}
-interface[type="cli"] page[name="nlp2vdisplay"] {
-  entry: nlp2vdisplay.cli:main;
-}
-interface[type="cli"] page[name="uri2vdisplay"] {
-  entry: uri2vdisplay.cli:main;
-}
-interface[type="mcp"] page[name="mcp2vdisplay"] {
-  entry: mcp2vdisplay.cli:main;
-}
-interface[type="api"] page[name="rest2vdisplay"] {
-  entry: rest2vdisplay.cli:main;
-  port: 8216;
+
+tests {
+  import: testql-scenarios/**/*.testql.toon.yaml;
 }
 
 env_vars {
@@ -41,11 +31,11 @@ env_vars {
 }
 
 deploy {
-  target: pip;
+  target: docker;
 }
 
 environment[name="local"] {
-  runtime: python;
+  runtime: docker-compose;
   env_file: .env;
   template_file: .env.example;
   python_version: >=3.10;

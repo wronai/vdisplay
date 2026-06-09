@@ -52,7 +52,7 @@ vdisplay relay adopt-window --pid 40024
 vdisplay relay adopt-window --title "Mozilla Firefox"
 ```
 
-Each window entry includes: `title`, `name`, `type`, `wm_class`, `wm_class_instance`, `window_type`, `pid`, `process_name`, `process_cmdline`, `app_label`.
+Each window entry includes: `title`, `name`, `type`, `wm_class`, `wm_class_instance`, `window_type`, `pid`, `process_name`, `process_cmdline`, `app_label`, **`nl`** (natural-language summary).
 
 Common causes:
 
@@ -76,16 +76,26 @@ sudo apt install xvfb
 
 ## Relay: window adopted but not restored
 
-`release-window` only restores windows adopted in the **same CLI invocation**. For persistent relay sessions, use the Python API:
+Adopted window positions are **persisted** in `~/.cache/vdisplay/__vdisplay_stash__-<display>.json`, so `release-window` works in a separate CLI call:
+
+```bash
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay list              # check stash
+vdisplay relay release-window --app "JetBrains"
+```
+
+Match by the same flags as adopt: `--title`, `--app`, `--class`, `--pid`, `--window-id`.
+
+For long-running automation, use the Python API:
 
 ```python
 from vdisplay import WindowRelaySession
 
 r = WindowRelaySession.create()
 r.start()
-wid = r.adopt_window(match_title="Firefox")
-# ... work in shell ...
-r.release_window(window_id=wid)
+wid = r.adopt_window(match_app="Firefox")
+# ... work ...
+r.release_window(match_app="Firefox")
 r.stop()
 ```
 

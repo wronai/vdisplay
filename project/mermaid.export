@@ -1,9 +1,104 @@
 flowchart TD
 %% generated in 0.00s
+    subgraph examples__ci_agent
+        examples__ci_agent__agent__main["main"]
+    end
+    subgraph examples__headless_virtual
+        examples__headless_virtual__run_virtual__main["main"]
+    end
+    subgraph examples__host_mirror
+        examples__host_mirror__run___resolve_host_display["_resolve_host_display"]
+        examples__host_mirror__mirror_demo__main["main"]
+    end
+    subgraph examples__host_relay
+        examples__host_relay__run___resolve_host_display["_resolve_host_display"]
+        examples__host_relay__relay_demo__main["main"]
+    end
+    subgraph packages__cli2vdisplay
+        packages__cli2vdisplay__src__cli2vdisplay__cli__main["main"]
+    end
+    subgraph packages__dsl2vdisplay
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_health["handle_health"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_info["handle_info"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_outputs["handle_outputs"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_windows["handle_windows"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_capabilities["handle_capabilities"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_validate["handle_validate"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli__main["main"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy("_main_legacy CC=10")
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand("_main_subcommand CC=9")
+        packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_query["_dispatch_query"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_cmd["_dispatch_cmd"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch("dispatch CC=8")
+        packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line["execute_dsl_line"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_screenshot["handle_screenshot"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_virtual_start["handle_virtual_start"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_mirror["handle_mirror"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_adopt["handle_adopt"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_release["handle_release"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry___load_schema["_load_schema"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas["all_schemas"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb["schema_for_verb"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict["validate_command_dict"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar__split_command["split_command"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar__pick_flag["pick_flag"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar__parse_line{{parse_line CC=40}}
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar__to_text["to_text"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__result__DslResult__to_dict["to_dict"]
+    end
+    subgraph packages__mcp2vdisplay
+        packages__mcp2vdisplay__src__mcp2vdisplay__cli__main["main"]
+        packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server["create_server"]
+        packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server["create_server"]
+    end
+    subgraph packages__nlp2vdisplay
+        packages__nlp2vdisplay__src__nlp2vdisplay__cli__main["main"]
+        packages__nlp2vdisplay__src__nlp2vdisplay__to_dsl__nl_to_dsl{{nl_to_dsl CC=15}}
+    end
+    subgraph packages__rest2vdisplay
+        packages__rest2vdisplay__src__rest2vdisplay__app__create_app["create_app"]
+        packages__rest2vdisplay__src__rest2vdisplay__cli__main["main"]
+    end
+    subgraph packages__uri2vdisplay
+        packages__uri2vdisplay__src__uri2vdisplay__decode__uri_to_dsl["uri_to_dsl"]
+        packages__uri2vdisplay__src__uri2vdisplay__cli__main["main"]
+    end
     subgraph src__vdisplay
-        src__vdisplay__cli__build_parser["build_parser"]
-        src__vdisplay__cli___print_json["_print_json"]
-        src__vdisplay__cli__main("main CC=14")
+        src__vdisplay__utils__require_command["require_command"]
+        src__vdisplay__utils__run_command["run_command"]
+        src__vdisplay__utils__run_command_bytes["run_command_bytes"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend____init__["__init__"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__capabilities["capabilities"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__info["info"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__screenshot_bytes["screenshot_bytes"]
+        src__vdisplay__capture__base__CaptureBackend__screenshot_png["screenshot_png"]
+        src__vdisplay__capture__linux_xwd__capture_display_png["capture_display_png"]
+        src__vdisplay__capture__linux_xwd__xwd_bytes_to_png["xwd_bytes_to_png"]
+        src__vdisplay__capture__linux_xwd___xwd_dimensions["_xwd_dimensions"]
+        src__vdisplay__capture__linux_xwd___xwd_to_rgb_bytes["_xwd_to_rgb_bytes"]
+        src__vdisplay__capture__linux_xwd___parse_xwd_header["_parse_xwd_header"]
+        src__vdisplay__capture__linux_xwd___read_xwd_header["_read_xwd_header"]
+        src__vdisplay__capture__linux_xwd___header_fields["_header_fields"]
+        src__vdisplay__capture__linux_xwd___decode_pixels("_decode_pixels CC=12")
+        src__vdisplay__capture__linux_xwd___rgb_to_png["_rgb_to_png"]
+        src__vdisplay__capture__linux_xwd___rgb_to_png_minimal["_rgb_to_png_minimal"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput____init__["__init__"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput___env["_env"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__move["move"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__click["click"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text["type_text"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey["hotkey"]
+        src__vdisplay__backends__base__BaseBackend____init__["__init__"]
+        src__vdisplay__backends__base__BaseBackend__capabilities["capabilities"]
+        src__vdisplay__backends__base__BaseBackend__info["info"]
+        src__vdisplay__backends__base__BaseBackend__start["start"]
+        src__vdisplay__backends__base__BaseBackend__stop["stop"]
+        src__vdisplay__backends__base__BaseBackend__launch["launch"]
+        src__vdisplay__backends__base__BaseBackend__screenshot_bytes["screenshot_bytes"]
+        src__vdisplay__backends__base__BaseBackend__save_screenshot["save_screenshot"]
+        src__vdisplay__backends__base__BaseBackend__adopt_window["adopt_window"]
+        src__vdisplay__backends__base__BaseBackend__release_window["release_window"]
+        src__vdisplay__backends__base__BaseBackend__as_dict["as_dict"]
         src__vdisplay__api___default_virtual_backend["_default_virtual_backend"]
         src__vdisplay__api___default_mirror_backend["_default_mirror_backend"]
         src__vdisplay__api___default_relay_backend["_default_relay_backend"]
@@ -29,78 +124,8 @@ flowchart TD
         src__vdisplay__api__WindowRelaySession____init__["__init__"]
         src__vdisplay__api__WindowRelaySession__create["create"]
         src__vdisplay__api__WindowRelaySession__start["start"]
-        src__vdisplay__api__WindowRelaySession__stop["stop"]
-        src__vdisplay__api__WindowRelaySession__adopt_window["adopt_window"]
-        src__vdisplay__api__WindowRelaySession__release_window["release_window"]
-        src__vdisplay__api__WindowRelaySession__list_adopted["list_adopted"]
-        src__vdisplay__api__WindowRelaySession__info["info"]
-        src__vdisplay__api__WindowRelaySession__capabilities["capabilities"]
-        src__vdisplay__api__platform_summary["platform_summary"]
-        src__vdisplay__utils__require_command["require_command"]
-        src__vdisplay__utils__run_command["run_command"]
-        src__vdisplay__utils__run_command_bytes["run_command_bytes"]
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend____init__["__init__"]
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__capabilities["capabilities"]
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__info["info"]
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start("start CC=8")
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__stop["stop"]
-        src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__backends__linux_x11_mirror___list_connected_outputs["_list_connected_outputs"]
-        src__vdisplay__backends__linux_x11_mirror___resolve_output("_resolve_output CC=9")
-        src__vdisplay__backends__linux_x11_mirror___primary_output["_primary_output"]
-        src__vdisplay__backends__linux_x11_mirror___output_mode["_output_mode"]
-        src__vdisplay__backends__base__BaseBackend____init__["__init__"]
-        src__vdisplay__backends__base__BaseBackend__capabilities["capabilities"]
-        src__vdisplay__backends__base__BaseBackend__info["info"]
-        src__vdisplay__backends__base__BaseBackend__start["start"]
-        src__vdisplay__backends__base__BaseBackend__stop["stop"]
-        src__vdisplay__backends__base__BaseBackend__launch["launch"]
-        src__vdisplay__backends__base__BaseBackend__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__backends__base__BaseBackend__save_screenshot["save_screenshot"]
-        src__vdisplay__backends__base__BaseBackend__adopt_window["adopt_window"]
-        src__vdisplay__backends__base__BaseBackend__release_window["release_window"]
-        src__vdisplay__backends__base__BaseBackend__as_dict["as_dict"]
-        src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend____init__["__init__"]
     end
-    src__vdisplay__cli__main --> src__vdisplay__cli__build_parser
-    src__vdisplay__cli__main --> src__vdisplay__cli___print_json
-    src__vdisplay__api__VirtualDisplaySession__create --> src__vdisplay__api___default_virtual_backend
-    src__vdisplay__api__MirrorSession__create --> src__vdisplay__api___default_mirror_backend
-    src__vdisplay__api__WindowRelaySession__create --> src__vdisplay__api___default_relay_backend
-    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_virtual_backend
-    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_mirror_backend
-    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_relay_backend
     src__vdisplay__utils__run_command_bytes --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___list_connected_outputs
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___resolve_output
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___output_mode
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__stop --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__screenshot_bytes --> src__vdisplay__capture__linux_xwd__capture_display_png
-    src__vdisplay__backends__linux_x11_mirror___list_connected_outputs --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_mirror___resolve_output --> src__vdisplay__backends__linux_x11_mirror___primary_output
-    src__vdisplay__backends__linux_x11_mirror___output_mode --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend__start --> src__vdisplay__backends__linux_xvfb___wait_for_display
-    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend__screenshot_bytes --> src__vdisplay__capture__linux_xwd__capture_display_png
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___window_geometry
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___window_title
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___find_window_id
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___offscreen_coordinates
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___output_origin
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window --> src__vdisplay__backends__linux_x11_relay___find_window_id
-    src__vdisplay__backends__linux_x11_relay___find_window_id --> src__vdisplay__utils__require_command
-    src__vdisplay__backends__linux_x11_relay___find_window_id --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___window_geometry --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___window_title --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___offscreen_coordinates --> src__vdisplay__backends__linux_x11_relay___screen_geometry
-    src__vdisplay__backends__linux_x11_relay___screen_geometry --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__backends__linux_x11_relay___offscreen_coordinates
-    src__vdisplay__backends__linux_x11_relay___debug_windows --> src__vdisplay__utils__run_command
-    src__vdisplay__backends__linux_x11_relay___debug_windows --> src__vdisplay__backends__linux_x11_relay___window_title
-    src__vdisplay__backends__linux_x11_relay___debug_windows --> src__vdisplay__backends__linux_x11_relay___window_geometry
     src__vdisplay__capture__linux_xwd__capture_display_png --> src__vdisplay__utils__require_command
     src__vdisplay__capture__linux_xwd__capture_display_png --> src__vdisplay__utils__run_command_bytes
     src__vdisplay__capture__linux_xwd__capture_display_png --> src__vdisplay__capture__linux_xwd__xwd_bytes_to_png
@@ -121,7 +146,147 @@ flowchart TD
     src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text --> src__vdisplay__utils__run_command
     src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey --> src__vdisplay__utils__require_command
     src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey --> src__vdisplay__utils__run_command
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_info --> src__vdisplay__api__platform_summary
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_outputs --> src__vdisplay__discovery__diagnose_display
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_outputs --> src__vdisplay__discovery__list_outputs
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_windows --> src__vdisplay__discovery__list_windows
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_validate --> src__vdisplay__discovery__diagnose_display
+    packages__nlp2vdisplay__src__nlp2vdisplay__cli__main --> packages__nlp2vdisplay__src__nlp2vdisplay__to_dsl__nl_to_dsl
+    packages__nlp2vdisplay__src__nlp2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__mcp2vdisplay__src__mcp2vdisplay__cli__main --> packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server
+    packages__cli2vdisplay__src__cli2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server --> packages__nlp2vdisplay__src__nlp2vdisplay__to_dsl__nl_to_dsl
+    packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line
+    packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    examples__host_mirror__mirror_demo__main --> src__vdisplay__discovery__diagnose_display
+    examples__host_mirror__mirror_demo__main --> src__vdisplay__discovery__list_outputs
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_cmd --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_query
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_cmd
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__parse_line
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__to_text
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__split_command
+    packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__rest2vdisplay__src__rest2vdisplay__app__create_app --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb
+    packages__rest2vdisplay__src__rest2vdisplay__app__create_app --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas
+    packages__rest2vdisplay__src__rest2vdisplay__app__create_app --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    src__vdisplay__api__VirtualDisplaySession__create --> src__vdisplay__api___default_virtual_backend
+    src__vdisplay__api__MirrorSession__create --> src__vdisplay__api___default_mirror_backend
+    src__vdisplay__api__WindowRelaySession__create --> src__vdisplay__api___default_relay_backend
+    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_virtual_backend
+    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_mirror_backend
+    src__vdisplay__api__platform_summary --> src__vdisplay__api___default_relay_backend
+    src__vdisplay__cli__main --> src__vdisplay__cli__build_parser
+    src__vdisplay__cli__main --> src__vdisplay__cli___print_json
+    src__vdisplay__cli__main --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend__start --> src__vdisplay__backends__linux_xvfb___wait_for_display
+    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend__screenshot_bytes --> src__vdisplay__capture__linux_xwd__capture_display_png
+    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend___acquire_display --> src__vdisplay__backends__linux_xvfb___probe_display
+    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend___acquire_display --> src__vdisplay__backends__linux_xvfb___display_candidates
+    src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend___acquire_display --> src__vdisplay__backends__linux_xvfb___display_socket_exists
+    src__vdisplay__backends__linux_xvfb___wait_for_display --> src__vdisplay__backends__linux_xvfb___probe_display
+    packages__rest2vdisplay__src__rest2vdisplay__cli__main --> packages__rest2vdisplay__src__rest2vdisplay__app__create_app
+    src__vdisplay__discovery__resolve_host_display --> src__vdisplay__discovery___looks_like_xvfb_only
+    src__vdisplay__discovery__list_outputs --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__discovery__list_outputs --> src__vdisplay__discovery___parse_xrandr_query
+    src__vdisplay__discovery__list_outputs --> src__vdisplay__discovery___list_monitors
+    src__vdisplay__discovery__list_outputs --> src__vdisplay__discovery___merge_output_metadata
+    src__vdisplay__discovery___list_monitors --> src__vdisplay__utils__run_command
+    src__vdisplay__discovery___parse_xrandr_query --> src__vdisplay__utils__run_command
+    src__vdisplay__discovery__list_windows --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__discovery__list_windows --> src__vdisplay__windows__list_windows_enriched
+    src__vdisplay__discovery__find_window_suggestions --> src__vdisplay__windows__find_windows
+    src__vdisplay__discovery__diagnose_display --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__discovery__diagnose_display --> src__vdisplay__discovery__list_outputs
+    src__vdisplay__discovery__diagnose_display --> src__vdisplay__discovery___display_hint
+    src__vdisplay__discovery___display_hint --> src__vdisplay__discovery___looks_like_xvfb_only
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend____init__ --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___list_connected_outputs
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___resolve_output
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___mirror_target_candidates
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__backends__linux_x11_mirror___output_mode
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__stop --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__screenshot_bytes --> src__vdisplay__capture__linux_xwd__capture_display_png
+    src__vdisplay__backends__linux_x11_mirror___list_connected_outputs --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_mirror___resolve_output --> src__vdisplay__backends__linux_x11_mirror___primary_output_from_xrandr
+    src__vdisplay__backends__linux_x11_mirror___primary_output_from_xrandr --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_mirror___mirror_target_candidates --> src__vdisplay__backends__linux_x11_mirror___primary_output_from_xrandr
+    src__vdisplay__backends__linux_x11_mirror___output_mode --> src__vdisplay__utils__run_command
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_mirror --> src__vdisplay__discovery__resolve_host_display
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_mirror --> src__vdisplay__discovery__list_outputs
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_adopt --> src__vdisplay__discovery__resolve_host_display
+    packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_release --> src__vdisplay__discovery__resolve_host_display
+    packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry___load_schema
+    packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas
+    packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb
+    src__vdisplay__windows__list_windows_enriched --> src__vdisplay__utils__require_command
+    src__vdisplay__windows__list_windows_enriched --> src__vdisplay__windows___root_window_id
+    src__vdisplay__windows__list_windows_enriched --> src__vdisplay__utils__run_command
+    src__vdisplay__windows__list_windows_enriched --> src__vdisplay__windows___dedupe_app_windows
+    src__vdisplay__windows__list_windows_enriched --> src__vdisplay__windows__inspect_window
+    src__vdisplay__windows__find_companion_frames --> src__vdisplay__windows__list_windows_enriched
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___xprop
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___parse_wm_class
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___normalize_atom_list
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___resolve_window_pid
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___process_info
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___window_geometry
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___derive_app_label
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___derive_role
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___is_internal_window
+    src__vdisplay__windows__inspect_window --> src__vdisplay__windows___root_window_id
+    src__vdisplay__windows__find_windows --> src__vdisplay__windows__list_windows_enriched
+    src__vdisplay__windows__find_windows --> src__vdisplay__windows___matches_class
+    src__vdisplay__windows__find_windows --> src__vdisplay__windows___matches_app
+    src__vdisplay__windows__find_windows --> src__vdisplay__windows___matches_title
+    src__vdisplay__windows___derive_app_label --> src__vdisplay__windows___looks_like_internal_class
+    src__vdisplay__windows___derive_app_label --> src__vdisplay__windows___looks_like_internal_name
+    src__vdisplay__windows___derive_role --> src__vdisplay__windows___looks_like_internal_class
+    src__vdisplay__windows___derive_role --> src__vdisplay__windows___looks_like_internal_name
+    src__vdisplay__windows___is_internal_window --> src__vdisplay__windows___looks_like_internal_name
+    src__vdisplay__windows___is_internal_window --> src__vdisplay__windows___looks_like_internal_class
+    src__vdisplay__windows___root_window_id --> src__vdisplay__utils__run_command
+    src__vdisplay__windows___xdotool --> src__vdisplay__utils__run_command
+    src__vdisplay__windows___xprop --> src__vdisplay__windows___format_window_id
+    src__vdisplay__windows___xprop --> src__vdisplay__utils__run_command
+    src__vdisplay__windows___xprop --> src__vdisplay__windows___decode_xprop_value
+    src__vdisplay__windows___resolve_window_pid --> src__vdisplay__utils__run_command
+    src__vdisplay__windows___window_geometry --> src__vdisplay__utils__run_command
+    packages__dsl2vdisplay__src__dsl2vdisplay__grammar__parse_line --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__split_command
+    packages__dsl2vdisplay__src__dsl2vdisplay__grammar__parse_line --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__pick_flag
+    packages__uri2vdisplay__src__uri2vdisplay__cli__main --> packages__uri2vdisplay__src__uri2vdisplay__decode__uri_to_dsl
+    packages__uri2vdisplay__src__uri2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend____init__ --> src__vdisplay__discovery__resolve_host_display
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__windows___window_geometry
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___move_window
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__windows__find_companion_frames
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___window_metadata
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___find_window_id
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___window_title
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___offscreen_coordinates
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window --> src__vdisplay__backends__linux_x11_relay___output_origin
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window --> src__vdisplay__backends__linux_x11_relay___find_window_id
+    src__vdisplay__backends__linux_x11_relay___find_window_id --> src__vdisplay__windows__find_windows
+    src__vdisplay__backends__linux_x11_relay___find_window_id --> src__vdisplay__windows__pick_best_window
+    src__vdisplay__backends__linux_x11_relay___find_window_id --> src__vdisplay__discovery__find_window_suggestions
+    src__vdisplay__backends__linux_x11_relay___move_window --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay___window_metadata --> src__vdisplay__windows__inspect_window
+    src__vdisplay__backends__linux_x11_relay___window_geometry --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay___window_title --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay___offscreen_coordinates --> src__vdisplay__backends__linux_x11_relay___screen_geometry
+    src__vdisplay__backends__linux_x11_relay___screen_geometry --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__utils__run_command
+    src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__backends__linux_x11_relay___offscreen_coordinates
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class src__vdisplay__cli__main,src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start,src__vdisplay__backends__linux_x11_mirror___resolve_output,src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window,src__vdisplay__backends__linux_x11_relay___output_origin,src__vdisplay__capture__linux_xwd___decode_pixels medCC
+    class packages__nlp2vdisplay__src__nlp2vdisplay__to_dsl__nl_to_dsl,src__vdisplay__cli__main,src__vdisplay__backends__linux_x11_mirror__LinuxX11MirrorBackend__start,src__vdisplay__windows__list_windows_enriched,src__vdisplay__windows___dedupe_app_windows,src__vdisplay__windows__find_companion_frames,src__vdisplay__windows__find_windows,src__vdisplay__windows___derive_app_label,src__vdisplay__windows___is_internal_window,packages__dsl2vdisplay__src__dsl2vdisplay__grammar__parse_line highCC
+    class src__vdisplay__capture__linux_xwd___decode_pixels,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch,src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend___acquire_display,src__vdisplay__discovery__resolve_host_display,src__vdisplay__discovery___parse_xrandr_query,src__vdisplay__backends__linux_x11_mirror___resolve_output,src__vdisplay__windows__inspect_window,src__vdisplay__windows__pick_best_window,src__vdisplay__windows___derive_role,src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window,src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__release_window,src__vdisplay__backends__linux_x11_relay___find_window_id,src__vdisplay__backends__linux_x11_relay___output_origin medCC

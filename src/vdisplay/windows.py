@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .exceptions import VDisplayError
+from .nl import describe_window_nl
 from .utils import require_command, run_command
 
 _JUNK_TITLES = frozenset(
@@ -169,7 +170,7 @@ def inspect_window(display: str, window_id: str, *, root_id: str | None = None) 
         process_name=process.get("name"),
     )
 
-    return {
+    info = {
         "window_id": window_id,
         "title": title or None,
         "name": net_wm_name or wm_name or title or None,
@@ -188,6 +189,8 @@ def inspect_window(display: str, window_id: str, *, root_id: str | None = None) 
         "height": height,
         "display": display,
     }
+    info["nl"] = describe_window_nl(info)
+    return info
 
 
 def find_windows(
@@ -358,9 +361,20 @@ def _matches_class(info: dict[str, Any], needle: str) -> bool:
 
 
 def _matches_app(info: dict[str, Any], needle: str) -> bool:
-    n = needle.lower()
-    for field in ("app_label", "process_name", "title", "name", "wm_class_instance"):
-        val = str(info.get(field) or "").lower()
+    n = needle.lower().strip()
+    if not n:
+        return False
+    for field in (
+        "app_label",
+        "process_name",
+        "title",
+        "name",
+        "wm_class",
+        "wm_class_instance",
+    ):
+        val = str(info.get(field) or "").lower().strip()
+        if not val:
+            continue
         if n in val or val in n:
             return True
     return False

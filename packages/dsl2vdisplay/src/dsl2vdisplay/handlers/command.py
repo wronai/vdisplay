@@ -89,7 +89,13 @@ def handle_release(cmd: dict[str, Any], *, line: str) -> DslResult:
     session = WindowRelaySession.create(display=resolve_host_display(cmd.get("display")))
     session.start()
     try:
-        wid = session.release_window(match_title=cmd.get("title"), window_id=cmd.get("window_id"))
+        wid = session.release_window(
+            match_title=cmd.get("title"),
+            window_id=cmd.get("window_id"),
+            match_class=cmd.get("class"),
+            match_pid=cmd.get("pid"),
+            match_app=cmd.get("app"),
+        )
         data = {"window_id": wid, "adopted": session.list_adopted()}
         return DslResult(ok=True, command=line, action="release", output=json.dumps(data, indent=2), data=data)
     finally:

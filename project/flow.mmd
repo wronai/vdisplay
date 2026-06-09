@@ -1,26 +1,30 @@
 flowchart TD
-%% generated in 0.00s
+%% generated in 0.01s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
 
-    subgraph Core
-        src__vdisplay__cli__build_parser["build_parser"]
-        src__vdisplay__cli___print_json["_print_json"]
-        src__vdisplay__cli__main["main"]
-        src__vdisplay__api__VirtualDisplaySession__create["create"]
-        src__vdisplay__api__VirtualDisplaySession__start["start"]
-        src__vdisplay__api__VirtualDisplaySession__stop["stop"]
-        src__vdisplay__api__VirtualDisplaySession__launch["launch"]
-        src__vdisplay__api__VirtualDisplaySession__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__api__VirtualDisplaySession__save_screenshot["save_screenshot"]
-        src__vdisplay__api__VirtualDisplaySession__adopt_window["adopt_window"]
-        src__vdisplay__api__VirtualDisplaySession__release_window["release_window"]
-        src__vdisplay__api__VirtualDisplaySession__info["info"]
-        src__vdisplay__api__VirtualDisplaySession__capabilities["capabilities"]
-        src__vdisplay__api__MirrorSession__create["create"]
-        src__vdisplay__api__MirrorSession__start["start"]
-        ...["+57 more"]
+    subgraph CLI
+        packages__cli2vdisplay__src__cli2vdisplay__cli__main["main"]
     end
 
-    class src__vdisplay__cli__build_parser,src__vdisplay__cli___print_json,src__vdisplay__cli__main,src__vdisplay__api__VirtualDisplaySession__create,src__vdisplay__api__VirtualDisplaySession__start,src__vdisplay__api__VirtualDisplaySession__stop,src__vdisplay__api__VirtualDisplaySession__launch,src__vdisplay__api__VirtualDisplaySession__screenshot_bytes,src__vdisplay__api__VirtualDisplaySession__save_screenshot,src__vdisplay__api__VirtualDisplaySession__adopt_window entry
+    subgraph Core
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__capabilities["capabilities"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__info["info"]
+        src__vdisplay__backends__mirror_stub__MirrorStubBackend__screenshot_bytes["screenshot_bytes"]
+        src__vdisplay__capture__base__CaptureBackend__screenshot_png["screenshot_png"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput___env["_env"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__move["move"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__click["click"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text["type_text"]
+        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey["hotkey"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_health["handle_health"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_info["handle_info"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_outputs["handle_outputs"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_windows["handle_windows"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_capabilities["handle_capabilities"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_validate["handle_validate"]
+        ...["+90 more"]
+    end
+
+    class src__vdisplay__backends__mirror_stub__MirrorStubBackend__capabilities,src__vdisplay__backends__mirror_stub__MirrorStubBackend__info,src__vdisplay__backends__mirror_stub__MirrorStubBackend__screenshot_bytes,src__vdisplay__capture__base__CaptureBackend__screenshot_png,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput___env,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__move,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__click,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey,packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_health entry

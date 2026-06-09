@@ -50,28 +50,34 @@ Files: `Dockerfile`, `docker-compose.yml`, `README.md`
 Mirror the host primary output to a second output (when available) and capture a screenshot.
 
 ```bash
-xhost +local:docker
 cd examples/host-mirror
-DISPLAY=$DISPLAY docker compose up --build
-xhost -local:docker
+./run.sh
+
+# optional: pick monitors explicitly
+VD_SOURCE=DP-2 VD_TARGET=HDMI-1 ./run.sh
 ```
 
-Files: `Dockerfile`, `docker-compose.yml`, `mirror_demo.py`, `README.md`
+Output: `output/mirror.png`. Uses `scrot` region capture on multi-monitor XWayland.
+
+Files: `Dockerfile`, `docker-compose.yml`, `mirror_demo.py`, `run.sh`, `README.md`
 
 ---
 
 ### [host-relay](../examples/host-relay/)
 
-Demonstrate adopting and releasing a window title match on the host session.
+Demonstrate adopting and releasing a window on the host session. Adopted positions persist across CLI calls.
 
 ```bash
-xhost +local:docker
-cd examples/host-relay
-DISPLAY=$DISPLAY WINDOW_TITLE=Firefox docker compose up --build
-xhost -local:docker
+# on host (no Docker required for CLI)
+vdisplay relay list-windows --apps-only    # each window has "nl"
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay release-window --app "JetBrains"
+
+# Docker demo
+cd examples/host-relay && ./run.sh
 ```
 
-Files: `Dockerfile`, `docker-compose.yml`, `relay_demo.py`, `README.md`
+Files: `Dockerfile`, `docker-compose.yml`, `relay_demo.py`, `run.sh`, `README.md`
 
 ## Quick reference
 

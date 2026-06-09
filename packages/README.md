@@ -61,11 +61,22 @@ pip install -e packages/uri2vdisplay packages/nlp2vdisplay packages/cli2vdisplay
 pip install -e "packages/mcp2vdisplay[mcp]" "packages/rest2vdisplay[rest]"
 ```
 
+## Output objects (`nl`)
+
+Query responses for monitors and windows include **`nl`** — a natural-language description of their contents. Useful for `nlp2vdisplay` and agent tooling.
+
+```bash
+dsl2vdisplay -c 'OUTPUTS DISPLAY :0'   # each output has "nl"
+dsl2vdisplay -c 'WINDOWS DISPLAY :0'   # each window has "nl"
+nlp2vdisplay to-dsl "list application windows on display zero"
+```
+
 ## Examples
 
 ```bash
 dsl2vdisplay -c 'INFO'
 dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
+dsl2vdisplay -c 'WINDOWS DISPLAY :0'
 cli2vdisplay exec 'SCREENSHOT OUT screen.png DISPLAY :99'
 rest2vdisplay serve --port 8216
 mcp2vdisplay serve

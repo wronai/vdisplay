@@ -53,7 +53,8 @@ def list_outputs(display: str | None = None) -> list[dict[str, str | bool | int 
 
     monitors = _list_monitors(display)
     if monitors:
-        return _merge_output_metadata(monitors, query_meta)
+        outputs = _merge_output_metadata(monitors, query_meta)
+        return _attach_output_nl(display, outputs)
 
     outputs: list[dict[str, str | bool | int | None]] = []
     for name, meta in query_meta.items():
@@ -76,7 +77,21 @@ def list_outputs(display: str | None = None) -> list[dict[str, str | bool | int 
             }
         )
     outputs.sort(key=lambda o: (o.get("monitor_index") is None, o.get("monitor_index") or 0, str(o.get("name"))))
-    return outputs
+    return _attach_output_nl(display, outputs)
+
+
+def _attach_output_nl(
+    display: str,
+    outputs: list[dict[str, str | bool | int | None]],
+) -> list[dict[str, str | bool | int | None]]:
+    from .nl import enrich_outputs_nl
+    from .windows import list_windows_enriched
+
+    try:
+        windows = list_windows_enriched(display, only_visible=True, apps_only=True)
+    except Exception:
+        windows = []
+    return enrich_outputs_nl(outputs, windows)
 
 
 def _list_monitors(display: str) -> list[dict[str, str | bool | int | None]]:
