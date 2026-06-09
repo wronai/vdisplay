@@ -51,8 +51,33 @@ The broker sets `VDISPLAY_AGENT_BROKER=1` so it never routes back to itself.
 | `application/executor.py` | Single entry: `execute(request)` |
 | `application/handlers/local.py` | In-process use-cases |
 | `application/handlers/agent.py` | Broker HTTP mapping |
-| `application/services/` | discovery, capture, session, info |
+| `application/services/` | discovery, capture, session, control, info |
+| `control/` | Provider registry, routing, plugins, verifier |
 | `client.py` | `AgentClient` SDK |
+
+## Control and extensibility
+
+Control operations use the same `CommandRequest` → `executor` path as capture. The router selects a **provider adapter** from capabilities and selector context — never from vendor-specific backends (Chrome vs Firefox are application profiles, not providers).
+
+```
+CLI / DSL / REST / Agent
+        ↓
+application.services.control
+        ↓
+ControlRouter (scoring + profile inference)
+        ↓
+ProviderRegistry + plugins.register_control_provider()
+        ↓
+ControlProvider (atspi | browser | terminal | x11 | custom)
+        ↓
+VerifierPipeline
+```
+
+See [control-plane.md](control-plane.md) and [RFC 001](rfc/001-extensibility-model.md).
+
+## Agent persistence
+
+Long-running broker work (sampler, screencast, sessions) is recorded in SQLite (`agent-tasks.db`). Startup marks orphan `running` tasks as `stale`. See [agent-broker.md — Tasks](agent-broker.md#tasks-durable-broker-work).
 
 ## Deprecated
 

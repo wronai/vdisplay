@@ -123,6 +123,14 @@ def _virtual_start(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
     return client.request(cmd).data
 
 
+def _terminal_open(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return client.request(cmd).data
+
+
+def _browser_open(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return client.request(cmd).data
+
+
 def _mirror(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
     source = cmd.source or "primary"
     monitors = client.outputs(display=cmd.display)
@@ -211,6 +219,8 @@ _AGENT_HANDLERS: dict[CommandVerb, AgentHandler] = {
     CommandVerb.VALIDATE: _validate,
     CommandVerb.SCREENSHOT: _screenshot,
     CommandVerb.VIRTUAL_START: _virtual_start,
+    CommandVerb.TERMINAL_OPEN: _terminal_open,
+    CommandVerb.BROWSER_OPEN: _browser_open,
     CommandVerb.MIRROR: _mirror,
     CommandVerb.ADOPT: _adopt,
     CommandVerb.RELEASE: _release,

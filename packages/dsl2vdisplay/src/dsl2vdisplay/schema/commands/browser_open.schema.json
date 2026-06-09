@@ -1,0 +1,16 @@
+{
+  "$id": "dsl2vdisplay/commands/browser_open",
+  "type": "object",
+  "required": ["verb", "url"],
+  "properties": {
+    "verb": { "const": "BROWSER_OPEN" },
+    "session_id": { "type": "string" },
+    "url": { "type": "string", "minLength": 1 },
+    "headless": { "type": "boolean", "default": true },
+    "title": { "type": "string" },
+    "engine": { "type": "string" },
+    "vendor": { "type": "string" },
+    "profile": { "type": "string" }
+  },
+  "additionalProperties": false
+}

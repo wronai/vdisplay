@@ -7,6 +7,7 @@ Runnable examples for different environments. Full index: [docs/examples.md](../
 | Directory | Description |
 |-----------|-------------|
 | [agent-broker/](agent-broker/) | **vdisplay-agent** + CLI/DSL/REST clients via `VDISPLAY_AGENT_URL` |
+| [control-plane/](control-plane/) | Semantic UI control (AT-SPI / terminal / browser) with verification |
 | [host-mirror/](host-mirror/) | Mirror host desktop via `xrandr` + screenshot |
 | [host-relay/](host-relay/) | Move window off-screen and restore |
 
@@ -23,6 +24,9 @@ On **GNOME Wayland**, start the agent and a ScreenCast session for host capture 
 ## Quick start
 
 ```bash
+# control plane demo (host, no Docker)
+python3 examples/control-plane/control_demo.py
+
 # broker demo (host, no Docker)
 cd examples/agent-broker && ./run.sh
 

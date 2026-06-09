@@ -166,8 +166,10 @@ class TerminalSessionRegistry:
     ) -> TerminalSession:
         try:
             import pexpect
-        except ImportError as exc:
-            raise RuntimeError("pexpect not installed (pip install 'vdisplay[terminal]')") from exc
+        except ImportError:
+            from ...utils import auto_install_package
+            auto_install_package("pexpect")
+            import pexpect
 
         sid = session_id or new_session_id()
         screen = ScreenBuffer(rows=rows, cols=cols, title=title or command)

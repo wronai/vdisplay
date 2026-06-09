@@ -36,10 +36,15 @@ def describe_screenshot_image(
     try:
         from img2nl.analyze import analyze_image
     except ImportError:
-        return {
-            "ok": False,
-            "error": "img2nl not installed: pip install img2nl[analyze]",
-        }
+        from ...utils import auto_install_package
+        try:
+            auto_install_package("img2nl[analyze]")
+            from img2nl.analyze import analyze_image
+        except Exception as exc:
+            return {
+                "ok": False,
+                "error": f"img2nl auto-install failed: {exc}",
+            }
 
     try:
         from img2nl.vql_bridge import content_check_from_result, metadata_slice_from_result

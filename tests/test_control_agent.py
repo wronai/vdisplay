@@ -6,12 +6,16 @@ import pytest
 def test_agent_control_diagnostics(agent_client, monkeypatch: pytest.MonkeyPatch) -> None:
     client, _runtime = agent_client
     monkeypatch.setattr(
-        "vdisplay.control.policy._atspi_ready",
+        "vdisplay.control.scoring._atspi_ready",
         lambda: (True, "AT-SPI2 bus active"),
     )
     payload = client.get("/diagnostics/control").json()
     assert payload["ok"] is True
     assert "control" in payload["data"]
+    assert "routing" in payload["data"]
+    assert payload["data"]["routing"]["selected_provider"]
+    assert "extensions" in payload["data"]
+    assert len(payload["data"]["extensions"]["providers"]) >= 4
 
 
 def test_agent_controls_list(agent_client, monkeypatch: pytest.MonkeyPatch) -> None:

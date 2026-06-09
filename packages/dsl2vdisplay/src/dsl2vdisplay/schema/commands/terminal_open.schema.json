@@ -1,0 +1,14 @@
+{
+  "$id": "dsl2vdisplay/commands/terminal_open",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "TERMINAL_OPEN" },
+    "session_id": { "type": "string" },
+    "command": { "type": "string" },
+    "rows": { "type": "integer", "minimum": 1, "default": 24 },
+    "cols": { "type": "integer", "minimum": 1, "default": 80 },
+    "title": { "type": "string" }
+  },
+  "additionalProperties": false
+}

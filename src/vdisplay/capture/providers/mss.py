@@ -18,7 +18,12 @@ class MssProvider:
         try:
             import mss  # noqa: F401
         except ImportError:
-            return False, "mss not installed (pip install mss)"
+            from ...utils import auto_install_package
+            try:
+                auto_install_package("mss")
+                import mss  # noqa: F401
+            except Exception as exc:
+                return False, f"mss auto-install failed: {exc}"
         return True, f"XCB screen grab via mss on DISPLAY={self.display}"
 
     def capture_full(self) -> bytes:
@@ -31,8 +36,11 @@ class MssProvider:
         try:
             import mss
             from PIL import Image
-        except ImportError as exc:
-            raise VDisplayError("mss capture requires mss and Pillow") from exc
+        except ImportError:
+            from ...utils import auto_install_package
+            auto_install_package("mss")
+            import mss
+            from PIL import Image
 
         env = os.environ.copy()
         env["DISPLAY"] = self.display

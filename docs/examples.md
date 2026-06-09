@@ -33,6 +33,18 @@ Files: `broker_demo.py`, `run.sh`, `README.md`
 
 ---
 
+### [control-plane](../examples/control-plane/)
+
+Query and interact with UI elements semantically using AT-SPI, terminal, or browser backend providers.
+
+```bash
+python3 examples/control-plane/control_demo.py
+```
+
+Files: `control_demo.py`, `README.md`
+
+---
+
 ## Headless (no host display)
 
 ### [headless-virtual](../examples/headless-virtual/)
@@ -118,6 +130,7 @@ Files: `Dockerfile`, `docker-compose.yml`, `relay_demo.py`, `run.sh`, `run-host.
 | Example | Mode | Docker | Host desktop | Broker |
 |---------|------|--------|--------------|--------|
 | agent-broker | broker | No | Yes | Yes |
+| control-plane | control | No | Yes | Optional |
 | headless-virtual | virtual | Yes | No | No |
 | ci-agent | virtual | Yes | No | No |
 | dev-workspace | virtual | Yes | No | No |

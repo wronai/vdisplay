@@ -70,26 +70,73 @@ export VDISPLAY_AGENT_TOKEN=your-secret
 | `VDISPLAY_AGENT_HOST` | agent | Bind address (default `127.0.0.1`) |
 | `VDISPLAY_AGENT_PORT` | agent | Listen port (default `8765`) |
 | `VDISPLAY_AGENT_BROKER` | agent only | Set to `1` inside broker — do not set on clients |
+| `VDISPLAY_AGENT_DB` | agent | Task persistence DB path (default `~/.cache/vdisplay/agent-tasks.db`) |
 | `VDISPLAY_CAPTURE_ALLOW_PORTAL` | agent | Set to `1` to opt in to xdg-desktop-portal capture |
 | `DISPLAY` | agent | Host X display (default auto-resolves to `:0`) |
 
 ## Agent HTTP API
 
+### Health and discovery
+
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/health` | Liveness |
-| GET | `/capabilities` | Platform capabilities |
+| GET | `/capabilities` | Platform + control + task persistence capabilities |
 | GET | `/diagnostics` | DISPLAY / session diagnostics |
 | GET | `/outputs` | Connected monitors (fast; no window enrichment) |
 | GET | `/windows` | Application windows (query params as CLI filters) |
+
+### Sessions
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/sessions` | Unified session catalog (virtual, mirror, relay, terminal, screencast, sampler) |
 | POST | `/session/virtual/start` | Start Xvfb session |
 | POST | `/session/mirror/start` | Start mirror session |
 | POST | `/session/relay/start` | Start relay session |
+| POST | `/session/terminal/open` | Open controllable terminal PTY session |
+| POST | `/session/browser/open` | Open Playwright browser session (`url`, `session_id`, `headless`) |
 | POST | `/session/screencast/start` | Start persistent portal ScreenCast (Wayland; one consent) |
 | POST | `/session/screencast/stop` | Stop ScreenCast session |
 | GET | `/session/screencast/status` | ScreenCast session state |
 | POST | `/session/{id}/stop` | Stop session |
+
+### Tasks (durable broker work)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/tasks` | List persisted tasks (`?status=`, `?kind=`) |
+| GET | `/tasks/{task_id}` | Task detail with `config` and `state` |
+| POST | `/tasks/{task_id}/heartbeat` | Refresh lease; optional `state` body |
+| POST | `/tasks/{task_id}/stop` | Mark task stopped |
+
+Tasks survive broker introspection across restarts. Orphan `running` tasks from a previous broker process are marked `stale` on startup.
+
+### Sampler and capture
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/sampler/start` | Background frame sampler (returns `task_id`) |
+| POST | `/sampler/stop` | Stop sampler |
+| GET | `/sampler/status` | Sampler state + heartbeat refresh |
 | POST | `/capture/frame` | Screenshot (PNG path or base64 in body) |
+
+### Control plane
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/control/plugins` | Registered control provider plugins |
+| GET | `/diagnostics/control` | Control readiness + routing + extension catalog |
+| POST | `/controls/list` | List control tree |
+| POST | `/controls/find` | Find nodes by selector |
+| POST | `/control/invoke` | Invoke / click |
+| POST | `/control/focus` | Focus element |
+| POST | `/control/set-value` | Set value / fill |
+
+### Window relay
+
+| Method | Path | Description |
+|--------|------|-------------|
 | POST | `/window/adopt` | Relay adopt window |
 | POST | `/window/release` | Relay release window |
 
@@ -242,6 +289,8 @@ vdisplay screenshot --all-monitors --out-dir /tmp/shots --mode mirror
 
 ## Related
 
+- [Control plane](control-plane.md)
+- [RFC 001 — extensibility model](rfc/001-extensibility-model.md)
 - [Troubleshooting — agent and capture](troubleshooting.md#vdisplay-agent-and-capture)
 - [Installation — control layer](installation.md#control-layer-and-agent)
 - [Example: agent-broker](../examples/agent-broker/)

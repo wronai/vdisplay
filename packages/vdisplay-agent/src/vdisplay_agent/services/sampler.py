@@ -10,6 +10,8 @@ from vdisplay.capture.host import capture_host_to_file
 from vdisplay.exceptions import VDisplayError
 
 from ..session_store import SessionStore
+from ..task_store import TaskStore
+from . import tasks as task_svc
 
 
 def _config_from_body(body: dict[str, Any]) -> SamplerLoopConfig:
@@ -96,7 +98,13 @@ def _recover_screencast(store: SessionStore) -> bool:
     return new_session.is_ready
 
 
-def start_sampler(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
+def start_sampler(
+    store: SessionStore,
+    body: dict[str, Any],
+    *,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
+) -> dict[str, Any]:
     if store.sampler is not None and store.sampler.state.running:
         raise VDisplayError("sampler already running — POST /sampler/stop first")
 
@@ -126,19 +134,50 @@ def start_sampler(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
         recover_fn=recover_fn,
     )
     store.sampler = loop
-    return loop.start()
+    payload = loop.start()
+    if task_store is not None and broker_id:
+        store.sampler_task_id = task_svc.begin_sampler_task(
+            task_store,
+            broker_id=broker_id,
+            config=config,
+        )
+        payload["task_id"] = store.sampler_task_id
+        task_svc.touch_sampler_task(
+            task_store,
+            store.sampler_task_id,
+            broker_id=broker_id,
+            state=payload,
+        )
+    return payload
 
 
-def stop_sampler(store: SessionStore) -> dict[str, Any]:
+def stop_sampler(store: SessionStore, *, task_store: TaskStore | None = None) -> dict[str, Any]:
     if store.sampler is None:
         return {"ok": True, "running": False, "stopped": False}
     payload = store.sampler.stop()
+    if task_store is not None and store.sampler_task_id:
+        task_svc.end_sampler_task(task_store, store.sampler_task_id, state=payload)
+        store.sampler_task_id = None
     store.sampler = None
     payload["stopped"] = True
     return payload
 
 
-def sampler_status(store: SessionStore) -> dict[str, Any]:
+def sampler_status(
+    store: SessionStore,
+    *,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
+) -> dict[str, Any]:
     if store.sampler is None:
         return {"ok": True, "running": False}
-    return store.sampler.status()
+    payload = store.sampler.status()
+    if task_store is not None and store.sampler_task_id and broker_id:
+        task_svc.touch_sampler_task(
+            task_store,
+            store.sampler_task_id,
+            broker_id=broker_id,
+            state=payload,
+        )
+        payload["task_id"] = store.sampler_task_id
+    return payload

@@ -206,6 +206,7 @@ def diagnose(display: str | None = None) -> dict[str, Any]:
 def diagnose_unattended(display: str | None = None) -> dict[str, Any]:
     from ...agent_config import resolve_agent_url
     from ...capture.policy import assess_unattended_capture
+    from ...control.descriptors import detect_platform_profile
 
     base = diagnose(display)
     url = resolve_agent_url(allow_auto=True)
@@ -215,8 +216,10 @@ def diagnose_unattended(display: str | None = None) -> dict[str, Any]:
         agent_url=url,
         screencast_ready=screencast_ready if isinstance(screencast_ready, bool) else None,
     )
+    platform = detect_platform_profile(display=display)
     return {
         **base,
+        "host_environment": platform.host_environment.value,
         "unattended": contract.to_dict(),
         "sampler_hint": _sampler_hint(contract),
     }

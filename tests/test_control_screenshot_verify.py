@@ -6,6 +6,7 @@ import pytest
 
 from vdisplay.application.services import control as control_svc
 from vdisplay.control.models import ControlBounds, ControlNode, ControlRole, ControlSnapshot
+from vdisplay.control.policy import ProviderRoutingDecision, ProviderScore
 from vdisplay.control.screenshot_verify import (
     _capture_via_agent,
     capture_control_screenshot,
@@ -133,7 +134,18 @@ def test_execute_action_screenshot_verify_only(monkeypatch: pytest.MonkeyPatch) 
         frames["n"] += 1
         return _png((0, 0, 0) if frames["n"] == 1 else (255, 0, 0))
 
-    monkeypatch.setattr(control_svc, "resolve_provider", lambda backend, display=None, **kwargs: FakeProvider())
+    routing = ProviderRoutingDecision(
+        requested_backend="test",
+        selected_provider="test",
+        auto_mode=False,
+        candidates=[ProviderScore(provider="test", score=100, eligible=True)],
+        why_selected=["test mock"],
+    )
+    monkeypatch.setattr(
+        control_svc,
+        "resolve_provider_routing",
+        lambda backend, **kwargs: (FakeProvider(), routing),
+    )
 
     result = control_svc._execute_action(
         action="invoke",
@@ -186,7 +198,18 @@ def test_execute_action_dual_verify_requires_both(monkeypatch: pytest.MonkeyPatc
         frames["n"] += 1
         return _png((0, 0, 0))
 
-    monkeypatch.setattr(control_svc, "resolve_provider", lambda backend, display=None, **kwargs: FakeProvider())
+    routing = ProviderRoutingDecision(
+        requested_backend="test",
+        selected_provider="test",
+        auto_mode=False,
+        candidates=[ProviderScore(provider="test", score=100, eligible=True)],
+        why_selected=["test mock"],
+    )
+    monkeypatch.setattr(
+        control_svc,
+        "resolve_provider_routing",
+        lambda backend, **kwargs: (FakeProvider(), routing),
+    )
 
     result = control_svc._execute_action(
         action="invoke",

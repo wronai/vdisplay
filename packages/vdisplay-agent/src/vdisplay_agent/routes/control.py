@@ -19,13 +19,47 @@ def register_routes(
     broker: AgentRuntime,
     check_auth: Callable[[str | None], None],
 ) -> None:
-    @app.get("/diagnostics/control")
-    def diagnostics_control(
-        display: str | None = Query(default=None),
+    @app.get("/control/plugins")
+    def control_plugins(
         authorization: str | None = Header(default=None),
     ) -> dict[str, Any]:
         check_auth(authorization)
-        return success(S.ACTION_CONTROL_DIAGNOSTICS, strip_ok(broker.diagnose_control(display=display)))
+        return success(S.ACTION_CONTROL_PLUGINS, strip_ok(broker.list_control_plugins()))
+
+    @app.get("/diagnostics/control")
+    def diagnostics_control(
+        display: str | None = Query(default=None),
+        backend: str = Query(default="auto"),
+        environment: str | None = Query(default=None),
+        session_id: str | None = Query(default=None),
+        role: str | None = Query(default=None),
+        name: str | None = Query(default=None),
+        app: str | None = Query(default=None),
+        dom_css: str | None = Query(default=None),
+        dom_xpath: str | None = Query(default=None),
+        terminal_line: int | None = Query(default=None),
+        terminal_col: int | None = Query(default=None),
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        check_auth(authorization)
+        return success(
+            S.ACTION_CONTROL_DIAGNOSTICS,
+            strip_ok(
+                broker.diagnose_control(
+                    display=display,
+                    backend=backend,
+                    environment=environment,
+                    session_id=session_id,
+                    role=role,
+                    name=name,
+                    app=app,
+                    dom_css=dom_css,
+                    dom_xpath=dom_xpath,
+                    terminal_line=terminal_line,
+                    terminal_col=terminal_col,
+                )
+            ),
+        )
 
     @app.post("/controls/list")
     async def controls_list(

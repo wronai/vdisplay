@@ -241,5 +241,86 @@ def relay_screenshot(
     )
 
 
+def browser_open(
+    *,
+    url: str,
+    session_id: str | None = None,
+    headless: bool = True,
+    title: str | None = None,
+    engine: str | None = None,
+    page: Any | None = None,
+) -> dict[str, Any]:
+    from ...control.browser_engine import normalize_browser_engine
+    from ...control.providers.browser_session import default_registry
+
+    registry = default_registry()
+    resolved_engine = normalize_browser_engine(engine).value
+    if page is not None:
+        session = registry.open_mock(
+            page,
+            url=url,
+            session_id=session_id,
+            title=title,
+            engine=resolved_engine,
+        )
+    else:
+        session = registry.open(
+            url,
+            session_id=session_id,
+            headless=headless,
+            title=title,
+            engine=resolved_engine,
+        )
+    return {
+        "ok": True,
+        "session_id": session.session_id,
+        "mode": "browser",
+        "url": session.url,
+        "title": session.title,
+        "headless": session.headless,
+        "engine": session.engine,
+        "profile_id": f"browser_{session.engine}",
+    }
+
+
+def terminal_open(
+    *,
+    session_id: str | None = None,
+    command: str | None = None,
+    rows: int = 24,
+    cols: int = 80,
+    title: str | None = None,
+    lines: list[str] | None = None,
+) -> dict[str, Any]:
+    from ...control.providers.terminal_session import default_registry
+
+    registry = default_registry()
+    if command:
+        session = registry.open_process(
+            command,
+            session_id=session_id,
+            rows=rows,
+            cols=cols,
+            title=title,
+        )
+    else:
+        session = registry.open_mock(
+            session_id=session_id,
+            lines=lines or ["READY"],
+            rows=rows,
+            cols=cols,
+            title=title,
+        )
+    return {
+        "ok": True,
+        "session_id": session.session_id,
+        "mode": "terminal",
+        "command": session.command,
+        "title": session.title,
+        "rows": rows,
+        "cols": cols,
+    }
+
+
 def unsupported_session_action(kind: str, action: str) -> None:
     raise VDisplayError(f"unsupported {kind} action: {action}")

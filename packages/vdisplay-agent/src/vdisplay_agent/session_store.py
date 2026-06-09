@@ -27,6 +27,8 @@ class SessionStore:
     virtual: Any | None = None
     virtual_key: tuple[str, int, int] | None = None
     sampler: Any | None = None
+    sampler_task_id: str | None = None
+    screencast_task_id: str | None = None
 
     def register(self, *, kind: str, handle: Any, prefix: str) -> SessionRecord:
         session_id = f"{prefix}-{uuid.uuid4().hex[:12]}"

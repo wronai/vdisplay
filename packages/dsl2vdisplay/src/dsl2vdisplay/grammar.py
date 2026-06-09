@@ -23,6 +23,8 @@ _MULTI_WORD_VERBS: dict[tuple[str, str], str] = {
     ("CONTROL", "SET_VALUE"): "CONTROL_SET_VALUE",
     ("CONTROL", "SETVALUE"): "CONTROL_SET_VALUE",
     ("DIAGNOSE", "CONTROL"): "DIAGNOSE_CONTROL",
+    ("TERMINAL", "OPEN"): "TERMINAL_OPEN",
+    ("BROWSER", "OPEN"): "BROWSER_OPEN",
 }
 
 
@@ -209,6 +211,40 @@ def _parse_diagnose_control(rest: list[str], cmd: dict[str, Any]) -> dict[str, A
     return _with_display(rest, cmd)
 
 
+def _parse_browser_open(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    if sid := pick_flag(rest, "SESSION_ID") or pick_flag(rest, "SESSION"):
+        cmd["session_id"] = sid
+    if url := pick_flag(rest, "URL"):
+        cmd["url"] = url
+    if title := pick_flag(rest, "TITLE"):
+        cmd["title"] = title
+    if vendor := pick_flag(rest, "VENDOR"):
+        cmd["vendor"] = vendor
+    elif engine := pick_flag(rest, "ENGINE"):
+        cmd["engine"] = engine
+    if profile := pick_flag(rest, "PROFILE"):
+        cmd["profile"] = profile
+    if "HEADED" in rest or "NO_HEADLESS" in rest:
+        cmd["headless"] = False
+    elif headless := pick_flag(rest, "HEADLESS"):
+        cmd["headless"] = str(headless).lower() in {"1", "true", "yes"}
+    return cmd
+
+
+def _parse_terminal_open(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    if sid := pick_flag(rest, "SESSION_ID"):
+        cmd["session_id"] = sid
+    if command := pick_flag(rest, "COMMAND"):
+        cmd["command"] = command
+    if rows := pick_flag(rest, "ROWS"):
+        cmd["rows"] = int(rows)
+    if cols := pick_flag(rest, "COLS"):
+        cmd["cols"] = int(cols)
+    if title := pick_flag(rest, "TITLE"):
+        cmd["title"] = title
+    return cmd
+
+
 def _parse_release(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
     if t := pick_flag(rest, "TITLE"):
         cmd["title"] = t
@@ -243,6 +279,8 @@ _VERB_PARSERS: dict[str, Callable[[list[str], dict[str, Any]], dict[str, Any]]] 
     "CONTROL_FOCUS": _parse_control_focus,
     "CONTROL_SET_VALUE": _parse_control_set_value,
     "DIAGNOSE_CONTROL": _parse_diagnose_control,
+    "TERMINAL_OPEN": _parse_terminal_open,
+    "BROWSER_OPEN": _parse_browser_open,
 }
 
 
@@ -291,7 +329,45 @@ _TEXT_FORMATTERS: dict[str, Callable[[dict[str, Any]], str]] = {
     "CONTROL_FOCUS": lambda c: _control_to_text("focus", c),
     "CONTROL_SET_VALUE": lambda c: _control_to_text("set-value", c),
     "DIAGNOSE_CONTROL": lambda c: "diagnose control",
+    "TERMINAL_OPEN": lambda c: _terminal_open_to_text(c),
+    "BROWSER_OPEN": lambda c: _browser_open_to_text(c),
 }
+
+
+def _browser_open_to_text(cmd: dict[str, Any]) -> str:
+    parts = ["browser", "open"]
+    for key, flag in (
+        ("session_id", "--session"),
+        ("url", "--url"),
+        ("title", "--title"),
+    ):
+        if value := cmd.get(key):
+            parts.extend([flag, f'"{value}"' if " " in str(value) else str(value)])
+    if vendor := cmd.get("vendor"):
+        parts.extend(["--vendor", str(vendor)])
+    elif engine := cmd.get("engine"):
+        parts.extend(["--engine", str(engine)])
+    elif profile := cmd.get("profile"):
+        parts.extend(["--profile", str(profile)])
+    if cmd.get("headless") is False:
+        parts.append("--headed")
+    return " ".join(parts)
+
+
+def _terminal_open_to_text(cmd: dict[str, Any]) -> str:
+    parts = ["terminal", "open"]
+    for key, flag in (
+        ("session_id", "--session-id"),
+        ("command", "--command"),
+        ("title", "--title"),
+    ):
+        if value := cmd.get(key):
+            parts.extend([flag, f'"{value}"' if " " in str(value) else str(value)])
+    if rows := cmd.get("rows"):
+        parts.extend(["--rows", str(rows)])
+    if cols := cmd.get("cols"):
+        parts.extend(["--cols", str(cols)])
+    return " ".join(parts)
 
 
 def to_text(cmd: dict[str, Any]) -> str:

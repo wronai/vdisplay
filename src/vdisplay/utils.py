@@ -44,3 +44,25 @@ def run_command_bytes(
 ) -> bytes:
     result = run_command(args, env=env, text=False, timeout=timeout)
     return result.stdout
+
+
+def auto_install_package(
+    package_name: str,
+    *,
+    pip_args: list[str] | None = None,
+    post_install: list[list[str]] | None = None,
+) -> None:
+    import sys
+    
+    print(f"vdisplay: auto-installing dependency {package_name}...", file=sys.stderr)
+    args = [sys.executable, "-m", "pip", "install", "-q"]
+    if pip_args:
+        args.extend(pip_args)
+    else:
+        args.append(package_name)
+    subprocess.check_call(args)
+    
+    if post_install:
+        for cmd in post_install:
+            subprocess.check_call([sys.executable, "-m", *cmd])
+

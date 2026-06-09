@@ -16,10 +16,18 @@ ACTION_VIRTUAL_START: Final = "virtual_start"
 ACTION_MIRROR_START: Final = "mirror_start"
 ACTION_RELAY_START: Final = "relay_start"
 ACTION_TERMINAL_START: Final = "terminal_start"
+ACTION_BROWSER_START: Final = "browser_start"
 ACTION_SCREENCAST_START: Final = "screencast_start"
 ACTION_SCREENCAST_STOP: Final = "screencast_stop"
 ACTION_SCREENCAST_STATUS: Final = "screencast_status"
 ACTION_SESSION_STOP: Final = "session_stop"
+ACTION_SESSIONS_LIST: Final = "sessions_list"
+
+# Task routes (PR-11)
+ACTION_TASKS_LIST: Final = "tasks_list"
+ACTION_TASK_GET: Final = "task_get"
+ACTION_TASK_HEARTBEAT: Final = "task_heartbeat"
+ACTION_TASK_STOP: Final = "task_stop"
 
 # Mutation routes
 ACTION_SAMPLER_START: Final = "sampler_start"
@@ -30,6 +38,7 @@ ACTION_WINDOW_ADOPT: Final = "window_adopt"
 ACTION_WINDOW_RELEASE: Final = "window_release"
 
 # Control routes
+ACTION_CONTROL_PLUGINS: Final = "control_plugins"
 ACTION_CONTROL_DIAGNOSTICS: Final = "control_diagnostics"
 ACTION_CONTROLS_LIST: Final = "controls_list"
 ACTION_CONTROLS_FIND: Final = "controls_find"
@@ -47,16 +56,23 @@ AGENT_ROUTES: Final = {
     "POST /session/mirror/start": ACTION_MIRROR_START,
     "POST /session/relay/start": ACTION_RELAY_START,
     "POST /session/terminal/open": ACTION_TERMINAL_START,
+    "POST /session/browser/open": ACTION_BROWSER_START,
     "POST /session/screencast/start": ACTION_SCREENCAST_START,
     "POST /session/screencast/stop": ACTION_SCREENCAST_STOP,
     "GET /session/screencast/status": ACTION_SCREENCAST_STATUS,
     "POST /session/{session_id}/stop": ACTION_SESSION_STOP,
+    "GET /sessions": ACTION_SESSIONS_LIST,
+    "GET /tasks": ACTION_TASKS_LIST,
+    "GET /tasks/{task_id}": ACTION_TASK_GET,
+    "POST /tasks/{task_id}/heartbeat": ACTION_TASK_HEARTBEAT,
+    "POST /tasks/{task_id}/stop": ACTION_TASK_STOP,
     "POST /sampler/start": ACTION_SAMPLER_START,
     "POST /sampler/stop": ACTION_SAMPLER_STOP,
     "GET /sampler/status": ACTION_SAMPLER_STATUS,
     "POST /capture/frame": ACTION_CAPTURE_FRAME,
     "POST /window/adopt": ACTION_WINDOW_ADOPT,
     "POST /window/release": ACTION_WINDOW_RELEASE,
+    "GET /control/plugins": ACTION_CONTROL_PLUGINS,
     "GET /diagnostics/control": ACTION_CONTROL_DIAGNOSTICS,
     "POST /controls/list": ACTION_CONTROLS_LIST,
     "POST /controls/find": ACTION_CONTROLS_FIND,

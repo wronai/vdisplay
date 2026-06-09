@@ -111,6 +111,33 @@ def _virtual_start(cmd: CommandRequest) -> dict[str, Any]:
     )
 
 
+def _terminal_open(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import session
+
+    return session.terminal_open(
+        session_id=cmd.terminal_session_id,
+        command=cmd.terminal_command,
+        rows=cmd.terminal_rows,
+        cols=cmd.terminal_cols,
+        title=cmd.terminal_title,
+    )
+
+
+def _browser_open(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import session
+
+    if not cmd.browser_url:
+        from ...exceptions import VDisplayError
+        raise VDisplayError("browser open requires --url")
+    return session.browser_open(
+        url=cmd.browser_url,
+        session_id=cmd.browser_session_id,
+        headless=cmd.browser_headless,
+        title=cmd.browser_title,
+        engine=cmd.browser_engine,
+    )
+
+
 def _mirror(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import session
 
@@ -235,6 +262,8 @@ _LOCAL_HANDLERS: dict[CommandVerb, LocalHandler] = {
     CommandVerb.VALIDATE: _validate,
     CommandVerb.SCREENSHOT: _screenshot,
     CommandVerb.VIRTUAL_START: _virtual_start,
+    CommandVerb.TERMINAL_OPEN: _terminal_open,
+    CommandVerb.BROWSER_OPEN: _browser_open,
     CommandVerb.MIRROR: _mirror,
     CommandVerb.ADOPT: _adopt,
     CommandVerb.RELEASE: _release,

@@ -22,6 +22,8 @@ class CommandVerb(StrEnum):
     SCREENSHOT = "SCREENSHOT"
     VIRTUAL_START = "VIRTUAL_START"
     VIRTUAL_STOP = "VIRTUAL_STOP"
+    TERMINAL_OPEN = "TERMINAL_OPEN"
+    BROWSER_OPEN = "BROWSER_OPEN"
     LAUNCH = "LAUNCH"
     MIRROR = "MIRROR"
     ADOPT = "ADOPT"
@@ -55,6 +57,8 @@ COMMAND_VERBS = frozenset(
         CommandVerb.SCREENSHOT,
         CommandVerb.VIRTUAL_START,
         CommandVerb.VIRTUAL_STOP,
+        CommandVerb.TERMINAL_OPEN,
+        CommandVerb.BROWSER_OPEN,
         CommandVerb.LAUNCH,
         CommandVerb.MIRROR,
         CommandVerb.ADOPT,
@@ -64,6 +68,16 @@ COMMAND_VERBS = frozenset(
         CommandVerb.CONTROL_SET_VALUE,
     }
 )
+
+def _resolve_browser_engine_from_dsl(cmd: dict[str, Any]) -> str | None:
+    if engine := cmd.get("engine") or cmd.get("vendor"):
+        return str(engine)
+    if profile := cmd.get("profile"):
+        profile_id = str(profile).strip().lower()
+        if profile_id.startswith("browser_"):
+            return profile_id.removeprefix("browser_")
+    return None
+
 
 _CONTROL_ACTIONS = {
     CommandVerb.CONTROLS_LIST: "controls_list",
@@ -123,6 +137,16 @@ class CommandRequest:
     control_terminal_line: int | None = None
     control_terminal_col: int | None = None
     control_session_id: str | None = None
+    terminal_session_id: str | None = None
+    terminal_command: str | None = None
+    terminal_rows: int = 24
+    terminal_cols: int = 80
+    terminal_title: str | None = None
+    browser_session_id: str | None = None
+    browser_url: str | None = None
+    browser_headless: bool = True
+    browser_title: str | None = None
+    browser_engine: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -180,7 +204,25 @@ class CommandRequest:
             control_text_contains=cmd.get("text_contains"),
             control_terminal_line=int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
             control_terminal_col=int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
-            control_session_id=cmd.get("session_id"),
+            control_session_id=(
+                cmd.get("session_id")
+                if verb not in {CommandVerb.TERMINAL_OPEN, CommandVerb.BROWSER_OPEN}
+                else None
+            ),
+            terminal_session_id=cmd.get("session_id") if verb == CommandVerb.TERMINAL_OPEN else None,
+            terminal_command=cmd.get("command") if verb == CommandVerb.TERMINAL_OPEN else None,
+            terminal_rows=int(cmd.get("rows") or 24),
+            terminal_cols=int(cmd.get("cols") or 80),
+            terminal_title=cmd.get("title") if verb == CommandVerb.TERMINAL_OPEN else None,
+            browser_session_id=cmd.get("session_id") if verb == CommandVerb.BROWSER_OPEN else None,
+            browser_url=cmd.get("url") if verb == CommandVerb.BROWSER_OPEN else None,
+            browser_headless=bool(cmd.get("headless", True)) if verb == CommandVerb.BROWSER_OPEN else True,
+            browser_title=cmd.get("title") if verb == CommandVerb.BROWSER_OPEN else None,
+            browser_engine=(
+                _resolve_browser_engine_from_dsl(cmd)
+                if verb == CommandVerb.BROWSER_OPEN
+                else None
+            ),
             extra={k: v for k, v in cmd.items() if k not in {"verb"}},
         )
 

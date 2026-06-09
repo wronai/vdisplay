@@ -50,6 +50,14 @@ def register(sub: argparse._SubParsersAction) -> None:
     sc_status = sc_sub.add_parser("status", help="Show ScreenCast session state")
     sc_status.set_defaults(func=handle, sc_action="status")
 
+    browser_open = agent_sub.add_parser("browser-open", help="Open Playwright browser session on agent")
+    browser_open.add_argument("--url", required=True)
+    browser_open.add_argument("--session-id", required=True)
+    browser_open.add_argument("--headed", action="store_true")
+    browser_open.add_argument("--vendor", choices=["chromium", "firefox"])
+    browser_open.add_argument("--engine", help="Alias for --vendor")
+    browser_open.set_defaults(func=handle)
+
 
 def _agent_client():
     from ..agent_config import resolve_agent_url
@@ -88,6 +96,31 @@ def handle(args: argparse.Namespace) -> int:
         return 0
     if args.action == "health":
         print_json(_agent_client().health())
+        return 0
+    if args.action == "browser-open":
+        from ..agent_config import resolve_agent_url
+        from ..application.services import session as session_svc
+
+        engine = getattr(args, "vendor", None) or getattr(args, "engine", None)
+        headless = not getattr(args, "headed", False)
+        if resolve_agent_url(allow_auto=True):
+            print_json(
+                _agent_client().browser_open(
+                    url=args.url,
+                    session_id=args.session_id,
+                    headless=headless,
+                    engine=engine,
+                )
+            )
+        else:
+            print_json(
+                session_svc.browser_open(
+                    url=args.url,
+                    session_id=args.session_id,
+                    headless=headless,
+                    engine=engine,
+                )
+            )
         return 0
     if args.action == "screencast":
         client = _agent_client()

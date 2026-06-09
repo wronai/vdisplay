@@ -69,9 +69,13 @@ class ExecutionPolicy:
         return "local"
 
     def meta_for(self, route: Route) -> dict[str, str]:
+        from ..control.descriptors import detect_platform_profile
+
+        platform = detect_platform_profile()
         return {
             "route": route,
             "agent_url": resolve_agent_url(allow_auto=True) or "",
+            "host_environment": platform.host_environment.value,
         }
 
 

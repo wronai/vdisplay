@@ -75,21 +75,40 @@ Broker responses use the same envelope as `CommandResult` (`packages/vdisplay-ag
 
 Broker endpoints (frozen; `packages/vdisplay-agent/src/vdisplay_agent/schemas.py`):
 
-
-| Method | Path | Command verb |
-|--------|------|----------------|
-| GET | `/health` | `HEALTH` |
-| GET | `/capabilities` | `CAPABILITIES` |
-| GET | `/diagnostics` | `VALIDATE` (partial) |
-| GET | `/outputs` | `MONITORS` |
-| GET | `/windows` | `WINDOWS` |
-| POST | `/session/virtual/start` | `VIRTUAL_START` |
-| POST | `/session/mirror/start` | `MIRROR` |
-| POST | `/session/relay/start` | relay session |
-| POST | `/session/{id}/stop` | session stop |
-| POST | `/capture/frame` | `SCREENSHOT` |
-| POST | `/window/adopt` | `ADOPT` |
-| POST | `/window/release` | `RELEASE` |
+| Method | Path | Action id |
+|--------|------|-----------|
+| GET | `/health` | `health` |
+| GET | `/capabilities` | `capabilities` |
+| GET | `/diagnostics` | `diagnostics` |
+| GET | `/outputs` | `outputs` |
+| GET | `/windows` | `windows` |
+| GET | `/sessions` | `sessions_list` |
+| POST | `/session/virtual/start` | `virtual_start` |
+| POST | `/session/mirror/start` | `mirror_start` |
+| POST | `/session/relay/start` | `relay_start` |
+| POST | `/session/terminal/open` | `terminal_start` |
+| POST | `/session/browser/open` | `browser_start` |
+| POST | `/session/screencast/start` | `screencast_start` |
+| POST | `/session/screencast/stop` | `screencast_stop` |
+| GET | `/session/screencast/status` | `screencast_status` |
+| POST | `/session/{id}/stop` | `session_stop` |
+| GET | `/tasks` | `tasks_list` |
+| GET | `/tasks/{task_id}` | `task_get` |
+| POST | `/tasks/{task_id}/heartbeat` | `task_heartbeat` |
+| POST | `/tasks/{task_id}/stop` | `task_stop` |
+| POST | `/sampler/start` | `sampler_start` |
+| POST | `/sampler/stop` | `sampler_stop` |
+| GET | `/sampler/status` | `sampler_status` |
+| POST | `/capture/frame` | `capture_frame` |
+| POST | `/window/adopt` | `window_adopt` |
+| POST | `/window/release` | `window_release` |
+| GET | `/control/plugins` | `control_plugins` |
+| GET | `/diagnostics/control` | `control_diagnostics` |
+| POST | `/controls/list` | `controls_list` |
+| POST | `/controls/find` | `controls_find` |
+| POST | `/control/invoke` | `control_invoke` |
+| POST | `/control/focus` | `control_focus` |
+| POST | `/control/set-value` | `control_set_value` |
 
 REST control layer (`rest2vdisplay`) should converge on `POST /v1/command` with the same envelope (planned).
 

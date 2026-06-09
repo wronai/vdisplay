@@ -3,7 +3,12 @@ from __future__ import annotations
 import argparse
 
 from ..application.services import control as control_svc
-from .common import add_display_arg
+from ..application.services import session as session_svc
+from .common import (
+    add_control_selector_args,
+    add_display_arg,
+    control_selector_kwargs_for_service,
+)
 from .io import print_json
 
 
@@ -15,7 +20,12 @@ def register(sub: argparse._SubParsersAction) -> None:
     add_display_arg(listing)
     listing.add_argument("--app", help="Filter by application name")
     listing.add_argument("--window-id", help="Filter by X11 window id")
-    listing.add_argument("--backend", default="auto", choices=["auto", "atspi", "x11", "browser", "terminal"])
+    listing.add_argument(
+        "--backend",
+        default="auto",
+        choices=["auto", "atspi", "x11", "browser", "terminal", "vision"],
+    )
+    listing.add_argument("--session-id", help="Terminal or browser session id")
     listing.add_argument("--format", default="flat", choices=["flat", "tree"])
     listing.add_argument("--max-depth", type=int, default=8)
     listing.set_defaults(func=handle)
@@ -51,43 +61,31 @@ def register(sub: argparse._SubParsersAction) -> None:
     set_value.add_argument("--verify-selector", help="Verify change on another control after set-value")
     set_value.set_defaults(func=handle)
 
+    browser_open = control_sub.add_parser("browser-open", help="Open Playwright browser session")
+    browser_open.add_argument("--url", required=True, help="Initial page URL")
+    browser_open.add_argument("--session-id", required=True, help="Session id for later control commands")
+    browser_open.add_argument("--headed", action="store_true", help="Show browser window (default: headless)")
+    browser_open.add_argument("--vendor", choices=["chromium", "firefox"], help="Browser engine vendor")
+    browser_open.add_argument("--engine", help="Alias for --vendor (chromium, firefox, chrome)")
+    browser_open.set_defaults(func=handle)
+
 
 def _add_selector_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--selector", help='e.g. button[name="Save"] or line[3][text="OK"]')
-    parser.add_argument("--name", help="Exact control name")
-    parser.add_argument("--role", help="Control role (button, input, ...)")
-    parser.add_argument("--app", help="Application label or window title")
-    parser.add_argument("--window-title", help="Window/frame title filter")
-    parser.add_argument("--window-id")
-    parser.add_argument("--index", type=int, default=0)
-    parser.add_argument("--backend", default="auto", choices=["auto", "atspi", "x11", "browser", "terminal"])
-    parser.add_argument("--environment", choices=["desktop", "browser", "terminal", "vision"])
-    parser.add_argument("--text", help="Exact visible text match")
-    parser.add_argument("--text-contains", help="Substring text match")
-    parser.add_argument("--terminal-line", type=int, help="1-based terminal line number")
-    parser.add_argument("--terminal-col", type=int, help="1-based terminal column number")
-    parser.add_argument("--session-id", help="Terminal or browser session id")
-
-
-def _selector_kwargs(args: argparse.Namespace) -> dict:
-    return {
-        "selector": args.selector,
-        "name": args.name,
-        "role": args.role,
-        "app": args.app,
-        "window_title": getattr(args, "window_title", None),
-        "window_id": args.window_id,
-        "index": args.index,
-        "environment": getattr(args, "environment", None),
-        "text": getattr(args, "text", None),
-        "text_contains": getattr(args, "text_contains", None),
-        "terminal_line": getattr(args, "terminal_line", None),
-        "terminal_col": getattr(args, "terminal_col", None),
-        "session_id": getattr(args, "session_id", None),
-    }
+    add_control_selector_args(parser)
 
 
 def handle(args: argparse.Namespace) -> int:
+    if args.action == "browser-open":
+        engine = getattr(args, "vendor", None) or getattr(args, "engine", None)
+        print_json(
+            session_svc.browser_open(
+                url=args.url,
+                session_id=args.session_id,
+                headless=not getattr(args, "headed", False),
+                engine=engine,
+            )
+        )
+        return 0
     if args.action == "list":
         print_json(
             control_svc.controls_list(
@@ -97,6 +95,7 @@ def handle(args: argparse.Namespace) -> int:
                 backend=args.backend,
                 max_depth=args.max_depth,
                 format=args.format,
+                session_id=getattr(args, "session_id", None),
             )
         )
         return 0
@@ -105,7 +104,7 @@ def handle(args: argparse.Namespace) -> int:
             control_svc.controls_find(
                 display=args.display,
                 backend=args.backend,
-                **_selector_kwargs(args),
+                **control_selector_kwargs_for_service(args),
             )
         )
         return 0
@@ -118,7 +117,7 @@ def handle(args: argparse.Namespace) -> int:
                 screenshot_verify=getattr(args, "screenshot_verify", False),
                 verify_label=getattr(args, "verify_label", None),
                 verify_selector=getattr(args, "verify_selector", None),
-                **_selector_kwargs(args),
+                **control_selector_kwargs_for_service(args),
             )
         )
         return 0
@@ -129,7 +128,7 @@ def handle(args: argparse.Namespace) -> int:
                 backend=args.backend,
                 verify=args.verify,
                 screenshot_verify=getattr(args, "screenshot_verify", False),
-                **_selector_kwargs(args),
+                **control_selector_kwargs_for_service(args),
             )
         )
         return 0
@@ -143,7 +142,7 @@ def handle(args: argparse.Namespace) -> int:
                 verify_label=getattr(args, "verify_label", None),
                 verify_selector=getattr(args, "verify_selector", None),
                 value=args.value,
-                **_selector_kwargs(args),
+                **control_selector_kwargs_for_service(args),
             )
         )
         return 0

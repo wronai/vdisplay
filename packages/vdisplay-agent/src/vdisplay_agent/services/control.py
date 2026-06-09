@@ -22,11 +22,26 @@ def _selector_kwargs(body: dict[str, Any]) -> dict[str, Any]:
         "terminal_line": body.get("terminal_line"),
         "terminal_col": body.get("terminal_col"),
         "session_id": body.get("session_id"),
+        "dom_css": body.get("dom_css"),
+        "dom_xpath": body.get("dom_xpath"),
     }
 
 
-def diagnose_control(*, display: str | None = None) -> dict[str, Any]:
-    return control_svc.diagnose_control(display=display)
+def list_control_plugins() -> dict[str, Any]:
+    return control_svc.list_control_plugins()
+
+
+def diagnose_control(
+    *,
+    display: str | None = None,
+    backend: str = "auto",
+    **selector_kwargs: Any,
+) -> dict[str, Any]:
+    return control_svc.diagnose_control(
+        display=display,
+        backend=backend,
+        **selector_kwargs,
+    )
 
 
 def list_controls(body: dict[str, Any]) -> dict[str, Any]:

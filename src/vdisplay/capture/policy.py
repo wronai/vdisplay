@@ -25,6 +25,7 @@ class CaptureCapabilityContract:
     recommended_profile: RecommendedProfile
     recommended_mode: CaptureMode
     session_type: Literal["wayland", "x11", "virtual"]
+    host_environment: str
     reasons: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
@@ -37,6 +38,8 @@ def assess_unattended_capture(
     agent_url: str | None = None,
     screencast_ready: bool | None = None,
 ) -> CaptureCapabilityContract:
+    from ..control.descriptors import HostEnvironmentKind
+
     if display and _looks_like_xvfb_only(display):
         return _assess_virtual(f"explicit virtual display {display} — xwd capture without portal")
 
@@ -56,11 +59,14 @@ def assess_unattended_capture(
         recommended_profile="driver",
         recommended_mode="best-effort",
         session_type="x11",
+        host_environment=HostEnvironmentKind.LINUX_X11.value,
         reasons=["pure X11 — driver chain may work without portal"],
     )
 
 
 def _assess_virtual(reason: str) -> CaptureCapabilityContract:
+    from ..control.descriptors import HostEnvironmentKind
+
     return CaptureCapabilityContract(
         supports_unattended_capture=True,
         requires_user_consent=False,
@@ -70,11 +76,14 @@ def _assess_virtual(reason: str) -> CaptureCapabilityContract:
         recommended_profile="virtual",
         recommended_mode="strict",
         session_type="virtual",
+        host_environment=HostEnvironmentKind.LINUX_HEADLESS.value,
         reasons=[reason],
     )
 
 
 def _assess_wayland(agent_url: str | None, screencast_ready: bool | None) -> CaptureCapabilityContract:
+    from ..control.descriptors import HostEnvironmentKind
+
     ready = screencast_ready
     if ready is None:
         try:
@@ -103,6 +112,7 @@ def _assess_wayland(agent_url: str | None, screencast_ready: bool | None) -> Cap
             recommended_profile="screencast",
             recommended_mode="desktop",
             session_type="wayland",
+            host_environment=HostEnvironmentKind.LINUX_WAYLAND.value,
             reasons=[
                 "active ScreenCast session — loop capture without new portal prompts",
                 "restart screencast after agent serve or blank frame",
@@ -125,5 +135,6 @@ def _assess_wayland(agent_url: str | None, screencast_ready: bool | None) -> Cap
         recommended_profile="screencast",
         recommended_mode="desktop",
         session_type="wayland",
+        host_environment=HostEnvironmentKind.LINUX_WAYLAND.value,
         reasons=reasons,
     )

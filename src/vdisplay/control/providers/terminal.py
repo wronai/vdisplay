@@ -52,7 +52,8 @@ class TerminalControlProvider(ControlProvider):
             return app
         sessions = self._registry.list_ids()
         if not sessions:
-            raise RuntimeError("no terminal session open; use --session-id or open a PTY session first")
+            from ...exceptions import VDisplayError
+            raise VDisplayError("no terminal session open; use --session-id or open a PTY session first")
         return sessions[-1]
 
     def snapshot(
@@ -64,7 +65,11 @@ class TerminalControlProvider(ControlProvider):
     ) -> ControlSnapshot:
         del max_depth
         session_id = self._resolve_session_id(app=app, window_id=window_id)
-        session = self._registry.require(session_id)
+        try:
+            session = self._registry.require(session_id)
+        except KeyError as exc:
+            from ...exceptions import VDisplayError
+            raise VDisplayError(str(exc)) from exc
         screen = session.screen.snapshot()
         snapshot = nodes_from_screen(screen, session_id=session_id, backend=self.name)
         self._cache = snapshot

@@ -5,9 +5,15 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 COMMON="$ROOT/examples/common"
 cd "$ROOT"
 
-VDISPLAY_BIN="${VDISPLAY_BIN:-$ROOT/.venv/bin/vdisplay}"
-if [[ ! -x "$VDISPLAY_BIN" ]]; then
-  VDISPLAY_BIN="$(command -v vdisplay || true)"
+VDISPLAY_BIN="${VDISPLAY_BIN:-}"
+if [[ -z "$VDISPLAY_BIN" ]]; then
+  if [[ -x "$ROOT/venv/bin/vdisplay" ]]; then
+    VDISPLAY_BIN="$ROOT/venv/bin/vdisplay"
+  elif [[ -x "$ROOT/.venv/bin/vdisplay" ]]; then
+    VDISPLAY_BIN="$ROOT/.venv/bin/vdisplay"
+  else
+    VDISPLAY_BIN="$(command -v vdisplay || true)"
+  fi
 fi
 
 validate_dir() {

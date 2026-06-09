@@ -72,6 +72,30 @@ def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None
             "/session/virtual/start",
             {"width": cmd.width, "height": cmd.height, "display": cmd.vd_display},
         )
+    if verb == CommandVerb.TERMINAL_OPEN:
+        body: dict[str, Any] = {
+            "rows": cmd.terminal_rows,
+            "cols": cmd.terminal_cols,
+        }
+        if cmd.terminal_session_id:
+            body["session_id"] = cmd.terminal_session_id
+        if cmd.terminal_command:
+            body["command"] = cmd.terminal_command
+        if cmd.terminal_title:
+            body["title"] = cmd.terminal_title
+        return "POST", "/session/terminal/open", body
+    if verb == CommandVerb.BROWSER_OPEN:
+        body = {
+            "url": cmd.browser_url,
+            "headless": cmd.browser_headless,
+        }
+        if cmd.browser_session_id:
+            body["session_id"] = cmd.browser_session_id
+        if cmd.browser_title:
+            body["title"] = cmd.browser_title
+        if cmd.browser_engine:
+            body["engine"] = cmd.browser_engine
+        return "POST", "/session/browser/open", body
     if verb == CommandVerb.DIAGNOSE_CONTROL:
         suffix = f"?display={cmd.display}" if cmd.display else ""
         return "GET", f"/diagnostics/control{suffix}", None
@@ -238,6 +262,24 @@ class AgentClient:
 
     def start_relay(self, *, display: str | None = None) -> dict[str, Any]:
         return self._request("POST", "/session/relay/start", body={"display": display})
+
+    def browser_open(
+        self,
+        *,
+        url: str,
+        session_id: str | None = None,
+        headless: bool = True,
+        title: str | None = None,
+        engine: str | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"url": url, "headless": headless}
+        if session_id:
+            body["session_id"] = session_id
+        if title:
+            body["title"] = title
+        if engine:
+            body["engine"] = engine
+        return self._request("POST", "/session/browser/open", body=body)
 
     def start_screencast(
         self,

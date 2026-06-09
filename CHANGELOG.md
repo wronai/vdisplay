@@ -175,6 +175,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.8] - 2026-06-09
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/agent-broker.md
+- Update docs/api-contract.md
+- Update docs/architecture.md
+- Update docs/control-plane.md
+- Update docs/examples.md
+- Update docs/index.md
+- ... and 7 more files
+
+### Test
+- Update tests/contract/test_contracts.py
+- Update tests/contract/test_descriptors.py
+- Update tests/contract/test_providers.py
+- Update tests/fixtures/__init__.py
+- Update tests/fixtures/fake_browser.py
+- Update tests/test_agent_browser_session.py
+- Update tests/test_agent_tasks.py
+- Update tests/test_browser_engine_profiles.py
+- Update tests/test_browser_session_detached.py
+- Update tests/test_cli_control_args.py
+- ... and 16 more files
+
+### Other
+- Update .gitignore
+- Update app.doql.less
+- Update brain/scratch_atspi.py
+- Update examples/control-plane/control_demo.py
+- Update examples/run_all_examples.sh
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/browser_open.schema.json
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/terminal_open.schema.json
+- Update packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py
+- ... and 34 more files
+
 ## [0.1.7] - 2026-06-09
 
 ### Docs

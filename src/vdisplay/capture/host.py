@@ -299,6 +299,32 @@ def _try_mirror_capture(monitors, source_name, target, resolved, errors) -> tupl
         return None
 
 
+def _try_driver_capture(resolved: str, region: tuple[int, int, int, int] | None, errors: list[str]) -> tuple[bytes, dict[str, Any]] | None:
+    if region is not None:
+        try:
+            png = capture_display_png(resolved, region=region)
+            if not is_blank_png(png):
+                return png, {
+                    "method": "monitor-region",
+                    "region": {
+                        "x": region[0], "y": region[1], "width": region[2], "height": region[3]
+                    }
+                }
+            errors.append("monitor-region: blank frame")
+        except VDisplayError as exc:
+            errors.append(f"monitor-region: {exc}")
+
+    try:
+        png = capture_display_png(resolved)
+        if not is_blank_png(png):
+            return png, {"method": "full-display"}
+        errors.append("full-display: blank frame")
+    except VDisplayError as exc:
+        errors.append(f"full-display: {exc}")
+    
+    return None
+
+
 def capture_host_png(
     *,
     monitor: int = 1,
@@ -335,27 +361,11 @@ def capture_host_png(
             meta.update(extra)
             return png, meta
 
-    if region is not None:
-        try:
-            png = capture_display_png(resolved, region=region)
-            if not is_blank_png(png):
-                meta["method"] = "monitor-region"
-                meta["region"] = {
-                    "x": region[0], "y": region[1], "width": region[2], "height": region[3]
-                }
-                return png, meta
-            errors.append("monitor-region: blank frame")
-        except VDisplayError as exc:
-            errors.append(f"monitor-region: {exc}")
-
-    try:
-        png = capture_display_png(resolved)
-        if not is_blank_png(png):
-            meta["method"] = "full-display"
-            return png, meta
-        errors.append("full-display: blank frame")
-    except VDisplayError as exc:
-        errors.append(f"full-display: {exc}")
+    driver_hit = _try_driver_capture(resolved, region, errors)
+    if driver_hit is not None:
+        png, extra = driver_hit
+        meta.update(extra)
+        return png, meta
 
     if not prefer_mirror:
         mirror_hit = _try_mirror_capture(monitors, source_name, target, resolved, errors)

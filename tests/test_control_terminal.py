@@ -172,10 +172,12 @@ def test_resolve_provider_unknown_backend() -> None:
 
 
 def test_terminal_service_missing_session_raises() -> None:
+    from vdisplay.exceptions import VDisplayError
+
     registry = TerminalSessionRegistry()
     provider = TerminalControlProvider(session_id="missing", registry=registry)
     try:
         provider.snapshot()
-    except (RuntimeError, KeyError):
+    except (RuntimeError, KeyError, VDisplayError):
         return
     raise AssertionError("expected missing session error")

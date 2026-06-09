@@ -57,8 +57,8 @@ Each window entry includes: `title`, `name`, `type`, `wm_class`, `wm_class_insta
 
 Common causes:
 
-- Firefox is not running
-- **Firefox on Wayland native** has no X11 window — use XWayland apps or virtual display instead
+- Firefox or PyCharm is not running
+- **Firefox or PyCharm on Wayland native** has no X11 window — use XWayland mode (e.g. by launching the app with `env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE DISPLAY=:0 /snap/bin/pycharm-professional`) or virtual display instead
 - Title differs — use `--app` or `--pid` from `vdisplay windows`
 
 ## `xwd: unable to open display`

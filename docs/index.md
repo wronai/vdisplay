@@ -9,6 +9,8 @@ Cross-platform virtual display orchestration for Python agents, CI pipelines, an
 | [README.md](../README.md) | Project overview, API summary, CLI reference |
 | [Installation](installation.md) | System dependencies and Python setup |
 | [Agent broker](agent-broker.md) | **vdisplay-agent** — install once, REST/MCP/DSL, ScreenCast |
+| [Control plane](control-plane.md) | AT-SPI / browser / terminal / X11 automation + plugins |
+| [RFC 001 — extensibility](rfc/001-extensibility-model.md) | Generic control extension model (accepted) |
 | [Architecture](architecture.md) | CommandRequest + executor (local vs agent routing) |
 | [Docker guide](docker-guide.md) | Running vdisplay in containers |
 | [Examples index](examples.md) | All usage examples by environment |

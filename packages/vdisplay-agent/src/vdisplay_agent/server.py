@@ -17,6 +17,10 @@ def create_app(runtime: AgentRuntime | None = None):
     broker = runtime or AgentRuntime()
     register_all_routes(app, broker)
 
+    @app.on_event("startup")
+    def _startup() -> None:
+        broker.recover_tasks()
+
     @app.on_event("shutdown")
     def _shutdown() -> None:
         broker.shutdown()

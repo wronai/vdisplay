@@ -27,7 +27,7 @@ def platform_capabilities() -> dict[str, Any]:
         "platform": platform.system().lower(),
         "python": platform.python_version(),
         "session_type": session_type,
-        "session_modes": ["virtual", "mirror", "relay", "screencast"],
+        "session_modes": ["virtual", "mirror", "relay", "terminal", "browser", "screencast", "capture_sampler"],
         "capture_sources": [row["name"] for row in capture_providers if row.get("available") == "true"],
         "capture_providers": capture_providers,
         "screencast": {
@@ -41,6 +41,7 @@ def platform_capabilities() -> dict[str, Any]:
         "requires_admin_install": False,
         "requires_user_runtime_prompt": session_type == "wayland",
         "supports_protected_content": False,
+        "task_persistence": True,
         "broker": "vdisplay-agent",
         **platform_summary(),
     }

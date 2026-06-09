@@ -381,6 +381,10 @@ def verify_action_result(
 
     state_diff.update(_add_diff_nodes(diff))
 
+    if diff.get("state_changes"):
+        state_diff["dom_state_changes"] = diff["state_changes"]
+        state_diff["state_changes"] = diff["state_changes"]
+
     if not state_diff and changed_nodes:
         state_diff["changed_nodes"] = changed_nodes
 
@@ -408,10 +412,13 @@ def _is_verified(
         focus_changes = state_diff.get("focus_changes") or diff.get("focus_changes") or []
         return any(item.get("after") is True for item in focus_changes)
 
+    if state_diff.get("dom_state_changes"):
+        return True
+
     keys = [
         "label_changes", "selector_match", "text_value_changes",
-        "target_text_value", "focus_changes", "added_nodes",
-        "removed_nodes", "changed_nodes"
+        "target_text_value", "focus_changes", "state_changes",
+        "added_nodes", "removed_nodes", "changed_nodes",
     ]
     if any(state_diff.get(key) for key in keys):
         return True

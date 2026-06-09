@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import uuid
 from typing import Any, Protocol
 
 from ..base import ControlProvider
@@ -16,6 +15,7 @@ from ..models import (
     ElementCapabilities,
 )
 from ..selector import ControlSelector, find_matches
+from .browser_session import BrowserSessionRegistry, default_registry
 
 _INTERACTIVE_SELECTORS = "button, input, textarea, select, a, [role='button'], [role='textbox']"
 
@@ -26,6 +26,15 @@ _TAG_ROLE = {
     "select": ControlRole.COMBOBOX,
     "a": ControlRole.UNKNOWN,
 }
+
+_DOM_STATE_SCRIPT = """el => ({
+  tag: el.tagName.toLowerCase(),
+  focused: document.activeElement === el,
+  checked: !!el.checked,
+  disabled: !!el.disabled,
+  visible: !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length),
+  value: el.value ?? null,
+})"""
 
 
 class _PageLike(Protocol):
@@ -41,7 +50,7 @@ class _PageLike(Protocol):
 
 
 class _ElementLike(Protocol):
-    def evaluate(self, script: str) -> Any: ...
+    def evaluate(self, script: str, *args: Any) -> Any: ...
 
     def bounding_box(self) -> dict[str, float] | None: ...
 
@@ -62,11 +71,21 @@ def _playwright_available() -> tuple[bool, str]:
 
         return True, "playwright available"
     except ImportError:
-        return False, "playwright not installed (pip install playwright && playwright install)"
+        from ...utils import auto_install_package
+        try:
+            auto_install_package("playwright", post_install=[["playwright", "install", "chromium"]])
+            import playwright  # noqa: F401
+            return True, "playwright available (auto-installed)"
+        except Exception as exc:
+            return False, f"playwright auto-install failed: {exc}"
 
 
 def _role_for_element(element: _ElementLike) -> ControlRole:
-    tag = (element.evaluate("el => el.tagName.toLowerCase()") or "").lower()
+    raw = element.evaluate("el => el.tagName.toLowerCase()")
+    if isinstance(raw, dict):
+        tag = str(raw.get("tag", "")).lower()
+    else:
+        tag = (raw or "").lower()
     explicit = element.get_attribute("role")
     if explicit == "button":
         return ControlRole.BUTTON
@@ -112,6 +131,16 @@ def _bounds_from_box(box: dict[str, float] | None) -> ControlBounds | None:
     )
 
 
+def _dom_state(element: _ElementLike) -> dict[str, Any]:
+    try:
+        payload = element.evaluate(_DOM_STATE_SCRIPT)
+        if isinstance(payload, dict):
+            return payload
+    except Exception:
+        pass
+    return {"tag": element.evaluate("el => el.tagName.toLowerCase()")}
+
+
 def _node_from_element(
     element: _ElementLike,
     *,
@@ -119,9 +148,10 @@ def _node_from_element(
     window_id: str | None,
     app_label: str | None,
     window_title: str | None,
-    provider_ref: str | None = None,
+    provider_ref: str,
 ) -> ControlNode:
     role = _role_for_element(element)
+    dom_state = _dom_state(element)
     name = (
         element.get_attribute("aria-label")
         or element.get_attribute("name")
@@ -129,10 +159,9 @@ def _node_from_element(
         or (element.inner_text() or "").strip()
         or None
     )
-    text_value = element.get_attribute("value") or ((element.inner_text() or "").strip() or None)
-    node_id = provider_ref or f"browser:{uuid.uuid4().hex[:12]}"
+    text_value = element.get_attribute("value") or dom_state.get("value") or ((element.inner_text() or "").strip() or None)
     return ControlNode(
-        id=node_id,
+        id=provider_ref,
         backend=backend,
         role=role,
         name=name,
@@ -140,40 +169,73 @@ def _node_from_element(
         window_id=window_id,
         app_label=app_label,
         window_title=window_title,
-        provider_ref=provider_ref or node_id,
+        provider_ref=provider_ref,
         actions=_actions_for(role),
         capabilities=_capabilities_for(role),
-        text_value=text_value,
-        state={"tag": element.evaluate("el => el.tagName.toLowerCase()")},
+        text_value=text_value if isinstance(text_value, str) else None,
+        state=dom_state,
     )
 
 
 class BrowserPlaywrightProvider(ControlProvider):
     name = "browser-playwright"
 
-    def __init__(self, *, page: _PageLike | None = None, default_url: str | None = None) -> None:
-        self._page = page
+    def __init__(
+        self,
+        *,
+        session_id: str | None = None,
+        registry: BrowserSessionRegistry | None = None,
+        page: _PageLike | None = None,
+        default_url: str | None = None,
+    ) -> None:
+        self._session_id = session_id
+        self._registry = registry or default_registry()
+        self._legacy_page = page
         self._default_url = default_url
-        self._playwright = None
-        self._browser = None
 
     def available(self) -> tuple[bool, str]:
-        if self._page is not None:
+        if self._legacy_page is not None:
             return True, "injected browser page"
         return _playwright_available()
 
-    def _ensure_page(self, *, app: str | None = None) -> _PageLike:
-        if self._page is not None:
-            page = self._page
-        else:
-            from playwright.sync_api import sync_playwright
+    def _resolve_session_id(self, *, app: str | None = None, window_id: str | None = None) -> str | None:
+        if self._session_id:
+            return self._session_id
+        if window_id and self._registry.get(window_id) is not None:
+            return window_id
+        if app and self._registry.get(app) is not None:
+            return app
+        if self._legacy_page is not None:
+            return None
+        sessions = self._registry.list_ids()
+        if not sessions:
+            from ...exceptions import VDisplayError
+            raise VDisplayError(
+                "no browser session open; use browser_open or POST /session/browser/open first"
+            )
+        return sessions[-1]
 
-            if self._playwright is None:
-                self._playwright = sync_playwright().start()
-                self._browser = self._playwright.chromium.launch(headless=True)
-                self._page = self._browser.new_page()
-            page = self._page
-        target_url = app or self._default_url
+    def _page_for(self, *, app: str | None = None, window_id: str | None = None) -> _PageLike:
+        if self._legacy_page is not None:
+            page = self._legacy_page
+            target_url = app or self._default_url
+            if target_url and target_url.startswith(("http://", "https://", "file://")):
+                if getattr(page, "url", "") != target_url:
+                    page.goto(target_url)
+            return page
+
+        session_id = self._resolve_session_id(app=app, window_id=window_id)
+        assert session_id is not None
+        try:
+            session = self._registry.require(session_id)
+        except KeyError as exc:
+            from ...exceptions import VDisplayError
+            raise VDisplayError(str(exc)) from exc
+        page = session.page
+        if page is None:
+            from ...exceptions import VDisplayError
+            raise VDisplayError(f"browser session {session_id!r} has no active page")
+        target_url = app or session.url or self._default_url
         if target_url and target_url.startswith(("http://", "https://", "file://")):
             if getattr(page, "url", "") != target_url:
                 page.goto(target_url)
@@ -186,8 +248,8 @@ class BrowserPlaywrightProvider(ControlProvider):
         app: str | None = None,
         max_depth: int = 8,
     ) -> ControlSnapshot:
-        del max_depth  # DOM snapshot is flat for MVP
-        page = self._ensure_page(app=app)
+        del max_depth
+        page = self._page_for(app=app, window_id=window_id)
         window_title = page.title()
         app_label = app or page.url
         nodes: dict[str, ControlNode] = {}
@@ -214,7 +276,7 @@ class BrowserPlaywrightProvider(ControlProvider):
 
     def find(self, selector: ControlSelector) -> list[ControlNode]:
         if selector.dom_css or selector.dom_xpath:
-            page = self._ensure_page(app=selector.app)
+            page = self._page_for(app=selector.app, window_id=selector.window_id or selector.session_id)
             query = selector.dom_css or selector.dom_xpath
             locator = page.locator(query)
             matches: list[ControlNode] = []
@@ -235,11 +297,11 @@ class BrowserPlaywrightProvider(ControlProvider):
                     return [matches[selector.index]]
                 return []
             return matches
-        snapshot = self.snapshot(app=selector.app)
+        snapshot = self.snapshot(app=selector.app, window_id=selector.window_id or selector.session_id)
         return find_matches(snapshot.nodes, selector)
 
-    def _resolve_element(self, element_id: str) -> tuple[_PageLike, _ElementLike]:
-        page = self._ensure_page()
+    def _resolve_element(self, element_id: str, *, app: str | None = None, window_id: str | None = None) -> tuple[_PageLike, _ElementLike]:
+        page = self._page_for(app=app, window_id=window_id)
         if element_id.startswith("browser:loc:"):
             _, _, query, index_raw = element_id.split(":", 3)
             return page, page.locator(query).nth(int(index_raw))
@@ -273,10 +335,5 @@ class BrowserPlaywrightProvider(ControlProvider):
         return _bounds_from_box(element.bounding_box())
 
     def close(self) -> None:
-        if self._browser is not None:
-            self._browser.close()
-            self._browser = None
-        if self._playwright is not None:
-            self._playwright.stop()
-            self._playwright = None
-        self._page = None
+        if self._session_id:
+            self._registry.close(self._session_id)

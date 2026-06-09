@@ -5,8 +5,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .capabilities import ProviderCapabilities
 from .models import ControlBounds, ControlNode, ControlSnapshot
 from .selector import ControlSelector
+from .session_kind import SessionKind
+from .verify_strategy import VerifyStrategy
 
 
 class ControlProvider(ABC):
@@ -39,3 +42,28 @@ class ControlProvider(ABC):
 
     @abstractmethod
     def bounds(self, element_id: str) -> ControlBounds | None: ...
+
+    def capabilities(self) -> ProviderCapabilities:
+        """Plugin contract — defaults from builtin descriptor catalog."""
+        from .descriptors import descriptor_for
+
+        descriptor = descriptor_for(self.name)
+        if descriptor is None:
+            return ProviderCapabilities()
+        return descriptor.capabilities
+
+    def verify_modes(self) -> frozenset[VerifyStrategy]:
+        from .descriptors import descriptor_for
+
+        descriptor = descriptor_for(self.name)
+        if descriptor is None:
+            return frozenset()
+        return descriptor.verify_strategies
+
+    def session_kind(self) -> SessionKind | None:
+        from .descriptors import descriptor_for
+
+        descriptor = descriptor_for(self.name)
+        if descriptor is None:
+            return None
+        return descriptor.session_kind

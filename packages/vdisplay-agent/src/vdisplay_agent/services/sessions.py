@@ -8,6 +8,8 @@ from vdisplay import MirrorSession, VirtualDisplaySession, WindowRelaySession
 from vdisplay.exceptions import VDisplayError
 
 from ..session_store import SessionRecord, SessionStore
+from ..task_store import TaskStore
+from . import tasks as task_svc
 
 
 def _session_started(record, *, mode: str) -> dict[str, Any]:
@@ -26,10 +28,14 @@ def start_virtual(
     width: int = 1280,
     height: int = 720,
     display: str = ":99",
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
 ) -> dict[str, Any]:
     session = VirtualDisplaySession.create(width=width, height=height, display=display)
     session.start()
     record = store.register(kind="virtual", handle=session, prefix="virt")
+    if task_store is not None and broker_id:
+        task_svc.register_session_task(task_store, broker_id=broker_id, record=record)
     return _session_started(record, mode="virtual")
 
 
@@ -39,18 +45,30 @@ def start_mirror(
     source: str = "primary",
     target: str | None = None,
     display: str | None = None,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
 ) -> dict[str, Any]:
     session = MirrorSession.create(source=source, target=target, display=display)
     session.start()
     record = store.register(kind="mirror", handle=session, prefix="mir")
+    if task_store is not None and broker_id:
+        task_svc.register_session_task(task_store, broker_id=broker_id, record=record)
     return _session_started(record, mode="mirror")
 
 
-def start_relay(store: SessionStore, *, display: str | None = None) -> dict[str, Any]:
+def start_relay(
+    store: SessionStore,
+    *,
+    display: str | None = None,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
+) -> dict[str, Any]:
     if store.relay is None:
         store.relay = WindowRelaySession.create(display=display)
         store.relay.start()
     record = store.register(kind="relay", handle=store.relay, prefix="relay")
+    if task_store is not None and broker_id:
+        task_svc.register_session_task(task_store, broker_id=broker_id, record=record)
     return _session_started(record, mode="relay")
 
 
@@ -60,6 +78,8 @@ def start_screencast(
     interactive: bool = True,
     timeout_s: float = 120.0,
     multiple: bool | None = None,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
 ) -> dict[str, Any]:
     from vdisplay.capture.portal_screencast import _screencast_multiple, start_screencast_session
 
@@ -71,14 +91,29 @@ def start_screencast(
     )
     store.screencast = session
     store.screencast_multiple = allow_multiple
-    return {"ok": True, "multiple": allow_multiple, **session.status()}
+    payload = {"ok": True, "multiple": allow_multiple, **session.status()}
+    if task_store is not None and broker_id:
+        store.screencast_task_id = task_svc.begin_screencast_task(
+            task_store,
+            broker_id=broker_id,
+            config={
+                "interactive": interactive,
+                "timeout_s": timeout_s,
+                "multiple": allow_multiple,
+            },
+        )
+        payload["task_id"] = store.screencast_task_id
+    return payload
 
 
-def stop_screencast(store: SessionStore) -> dict[str, Any]:
+def stop_screencast(store: SessionStore, *, task_store: TaskStore | None = None) -> dict[str, Any]:
     from vdisplay.capture.portal_screencast import get_active_screencast, stop_screencast_session
 
     session = store.screencast or get_active_screencast()
     store.screencast = None
+    if task_store is not None and store.screencast_task_id:
+        task_svc.end_screencast_task(task_store, store.screencast_task_id)
+        store.screencast_task_id = None
     if session is None:
         return {"ok": True, "stopped": False}
     return session.stop()
@@ -102,6 +137,8 @@ def start_terminal(
     cols: int = 80,
     lines: list[str] | None = None,
     title: str | None = None,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
 ) -> dict[str, Any]:
     from vdisplay.control.providers.terminal_session import default_registry
 
@@ -122,6 +159,8 @@ def start_terminal(
         handle=session,
     )
     store.sessions[session.session_id] = record
+    if task_store is not None and broker_id:
+        task_svc.register_session_task(task_store, broker_id=broker_id, record=record)
     return {
         "ok": True,
         "session_id": session.session_id,
@@ -133,15 +172,70 @@ def start_terminal(
     }
 
 
-def stop_session(store: SessionStore, session_id: str) -> dict[str, Any]:
+def start_browser(
+    store: SessionStore,
+    *,
+    url: str,
+    session_id: str | None = None,
+    headless: bool = True,
+    title: str | None = None,
+    engine: str | None = None,
+    task_store: TaskStore | None = None,
+    broker_id: str = "",
+) -> dict[str, Any]:
+    from vdisplay.control.providers.browser_session import default_registry
+
+    registry = default_registry()
+    session = registry.open(
+        url,
+        session_id=session_id,
+        headless=headless,
+        title=title,
+        engine=engine,
+    )
+    record = SessionRecord(
+        session_id=session.session_id,
+        kind="browser",
+        handle=session,
+    )
+    store.sessions[session.session_id] = record
+    if task_store is not None and broker_id:
+        task_svc.register_session_task(task_store, broker_id=broker_id, record=record)
+    return {
+        "ok": True,
+        "session_id": session.session_id,
+        "mode": "browser",
+        "url": session.url,
+        "title": session.title,
+        "headless": headless,
+        "engine": session.engine,
+        "profile_id": f"browser_{session.engine}",
+    }
+
+
+def stop_session(store: SessionStore, session_id: str, *, task_store: TaskStore | None = None) -> dict[str, Any]:
     record = store.pop(session_id)
+    if task_store is not None:
+        task_svc.unregister_session_task(task_store, session_id)
     if record.kind == "relay" and record.handle is store.relay:
         store.clear_relay()
     elif record.kind == "terminal":
         record.handle.close()
+    elif record.kind == "browser":
+        from vdisplay.control.providers.browser_session import default_registry
+
+        default_registry().close(session_id)
+        record.handle.close()
     else:
         record.handle.stop()
     return {"ok": True, "session_id": session_id, "stopped": True}
+
+
+def list_sessions(store: SessionStore) -> dict[str, Any]:
+    from vdisplay.control.session import build_catalog_from_agent_store
+
+    catalog = build_catalog_from_agent_store(store)
+    return {"ok": True, **catalog.to_dict()}
 
 
 def shutdown(store: SessionStore) -> None:
@@ -163,3 +257,6 @@ def shutdown(store: SessionStore) -> None:
         except VDisplayError:
             pass
     store.clear_relay()
+    from vdisplay.control.providers.browser_session import default_registry
+
+    default_registry().close_all()

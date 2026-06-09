@@ -29,6 +29,8 @@ def all_schemas() -> dict[str, dict[str, Any]]:
             "control_focus",
             "control_set_value",
             "diagnose_control",
+            "terminal_open",
+            "browser_open",
         ]
         _SCHEMAS = {n.upper(): _load_schema(n) for n in names}
     return _SCHEMAS

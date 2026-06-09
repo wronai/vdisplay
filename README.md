@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.7-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$3.62-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-3.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.8-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$4.57-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-4.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $3.6181 (6 commits)
-- 👤 **Human dev:** ~$356 (3.6h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $4.5681 (7 commits)
+- 👤 **Human dev:** ~$475 (4.7h @ $100/h, 30min dedup)
 
 Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -106,6 +106,425 @@ vdisplay relay list
 `vdisplay relay list-windows` is deprecated — use `vdisplay windows`.
 
 Filter windows with `--app`, `--class`, `--pid`, `--min-width`, `--min-height`. Use `--all` (default) to include internal/helper windows; `--apps-only` excludes them.
+
+## Desktop workflows (GNOME, multi-monitor)
+
+Examples for a typical Linux desktop session (`DISPLAY=:0`, Wayland + XWayland). Replace monitor names (`DP-2`, `DP-1`, `HDMI-1`) with output from `vdisplay monitors`.
+
+> **Wayland note:** vdisplay lists **XWayland** windows via `xdotool`. Native Wayland apps (Firefox Wayland, Cursor, GNOME Terminal) may not appear in `vdisplay windows` — use **portal screencast** for screenshots of the full desktop or a chosen monitor.
+
+### JetBrains Toolbox / IDE
+
+Toolbox usually runs on XWayland and shows up in window lists:
+
+```bash
+# find Toolbox on the primary monitor
+vdisplay windows --app "JetBrains"
+vdisplay windows --class jetbrains-toolbox | jq '.windows[] | {window_id, app_label, monitor_name, nl}'
+
+# hide Toolbox off-screen (automation / clean screenshot)
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay list
+
+# move Toolbox to another physical monitor
+vdisplay relay adopt-window --app "JetBrains" --target HDMI-1
+vdisplay relay release-window --app "JetBrains"
+
+# before/after screenshots (Wayland: agent + screencast first — see below)
+vdisplay agent serve                              # terminal 1
+vdisplay agent screencast start                   # terminal 2 — pick monitor in portal
+vdisplay relay screenshot -o before.png --source DP-2
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay screenshot -o toolbox-hidden.png --source DP-2
+vdisplay relay release-window --app "JetBrains"
+vdisplay relay screenshot -o after-restore.png --source DP-2
+```
+
+IntelliJ / PyCharm (when launched via Toolbox, often XWayland):
+
+```bash
+vdisplay windows --app "IntelliJ"
+vdisplay windows --class idea | jq '.windows[] | {title, pid, nl}'
+vdisplay relay adopt-window --title "vdisplay"   # partial title match
+```
+
+### Firefox (XWayland)
+
+If Firefox runs on XWayland (`about:support` → Window Protocol: X11):
+
+```bash
+vdisplay windows --app "Firefox"
+vdisplay windows --class firefox | jq '.windows[] | {window_id, title, nl}'
+vdisplay relay adopt-window --app "Firefox"
+vdisplay relay adopt-window --title "Mozilla Firefox"
+vdisplay relay release-window --app "Firefox"
+```
+
+Native Wayland Firefox is **not** listed by `vdisplay windows` — capture the monitor instead:
+
+```bash
+vdisplay agent screencast start
+vdisplay screenshot -o firefox-monitor.png --source DP-2
+```
+
+### Chromium / Chrome / Edge
+
+Same as Firefox — only visible when running on XWayland:
+
+```bash
+vdisplay windows --class google-chrome
+vdisplay windows --class chromium
+vdisplay windows --app "Chrome" | jq '.windows[].nl'
+```
+
+### GNOME Terminal, Cursor, native Wayland apps
+
+These often **do not** appear in `vdisplay windows`. Workflow:
+
+```bash
+# 1) see which monitors exist and what XWayland apps are visible
+vdisplay all | jq '{monitors: [.monitors[].name], x11_windows: [.windows[].app_label]}'
+
+# 2) screenshot the monitor where the app is shown
+vdisplay agent screencast start
+vdisplay screenshot -o terminal.png --source DP-1
+vdisplay screenshot -o primary.png --source primary
+```
+
+### LibreOffice, GIMP, Steam (XWayland)
+
+```bash
+vdisplay windows --app "LibreOffice"
+vdisplay windows --class soffice
+vdisplay windows --app "GIMP"
+vdisplay relay adopt-window --class steam
+vdisplay relay release-window --class steam
+```
+
+### VS Code / Cursor / Slack / Discord (Electron)
+
+Electron apps often expose a partial AT-SPI tree when launched with accessibility enabled. Window listing still depends on XWayland:
+
+```bash
+# list visible Electron windows (when on XWayland)
+vdisplay windows --app "Cursor"
+vdisplay windows --app "code"
+vdisplay windows --class slack | jq '.windows[] | {title, app_label, nl}'
+
+# semantic control — AT-SPI backend (GTK_A11Y / Java ATK wrapper may be required for some builds)
+export GTK_A11Y=1
+vdisplay diagnose control
+vdisplay control list --app "Cursor" --backend atspi --max-depth 4
+vdisplay control click --app "Cursor" --role button --name "Run" --verify
+
+# if native Wayland build — window not in list; capture monitor instead
+vdisplay agent screencast start
+vdisplay screenshot -o cursor.png --source DP-2
+```
+
+### Thunderbird, Nautilus, GNOME Calculator
+
+```bash
+vdisplay windows --app "Thunderbird"
+vdisplay windows --class org.gnome.Nautilus
+vdisplay windows --class org.gnome.Calculator
+
+# hide file manager off-screen before a clean desktop shot
+vdisplay relay adopt-window --class org.gnome.Nautilus
+vdisplay relay screenshot -o desk-clean.png --source DP-2
+vdisplay relay release-window --class org.gnome.Nautilus
+```
+
+### Spotify, OBS, Blender (mixed X11 / Wayland)
+
+```bash
+vdisplay windows --app "Spotify"
+vdisplay windows --class obs
+vdisplay windows --class blender | jq '.windows[] | {title, monitor_name, nl}'
+
+# move Blender to second monitor (XWayland only)
+vdisplay relay adopt-window --class blender --target HDMI-1
+```
+
+### Messaging & video calls (Telegram, Signal, Zoom, Teams)
+
+Electron and Qt wrappers — window listing depends on XWayland; capture the monitor for native Wayland builds:
+
+```bash
+vdisplay windows --app "Telegram"
+vdisplay windows --class signal
+vdisplay windows --app "zoom"
+vdisplay windows --class teams | jq '.windows[] | {title, app_label, nl}'
+
+# hide chat window before desktop recording
+vdisplay relay adopt-window --app "Telegram"
+vdisplay agent screencast start
+vdisplay screenshot -o desk-no-telegram.png --source DP-2
+vdisplay relay release-window --app "Telegram"
+
+# Zoom/Teams on Wayland — usually not in window list; full-monitor capture
+vdisplay screenshot -o meeting.png --source primary
+```
+
+### Developer tools (DBeaver, Android Studio, Docker Desktop, Wireshark)
+
+Java/Electron apps — often XWayland; Java ATK helps AT-SPI:
+
+```bash
+vdisplay windows --app "DBeaver"
+vdisplay windows --class android-studio
+vdisplay windows --class Docker
+vdisplay windows --class wireshark | jq '.windows[] | {title, pid, nl}'
+
+# semantic click in DBeaver SQL editor toolbar (AT-SPI)
+export GTK_A11Y=1
+vdisplay control list --app DBeaver --backend atspi --max-depth 5
+vdisplay control click --app DBeaver --role button --name Execute --verify
+
+# hide Android Studio emulator window off-screen during screenshot
+vdisplay relay adopt-window --title "Android Emulator"
+vdisplay relay screenshot -o ci-screen.png --source DP-2
+vdisplay relay release-window --title "Android Emulator"
+```
+
+### Media players & creative (VLC, Audacity, Krita, Inkscape)
+
+GTK/Qt apps — GTK tools benefit from `GDK_BACKEND=x11` on Wayland for AT-SPI:
+
+```bash
+vdisplay windows --class vlc
+vdisplay windows --app "Audacity"
+vdisplay windows --class krita
+vdisplay windows --class inkscape
+
+# pause VLC via AT-SPI (when tree is exposed)
+GDK_BACKEND=x11 GTK_A11Y=1 vdisplay control click --app vlc --role button --name Pause --verify
+
+# move Inkscape to second monitor before export
+vdisplay relay adopt-window --class inkscape --target HDMI-1
+vdisplay relay release-window --class inkscape
+```
+
+### Terminals beyond GNOME Terminal (Tilix, Alacritty, kitty)
+
+Native Wayland terminals rarely appear in `vdisplay windows`. Prefer a **terminal session** or monitor capture:
+
+```bash
+# if running on XWayland
+vdisplay windows --class Tilix
+vdisplay windows --class Alacritty
+vdisplay windows --class kitty
+
+# reliable TUI control — open PTY instead of chasing desktop window
+dsl2vdisplay -c 'terminal open --session-id dev-1 --command bash'
+vdisplay control list --backend terminal --session-id dev-1
+vdisplay control click --backend terminal --session-id dev-1 --terminal-line 1 --terminal-col 0
+
+# screenshot where the terminal is visible (Wayland)
+vdisplay agent screencast start
+vdisplay screenshot -o alacritty.png --source DP-1
+```
+
+### System apps (Settings, Software, Files, Calculator, virt-manager)
+
+GNOME shell apps are often native Wayland — use monitor capture or AT-SPI with X11 backend:
+
+```bash
+vdisplay windows --class gnome-control-center    # Settings (XWayland only)
+vdisplay windows --class org.gnome.Software
+vdisplay windows --class virt-manager
+vdisplay windows --class VirtualBox
+
+# virt-manager VM window on second monitor
+vdisplay relay adopt-window --class virt-manager --target DP-1
+
+# Settings on Wayland — not listed; capture primary
+vdisplay screenshot -o settings.png --source primary
+```
+
+### Password managers & notes (Bitwarden, Obsidian, 1Password)
+
+Electron apps — partial AT-SPI when accessibility is enabled:
+
+```bash
+vdisplay windows --app "Bitwarden"
+vdisplay windows --class obsidian
+vdisplay windows --app "1Password"
+
+export GTK_A11Y=1
+vdisplay control list --app obsidian --backend atspi --format tree
+vdisplay control click --app Bitwarden --role button --name Unlock --verify
+```
+
+### AT-SPI control on native GTK apps (GNOME Wayland)
+
+On Wayland, force GTK apps onto X11 for a reliable accessibility tree:
+
+```bash
+export DISPLAY=:0
+export GDK_BACKEND=x11
+export GTK_A11Y=1
+export NO_AT_BRIDGE=0
+
+# demo fixture used in tests — or any GTK3 app you start the same way
+./tests/fixtures/run_gtk_demo.sh &
+sleep 2
+
+vdisplay control list --app vdisplay-gtk-demo --backend atspi
+vdisplay control click --app vdisplay-gtk-demo --role button --name Increment --verify
+vdisplay control set-value --app vdisplay-gtk-demo --role input --index 0 --value hello --verify
+```
+
+### Browser sessions (Playwright DOM — any site)
+
+Open a **browser session** first, then control via DOM selectors (not the desktop Firefox window):
+
+```bash
+# DSL
+dsl2vdisplay -c 'browser open --url https://example.com --session web-1'
+dsl2vdisplay -c 'browser open --url https://example.com --session web-ff --vendor firefox --headed'
+
+# CLI equivalent via agent (terminal 1: vdisplay agent serve)
+vdisplay agent browser-open --url https://example.com --session-id web-1
+
+# control the open session
+vdisplay control list --backend browser --session-id web-1
+vdisplay control click --backend browser --session-id web-1 --selector "#submit" --verify
+vdisplay diagnose control --selector "#go" --session-id web-1   # routing + profile inference
+```
+
+### Terminal sessions (TUI / PTY)
+
+```bash
+dsl2vdisplay -c 'terminal open --session-id term-1 --command bash'
+vdisplay control list --backend terminal --session-id term-1
+vdisplay control click --backend terminal --session-id term-1 --terminal-line 3 --terminal-col 10
+```
+
+### Desktop app cheat sheet
+
+| App | `vdisplay windows` | Control backend | Notes |
+|-----|-------------------|-----------------|-------|
+| JetBrains Toolbox / IDE | `--app JetBrains` | `atspi` (X11) | Often XWayland; Java ATK wrapper helps |
+| Firefox (native Wayland) | usually hidden | monitor screenshot | Use screencast + `--source` |
+| Firefox (X11) | `--class firefox` | `atspi` or relay | Check `about:support` → Window Protocol |
+| Chromium / Chrome | `--class google-chrome` | `atspi` / relay | XWayland only in window list |
+| Cursor / VS Code / Slack | `--app Cursor` / `code` | `atspi` (partial) | Wayland build → screenshot fallback |
+| GNOME Terminal / Tilix | often hidden | `terminal` session | Open PTY session instead of desktop window |
+| Alacritty / kitty | `--class` (X11 only) | `terminal` or screenshot | Native Wayland → monitor capture |
+| Telegram / Signal / Discord | `--app` / `--class` | relay / screenshot | Electron; hide with `relay adopt-window` |
+| Zoom / Teams / Meet | often hidden | monitor screenshot | Video UI rarely in XWayland list |
+| DBeaver / Android Studio | `--app` / `--class` | `atspi` (Java) | `GTK_A11Y=1`; emulator via `--title` |
+| Docker Desktop / Wireshark | `--class Docker` | relay / `atspi` | Mixed Electron/Qt |
+| VLC / Audacity / Krita | `--class vlc` etc. | `atspi` (GTK/Qt) | `GDK_BACKEND=x11` on Wayland host |
+| GIMP / Blender / OBS | `--class` / `--app` | `atspi` / relay | Move with `--target HDMI-1` |
+| Thunderbird / Evolution | `--app Thunderbird` | `atspi` / relay | Mail clients on XWayland |
+| Nautilus / Calculator | `--class org.gnome.*` | relay / `atspi` | Hide file manager before clean shot |
+| virt-manager / VirtualBox | `--class virt-manager` | relay | VM window on second monitor |
+| Bitwarden / Obsidian | `--app` | `atspi` (partial) | Electron; unlock via `--role button` |
+| GTK demo / native GTK | `--app` / title | `atspi` | `GDK_BACKEND=x11` on Wayland host |
+| Web app (any URL) | N/A | `browser` + session | `browser open` then DOM selectors |
+
+### Typical desktop session (discover → hide → capture → control)
+
+Copy-paste workflow when several apps are open on a GNOME desktop:
+
+```bash
+# 0) broker + portal (once per session)
+vdisplay agent serve                              # terminal 1
+vdisplay agent screencast start                   # terminal 2
+
+# 1) inventory — what XWayland exposes vs monitors only
+vdisplay all | jq '{
+  monitors: [.monitors[] | {name, primary, nl}],
+  windows: [.windows[] | {app_label, title, monitor_name}]
+}'
+
+# 2) hide noisy windows before a clean screenshot
+vdisplay relay adopt-window --app "JetBrains"
+vdisplay relay adopt-window --class slack
+vdisplay relay adopt-window --class org.gnome.Nautilus
+vdisplay relay screenshot -o desk-clean.png --source DP-2
+
+# 3) semantic control on an app that exposes AT-SPI (GTK/Java on X11)
+export GDK_BACKEND=x11 GTK_A11Y=1
+vdisplay control list --app DBeaver --backend atspi --format tree
+vdisplay control click --app DBeaver --role button --name Execute --verify
+
+# 4) web workflow — separate from desktop Firefox
+dsl2vdisplay -c 'browser open --url https://example.com --session web-1 --headed'
+vdisplay control click --backend browser --session-id web-1 --selector "a" --verify
+
+# 5) restore hidden windows
+vdisplay relay release-window --app "JetBrains"
+vdisplay relay release-window --class slack
+vdisplay relay release-window --class org.gnome.Nautilus
+```
+
+### Multi-monitor layout (3 outputs)
+
+Inspect geometry, then capture or move windows per output:
+
+```bash
+vdisplay monitors | jq '.monitors[] | {name, primary, x, y, width, height, nl}'
+
+# one PNG per connected output (Wayland: screencast + Entire Screen in portal for all)
+vdisplay agent screencast start
+vdisplay screenshot --all-monitors --out-dir ./captures
+ls ./captures/    # DP-2.png, DP-1.png, HDMI-1.png
+
+# single monitor by name
+vdisplay screenshot -o dp1.png --source DP-1
+vdisplay screenshot -o hdmi.png --source HDMI-1
+
+# mirror primary onto second output (X11 multi-head only; Wayland → use screencast screenshot)
+vdisplay mirror screenshot -o mirrored.png --source primary --target DP-1
+```
+
+### Isolated virtual desktop (any app, no portal)
+
+Run apps on owned Xvfb `:99` — works headless and in CI:
+
+```bash
+sudo apt install xterm   # or firefox, etc.
+
+vdisplay virtual start --width 1920 --height 1080 --display :99
+vdisplay virtual launch xterm -hold
+vdisplay virtual launch --display :99 xterm -e 'sleep 5; echo hello'
+
+# separate session: launch spins up its own Xvfb, runs command, stops
+vdisplay virtual launch xterm -hold
+vdisplay virtual screenshot -o vd-xterm.png --display :99
+
+# Python API — long-running agent on :99
+python3 - <<'PY'
+from vdisplay import VirtualDisplaySession
+vd = VirtualDisplaySession.create(width=1280, height=720, display=":99")
+vd.start()
+vd.launch(["xterm", "-hold"])
+vd.save_screenshot("agent-screen.png")
+input("Press Enter to stop…")
+vd.stop()
+PY
+```
+
+### Quick agent setup (copy-paste for desktop capture)
+
+```bash
+# terminal 1 — leave running
+vdisplay agent serve
+
+# terminal 2
+vdisplay agent health
+vdisplay agent screencast start          # once per session; pick monitor or Entire Screen
+vdisplay screenshot -o desk.png --source DP-2
+vdisplay relay screenshot -o desk.png --source DP-2
+vdisplay mirror screenshot -o desk.png --source primary
+vdisplay agent screencast status
+vdisplay agent screencast stop
+```
+
+If capture is **blank**, the portal shared a different monitor than `--source` — use `vdisplay monitors` + match the name, or restart screencast and choose **Entire Screen**.
 
 ### Example output
 
@@ -324,6 +743,75 @@ WINDOW_APP=JetBrains ./examples/host-relay/run-host.sh
 - Relay moves windows within the **same X11 session** — it does not move apps into Xvfb `:99`.
 - On **Wayland**, window move uses XWayland; screenshots need **agent + screencast** (Docker `./run.sh` often yields black PNGs — use `./run-host.sh` instead).
 - Filter windows first: `vdisplay windows --app "Toolbox"` → use `--app`, `--title`, or `--window-id` from JSON.
+
+## Control plane (Semantic UI control)
+
+The control plane provides a unified API for accessibility-first, semantic control of native applications, web browsers, and terminals, using computer vision (`img2nl` / screenshot diffs) to verify action execution.
+
+Supported backends:
+- `atspi` — Linux Desktop AT-SPI2 accessibility tree
+- `browser` — Playwright headless/headed browser DOM
+- `terminal` — Terminal session emulation and cursor positioning
+- `x11` — `xdotool` keyboard/mouse pointer injection fallback
+
+### CLI Examples
+
+```bash
+# 1) Diagnose control backends and readiness
+vdisplay diagnose control
+
+# 2) List all interactive controls (buttons, inputs, links)
+vdisplay control list --backend auto
+
+# 3) Filter controls by application (e.g. Firefox) in tree format
+vdisplay control list --app firefox --backend auto --format tree
+
+# 4) Click a button by name and verify state change semantically
+vdisplay control click --role button --name "Save" --verify
+
+# 5) Type text into an input field and verify value change
+vdisplay control set-value --role input --name "Username" --value "admin" --verify
+
+# 6) Click a control using CSS selectors in browser environment
+vdisplay control click --backend browser --selector "#submit-btn" --session-id "web-1" --verify
+
+# 7) Open browser session then route automatically (DSL)
+dsl2vdisplay -c 'browser open --url https://example.com --session web-1 --vendor firefox'
+dsl2vdisplay -c 'control click --backend browser --session-id web-1 --selector "#go" --verify'
+
+# 8) Desktop GTK app on Wayland host (X11 backend for AT-SPI)
+GDK_BACKEND=x11 GTK_A11Y=1 vdisplay control list --app vdisplay-gtk-demo --backend atspi
+
+# 9) Java IDE toolbar (DBeaver / IntelliJ on XWayland)
+vdisplay control click --app DBeaver --role button --name "Execute SQL" --verify
+
+# 10) Electron app — unlock dialog (Bitwarden / Obsidian)
+vdisplay control click --app Bitwarden --role button --name Unlock --verify
+
+# 11) xdotool fallback when AT-SPI tree is empty
+vdisplay control click --backend x11 --app firefox --role button --name Reload
+```
+
+### Python API Example
+
+```python
+from vdisplay.application.services import control as control_svc
+
+# List controls from the active accessibility tree
+controls = control_svc.controls_list(display=":0", app="Firefox", format="flat")
+for c in controls:
+    print(f"[{c['role']}] {c['name']} (at {c['x']},{c['y']})")
+
+# Programmatically click a button and verify success
+result = control_svc.control_click(
+    display=":0",
+    role="button",
+    name="Log In",
+    verify=True,
+    screenshot_verify=True
+)
+print("Action OK:", result["ok"])
+```
 
 ## Natural language and DSL
 

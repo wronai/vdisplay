@@ -2,13 +2,15 @@
 
 from __future__ import annotations
 
+import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from .services import capabilities, capture, control, outputs, relay, sampler, sessions, windows
+from .services import capabilities, capture, control, outputs, relay, sampler, sessions, tasks, windows
 from .session_store import SessionRecord, SessionStore
+from .task_store import TaskStore
 
-__all__ = ["AgentRuntime", "SessionRecord", "SessionStore"]
+__all__ = ["AgentRuntime", "SessionRecord", "SessionStore", "TaskStore"]
 
 
 @dataclass
@@ -16,6 +18,8 @@ class AgentRuntime:
     """Privileged runtime: owns session store and broker services."""
 
     store: SessionStore = field(default_factory=SessionStore)
+    task_store: TaskStore = field(default_factory=TaskStore)
+    broker_id: str = field(default_factory=lambda: uuid.uuid4().hex[:16])
 
     @property
     def sessions(self) -> dict[str, SessionRecord]:
@@ -38,43 +42,82 @@ class AgentRuntime:
         return windows.list_windows(**filters)
 
     def start_virtual(self, **kwargs: Any) -> dict[str, Any]:
-        return sessions.start_virtual(self.store, **kwargs)
+        return sessions.start_virtual(self.store, **kwargs, task_store=self.task_store, broker_id=self.broker_id)
 
     def start_mirror(self, **kwargs: Any) -> dict[str, Any]:
-        return sessions.start_mirror(self.store, **kwargs)
+        return sessions.start_mirror(self.store, **kwargs, task_store=self.task_store, broker_id=self.broker_id)
 
     def start_relay(self, **kwargs: Any) -> dict[str, Any]:
-        return sessions.start_relay(self.store, **kwargs)
+        return sessions.start_relay(self.store, **kwargs, task_store=self.task_store, broker_id=self.broker_id)
 
     def start_terminal(self, **kwargs: Any) -> dict[str, Any]:
-        return sessions.start_terminal(self.store, **kwargs)
+        return sessions.start_terminal(self.store, **kwargs, task_store=self.task_store, broker_id=self.broker_id)
+
+    def start_browser(self, **kwargs: Any) -> dict[str, Any]:
+        return sessions.start_browser(self.store, **kwargs, task_store=self.task_store, broker_id=self.broker_id)
 
     def start_screencast(self, **kwargs: Any) -> dict[str, Any]:
-        return sessions.start_screencast(self.store, **kwargs)
+        return sessions.start_screencast(
+            self.store,
+            **kwargs,
+            task_store=self.task_store,
+            broker_id=self.broker_id,
+        )
 
     def stop_screencast(self) -> dict[str, Any]:
-        return sessions.stop_screencast(self.store)
+        return sessions.stop_screencast(self.store, task_store=self.task_store)
 
     def screencast_status(self) -> dict[str, Any]:
         return sessions.screencast_status(self.store)
 
     def stop_session(self, session_id: str) -> dict[str, Any]:
-        return sessions.stop_session(self.store, session_id)
+        return sessions.stop_session(self.store, session_id, task_store=self.task_store)
+
+    def recover_tasks(self) -> dict[str, Any]:
+        return tasks.recover_on_startup(self.task_store, self.broker_id)
+
+    def list_tasks(self, *, status: str | None = None, kind: str | None = None) -> dict[str, Any]:
+        return tasks.list_tasks(self.task_store, status=status, kind=kind)
+
+    def get_task(self, task_id: str) -> dict[str, Any]:
+        return tasks.get_task(self.task_store, task_id)
+
+    def heartbeat_task(self, task_id: str, *, state: dict[str, Any] | None = None) -> dict[str, Any]:
+        return tasks.heartbeat_task(self.task_store, task_id, broker_id=self.broker_id, state=state)
+
+    def stop_task(self, task_id: str) -> dict[str, Any]:
+        return tasks.stop_task(self.task_store, task_id, broker_id=self.broker_id)
+
+    def list_sessions(self) -> dict[str, Any]:
+        return sessions.list_sessions(self.store)
 
     def start_sampler(self, body: dict[str, Any]) -> dict[str, Any]:
-        return sampler.start_sampler(self.store, body)
+        return sampler.start_sampler(self.store, body, task_store=self.task_store, broker_id=self.broker_id)
 
     def stop_sampler(self) -> dict[str, Any]:
-        return sampler.stop_sampler(self.store)
+        return sampler.stop_sampler(self.store, task_store=self.task_store)
 
     def sampler_status(self) -> dict[str, Any]:
-        return sampler.sampler_status(self.store)
+        return sampler.sampler_status(self.store, task_store=self.task_store, broker_id=self.broker_id)
 
     def capture_frame(self, body: dict[str, Any]) -> dict[str, Any]:
         return capture.capture_frame(self.store, body)
 
-    def diagnose_control(self, *, display: str | None = None) -> dict[str, Any]:
-        return control.diagnose_control(display=display)
+    def list_control_plugins(self) -> dict[str, Any]:
+        return control.list_control_plugins()
+
+    def diagnose_control(
+        self,
+        *,
+        display: str | None = None,
+        backend: str = "auto",
+        **selector_kwargs: Any,
+    ) -> dict[str, Any]:
+        return control.diagnose_control(
+            display=display,
+            backend=backend,
+            **selector_kwargs,
+        )
 
     def list_controls(self, body: dict[str, Any]) -> dict[str, Any]:
         return control.list_controls(body)
@@ -98,4 +141,5 @@ class AgentRuntime:
         return relay.release_window(self.store, body)
 
     def shutdown(self) -> None:
+        tasks.shutdown_tasks(self.task_store, self.store, broker_id=self.broker_id)
         sessions.shutdown(self.store)

@@ -52,6 +52,26 @@ def register_routes(
         except Exception as exc:
             return json_error(S.ACTION_RELAY_START, exc)
 
+    @app.post("/session/browser/open")
+    async def session_browser_open(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime(
+                S.ACTION_BROWSER_START,
+                broker.start_browser(
+                    url=str(body.get("url") or body.get("app") or ""),
+                    session_id=body.get("session_id"),
+                    headless=bool(body.get("headless", True)),
+                    title=body.get("title"),
+                    engine=body.get("engine") or body.get("vendor"),
+                ),
+            )
+        except Exception as exc:
+            return json_error(S.ACTION_BROWSER_START, exc)
+
     @app.post("/session/terminal/open")
     async def session_terminal_open(
         body: dict[str, Any],
@@ -96,6 +116,13 @@ def register_routes(
     ) -> dict[str, Any]:
         check_auth(authorization)
         return success(S.ACTION_SCREENCAST_STATUS, strip_ok(broker.screencast_status()))
+
+    @app.get("/sessions")
+    def sessions_list(
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        check_auth(authorization)
+        return success(S.ACTION_SESSIONS_LIST, strip_ok(broker.list_sessions()))
 
     @app.post("/session/{session_id}/stop")
     def session_stop(

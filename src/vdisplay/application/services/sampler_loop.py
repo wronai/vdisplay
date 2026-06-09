@@ -80,8 +80,10 @@ def transcode_frame(path: Path, fmt: FrameFormat) -> Path:
         return path
     try:
         from PIL import Image
-    except ImportError as exc:
-        raise VDisplayError(f"format {fmt} requires Pillow: pip install vdisplay[pillow]") from exc
+    except ImportError:
+        from ...utils import auto_install_package
+        auto_install_package("vdisplay[pillow]")
+        from PIL import Image
 
     target = path.with_suffix(f".{frame_extension(fmt)}")
     with Image.open(path) as image:
