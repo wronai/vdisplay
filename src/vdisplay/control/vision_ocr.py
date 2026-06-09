@@ -137,3 +137,85 @@ def ocr_find_selector(
     boxes = ocr_png(png, min_confidence=min_confidence)
     matched = match_selector_boxes(boxes, selector, fuzzy=fuzzy)
     return boxes, matched
+
+
+ANCHOR_RELATIONS = frozenset({"right_of", "below", "near", "left_of", "above"})
+
+
+def _vertical_overlap(a: ControlBounds, b: ControlBounds) -> bool:
+    a_top, a_bottom = a.y, a.y + a.height
+    b_top, b_bottom = b.y, b.y + b.height
+    return a_top < b_bottom and b_top < a_bottom
+
+
+def _horizontal_overlap(a: ControlBounds, b: ControlBounds) -> bool:
+    a_left, a_right = a.x, a.x + a.width
+    b_left, b_right = b.x, b.x + b.width
+    return a_left < b_right and b_left < a_right
+
+
+def anchor_spatial_relation(
+    candidate: ControlBounds,
+    anchor: ControlBounds,
+    rel: str,
+    *,
+    gap: int = 12,
+    near_threshold: int = 80,
+) -> bool:
+    """Return True when ``candidate`` satisfies a spatial relation to ``anchor``."""
+    rel_norm = (rel or "near").strip().lower()
+    if rel_norm == "right_of":
+        return candidate.x >= anchor.x + anchor.width - gap and _vertical_overlap(candidate, anchor)
+    if rel_norm == "below":
+        return candidate.y >= anchor.y + anchor.height - gap and _horizontal_overlap(candidate, anchor)
+    if rel_norm == "left_of":
+        return candidate.x + candidate.width <= anchor.x + gap and _vertical_overlap(candidate, anchor)
+    if rel_norm == "above":
+        return candidate.y + candidate.height <= anchor.y + gap and _horizontal_overlap(candidate, anchor)
+
+    ax, ay = anchor.center
+    cx, cy = candidate.center
+    distance = ((ax - cx) ** 2 + (ay - cy) ** 2) ** 0.5
+    return distance <= near_threshold
+
+
+def _find_anchor_boxes(
+    boxes: list[OcrTextBox],
+    anchor_text: str,
+    *,
+    fuzzy: bool = True,
+) -> list[OcrTextBox]:
+    selector = ControlSelector(vision_anchor=anchor_text)
+    return match_selector_boxes(boxes, selector, fuzzy=fuzzy)
+
+
+def anchor_spatial_find(
+    boxes: list[OcrTextBox],
+    *,
+    anchor_text: str,
+    rel: str,
+    target_text: str | None = None,
+    fuzzy: bool = True,
+) -> tuple[list[OcrTextBox], list[OcrTextBox]]:
+    """Find OCR boxes relative to an anchor label using bounds-based geometry."""
+    rel_norm = (rel or "near").strip().lower()
+    if rel_norm not in ANCHOR_RELATIONS:
+        raise ValueError(f"unsupported vision_anchor_rel: {rel!r}")
+
+    anchors = _find_anchor_boxes(boxes, anchor_text, fuzzy=fuzzy)
+    if not anchors:
+        return anchors, []
+
+    anchor = anchors[0]
+    spatial: list[OcrTextBox] = []
+    for box in boxes:
+        if box is anchor:
+            continue
+        if not anchor_spatial_relation(box.bounds, anchor.bounds, rel_norm):
+            continue
+        if target_text and not _box_matches(box, target_text, exact=not fuzzy):
+            continue
+        spatial.append(box)
+
+    spatial.sort(key=lambda item: item.confidence, reverse=True)
+    return anchors, spatial

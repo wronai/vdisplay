@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.9"
+version = "0.1.10"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -52,6 +52,7 @@ browser = [
 vision = [
     "Pillow>=10.0",
     "pytesseract>=0.3.10",
+    "opencv-python>=4.8",
 ]
 terminal = [
     "pyte>=0.8.1",

@@ -1,5 +1,5 @@
 source: code2llm
-# generated in 0.35s
+# generated in 0.42s
 schema: code2llm.planfile_tickets.v1
 project_root: /home/tom/github/wronai/vdisplay
 tickets:
@@ -43,7 +43,7 @@ tickets:
     Function: _decode_pixels'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_browser_provider'
-  description: 'code2llm reports `God Function: _score_browser_provider` in `src/vdisplay/control/scoring.py:426`.
+  description: 'code2llm reports `God Function: _score_browser_provider` in `src/vdisplay/control/scoring.py:437`.
 
 
     Function ''_score_browser_provider'' is oversized: CC=12, fan-out=5, mutations=30.
@@ -58,11 +58,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:426:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:437:God
     Function: _score_browser_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_candidate'
-  description: 'code2llm reports `God Function: _score_candidate` in `src/vdisplay/control/profile_inference.py:161`.
+  description: 'code2llm reports `God Function: _score_candidate` in `src/vdisplay/control/profile_inference.py:166`.
 
 
     Function ''_score_candidate'' is oversized: CC=12, fan-out=11, mutations=35.
@@ -77,7 +77,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:161:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:166:God
     Function: _score_candidate'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _start_screencast_impl'
@@ -117,6 +117,25 @@ tickets:
   - src/vdisplay/capture/host.py
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/capture/host.py:328:God Function:
     capture_host_png'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: match_template'
+  description: 'code2llm reports `God Function: match_template` in `src/vdisplay/control/vision_template.py:62`.
+
+
+    Function ''match_template'' is oversized: CC=11, fan-out=17, mutations=30.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_template.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_template.py:62:God
+    Function: match_template'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: register'
   description: 'code2llm reports `God Function: register` in `src/vdisplay/commands/relay.py:12`.
@@ -176,7 +195,7 @@ tickets:
     Function: register'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: Atspi'
-  description: 'code2llm reports `Shotgun Surgery: Atspi` in `src/vdisplay/control/providers/atspi_impl.py:75`.
+  description: 'code2llm reports `Shotgun Surgery: Atspi` in `src/vdisplay/control/providers/atspi_impl.py:358`.
 
 
     Mutation of variable ''Atspi'' spans 11 functions. Changing this logic requires
@@ -192,11 +211,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/providers/atspi_impl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/atspi_impl.py:75:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/atspi_impl.py:358:Shotgun
     Surgery: Atspi'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: app'
-  description: 'code2llm reports `Shotgun Surgery: app` in `packages/vdisplay-agent/src/vdisplay_agent/cli.py:7`.
+  description: 'code2llm reports `Shotgun Surgery: app` in `packages/vdisplay-agent/src/vdisplay_agent/server.py:14`.
 
 
     Mutation of variable ''app'' spans 6 functions. Changing this logic requires work
@@ -211,12 +230,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/vdisplay-agent/src/vdisplay_agent/cli.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/cli.py:7:Shotgun
+  - packages/vdisplay-agent/src/vdisplay_agent/server.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/server.py:14:Shotgun
     Surgery: app'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: args'
-  description: 'code2llm reports `Shotgun Surgery: args` in `packages/rest2vdisplay/src/rest2vdisplay/cli.py:7`.
+  description: 'code2llm reports `Shotgun Surgery: args` in `examples/common/validate_artifacts.py:64`.
 
 
     Mutation of variable ''args'' spans 15 functions. Changing this logic requires
@@ -231,12 +250,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/rest2vdisplay/src/rest2vdisplay/cli.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/rest2vdisplay/src/rest2vdisplay/cli.py:7:Shotgun
+  - examples/common/validate_artifacts.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/common/validate_artifacts.py:64:Shotgun
     Surgery: args'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: base'
-  description: 'code2llm reports `Shotgun Surgery: base` in `src/vdisplay/application/services/discovery.py:206`.
+  description: 'code2llm reports `Shotgun Surgery: base` in `src/vdisplay/capture/providers/fbdev.py:12`.
 
 
     Mutation of variable ''base'' spans 6 functions. Changing this logic requires
@@ -251,35 +270,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/application/services/discovery.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/discovery.py:206:Shotgun
+  - src/vdisplay/capture/providers/fbdev.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/providers/fbdev.py:12:Shotgun
     Surgery: base'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: body'
-  description: 'code2llm reports `Shotgun Surgery: body` in `src/vdisplay/client.py:58`.
-
-
-    Mutation of variable ''body'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/client.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/client.py:58:Shotgun Surgery:
-    body'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: bounds'
   description: 'code2llm reports `Shotgun Surgery: bounds` in `examples/control-plane/control_demo.py:29`.
 
 
-    Mutation of variable ''bounds'' spans 5 functions. Changing this logic requires
+    Mutation of variable ''bounds'' spans 6 functions. Changing this logic requires
     work in many places.
 
 
@@ -295,28 +294,8 @@ tickets:
   dedupe_key: 'code2llm:smell:shotgun_surgery:examples/control-plane/control_demo.py:29:Shotgun
     Surgery: bounds'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: buf'
-  description: 'code2llm reports `Shotgun Surgery: buf` in `src/vdisplay/capture/linux_xwd.py:64`.
-
-
-    Mutation of variable ''buf'' spans 5 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/linux_xwd.py:64:Shotgun
-    Surgery: buf'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: bus'
-  description: 'code2llm reports `Shotgun Surgery: bus` in `src/vdisplay/capture/portal.py:14`.
+  description: 'code2llm reports `Shotgun Surgery: bus` in `src/vdisplay/capture/portal_screencast.py:229`.
 
 
     Mutation of variable ''bus'' spans 5 functions. Changing this logic requires work
@@ -331,12 +310,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/portal.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/portal.py:14:Shotgun
+  - src/vdisplay/capture/portal_screencast.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/portal_screencast.py:229:Shotgun
     Surgery: bus'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: candidates'
-  description: 'code2llm reports `Shotgun Surgery: candidates` in `src/vdisplay/backends/linux_x11_mirror.py:120`.
+  description: 'code2llm reports `Shotgun Surgery: candidates` in `src/vdisplay/backends/linux_x11_mirror.py:237`.
 
 
     Mutation of variable ''candidates'' spans 5 functions. Changing this logic requires
@@ -352,7 +331,7 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/backends/linux_x11_mirror.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_mirror.py:120:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_mirror.py:237:Shotgun
     Surgery: candidates'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: captures'
@@ -376,7 +355,7 @@ tickets:
     Surgery: captures'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: client'
-  description: 'code2llm reports `Shotgun Surgery: client` in `src/vdisplay/commands/agent.py:74`.
+  description: 'code2llm reports `Shotgun Surgery: client` in `src/vdisplay/application/runtime.py:27`.
 
 
     Mutation of variable ''client'' spans 7 functions. Changing this logic requires
@@ -391,12 +370,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/commands/agent.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/commands/agent.py:74:Shotgun
+  - src/vdisplay/application/runtime.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/runtime.py:27:Shotgun
     Surgery: client'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: cmd'
-  description: 'code2llm reports `Shotgun Surgery: cmd` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57`.
+  description: 'code2llm reports `Shotgun Surgery: cmd` in `packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:234`.
 
 
     Mutation of variable ''cmd'' spans 17 functions. Changing this logic requires
@@ -411,12 +390,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57:Shotgun
+  - packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:234:Shotgun
     Surgery: cmd'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: code'
+  description: 'code2llm reports `Shotgun Surgery: code` in `packages/vdisplay-agent/src/vdisplay_agent/envelope.py:59`.
+
+
+    Mutation of variable ''code'' spans 7 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/vdisplay-agent/src/vdisplay_agent/envelope.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/envelope.py:59:Shotgun
+    Surgery: code'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: completed'
-  description: 'code2llm reports `Shotgun Surgery: completed` in `src/vdisplay/capture/portal_screencast.py:598`.
+  description: 'code2llm reports `Shotgun Surgery: completed` in `src/vdisplay/control/providers/atspi.py:54`.
 
 
     Mutation of variable ''completed'' spans 5 functions. Changing this logic requires
@@ -431,15 +430,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/portal_screencast.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/portal_screencast.py:598:Shotgun
+  - src/vdisplay/control/providers/atspi.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/atspi.py:54:Shotgun
     Surgery: completed'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: count'
-  description: 'code2llm reports `Shotgun Surgery: count` in `src/vdisplay/control/providers/atspi_impl.py:75`.
+  title: 'Address code smell: Shotgun Surgery: confidence'
+  description: 'code2llm reports `Shotgun Surgery: confidence` in `src/vdisplay/control/verifier.py:274`.
 
 
-    Mutation of variable ''count'' spans 6 functions. Changing this logic requires
+    Mutation of variable ''confidence'' spans 5 functions. Changing this logic requires
     work in many places.
 
 
@@ -451,15 +450,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/providers/atspi_impl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/atspi_impl.py:75:Shotgun
-    Surgery: count'
+  - src/vdisplay/control/verifier.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/verifier.py:274:Shotgun
+    Surgery: confidence'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: descriptor'
-  description: 'code2llm reports `Shotgun Surgery: descriptor` in `src/vdisplay/control/plugins.py:36`.
+  title: 'Address code smell: Shotgun Surgery: cropped'
+  description: 'code2llm reports `Shotgun Surgery: cropped` in `src/vdisplay/capture/host.py:156`.
 
 
-    Mutation of variable ''descriptor'' spans 7 functions. Changing this logic requires
+    Mutation of variable ''cropped'' spans 5 functions. Changing this logic requires
     work in many places.
 
 
@@ -471,9 +470,69 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/plugins.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/plugins.py:36:Shotgun
-    Surgery: descriptor'
+  - src/vdisplay/capture/host.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:156:Shotgun
+    Surgery: cropped'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: cx'
+  description: 'code2llm reports `Shotgun Surgery: cx` in `src/vdisplay/control/vision_template.py:122`.
+
+
+    Mutation of variable ''cx'' spans 6 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/control/vision_template.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/vision_template.py:122:Shotgun
+    Surgery: cx'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: cy'
+  description: 'code2llm reports `Shotgun Surgery: cy` in `src/vdisplay/control/vision_template.py:122`.
+
+
+    Mutation of variable ''cy'' spans 6 functions. Changing this logic requires work
+    in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/control/vision_template.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/vision_template.py:122:Shotgun
+    Surgery: cy'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: data'
+  description: 'code2llm reports `Shotgun Surgery: data` in `packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:27`.
+
+
+    Mutation of variable ''data'' spans 26 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:27:Shotgun
+    Surgery: data'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: diag'
   description: 'code2llm reports `Shotgun Surgery: diag` in `examples/host-mirror/mirror_demo.py:34`.
@@ -496,7 +555,7 @@ tickets:
     Surgery: diag'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: display'
-  description: 'code2llm reports `Shotgun Surgery: display` in `src/vdisplay/nlp.py:111`.
+  description: 'code2llm reports `Shotgun Surgery: display` in `examples/host-mirror/mirror_demo.py:34`.
 
 
     Mutation of variable ''display'' spans 19 functions. Changing this logic requires
@@ -511,12 +570,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/nlp.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nlp.py:111:Shotgun Surgery:
-    display'
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
+    Surgery: display'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: eligible'
-  description: 'code2llm reports `Shotgun Surgery: eligible` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: eligible` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''eligible'' spans 11 functions. Changing this logic requires
@@ -532,31 +591,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: eligible'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: err'
-  description: 'code2llm reports `Shotgun Surgery: err` in `src/vdisplay/backends/linux_xvfb.py:147`.
-
-
-    Mutation of variable ''err'' spans 11 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/backends/linux_xvfb.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_xvfb.py:147:Shotgun
-    Surgery: err'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: errors'
-  description: 'code2llm reports `Shotgun Surgery: errors` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57`.
+  description: 'code2llm reports `Shotgun Surgery: errors` in `examples/common/validate_artifacts.py:53`.
 
 
     Mutation of variable ''errors'' spans 11 functions. Changing this logic requires
@@ -571,35 +610,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57:Shotgun
+  - examples/common/validate_artifacts.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/common/validate_artifacts.py:53:Shotgun
     Surgery: errors'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: extra'
-  description: 'code2llm reports `Shotgun Surgery: extra` in `src/vdisplay/nl.py:59`.
-
-
-    Mutation of variable ''extra'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/nl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nl.py:59:Shotgun Surgery:
-    extra'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: height'
-  description: 'code2llm reports `Shotgun Surgery: height` in `src/vdisplay/nl.py:59`.
+  description: 'code2llm reports `Shotgun Surgery: height` in `src/vdisplay/control/screenshot_verify.py:118`.
 
 
-    Mutation of variable ''height'' spans 23 functions. Changing this logic requires
+    Mutation of variable ''height'' spans 24 functions. Changing this logic requires
     work in many places.
 
 
@@ -611,12 +630,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/nl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nl.py:59:Shotgun Surgery:
-    height'
+  - src/vdisplay/control/screenshot_verify.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/screenshot_verify.py:118:Shotgun
+    Surgery: height'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: here'
-  description: 'code2llm reports `Shotgun Surgery: here` in `examples/common/screenshot_meta.py:11`.
+  description: 'code2llm reports `Shotgun Surgery: here` in `examples/headless-virtual/run_virtual.py:13`.
 
 
     Mutation of variable ''here'' spans 5 functions. Changing this logic requires
@@ -631,15 +650,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - examples/common/screenshot_meta.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/common/screenshot_meta.py:11:Shotgun
+  - examples/headless-virtual/run_virtual.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/headless-virtual/run_virtual.py:13:Shotgun
     Surgery: here'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: hint'
-  description: 'code2llm reports `Shotgun Surgery: hint` in `src/vdisplay/backends/linux_x11_mirror.py:153`.
+  description: 'code2llm reports `Shotgun Surgery: hint` in `src/vdisplay/backends/linux_x11_relay.py:352`.
 
 
-    Mutation of variable ''hint'' spans 5 functions. Changing this logic requires
+    Mutation of variable ''hint'' spans 6 functions. Changing this logic requires
     work in many places.
 
 
@@ -651,12 +670,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/backends/linux_x11_mirror.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_mirror.py:153:Shotgun
+  - src/vdisplay/backends/linux_x11_relay.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:352:Shotgun
     Surgery: hint'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: host'
-  description: 'code2llm reports `Shotgun Surgery: host` in `src/vdisplay/commands/agent.py:74`.
+  description: 'code2llm reports `Shotgun Surgery: host` in `src/vdisplay/control/scoring.py:322`.
 
 
     Mutation of variable ''host'' spans 9 functions. Changing this logic requires
@@ -671,32 +690,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/commands/agent.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/commands/agent.py:74:Shotgun
+  - src/vdisplay/control/scoring.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:322:Shotgun
     Surgery: host'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: image'
-  description: 'code2llm reports `Shotgun Surgery: image` in `src/vdisplay/capture/linux_xwd.py:64`.
-
-
-    Mutation of variable ''image'' spans 7 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/linux_xwd.py:64:Shotgun
-    Surgery: image'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: index'
-  description: 'code2llm reports `Shotgun Surgery: index` in `src/vdisplay/capture/linux_xwd.py:245`.
+  description: 'code2llm reports `Shotgun Surgery: index` in `src/vdisplay/control/selector.py:237`.
 
 
     Mutation of variable ''index'' spans 10 functions. Changing this logic requires
@@ -711,12 +710,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/linux_xwd.py:245:Shotgun
+  - src/vdisplay/control/selector.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/selector.py:237:Shotgun
     Surgery: index'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: info'
-  description: 'code2llm reports `Shotgun Surgery: info` in `src/vdisplay/windows/query.py:87`.
+  description: 'code2llm reports `Shotgun Surgery: info` in `examples/headless-virtual/run_virtual.py:30`.
 
 
     Mutation of variable ''info'' spans 9 functions. Changing this logic requires
@@ -731,12 +730,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/windows/query.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/windows/query.py:87:Shotgun
+  - examples/headless-virtual/run_virtual.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/headless-virtual/run_virtual.py:30:Shotgun
     Surgery: info'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: key'
-  description: 'code2llm reports `Shotgun Surgery: key` in `src/vdisplay/control/session.py:134`.
+  description: 'code2llm reports `Shotgun Surgery: key` in `src/vdisplay/backends/linux_x11_relay.py:412`.
 
 
     Mutation of variable ''key'' spans 17 functions. Changing this logic requires
@@ -751,12 +750,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/session.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/session.py:134:Shotgun
+  - src/vdisplay/backends/linux_x11_relay.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:412:Shotgun
     Surgery: key'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: kind'
-  description: 'code2llm reports `Shotgun Surgery: kind` in `src/vdisplay/control/providers/atspi.py:86`.
+  description: 'code2llm reports `Shotgun Surgery: kind` in `src/vdisplay/control/session.py:94`.
 
 
     Mutation of variable ''kind'' spans 6 functions. Changing this logic requires
@@ -771,15 +770,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/providers/atspi.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/atspi.py:86:Shotgun
+  - src/vdisplay/control/session.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/session.py:94:Shotgun
     Surgery: kind'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: label'
-  description: 'code2llm reports `Shotgun Surgery: label` in `src/vdisplay/discovery.py:124`.
+  description: 'code2llm reports `Shotgun Surgery: label` in `src/vdisplay/nl.py:41`.
 
 
-    Mutation of variable ''label'' spans 5 functions. Changing this logic requires
+    Mutation of variable ''label'' spans 6 functions. Changing this logic requires
     work in many places.
 
 
@@ -791,12 +790,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/discovery.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:124:Shotgun
-    Surgery: label'
+  - src/vdisplay/nl.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nl.py:41:Shotgun Surgery:
+    label'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: line'
-  description: 'code2llm reports `Shotgun Surgery: line` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57`.
+  description: 'code2llm reports `Shotgun Surgery: line` in `packages/uri2vdisplay/src/uri2vdisplay/cli.py:11`.
 
 
     Mutation of variable ''line'' spans 11 functions. Changing this logic requires
@@ -811,12 +810,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57:Shotgun
+  - packages/uri2vdisplay/src/uri2vdisplay/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/uri2vdisplay/src/uri2vdisplay/cli.py:11:Shotgun
     Surgery: line'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: lowered'
-  description: 'code2llm reports `Shotgun Surgery: lowered` in `src/vdisplay/windows/filter.py:13`.
+  description: 'code2llm reports `Shotgun Surgery: lowered` in `src/vdisplay/application/services/sampler_loop.py:61`.
 
 
     Mutation of variable ''lowered'' spans 7 functions. Changing this logic requires
@@ -831,12 +830,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/windows/filter.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/windows/filter.py:13:Shotgun
+  - src/vdisplay/application/services/sampler_loop.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/sampler_loop.py:61:Shotgun
     Surgery: lowered'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: match'
-  description: 'code2llm reports `Shotgun Surgery: match` in `src/vdisplay/backends/linux_x11_mirror.py:211`.
+  description: 'code2llm reports `Shotgun Surgery: match` in `src/vdisplay/backends/linux_x11_relay.py:454`.
 
 
     Mutation of variable ''match'' spans 7 functions. Changing this logic requires
@@ -851,15 +850,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/backends/linux_x11_mirror.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_mirror.py:211:Shotgun
+  - src/vdisplay/backends/linux_x11_relay.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:454:Shotgun
     Surgery: match'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: message'
-  description: 'code2llm reports `Shotgun Surgery: message` in `src/vdisplay/application/services/capture.py:27`.
+  title: 'Address code smell: Shotgun Surgery: matches'
+  description: 'code2llm reports `Shotgun Surgery: matches` in `src/vdisplay/control/selector.py:237`.
 
 
-    Mutation of variable ''message'' spans 6 functions. Changing this logic requires
+    Mutation of variable ''matches'' spans 19 functions. Changing this logic requires
     work in many places.
 
 
@@ -871,12 +870,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/application/services/capture.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/capture.py:27:Shotgun
-    Surgery: message'
+  - src/vdisplay/control/selector.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/selector.py:237:Shotgun
+    Surgery: matches'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: meta'
+  description: 'code2llm reports `Shotgun Surgery: meta` in `examples/host-mirror/mirror_demo.py:34`.
+
+
+    Mutation of variable ''meta'' spans 30 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
+    Surgery: meta'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: missing'
-  description: 'code2llm reports `Shotgun Surgery: missing` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: missing` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''missing'' spans 12 functions. Changing this logic requires
@@ -892,11 +911,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: missing'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: monitors'
-  description: 'code2llm reports `Shotgun Surgery: monitors` in `src/vdisplay/capture/host.py:19`.
+  description: 'code2llm reports `Shotgun Surgery: monitors` in `examples/host-mirror/mirror_demo.py:34`.
 
 
     Mutation of variable ''monitors'' spans 14 functions. Changing this logic requires
@@ -911,52 +930,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/host.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:19:Shotgun
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
     Surgery: monitors'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: normalized'
-  description: 'code2llm reports `Shotgun Surgery: normalized` in `src/vdisplay/capture/host.py:19`.
-
-
-    Mutation of variable ''normalized'' spans 12 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/capture/host.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:19:Shotgun
-    Surgery: normalized'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: ok'
-  description: 'code2llm reports `Shotgun Surgery: ok` in `src/vdisplay/capture/providers/engine.py:56`.
-
-
-    Mutation of variable ''ok'' spans 6 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/capture/providers/engine.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/providers/engine.py:56:Shotgun
-    Surgery: ok'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: out'
-  description: 'code2llm reports `Shotgun Surgery: out` in `src/vdisplay/capture/linux_xwd.py:245`.
+  description: 'code2llm reports `Shotgun Surgery: out` in `src/vdisplay/capture/host.py:402`.
 
 
     Mutation of variable ''out'' spans 11 functions. Changing this logic requires
@@ -971,32 +950,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/linux_xwd.py:245:Shotgun
+  - src/vdisplay/capture/host.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:402:Shotgun
     Surgery: out'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: output'
-  description: 'code2llm reports `Shotgun Surgery: output` in `src/vdisplay/nl.py:151`.
-
-
-    Mutation of variable ''output'' spans 9 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/nl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nl.py:151:Shotgun Surgery:
-    output'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: output_dir'
-  description: 'code2llm reports `Shotgun Surgery: output_dir` in `src/vdisplay/capture/host.py:502`.
+  description: 'code2llm reports `Shotgun Surgery: output_dir` in `examples/headless-virtual/run_virtual.py:30`.
 
 
     Mutation of variable ''output_dir'' spans 5 functions. Changing this logic requires
@@ -1011,12 +970,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/host.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:502:Shotgun
+  - examples/headless-virtual/run_virtual.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/headless-virtual/run_virtual.py:30:Shotgun
     Surgery: output_dir'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: outputs'
-  description: 'code2llm reports `Shotgun Surgery: outputs` in `packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py:60`.
+  description: 'code2llm reports `Shotgun Surgery: outputs` in `src/vdisplay/discovery.py:277`.
 
 
     Mutation of variable ''outputs'' spans 7 functions. Changing this logic requires
@@ -1031,12 +990,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py:60:Shotgun
+  - src/vdisplay/discovery.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:277:Shotgun
     Surgery: outputs'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: parser'
-  description: 'code2llm reports `Shotgun Surgery: parser` in `src/vdisplay/commands/all_cmd.py:32`.
+  description: 'code2llm reports `Shotgun Surgery: parser` in `packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:287`.
 
 
     Mutation of variable ''parser'' spans 29 functions. Changing this logic requires
@@ -1051,15 +1010,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/commands/all_cmd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/commands/all_cmd.py:32:Shotgun
+  - packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:287:Shotgun
     Surgery: parser'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: path'
-  description: 'code2llm reports `Shotgun Surgery: path` in `packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:60`.
+  title: 'Address code smell: Shotgun Surgery: parts'
+  description: 'code2llm reports `Shotgun Surgery: parts` in `packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:298`.
 
 
-    Mutation of variable ''path'' spans 22 functions. Changing this logic requires
+    Mutation of variable ''parts'' spans 13 functions. Changing this logic requires
     work in many places.
 
 
@@ -1071,32 +1030,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:60:Shotgun
+  - packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:298:Shotgun
+    Surgery: parts'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: path'
+  description: 'code2llm reports `Shotgun Surgery: path` in `examples/host-mirror/mirror_demo.py:34`.
+
+
+    Mutation of variable ''path'' spans 23 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
     Surgery: path'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: payload'
-  description: 'code2llm reports `Shotgun Surgery: payload` in `src/vdisplay/application/services/control.py:149`.
-
-
-    Mutation of variable ''payload'' spans 55 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/application/services/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/control.py:149:Shotgun
-    Surgery: payload'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: platform'
-  description: 'code2llm reports `Shotgun Surgery: platform` in `src/vdisplay/application/services/discovery.py:206`.
+  description: 'code2llm reports `Shotgun Surgery: platform` in `src/vdisplay/control/policy.py:135`.
 
 
     Mutation of variable ''platform'' spans 5 functions. Changing this logic requires
@@ -1111,15 +1070,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/application/services/discovery.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/discovery.py:206:Shotgun
+  - src/vdisplay/control/policy.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/policy.py:135:Shotgun
     Surgery: platform'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: png'
-  description: 'code2llm reports `Shotgun Surgery: png` in `src/vdisplay/capture/host.py:107`.
+  description: 'code2llm reports `Shotgun Surgery: png` in `src/vdisplay/capture/host.py:402`.
 
 
-    Mutation of variable ''png'' spans 15 functions. Changing this logic requires
+    Mutation of variable ''png'' spans 17 functions. Changing this logic requires
     work in many places.
 
 
@@ -1132,11 +1091,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/capture/host.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:107:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:402:Shotgun
     Surgery: png'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: primary'
-  description: 'code2llm reports `Shotgun Surgery: primary` in `src/vdisplay/backends/linux_x11_mirror.py:237`.
+  description: 'code2llm reports `Shotgun Surgery: primary` in `src/vdisplay/discovery.py:153`.
 
 
     Mutation of variable ''primary'' spans 5 functions. Changing this logic requires
@@ -1151,12 +1110,32 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/backends/linux_x11_mirror.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_mirror.py:237:Shotgun
+  - src/vdisplay/discovery.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:153:Shotgun
     Surgery: primary'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: profile'
+  description: 'code2llm reports `Shotgun Surgery: profile` in `src/vdisplay/control/browser_session_store.py:169`.
+
+
+    Mutation of variable ''profile'' spans 5 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/control/browser_session_store.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/browser_session_store.py:169:Shotgun
+    Surgery: profile'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: provider'
-  description: 'code2llm reports `Shotgun Surgery: provider` in `src/vdisplay/application/services/control.py:149`.
+  description: 'code2llm reports `Shotgun Surgery: provider` in `src/vdisplay/application/services/control.py:157`.
 
 
     Mutation of variable ''provider'' spans 6 functions. Changing this logic requires
@@ -1172,28 +1151,8 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/application/services/control.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/control.py:149:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/control.py:157:Shotgun
     Surgery: provider'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: query'
-  description: 'code2llm reports `Shotgun Surgery: query` in `src/vdisplay/client.py:29`.
-
-
-    Mutation of variable ''query'' spans 6 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/client.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/client.py:29:Shotgun Surgery:
-    query'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: raw'
   description: 'code2llm reports `Shotgun Surgery: raw` in `src/vdisplay/backends/linux_x11_relay.py:412`.
@@ -1215,8 +1174,28 @@ tickets:
   dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:412:Shotgun
     Surgery: raw'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: ready'
+  description: 'code2llm reports `Shotgun Surgery: ready` in `src/vdisplay/control/scoring.py:536`.
+
+
+    Mutation of variable ''ready'' spans 17 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/control/scoring.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
+    Surgery: ready'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: ready_reason'
-  description: 'code2llm reports `Shotgun Surgery: ready_reason` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: ready_reason` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''ready_reason'' spans 7 functions. Changing this logic requires
@@ -1232,11 +1211,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: ready_reason'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: reasons'
-  description: 'code2llm reports `Shotgun Surgery: reasons` in `src/vdisplay/control/profile_inference.py:139`.
+  description: 'code2llm reports `Shotgun Surgery: reasons` in `src/vdisplay/control/profile_inference.py:65`.
 
 
     Mutation of variable ''reasons'' spans 24 functions. Changing this logic requires
@@ -1252,14 +1231,14 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/profile_inference.py:139:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/profile_inference.py:65:Shotgun
     Surgery: reasons'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: region'
-  description: 'code2llm reports `Shotgun Surgery: region` in `src/vdisplay/capture/host.py:107`.
+  description: 'code2llm reports `Shotgun Surgery: region` in `src/vdisplay/capture/host.py:40`.
 
 
-    Mutation of variable ''region'' spans 8 functions. Changing this logic requires
+    Mutation of variable ''region'' spans 9 functions. Changing this logic requires
     work in many places.
 
 
@@ -1272,11 +1251,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/capture/host.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:107:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:40:Shotgun
     Surgery: region'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: registry'
-  description: 'code2llm reports `Shotgun Surgery: registry` in `src/vdisplay/control/plugins.py:106`.
+  description: 'code2llm reports `Shotgun Surgery: registry` in `src/vdisplay/control/plugins.py:53`.
 
 
     Mutation of variable ''registry'' spans 9 functions. Changing this logic requires
@@ -1292,11 +1271,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/plugins.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/plugins.py:106:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/plugins.py:53:Shotgun
     Surgery: registry'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: request'
-  description: 'code2llm reports `Shotgun Surgery: request` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57`.
+  description: 'code2llm reports `Shotgun Surgery: request` in `src/vdisplay/agent_dispatch.py:22`.
 
 
     Mutation of variable ''request'' spans 7 functions. Changing this logic requires
@@ -1311,12 +1290,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57:Shotgun
+  - src/vdisplay/agent_dispatch.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/agent_dispatch.py:22:Shotgun
     Surgery: request'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: resolved'
-  description: 'code2llm reports `Shotgun Surgery: resolved` in `src/vdisplay/agent_dispatch.py:15`.
+  description: 'code2llm reports `Shotgun Surgery: resolved` in `examples/host-mirror/mirror_demo.py:34`.
 
 
     Mutation of variable ''resolved'' spans 13 functions. Changing this logic requires
@@ -1331,15 +1310,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/agent_dispatch.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/agent_dispatch.py:15:Shotgun
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
     Surgery: resolved'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: result'
-  description: 'code2llm reports `Shotgun Surgery: result` in `src/vdisplay/backends/linux_x11_relay.py:454`.
+  description: 'code2llm reports `Shotgun Surgery: result` in `src/vdisplay/backends/linux_x11_relay.py:412`.
 
 
-    Mutation of variable ''result'' spans 47 functions. Changing this logic requires
+    Mutation of variable ''result'' spans 48 functions. Changing this logic requires
     work in many places.
 
 
@@ -1352,11 +1331,31 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/backends/linux_x11_relay.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:454:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:412:Shotgun
     Surgery: result'
 - signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: root'
+  description: 'code2llm reports `Shotgun Surgery: root` in `src/vdisplay/capture/portal_screencast.py:698`.
+
+
+    Mutation of variable ''root'' spans 5 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/capture/portal_screencast.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/portal_screencast.py:698:Shotgun
+    Surgery: root'
+- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: row'
-  description: 'code2llm reports `Shotgun Surgery: row` in `src/vdisplay/capture/linux_xwd.py:245`.
+  description: 'code2llm reports `Shotgun Surgery: row` in `packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:36`.
 
 
     Mutation of variable ''row'' spans 7 functions. Changing this logic requires work
@@ -1371,12 +1370,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/linux_xwd.py:245:Shotgun
+  - packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:36:Shotgun
     Surgery: row'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: score'
-  description: 'code2llm reports `Shotgun Surgery: score` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: score` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''score'' spans 18 functions. Changing this logic requires
@@ -1392,11 +1391,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: score'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: screencast'
-  description: 'code2llm reports `Shotgun Surgery: screencast` in `src/vdisplay/control/session.py:134`.
+  description: 'code2llm reports `Shotgun Surgery: screencast` in `src/vdisplay/capture/portal_screencast.py:229`.
 
 
     Mutation of variable ''screencast'' spans 5 functions. Changing this logic requires
@@ -1411,15 +1410,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/session.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/session.py:134:Shotgun
+  - src/vdisplay/capture/portal_screencast.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/portal_screencast.py:229:Shotgun
     Surgery: screencast'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: selector'
-  description: 'code2llm reports `Shotgun Surgery: selector` in `src/vdisplay/control/routing_semantics.py:89`.
+  description: 'code2llm reports `Shotgun Surgery: selector` in `src/vdisplay/application/services/control.py:117`.
 
 
-    Mutation of variable ''selector'' spans 11 functions. Changing this logic requires
+    Mutation of variable ''selector'' spans 12 functions. Changing this logic requires
     work in many places.
 
 
@@ -1431,35 +1430,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/routing_semantics.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/routing_semantics.py:89:Shotgun
+  - src/vdisplay/application/services/control.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/application/services/control.py:117:Shotgun
     Surgery: selector'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: sid'
-  description: 'code2llm reports `Shotgun Surgery: sid` in `src/vdisplay/control/profile_inference.py:161`.
+  title: 'Address code smell: Shotgun Surgery: session'
+  description: 'code2llm reports `Shotgun Surgery: session` in `examples/host-mirror/mirror_demo.py:34`.
 
 
-    Mutation of variable ''sid'' spans 9 functions. Changing this logic requires work
-    in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/profile_inference.py:161:Shotgun
-    Surgery: sid'
-- signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: state'
-  description: 'code2llm reports `Shotgun Surgery: state` in `src/vdisplay/backends/linux_x11_relay.py:331`.
-
-
-    Mutation of variable ''state'' spans 13 functions. Changing this logic requires
+    Mutation of variable ''session'' spans 53 functions. Changing this logic requires
     work in many places.
 
 
@@ -1471,12 +1450,52 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/backends/linux_x11_relay.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:331:Shotgun
+  - examples/host-mirror/mirror_demo.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:examples/host-mirror/mirror_demo.py:34:Shotgun
+    Surgery: session'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: session_id'
+  description: 'code2llm reports `Shotgun Surgery: session_id` in `packages/vdisplay-agent/src/vdisplay_agent/services/capture.py:15`.
+
+
+    Mutation of variable ''session_id'' spans 16 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/vdisplay-agent/src/vdisplay_agent/services/capture.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/capture.py:15:Shotgun
+    Surgery: session_id'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: state'
+  description: 'code2llm reports `Shotgun Surgery: state` in `packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:166`.
+
+
+    Mutation of variable ''state'' spans 14 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:166:Shotgun
     Surgery: state'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: store'
-  description: 'code2llm reports `Shotgun Surgery: store` in `packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:154`.
+  description: 'code2llm reports `Shotgun Surgery: store` in `packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:166`.
 
 
     Mutation of variable ''store'' spans 13 functions. Changing this logic requires
@@ -1491,12 +1510,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:154:Shotgun
+  - packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:166:Shotgun
     Surgery: store'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: sub'
-  description: 'code2llm reports `Shotgun Surgery: sub` in `src/vdisplay/commands/all_cmd.py:32`.
+  description: 'code2llm reports `Shotgun Surgery: sub` in `src/vdisplay/cli.py:10`.
 
 
     Mutation of variable ''sub'' spans 21 functions. Changing this logic requires
@@ -1511,12 +1530,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/commands/all_cmd.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/commands/all_cmd.py:32:Shotgun
-    Surgery: sub'
+  - src/vdisplay/cli.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/cli.py:10:Shotgun Surgery:
+    sub'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: suffix'
-  description: 'code2llm reports `Shotgun Surgery: suffix` in `src/vdisplay/client.py:58`.
+  description: 'code2llm reports `Shotgun Surgery: suffix` in `src/vdisplay/client.py:29`.
 
 
     Mutation of variable ''suffix'' spans 8 functions. Changing this logic requires
@@ -1532,11 +1551,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/client.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/client.py:58:Shotgun Surgery:
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/client.py:29:Shotgun Surgery:
     suffix'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: supports_native_invoke'
-  description: 'code2llm reports `Shotgun Surgery: supports_native_invoke` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: supports_native_invoke` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''supports_native_invoke'' spans 8 functions. Changing this
@@ -1552,11 +1571,11 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: supports_native_invoke'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: supports_semantic_find'
-  description: 'code2llm reports `Shotgun Surgery: supports_semantic_find` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `Shotgun Surgery: supports_semantic_find` in `src/vdisplay/control/scoring.py:536`.
 
 
     Mutation of variable ''supports_semantic_find'' spans 7 functions. Changing this
@@ -1572,7 +1591,7 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:274:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/scoring.py:536:Shotgun
     Surgery: supports_semantic_find'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: target'
@@ -1596,7 +1615,7 @@ tickets:
     Surgery: target'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: task_store'
-  description: 'code2llm reports `Shotgun Surgery: task_store` in `packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:162`.
+  description: 'code2llm reports `Shotgun Surgery: task_store` in `packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:136`.
 
 
     Mutation of variable ''task_store'' spans 6 functions. Changing this logic requires
@@ -1612,31 +1631,11 @@ tickets:
   - shotgun-surgery
   files:
   - packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:162:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py:136:Shotgun
     Surgery: task_store'
 - signal: code2llm_smell_shotgun_surgery
-  title: 'Address code smell: Shotgun Surgery: text'
-  description: 'code2llm reports `Shotgun Surgery: text` in `src/vdisplay/nlp.py:111`.
-
-
-    Mutation of variable ''text'' spans 8 functions. Changing this logic requires
-    work in many places.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: high
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - shotgun-surgery
-  files:
-  - src/vdisplay/nlp.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nlp.py:111:Shotgun Surgery:
-    text'
-- signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: title'
-  description: 'code2llm reports `Shotgun Surgery: title` in `src/vdisplay/windows/query.py:87`.
+  description: 'code2llm reports `Shotgun Surgery: title` in `src/vdisplay/control/session.py:94`.
 
 
     Mutation of variable ''title'' spans 6 functions. Changing this logic requires
@@ -1651,9 +1650,29 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/windows/query.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/windows/query.py:87:Shotgun
+  - src/vdisplay/control/session.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/session.py:94:Shotgun
     Surgery: title'
+- signal: code2llm_smell_shotgun_surgery
+  title: 'Address code smell: Shotgun Surgery: url'
+  description: 'code2llm reports `Shotgun Surgery: url` in `src/vdisplay/discovery.py:277`.
+
+
+    Mutation of variable ''url'' spans 17 functions. Changing this logic requires
+    work in many places.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: high
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - shotgun-surgery
+  files:
+  - src/vdisplay/discovery.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:277:Shotgun
+    Surgery: url'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: value'
   description: 'code2llm reports `Shotgun Surgery: value` in `src/vdisplay/capture/linux_xwd.py:245`.
@@ -1676,7 +1695,7 @@ tickets:
     Surgery: value'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: verb'
-  description: 'code2llm reports `Shotgun Surgery: verb` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57`.
+  description: 'code2llm reports `Shotgun Surgery: verb` in `packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:100`.
 
 
     Mutation of variable ''verb'' spans 10 functions. Changing this logic requires
@@ -1692,11 +1711,11 @@ tickets:
   - shotgun-surgery
   files:
   - packages/dsl2vdisplay/src/dsl2vdisplay/bus.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:57:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:100:Shotgun
     Surgery: verb'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: verified'
-  description: 'code2llm reports `Shotgun Surgery: verified` in `src/vdisplay/control/verifier.py:287`.
+  description: 'code2llm reports `Shotgun Surgery: verified` in `src/vdisplay/control/screenshot_verify.py:118`.
 
 
     Mutation of variable ''verified'' spans 5 functions. Changing this logic requires
@@ -1711,12 +1730,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/verifier.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/verifier.py:287:Shotgun
+  - src/vdisplay/control/screenshot_verify.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/screenshot_verify.py:118:Shotgun
     Surgery: verified'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: wid'
-  description: 'code2llm reports `Shotgun Surgery: wid` in `src/vdisplay/backends/linux_x11_relay.py:225`.
+  description: 'code2llm reports `Shotgun Surgery: wid` in `src/vdisplay/windows/scan.py:99`.
 
 
     Mutation of variable ''wid'' spans 8 functions. Changing this logic requires work
@@ -1731,15 +1750,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/backends/linux_x11_relay.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/backends/linux_x11_relay.py:225:Shotgun
+  - src/vdisplay/windows/scan.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/windows/scan.py:99:Shotgun
     Surgery: wid'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: width'
-  description: 'code2llm reports `Shotgun Surgery: width` in `src/vdisplay/nl.py:59`.
+  description: 'code2llm reports `Shotgun Surgery: width` in `src/vdisplay/control/screenshot_verify.py:118`.
 
 
-    Mutation of variable ''width'' spans 23 functions. Changing this logic requires
+    Mutation of variable ''width'' spans 24 functions. Changing this logic requires
     work in many places.
 
 
@@ -1751,12 +1770,12 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/nl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/nl.py:59:Shotgun Surgery:
-    width'
+  - src/vdisplay/control/screenshot_verify.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/screenshot_verify.py:118:Shotgun
+    Surgery: width'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: windows'
-  description: 'code2llm reports `Shotgun Surgery: windows` in `src/vdisplay/discovery.py:236`.
+  description: 'code2llm reports `Shotgun Surgery: windows` in `src/vdisplay/discovery.py:107`.
 
 
     Mutation of variable ''windows'' spans 9 functions. Changing this logic requires
@@ -1772,14 +1791,14 @@ tickets:
   - shotgun-surgery
   files:
   - src/vdisplay/discovery.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:236:Shotgun
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/discovery.py:107:Shotgun
     Surgery: windows'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: x'
-  description: 'code2llm reports `Shotgun Surgery: x` in `src/vdisplay/control/providers/ax_impl.py:75`.
+  description: 'code2llm reports `Shotgun Surgery: x` in `src/vdisplay/capture/host.py:40`.
 
 
-    Mutation of variable ''x'' spans 14 functions. Changing this logic requires work
+    Mutation of variable ''x'' spans 16 functions. Changing this logic requires work
     in many places.
 
 
@@ -1791,15 +1810,15 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/providers/ax_impl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/ax_impl.py:75:Shotgun
+  - src/vdisplay/capture/host.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:40:Shotgun
     Surgery: x'
 - signal: code2llm_smell_shotgun_surgery
   title: 'Address code smell: Shotgun Surgery: y'
-  description: 'code2llm reports `Shotgun Surgery: y` in `src/vdisplay/control/providers/ax_impl.py:75`.
+  description: 'code2llm reports `Shotgun Surgery: y` in `src/vdisplay/capture/host.py:40`.
 
 
-    Mutation of variable ''y'' spans 14 functions. Changing this logic requires work
+    Mutation of variable ''y'' spans 16 functions. Changing this logic requires work
     in many places.
 
 
@@ -1811,8 +1830,8 @@ tickets:
   - code-smell
   - shotgun-surgery
   files:
-  - src/vdisplay/control/providers/ax_impl.py
-  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/control/providers/ax_impl.py:75:Shotgun
+  - src/vdisplay/capture/host.py
+  dedupe_key: 'code2llm:smell:shotgun_surgery:src/vdisplay/capture/host.py:40:Shotgun
     Surgery: y'
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.vdisplay.application.commands.CommandRequest.from_dsl
@@ -1961,10 +1980,48 @@ tickets:
   - src/vdisplay/control/providers/uia_impl.py
   dedupe_key: code2llm:cc:src/vdisplay/control/providers/uia_impl.py:src.vdisplay.control.providers.uia_impl._matches_selector
 - signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.vdisplay.control.providers.vision.provider.VisionStubProvider._find_anchor_nodes
+    (CC=17)'
+  description: 'code2llm reports `src.vdisplay.control.providers.vision.provider.VisionStubProvider._find_anchor_nodes`
+    at `src/vdisplay/control/providers/vision/provider.py:161` with cyclomatic complexity
+    17 (limit 15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/vdisplay/control/providers/vision/provider.py
+  dedupe_key: code2llm:cc:src/vdisplay/control/providers/vision/provider.py:src.vdisplay.control.providers.vision.provider.VisionStubProvider._find_anchor_nodes
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.vdisplay.control.providers.x11.X11ControlProvider.snapshot
+    (CC=15)'
+  description: 'code2llm reports `src.vdisplay.control.providers.x11.X11ControlProvider.snapshot`
+    at `src/vdisplay/control/providers/x11.py:33` with cyclomatic complexity 15 (limit
+    15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/vdisplay/control/providers/x11.py
+  dedupe_key: code2llm:cc:src/vdisplay/control/providers/x11.py:src.vdisplay.control.providers.x11.X11ControlProvider.snapshot
+- signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.vdisplay.control.scoring._score_x11_provider
     (CC=18)'
   description: 'code2llm reports `src.vdisplay.control.scoring._score_x11_provider`
-    at `src/vdisplay/control/scoring.py:472` with cyclomatic complexity 18 (limit
+    at `src/vdisplay/control/scoring.py:483` with cyclomatic complexity 18 (limit
     15).
 
 
@@ -1983,7 +2040,7 @@ tickets:
   title: 'Reduce cyclomatic complexity: src.vdisplay.control.scoring.score_provider
     (CC=16)'
   description: 'code2llm reports `src.vdisplay.control.scoring.score_provider` at
-    `src/vdisplay/control/scoring.py:599` with cyclomatic complexity 16 (limit 15).
+    `src/vdisplay/control/scoring.py:610` with cyclomatic complexity 16 (limit 15).
 
 
     Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
@@ -1997,6 +2054,25 @@ tickets:
   files:
   - src/vdisplay/control/scoring.py
   dedupe_key: code2llm:cc:src/vdisplay/control/scoring.py:src.vdisplay.control.scoring.score_provider
+- signal: code2llm_cc
+  title: 'Reduce cyclomatic complexity: src.vdisplay.control.selector.ControlSelector.active_fields
+    (CC=16)'
+  description: 'code2llm reports `src.vdisplay.control.selector.ControlSelector.active_fields`
+    at `src/vdisplay/control/selector.py:81` with cyclomatic complexity 16 (limit
+    15).
+
+
+    Extract smaller functions, flatten conditionals, or split strategy branches. Re-run
+    code2llm after the change and keep tests green.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - complexity
+  - refactor
+  files:
+  - src/vdisplay/control/selector.py
+  dedupe_key: code2llm:cc:src/vdisplay/control/selector.py:src.vdisplay.control.selector.ControlSelector.active_fields
 - signal: code2llm_cc
   title: 'Reduce cyclomatic complexity: src.vdisplay.control.verifier.VerifierPipeline._evaluate_runs
     (CC=16)'
@@ -2041,9 +2117,9 @@ tickets:
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2063,9 +2139,9 @@ tickets:
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2081,13 +2157,35 @@ tickets:
     Clump: app, broker, check_auth'
 - signal: code2llm_smell_data_clump
   title: 'Address code smell: Data Clump: app, broker, check_auth'
+  description: 'code2llm reports `Data Clump: app, broker, check_auth` in `packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20`.
+
+
+    Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
+  dedupe_key: 'code2llm:smell:data_clump:packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20:Data
+    Clump: app, broker, check_auth'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: app, broker, check_auth'
   description: 'code2llm reports `Data Clump: app, broker, check_auth` in `packages/vdisplay-agent/src/vdisplay_agent/routes/tasks.py:16`.
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2107,9 +2205,9 @@ tickets:
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2129,9 +2227,9 @@ tickets:
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2151,9 +2249,9 @@ tickets:
 
 
     Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
+    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes,
+    packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -2168,74 +2266,12 @@ tickets:
   dedupe_key: 'code2llm:smell:data_clump:packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py:16:Data
     Clump: app, broker, check_auth'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: app, broker, check_auth'
-  description: 'code2llm reports `Data Clump: app, broker, check_auth` in `packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20`.
-
-
-    Arguments (app, broker, check_auth) are used together in multiple functions: packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes,
-    packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes, packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
-  dedupe_key: 'code2llm:smell:data_clump:packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20:Data
-    Clump: app, broker, check_auth'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: height, rgb, width'
-  description: 'code2llm reports `Data Clump: height, rgb, width` in `src/vdisplay/capture/linux_xwd.py:294`.
-
-
-    Arguments (height, rgb, width) are used together in multiple functions: src.vdisplay.capture.linux_xwd._rgb_to_png,
-    src.vdisplay.capture.linux_xwd._rgb_to_png_minimal.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/linux_xwd.py:294:Data
-    Clump: height, rgb, width'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: height, rgb, width'
-  description: 'code2llm reports `Data Clump: height, rgb, width` in `src/vdisplay/capture/linux_xwd.py:306`.
-
-
-    Arguments (height, rgb, width) are used together in multiple functions: src.vdisplay.capture.linux_xwd._rgb_to_png,
-    src.vdisplay.capture.linux_xwd._rgb_to_png_minimal.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/capture/linux_xwd.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/linux_xwd.py:306:Data
-    Clump: height, rgb, width'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: node_id, target_object, out, cap_fd'
-  description: 'code2llm reports `Data Clump: node_id, target_object, out, cap_fd`
+  title: 'Address code smell: Data Clump: out, target_object, node_id, cap_fd'
+  description: 'code2llm reports `Data Clump: out, target_object, node_id, cap_fd`
     in `src/vdisplay/capture/portal_screencast.py:598`.
 
 
-    Arguments (node_id, target_object, out, cap_fd) are used together in multiple
+    Arguments (out, target_object, node_id, cap_fd) are used together in multiple
     functions: src.vdisplay.capture.portal_screencast._capture_pipewire_frame_gi_subprocess,
     src.vdisplay.capture.portal_screencast._capture_pipewire_frame_gst_launch.
 
@@ -2250,14 +2286,14 @@ tickets:
   files:
   - src/vdisplay/capture/portal_screencast.py
   dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/portal_screencast.py:598:Data
-    Clump: node_id, target_object, out, cap_fd'
+    Clump: out, target_object, node_id, cap_fd'
 - signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: node_id, target_object, out, cap_fd'
-  description: 'code2llm reports `Data Clump: node_id, target_object, out, cap_fd`
+  title: 'Address code smell: Data Clump: out, target_object, node_id, cap_fd'
+  description: 'code2llm reports `Data Clump: out, target_object, node_id, cap_fd`
     in `src/vdisplay/capture/portal_screencast.py:635`.
 
 
-    Arguments (node_id, target_object, out, cap_fd) are used together in multiple
+    Arguments (out, target_object, node_id, cap_fd) are used together in multiple
     functions: src.vdisplay.capture.portal_screencast._capture_pipewire_frame_gi_subprocess,
     src.vdisplay.capture.portal_screencast._capture_pipewire_frame_gst_launch.
 
@@ -2272,7 +2308,47 @@ tickets:
   files:
   - src/vdisplay/capture/portal_screencast.py
   dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/portal_screencast.py:635:Data
-    Clump: node_id, target_object, out, cap_fd'
+    Clump: out, target_object, node_id, cap_fd'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: rgb, width, height'
+  description: 'code2llm reports `Data Clump: rgb, width, height` in `src/vdisplay/capture/linux_xwd.py:294`.
+
+
+    Arguments (rgb, width, height) are used together in multiple functions: src.vdisplay.capture.linux_xwd._rgb_to_png,
+    src.vdisplay.capture.linux_xwd._rgb_to_png_minimal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/capture/linux_xwd.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/linux_xwd.py:294:Data
+    Clump: rgb, width, height'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: rgb, width, height'
+  description: 'code2llm reports `Data Clump: rgb, width, height` in `src/vdisplay/capture/linux_xwd.py:306`.
+
+
+    Arguments (rgb, width, height) are used together in multiple functions: src.vdisplay.capture.linux_xwd._rgb_to_png,
+    src.vdisplay.capture.linux_xwd._rgb_to_png_minimal.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/capture/linux_xwd.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/capture/linux_xwd.py:306:Data
+    Clump: rgb, width, height'
 - signal: code2llm_smell_data_clump
   title: 'Address code smell: Data Clump: self, ctx, spec'
   description: 'code2llm reports `Data Clump: self, ctx, spec` in `src/vdisplay/control/verifier.py:92`.
@@ -2313,6 +2389,222 @@ tickets:
   - src/vdisplay/control/verifier.py
   dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/verifier.py:185:Data
     Clump: self, ctx, spec'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `examples/control-plugin/src/vdisplay_example_plugin/my_provider.py:87`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - examples/control-plugin/src/vdisplay_example_plugin/my_provider.py
+  dedupe_key: 'code2llm:smell:data_clump:examples/control-plugin/src/vdisplay_example_plugin/my_provider.py:87:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/base.py:41`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/base.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/base.py:41:Data Clump:
+    self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/uia.py:141`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/uia.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/uia.py:141:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/browser_playwright.py:328`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/browser_playwright.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/browser_playwright.py:328:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/ax.py:141`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/ax.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/ax.py:141:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/atspi.py:229`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/atspi.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/atspi.py:229:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/terminal.py:115`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/terminal.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/terminal.py:115:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/x11.py:125`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/x11.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/x11.py:125:Data
+    Clump: self, element_id, value'
+- signal: code2llm_smell_data_clump
+  title: 'Address code smell: Data Clump: self, element_id, value'
+  description: 'code2llm reports `Data Clump: self, element_id, value` in `src/vdisplay/control/providers/vision/provider.py:326`.
+
+
+    Arguments (self, element_id, value) are used together in multiple functions: examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
+    src.vdisplay.control.base.ControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.set_value,
+    src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
+    src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value,
+    src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.set_value,
+    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - data-clump
+  files:
+  - src/vdisplay/control/providers/vision/provider.py
+  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/vision/provider.py:326:Data
+    Clump: self, element_id, value'
 - signal: code2llm_smell_data_clump
   title: 'Address code smell: Data Clump: self, path, method'
   description: 'code2llm reports `Data Clump: self, path, method` in `src/vdisplay/client.py:124`.
@@ -2545,222 +2837,6 @@ tickets:
   - src/vdisplay/backends/mirror_stub.py
   dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/backends/mirror_stub.py:16:Data
     Clump: self, target, source'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/base.py:41`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/base.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/base.py:41:Data Clump:
-    self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/x11.py:112`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/x11.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/x11.py:112:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/browser_playwright.py:328`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/browser_playwright.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/browser_playwright.py:328:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/atspi.py:229`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/atspi.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/atspi.py:229:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/terminal.py:115`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/terminal.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/terminal.py:115:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `examples/control-plugin/src/vdisplay_example_plugin/my_provider.py:87`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - examples/control-plugin/src/vdisplay_example_plugin/my_provider.py
-  dedupe_key: 'code2llm:smell:data_clump:examples/control-plugin/src/vdisplay_example_plugin/my_provider.py:87:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/uia.py:141`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/uia.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/uia.py:141:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/ax.py:141`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/ax.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/ax.py:141:Data
-    Clump: self, value, element_id'
-- signal: code2llm_smell_data_clump
-  title: 'Address code smell: Data Clump: self, value, element_id'
-  description: 'code2llm reports `Data Clump: self, value, element_id` in `src/vdisplay/control/providers/vision/provider.py:187`.
-
-
-    Arguments (self, value, element_id) are used together in multiple functions: src.vdisplay.control.base.ControlProvider.set_value,
-    src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.set_value,
-    src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value,
-    examples.control-plugin.src.vdisplay_example_plugin.my_provider.EchoControlProvider.set_value,
-    src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.set_value,
-    src.vdisplay.control.providers.vision.provider.VisionStubProvider.set_value.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - data-clump
-  files:
-  - src/vdisplay/control/providers/vision/provider.py
-  dedupe_key: 'code2llm:smell:data_clump:src/vdisplay/control/providers/vision/provider.py:187:Data
-    Clump: self, value, element_id'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _acquire_display'
   description: 'code2llm reports `God Function: _acquire_display` in `src/vdisplay/backends/linux_xvfb.py:93`.
@@ -2782,7 +2858,7 @@ tickets:
     Function: _acquire_display'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _apply_attr'
-  description: 'code2llm reports `God Function: _apply_attr` in `src/vdisplay/control/selector.py:268`.
+  description: 'code2llm reports `God Function: _apply_attr` in `src/vdisplay/control/selector.py:281`.
 
 
     Function ''_apply_attr'' is oversized: CC=13, fan-out=2, mutations=16.
@@ -2797,7 +2873,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/selector.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:268:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:281:God
     Function: _apply_attr'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _assess_wayland'
@@ -3089,7 +3165,7 @@ tickets:
     Function: _crop_png'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _execute_action'
-  description: 'code2llm reports `God Function: _execute_action` in `src/vdisplay/application/services/control.py:335`.
+  description: 'code2llm reports `God Function: _execute_action` in `src/vdisplay/application/services/control.py:343`.
 
 
     Function ''_execute_action'' is oversized: CC=7, fan-out=14, mutations=14.
@@ -3104,7 +3180,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/application/services/control.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:335:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:343:God
     Function: _execute_action'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _fb_info'
@@ -3182,6 +3258,25 @@ tickets:
   - src/vdisplay/control/providers/atspi_impl.py
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/providers/atspi_impl.py:393:God
     Function: _handle_set_value'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _horizontal_overlap'
+  description: 'code2llm reports `God Function: _horizontal_overlap` in `src/vdisplay/control/vision_ocr.py:151`.
+
+
+    Function ''_horizontal_overlap'' is oversized: CC=2, fan-out=0, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_ocr.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_ocr.py:151:God
+    Function: _horizontal_overlap'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _label_prefix_changes'
   description: 'code2llm reports `God Function: _label_prefix_changes` in `src/vdisplay/control/verify.py:190`.
@@ -3621,7 +3716,7 @@ tickets:
     Function: _run_subprocess'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score'
-  description: 'code2llm reports `God Function: _score` in `src/vdisplay/control/selector.py:176`.
+  description: 'code2llm reports `God Function: _score` in `src/vdisplay/control/selector.py:189`.
 
 
     Function ''_score'' is oversized: CC=6, fan-out=6, mutations=11.
@@ -3636,11 +3731,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/selector.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:176:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:189:God
     Function: _score'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_atspi_provider'
-  description: 'code2llm reports `God Function: _score_atspi_provider` in `src/vdisplay/control/scoring.py:274`.
+  description: 'code2llm reports `God Function: _score_atspi_provider` in `src/vdisplay/control/scoring.py:285`.
 
 
     Function ''_score_atspi_provider'' is oversized: CC=10, fan-out=5, mutations=21.
@@ -3655,11 +3750,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:274:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:285:God
     Function: _score_atspi_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_ax_provider'
-  description: 'code2llm reports `God Function: _score_ax_provider` in `src/vdisplay/control/scoring.py:348`.
+  description: 'code2llm reports `God Function: _score_ax_provider` in `src/vdisplay/control/scoring.py:359`.
 
 
     Function ''_score_ax_provider'' is oversized: CC=10, fan-out=4, mutations=21.
@@ -3674,11 +3769,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:348:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:359:God
     Function: _score_ax_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_browser_engine'
-  description: 'code2llm reports `God Function: _score_browser_engine` in `src/vdisplay/control/profile_inference.py:60`.
+  description: 'code2llm reports `God Function: _score_browser_engine` in `src/vdisplay/control/profile_inference.py:65`.
 
 
     Function ''_score_browser_engine'' is oversized: CC=8, fan-out=4, mutations=8.
@@ -3693,11 +3788,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:60:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:65:God
     Function: _score_browser_engine'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_native_desktop'
-  description: 'code2llm reports `God Function: _score_native_desktop` in `src/vdisplay/control/profile_inference.py:139`.
+  description: 'code2llm reports `God Function: _score_native_desktop` in `src/vdisplay/control/profile_inference.py:144`.
 
 
     Function ''_score_native_desktop'' is oversized: CC=14, fan-out=1, mutations=11.
@@ -3712,11 +3807,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:139:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:144:God
     Function: _score_native_desktop'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_plugin_provider'
-  description: 'code2llm reports `God Function: _score_plugin_provider` in `src/vdisplay/control/scoring.py:559`.
+  description: 'code2llm reports `God Function: _score_plugin_provider` in `src/vdisplay/control/scoring.py:570`.
 
 
     Function ''_score_plugin_provider'' is oversized: CC=11, fan-out=3, mutations=20.
@@ -3731,11 +3826,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:559:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:570:God
     Function: _score_plugin_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_terminal_provider'
-  description: 'code2llm reports `God Function: _score_terminal_provider` in `src/vdisplay/control/scoring.py:385`.
+  description: 'code2llm reports `God Function: _score_terminal_provider` in `src/vdisplay/control/scoring.py:396`.
 
 
     Function ''_score_terminal_provider'' is oversized: CC=7, fan-out=4, mutations=29.
@@ -3750,11 +3845,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:385:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:396:God
     Function: _score_terminal_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_terminal_pty'
-  description: 'code2llm reports `God Function: _score_terminal_pty` in `src/vdisplay/control/profile_inference.py:99`.
+  description: 'code2llm reports `God Function: _score_terminal_pty` in `src/vdisplay/control/profile_inference.py:104`.
 
 
     Function ''_score_terminal_pty'' is oversized: CC=7, fan-out=1, mutations=9.
@@ -3769,11 +3864,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:99:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:104:God
     Function: _score_terminal_pty'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_uia_provider'
-  description: 'code2llm reports `God Function: _score_uia_provider` in `src/vdisplay/control/scoring.py:311`.
+  description: 'code2llm reports `God Function: _score_uia_provider` in `src/vdisplay/control/scoring.py:322`.
 
 
     Function ''_score_uia_provider'' is oversized: CC=10, fan-out=4, mutations=21.
@@ -3788,11 +3883,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:311:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:322:God
     Function: _score_uia_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_vision_provider'
-  description: 'code2llm reports `God Function: _score_vision_provider` in `src/vdisplay/control/scoring.py:525`.
+  description: 'code2llm reports `God Function: _score_vision_provider` in `src/vdisplay/control/scoring.py:536`.
 
 
     Function ''_score_vision_provider'' is oversized: CC=6, fan-out=4, mutations=19.
@@ -3807,11 +3902,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:525:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:536:God
     Function: _score_vision_provider'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _score_web_spa'
-  description: 'code2llm reports `God Function: _score_web_spa` in `src/vdisplay/control/profile_inference.py:84`.
+  description: 'code2llm reports `God Function: _score_web_spa` in `src/vdisplay/control/profile_inference.py:89`.
 
 
     Function ''_score_web_spa'' is oversized: CC=6, fan-out=1, mutations=7.
@@ -3826,8 +3921,27 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:84:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:89:God
     Function: _score_web_spa'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _search_region_for_relation'
+  description: 'code2llm reports `God Function: _search_region_for_relation` in `src/vdisplay/control/vision_template.py:136`.
+
+
+    Function ''_search_region_for_relation'' is oversized: CC=8, fan-out=5, mutations=23.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_template.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_template.py:136:God
+    Function: _search_region_for_relation'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _select_winner'
   description: 'code2llm reports `God Function: _select_winner` in `src/vdisplay/control/router.py:60`.
@@ -3943,11 +4057,30 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/capture/host.py:242:God Function:
     _try_screencast_capture'
 - signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: _vertical_overlap'
+  description: 'code2llm reports `God Function: _vertical_overlap` in `src/vdisplay/control/vision_ocr.py:145`.
+
+
+    Function ''_vertical_overlap'' is oversized: CC=2, fan-out=0, mutations=8.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_ocr.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_ocr.py:145:God
+    Function: _vertical_overlap'
+- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: _vision_ready'
   description: 'code2llm reports `God Function: _vision_ready` in `src/vdisplay/control/scoring.py:201`.
 
 
-    Function ''_vision_ready'' is oversized: CC=3, fan-out=4, mutations=8.
+    Function ''_vision_ready'' is oversized: CC=6, fan-out=5, mutations=12.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -3981,30 +4114,11 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/backends/linux_x11_relay.py:412:God
     Function: _window_geometry'
 - signal: code2llm_smell_god_function
-  title: 'Address code smell: God Function: active_fields'
-  description: 'code2llm reports `God Function: active_fields` in `src/vdisplay/control/selector.py:75`.
-
-
-    Function ''active_fields'' is oversized: CC=14, fan-out=4, mutations=0.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - god-function
-  files:
-  - src/vdisplay/control/selector.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:75:God
-    Function: active_fields'
-- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: add_control_selector_args'
   description: 'code2llm reports `God Function: add_control_selector_args` in `src/vdisplay/commands/common.py:41`.
 
 
-    Function ''add_control_selector_args'' is oversized: CC=1, fan-out=1, mutations=14.
+    Function ''add_control_selector_args'' is oversized: CC=1, fan-out=1, mutations=18.
 
 
     Make the smallest refactor that removes the smell and run local tests.'
@@ -4037,6 +4151,25 @@ tickets:
   - src/vdisplay/backends/linux_x11_relay.py
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/backends/linux_x11_relay.py:73:God
     Function: adopt_window'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: anchor_spatial_relation'
+  description: 'code2llm reports `God Function: anchor_spatial_relation` in `src/vdisplay/control/vision_ocr.py:157`.
+
+
+    Function ''anchor_spatial_relation'' is oversized: CC=10, fan-out=4, mutations=10.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_ocr.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_ocr.py:157:God
+    Function: anchor_spatial_relation'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: assign_windows_to_monitors'
   description: 'code2llm reports `God Function: assign_windows_to_monitors` in `src/vdisplay/nl.py:132`.
@@ -4191,7 +4324,7 @@ tickets:
     Function: collect_elements'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: controls_find'
-  description: 'code2llm reports `God Function: controls_find` in `src/vdisplay/application/services/control.py:175`.
+  description: 'code2llm reports `God Function: controls_find` in `src/vdisplay/application/services/control.py:183`.
 
 
     Function ''controls_find'' is oversized: CC=7, fan-out=11, mutations=6.
@@ -4206,7 +4339,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/application/services/control.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:175:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:183:God
     Function: controls_find'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: create_app'
@@ -4322,7 +4455,7 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/nl.py:6:God Function: describe_window_nl'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: detect_platform_profile'
-  description: 'code2llm reports `God Function: detect_platform_profile` in `src/vdisplay/control/descriptors.py:391`.
+  description: 'code2llm reports `God Function: detect_platform_profile` in `src/vdisplay/control/descriptors.py:393`.
 
 
     Function ''detect_platform_profile'' is oversized: CC=14, fan-out=13, mutations=13.
@@ -4337,11 +4470,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/descriptors.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/descriptors.py:391:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/descriptors.py:393:God
     Function: detect_platform_profile'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: diagnose_control'
-  description: 'code2llm reports `God Function: diagnose_control` in `src/vdisplay/application/services/control.py:109`.
+  description: 'code2llm reports `God Function: diagnose_control` in `src/vdisplay/application/services/control.py:117`.
 
 
     Function ''diagnose_control'' is oversized: CC=5, fan-out=12, mutations=9.
@@ -4356,7 +4489,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/application/services/control.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:109:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/application/services/control.py:117:God
     Function: diagnose_control'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: diagnose_display'
@@ -4493,7 +4626,7 @@ tickets:
     Function: find'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: find_matches'
-  description: 'code2llm reports `God Function: find_matches` in `src/vdisplay/control/selector.py:198`.
+  description: 'code2llm reports `God Function: find_matches` in `src/vdisplay/control/selector.py:211`.
 
 
     Function ''find_matches'' is oversized: CC=13, fan-out=12, mutations=1.
@@ -4508,11 +4641,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/selector.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:198:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:211:God
     Function: find_matches'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: infer_application_profile'
-  description: 'code2llm reports `God Function: infer_application_profile` in `src/vdisplay/control/profile_inference.py:209`.
+  description: 'code2llm reports `God Function: infer_application_profile` in `src/vdisplay/control/profile_inference.py:214`.
 
 
     Function ''infer_application_profile'' is oversized: CC=6, fan-out=8, mutations=14.
@@ -4527,7 +4660,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:209:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:214:God
     Function: infer_application_profile'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: inspect_window'
@@ -4911,7 +5044,7 @@ tickets:
     Function: open_pexpect'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: parse_selector'
-  description: 'code2llm reports `God Function: parse_selector` in `src/vdisplay/control/selector.py:296`.
+  description: 'code2llm reports `God Function: parse_selector` in `src/vdisplay/control/selector.py:309`.
 
 
     Function ''parse_selector'' is oversized: CC=14, fan-out=14, mutations=8.
@@ -4926,7 +5059,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/selector.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:296:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/selector.py:309:God
     Function: parse_selector'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: platform_capabilities'
@@ -4987,7 +5120,7 @@ tickets:
     Function: png_dimensions'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: profile_provider_boost'
-  description: 'code2llm reports `God Function: profile_provider_boost` in `src/vdisplay/control/profile_inference.py:245`.
+  description: 'code2llm reports `God Function: profile_provider_boost` in `src/vdisplay/control/profile_inference.py:250`.
 
 
     Function ''profile_provider_boost'' is oversized: CC=6, fan-out=1, mutations=9.
@@ -5002,11 +5135,11 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/profile_inference.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:245:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:250:God
     Function: profile_provider_boost'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: rank_providers'
-  description: 'code2llm reports `God Function: rank_providers` in `src/vdisplay/control/scoring.py:659`.
+  description: 'code2llm reports `God Function: rank_providers` in `src/vdisplay/control/scoring.py:670`.
 
 
     Function ''rank_providers'' is oversized: CC=8, fan-out=12, mutations=13.
@@ -5021,7 +5154,7 @@ tickets:
   - god-function
   files:
   - src/vdisplay/control/scoring.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:659:God
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/scoring.py:670:God
     Function: rank_providers'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: register'
@@ -5120,6 +5253,25 @@ tickets:
     Function: register_routes'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: register_routes'
+  description: 'code2llm reports `God Function: register_routes` in `packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20`.
+
+
+    Function ''register_routes'' is oversized: CC=1, fan-out=11, mutations=0.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
+  dedupe_key: 'code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20:God
+    Function: register_routes'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: register_routes'
   description: 'code2llm reports `God Function: register_routes` in `packages/vdisplay-agent/src/vdisplay_agent/routes/tasks.py:16`.
 
 
@@ -5174,25 +5326,6 @@ tickets:
   files:
   - packages/vdisplay-agent/src/vdisplay_agent/routes/control.py
   dedupe_key: 'code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/routes/control.py:17:God
-    Function: register_routes'
-- signal: code2llm_smell_god_function
-  title: 'Address code smell: God Function: register_routes'
-  description: 'code2llm reports `God Function: register_routes` in `packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20`.
-
-
-    Function ''register_routes'' is oversized: CC=1, fan-out=11, mutations=0.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - god-function
-  files:
-  - packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
-  dedupe_key: 'code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:20:God
     Function: register_routes'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: relay_screenshot'
@@ -5327,25 +5460,6 @@ tickets:
   dedupe_key: 'code2llm:smell:god_function:examples/control-plane/control_demo.py:29:God
     Function: show_active_controls'
 - signal: code2llm_smell_god_function
-  title: 'Address code smell: God Function: snapshot'
-  description: 'code2llm reports `God Function: snapshot` in `src/vdisplay/control/providers/x11.py:33`.
-
-
-    Function ''snapshot'' is oversized: CC=13, fan-out=10, mutations=0.
-
-
-    Make the smallest refactor that removes the smell and run local tests.'
-  priority: normal
-  labels:
-  - llm-ready
-  - code2llm
-  - code-smell
-  - god-function
-  files:
-  - src/vdisplay/control/providers/x11.py
-  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/providers/x11.py:33:God
-    Function: snapshot'
-- signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: snapshot_dict'
   description: 'code2llm reports `God Function: snapshot_dict` in `src/vdisplay/control/providers/atspi_impl.py:237`.
 
@@ -5421,6 +5535,25 @@ tickets:
   - packages/vdisplay-agent/src/vdisplay_agent/serve_port.py
   dedupe_key: 'code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:91:God
     Function: stop_pids'
+- signal: code2llm_smell_god_function
+  title: 'Address code smell: God Function: template_anchor_find'
+  description: 'code2llm reports `God Function: template_anchor_find` in `src/vdisplay/control/vision_template.py:177`.
+
+
+    Function ''template_anchor_find'' is oversized: CC=2, fan-out=10, mutations=11.
+
+
+    Make the smallest refactor that removes the smell and run local tests.'
+  priority: normal
+  labels:
+  - llm-ready
+  - code2llm
+  - code-smell
+  - god-function
+  files:
+  - src/vdisplay/control/vision_template.py
+  dedupe_key: 'code2llm:smell:god_function:src/vdisplay/control/vision_template.py:177:God
+    Function: template_anchor_find'
 - signal: code2llm_smell_god_function
   title: 'Address code smell: God Function: uri_to_dsl'
   description: 'code2llm reports `God Function: uri_to_dsl` in `packages/uri2vdisplay/src/uri2vdisplay/decode.py:6`.

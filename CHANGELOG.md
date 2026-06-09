@@ -175,6 +175,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.10] - 2026-06-09
+
+### Docs
+- Update README.md
+- Update docs/rfc/001-extensibility-model.md
+- Update docs/rfc/extensibility-model.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_vision_anchor_matching.py
+- Update tests/test_vision_template_matching.py
+
+### Other
+- Update .code2llm_cache/__init___1781039844393866372_159.pkl
+- Update .code2llm_cache/common_1781040205653846463_4359.pkl
+- Update .code2llm_cache/control_1781040207076088867_13801.pkl
+- Update .code2llm_cache/descriptors_1781040183676855820_15825.pkl
+- Update .code2llm_cache/profile_inference_1781040215567220234_9124.pkl
+- Update .code2llm_cache/provider_1781040202721045498_13573.pkl
+- Update .code2llm_cache/pyproject_1781040184682865842_3441.pkl
+- Update .code2llm_cache/scoring_1781040215709388690_25830.pkl
+- Update .code2llm_cache/selector_1781040187854897438_12252.pkl
+- Update .code2llm_cache/vision_ocr_1781040211854136445_7119.pkl
+- ... and 19 more files
+
 ## [0.1.9] - 2026-06-09
 
 ### Docs

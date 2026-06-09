@@ -275,11 +275,12 @@ Session gates: browser and terminal providers require an open session (`browser_
 | PR-19 | Windows UIA / macOS AX provider stubs + host-gated routing |
 | PR-20 | Vision OCR find/invoke (tesseract + pointer fallback) |
 | PR-21 | Full Windows UIA / macOS AX invoke (comtypes + ApplicationServices) |
+| PR-22 | Vision template + spatial anchor matching (opencv + bounds geometry) |
 
 ## Recommended next PRs
 
-1. **PR-22** — Vision template/anchor matching beyond OCR text boxes.
-2. **PR-23** — Cross-platform control plugin examples (UIA/AX wheels).
+1. **PR-23** — Cross-platform control plugin examples (UIA/AX wheels).
+2. **PR-24** — Vision multi-match disambiguation (index + confidence thresholds).
 
 ## One-line principle
 

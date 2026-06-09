@@ -33,6 +33,9 @@ class ControlSelector:
     terminal_col: int | None = None
     session_id: str | None = None
     vision_anchor: str | None = None
+    vision_template: str | None = None
+    vision_anchor_rel: str | None = None
+    vision_target: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -61,6 +64,9 @@ class ControlSelector:
             terminal_col=payload.get("terminal_col"),
             session_id=payload.get("session_id"),
             vision_anchor=payload.get("vision_anchor"),
+            vision_template=payload.get("vision_template"),
+            vision_anchor_rel=payload.get("vision_anchor_rel"),
+            vision_target=payload.get("vision_target"),
             extra=extra,
         )
 
@@ -84,7 +90,14 @@ class ControlSelector:
         env_map = {
             "browser": ("dom_css", "dom_xpath", "text", "text_contains", "role", "name"),
             "terminal": ("terminal_line", "terminal_col", "session_id", "text", "text_contains"),
-            "vision": ("vision_anchor", "text", "text_contains"),
+            "vision": (
+                "vision_anchor",
+                "vision_template",
+                "vision_anchor_rel",
+                "vision_target",
+                "text",
+                "text_contains",
+            ),
         }
         
         env_match = self.environment
@@ -93,7 +106,7 @@ class ControlSelector:
                 env_match = "browser"
             elif self.terminal_line is not None:
                 env_match = "terminal"
-            elif self.vision_anchor:
+            elif self.vision_anchor or self.vision_template or self.vision_anchor_rel:
                 env_match = "vision"
                 
         if env_match in env_map:

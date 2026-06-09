@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.14s
+%% generated in 0.06s
     examples__agent_broker["examples.agent-broker<br/>2 funcs"]
     examples__ci_agent["examples.ci-agent<br/>2 funcs"]
     examples__common["examples.common<br/>13 funcs"]
@@ -15,7 +15,7 @@ flowchart TD
     packages__rest2vdisplay["packages.rest2vdisplay<br/>2 funcs"]
     packages__uri2vdisplay["packages.uri2vdisplay<br/>2 funcs"]
     packages__vdisplay_agent["packages.vdisplay-agent<br/>129 funcs"]
-    src__vdisplay["src.vdisplay<br/>963 funcs"]
+    src__vdisplay["src.vdisplay<br/>982 funcs"]
     packages__vdisplay_agent ==>|28| src__vdisplay
     packages__dsl2vdisplay ==>|6| src__vdisplay
     src__vdisplay ==>|6| packages__dsl2vdisplay
@@ -35,8 +35,9 @@ flowchart TD
     packages__uri2vdisplay -->|1| packages__dsl2vdisplay
     packages__nlp2vdisplay -->|1| src__vdisplay
     packages__vdisplay_agent -->|1| packages__rest2vdisplay
+    examples__control_plugin -->|1| src__vdisplay
     examples__control_plane -->|1| src__vdisplay
     examples__agent_broker -->|1| src__vdisplay
     examples__common -->|1| src__vdisplay
     src__vdisplay -->|1| packages__rest2vdisplay
-    examples__control_plugin -->|1| src__vdisplay
+    src__vdisplay -->|1| examples__control_plugin

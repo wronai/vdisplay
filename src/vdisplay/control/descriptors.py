@@ -75,9 +75,11 @@ BROWSER_SELECTOR = SelectorExtension(
 
 VISION_SELECTOR = SelectorExtension(
     name="vision",
-    fields=frozenset({"vision_anchor"}),
+    fields=frozenset(
+        {"vision_anchor", "vision_template", "vision_anchor_rel", "vision_target"}
+    ),
     environments=frozenset({"vision"}),
-    description="Visual anchor hints when semantic trees are unavailable",
+    description="Visual anchor/template hints when semantic trees are unavailable",
 )
 
 

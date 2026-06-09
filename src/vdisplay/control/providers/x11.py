@@ -48,7 +48,20 @@ class X11ControlProvider(ControlProvider):
             matches = [item for item in matches if str(item.get("window_id")) == str(window_id)]
         window = pick_best_window(matches)
         if window is None:
-            raise VDisplayError("x11 fallback: no window matched for snapshot")
+            hint = "x11 fallback: no window matched for snapshot"
+            if app:
+                hint += f" (app={app!r})"
+            from ...discovery import window_discovery_meta
+
+            meta = window_discovery_meta(self.display)
+            if meta.get("session_type") == "wayland":
+                hint += (
+                    ". Session is Wayland — native apps like Firefox are invisible to xdotool;"
+                    " use --backend atspi, a browser session, or MOZ_ENABLE_WAYLAND=0 for X11 Firefox"
+                )
+            else:
+                hint += ". Run: vdisplay windows --apps-only"
+            raise VDisplayError(hint)
 
         node_id = f"x11:{window['window_id']}"
         bounds = ControlBounds(

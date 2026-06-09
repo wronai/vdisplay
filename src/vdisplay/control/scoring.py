@@ -202,11 +202,17 @@ def _vision_ready() -> tuple[bool, str]:
     try:
         from .providers.vision import VisionStubProvider
         from .vision_ocr import ocr_available
+        from .vision_template import template_available
 
         provider_ok, provider_reason = VisionStubProvider().available()
         ocr_ok, ocr_reason = ocr_available()
+        template_ok, template_reason = template_available()
+        if ocr_ok and template_ok:
+            return True, f"vision OCR + template invoke ({ocr_reason}; {template_reason})"
         if ocr_ok:
             return True, f"vision OCR invoke ({ocr_reason})"
+        if template_ok:
+            return True, f"vision template invoke ({template_reason})"
         return provider_ok, provider_reason
     except Exception as exc:
         return False, str(exc)
@@ -260,7 +266,12 @@ def selector_context(selector: ControlSelector | None, session_id: str | None) -
         "terminal": _is_terminal_context(selector, sid),
         "browser": _is_browser_context(selector),
         "desktop": _is_desktop_context(selector),
-        "vision": bool(selector.environment == "vision" or selector.vision_anchor),
+        "vision": bool(
+            selector.environment == "vision"
+            or selector.vision_anchor
+            or selector.vision_template
+            or selector.vision_anchor_rel
+        ),
         "session_id": bool(sid),
     }
 

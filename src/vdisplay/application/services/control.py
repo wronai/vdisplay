@@ -33,6 +33,10 @@ def _apply_selector_overrides(selector: ControlSelector, **kwargs: Any) -> Contr
         "text_contains",
         "terminal_line",
         "terminal_col",
+        "vision_anchor",
+        "vision_template",
+        "vision_anchor_rel",
+        "vision_target",
     ):
         value = overrides.get(key)
         if value is not None and value != "":
@@ -71,6 +75,10 @@ def _selector_from_kwargs(**kwargs: Any) -> ControlSelector:
         terminal_line=kwargs.get("terminal_line"),
         terminal_col=kwargs.get("terminal_col"),
         session_id=kwargs.get("session_id"),
+        vision_anchor=kwargs.get("vision_anchor"),
+        vision_template=kwargs.get("vision_template"),
+        vision_anchor_rel=kwargs.get("vision_anchor_rel"),
+        vision_target=kwargs.get("vision_target"),
         dom_css=kwargs.get("dom_css"),
         dom_xpath=kwargs.get("dom_xpath"),
         backend=kwargs.get("backend"),

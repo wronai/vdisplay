@@ -49,7 +49,12 @@ def profile_for(profile_id: str) -> ApplicationProfile | None:
 def _score_vision_only_surface(selector: ControlSelector) -> tuple[float, list[str]]:
     score = 0.0
     reasons: list[str] = []
-    if selector.environment == "vision" or selector.vision_anchor:
+    if (
+        selector.environment == "vision"
+        or selector.vision_anchor
+        or selector.vision_template
+        or selector.vision_anchor_rel
+    ):
         score += 0.95
         reasons.append("vision environment or anchor")
     if selector.dom_css or selector.dom_xpath or selector.terminal_line is not None:
