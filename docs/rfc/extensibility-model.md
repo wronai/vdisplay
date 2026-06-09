@@ -19,8 +19,8 @@ Status: **accepted** — see [RFC 001](./001-extensibility-model.md) for the can
 
 | PR | Scope | Status |
 |----|-------|--------|
-| PR-4 … PR-17 | Extension model + DSL + host environment + browser engine + vision stub | **done** |
-| PR-18+ | See [RFC 001 — Recommended next PRs](./001-extensibility-model.md#recommended-next-prs) | planned |
+| PR-4 … PR-21 | Extension model + cross-platform UIA/AX invoke + vision OCR | **done** |
+| PR-22+ | See [RFC 001 — Recommended next PRs](./001-extensibility-model.md#recommended-next-prs) | planned |
 
 ## Diagnostics
 

@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vdisplay-example-control-plugin"
+version = "0.1.0"
+description = "Example vdisplay control provider wheel (PR-18 plugin author guide)"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.entry-points."vdisplay.control_providers"]
+echo = "vdisplay_example_plugin:register_plugin"
+
+[tool.setuptools.packages.find]
+where = ["src"]

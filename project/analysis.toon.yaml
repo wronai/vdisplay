@@ -1,19 +1,25 @@
-# code2llm | 218f 25586L | python:166,json:22,toml:8,shell:7,yml:5,yaml:4,txt:1 | 2026-06-09
-# generated in 0.08s
-# CC̅=3.3 | critical:6/1093 | dups:0 | cycles:0
+# code2llm | 228f 27504L | python:175,json:22,toml:9,shell:7,yml:5,yaml:4,txt:1 | 2026-06-09
+# generated in 0.10s
+# CC̅=3.4 | critical:12/1210 | dups:0 | cycles:0
 
-HEALTH[6]:
+HEALTH[12]:
   🟡 CC    _route_command CC=17 (limit:15)
-  🟡 CC    _score_x11_provider CC=15 (limit:15)
-  🟡 CC    assess_control_capability CC=18 (limit:15)
-  🟡 CC    _evaluate_runs CC=16 (limit:15)
-  🟡 CC    from_dsl CC=23 (limit:15)
   🟡 CC    handle CC=15 (limit:15)
+  🟡 CC    from_dsl CC=23 (limit:15)
+  🟡 CC    match_selector_boxes CC=20 (limit:15)
+  🟡 CC    _evaluate_readiness CC=18 (limit:15)
+  🟡 CC    assess_control_capability CC=19 (limit:15)
+  🟡 CC    _score_x11_provider CC=18 (limit:15)
+  🟡 CC    score_provider CC=16 (limit:15)
+  🟡 CC    _matches_selector CC=20 (limit:15)
+  🟡 CC    collect_elements CC=22 (limit:15)
+  🟡 CC    _matches_selector CC=17 (limit:15)
+  🟡 CC    _evaluate_runs CC=16 (limit:15)
 
 REFACTOR[1]:
-  1. split 6 high-CC methods  (CC>15)
+  1. split 12 high-CC methods  (CC>15)
 
-PIPELINES[537]:
+PIPELINES[596]:
   [1] Src [main]: main → create_server
       PURITY: 100% pure
   [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url
@@ -66,7 +72,7 @@ PIPELINES[537]:
       PURITY: 100% pure
   [26] Src [handle_virtual_start]: handle_virtual_start → _ok
       PURITY: 100% pure
-  [27] Src [handle_mirror]: handle_mirror → resolve_host_display → _looks_like_xvfb_only
+  [27] Src [handle_mirror]: handle_mirror → resolve_host_display → _display_socket_exists
       PURITY: 100% pure
   [28] Src [handle_adopt]: handle_adopt → _ok
       PURITY: 100% pure
@@ -118,65 +124,71 @@ PIPELINES[537]:
 LAYERS:
   src/                            CC̄=3.5    ←in:0  →out:0
   │ !! portal_screencast          749L  1C   33m  CC=9      ←5
-  │ !! scoring                    575L  2C   28m  CC=15     ←6
+  │ !! scoring                    736L  2C   34m  CC=18     ←6
   │ !! host                       534L  0C   15m  CC=13     ←5
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
+  │ descriptors                456L  5C   11m  CC=14     ←9
   │ verify                     427L  0C   19m  CC=13     ←1
   │ control                    424L  0C   16m  CC=9      ←0
-  │ descriptors                408L  5C   11m  CC=14     ←8
   │ !! client                     407L  1C   38m  CC=17     ←0
-  │ atspi_impl                 392L  0C   19m  CC=8      ←1
-  │ discovery                  352L  0C   13m  CC=10     ←17
+  │ atspi_impl                 404L  0C   19m  CC=8      ←1
+  │ discovery                  363L  0C   14m  CC=11     ←18
   │ browser_playwright         339L  3C   30m  CC=14     ←2
   │ session                    326L  0C   12m  CC=4      ←0
-  │ selector                   322L  1C   17m  CC=14     ←8
+  │ selector                   322L  1C   17m  CC=14     ←9
   │ linux_xwd                  320L  0C   21m  CC=12     ←12
-  │ !! verifier                   304L  3C   12m  CC=16     ←1
+  │ !! verifier                   311L  3C   12m  CC=16     ←1
   │ !! commands                   292L  3C    6m  CC=23     ←0
   │ local                      283L  0C   21m  CC=4      ←1
   │ sampler_loop               280L  3C   12m  CC=10     ←1
+  │ router                     271L  2C   10m  CC=9      ←2
+  │ !! uia_impl                   268L  4C   24m  CC=22     ←3
+  │ profile_inference          266L  1C   11m  CC=14     ←3
   │ terminal_screen            260L  3C   14m  CC=7      ←3
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
-  │ profile_inference          256L  1C   11m  CC=14     ←2
-  │ router                     247L  2C    9m  CC=11     ←2
+  │ !! ax_impl                    255L  4C   24m  CC=17     ←2
+  │ browser_session            246L  2C   13m  CC=14     ←3
   │ agent                      241L  0C   22m  CC=6      ←1
   │ atspi                      240L  1C   15m  CC=8      ←0
-  │ discovery                  239L  0C   11m  CC=4      ←0
+  │ discovery                  239L  0C   11m  CC=4      ←2
   │ terminal_session           227L  2C   16m  CC=7      ←6
   │ portal                     221L  1C    7m  CC=11     ←1
+  │ provider                   217L  1C   13m  CC=7      ←0
   │ session                    216L  3C   11m  CC=11     ←2
-  │ screenshot_verify          212L  0C    7m  CC=13     ←2
+  │ screenshot_verify          212L  0C    7m  CC=13     ←3
   │ query                      209L  0C    6m  CC=9      ←4
+  │ browser_session_store      196L  1C   14m  CC=7      ←2
   │ api                        193L  3C   32m  CC=6      ←4
   │ models                     187L  9C    7m  CC=4      ←0
   │ capture                    182L  0C    5m  CC=9      ←1
+  │ !! policy                     178L  1C    4m  CC=19     ←2
   │ filter                     173L  0C   12m  CC=14     ←2
+  │ uia                        169L  1C   10m  CC=6      ←0
+  │ ax                         169L  1C   10m  CC=6      ←0
   │ linux_xvfb                 164L  1C   14m  CC=8      ←0
   │ contracts                  164L  5C    7m  CC=4      ←1
-  │ plugins                    163L  1C   11m  CC=8      ←3
-  │ browser_session            161L  2C   11m  CC=9      ←3
+  │ plugins                    163L  1C   11m  CC=8      ←4
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
+  │ routing_semantics          154L  1C    8m  CC=7      ←4
   │ control                    149L  0C    3m  CC=8      ←0
-  │ routing_semantics          148L  1C    8m  CC=7      ←4
   │ terminal                   147L  1C   13m  CC=14     ←0
   │ !! agent                      143L  0C    3m  CC=15     ←0
-  │ !! policy                     141L  1C    4m  CC=18     ←2
   │ policy                     140L  1C    4m  CC=11     ←2
+  │ !! vision_ocr                 139L  1C    7m  CC=20     ←3
   │ sampler                    132L  0C    8m  CC=9      ←0
   │ x11                        119L  1C   10m  CC=13     ←0
+  │ registry                   117L  1C   14m  CC=3      ←2
   │ relay                      110L  0C    3m  CC=5      ←0
   │ scan                       110L  0C    7m  CC=6      ←2
   │ sampler                    109L  1C    3m  CC=5      ←1
-  │ registry                   103L  1C   12m  CC=3      ←2
   │ normalize                  103L  0C    7m  CC=14     ←1
   │ img2nl_enrich              102L  0C    5m  CC=10     ←0
   │ engine                      99L  0C    6m  CC=11     ←4
   │ drm                         92L  1C    5m  CC=11     ←0
-  │ vision                      90L  1C    8m  CC=3      ←0
   │ payloads                    86L  0C    5m  CC=1      ←2
-  │ runtime                     86L  1C    7m  CC=6      ←3
   │ common                      86L  0C    7m  CC=2      ←8
+  │ runtime                     86L  1C    7m  CC=6      ←3
   │ virtual                     81L  0C    2m  CC=6      ←0
   │ fbdev                       77L  1C    5m  CC=7      ←0
   │ capabilities                76L  1C    1m  CC=1      ←0
@@ -192,7 +204,7 @@ LAYERS:
   │ screenshot                  53L  0C    2m  CC=1      ←0
   │ executor                    51L  0C    2m  CC=6      ←4
   │ info                        51L  0C    1m  CC=6      ←0
-  │ diagnose                    48L  0C    2m  CC=5      ←0
+  │ diagnose                    49L  0C    2m  CC=5      ←0
   │ all_cmd                     46L  0C    4m  CC=1      ←0
   │ __init__                    46L  0C    0m  CC=0.0    ←0
   │ linux_xdotool               45L  1C    6m  CC=2      ←0
@@ -211,6 +223,7 @@ LAYERS:
   │ base                        22L  2C    3m  CC=1      ←0
   │ monitors                    19L  0C    2m  CC=1      ←0
   │ constants                   19L  0C    0m  CC=0.0    ←0
+  │ __init__                    18L  0C    0m  CC=0.0    ←0
   │ agent_envelope              17L  0C    1m  CC=6      ←1
   │ info                        16L  0C    2m  CC=1      ←0
   │ session_kind                15L  1C    0m  CC=0.0    ←0
@@ -222,45 +235,11 @@ LAYERS:
   │ base                         9L  1C    1m  CC=1      ←0
   │ io                           7L  0C    1m  CC=1      ←0
   │ __init__                     6L  0C    0m  CC=0.0    ←0
-  │ __init__                     6L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
-  │
-  examples/                       CC̄=3.1    ←in:0  →out:0
-  │ !! after_adopt.png.meta.json   584L  0C    0m  CC=0.0    ←0
-  │ !! after_release.png.meta.json   551L  0C    0m  CC=0.0    ←0
-  │ !! before_automation.png.meta.json   551L  0C    0m  CC=0.0    ←0
-  │ control_demo               172L  0C    5m  CC=6      ←0
-  │ screenshot_meta            162L  0C    9m  CC=14     ←5
-  │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
-  │ relay_demo                 137L  0C    3m  CC=11     ←0
-  │ mirror_demo                 97L  0C    2m  CC=7      ←0
-  │ validate_artifacts          84L  0C    3m  CC=12     ←0
-  │ agent                       73L  0C    2m  CC=4      ←0
-  │ run_virtual                 63L  0C    2m  CC=4      ←0
-  │ broker_demo                 57L  0C    1m  CC=9      ←0
-  │ run.sh                      53L  0C    1m  CC=0.0    ←0
-  │ run.sh                      47L  0C    1m  CC=0.0    ←0
-  │ frame-001.png.meta.json     35L  0C    0m  CC=0.0    ←0
-  │ frame-002.png.meta.json     35L  0C    0m  CC=0.0    ←0
-  │ frame-000.png.meta.json     35L  0C    0m  CC=0.0    ←0
-  │ host_capture                29L  0C    1m  CC=1      ←2
-  │ Dockerfile                  29L  0C    0m  CC=0.0    ←0
-  │ Dockerfile                  29L  0C    0m  CC=0.0    ←0
-  │ Dockerfile                  28L  0C    0m  CC=0.0    ←0
-  │ Dockerfile                  28L  0C    0m  CC=0.0    ←0
-  │ screen.png.meta.json        28L  0C    0m  CC=0.0    ←0
-  │ run.sh                      26L  0C    1m  CC=0.0    ←0
-  │ run-host.sh                 25L  0C    0m  CC=0.0    ←0
-  │ run-host.sh                 24L  0C    0m  CC=0.0    ←0
-  │ Dockerfile                  19L  0C    0m  CC=0.0    ←0
-  │ docker-compose.yml          17L  0C    0m  CC=0.0    ←0
-  │ docker-compose.yml          16L  0C    0m  CC=0.0    ←0
-  │ docker-compose.yml          14L  0C    0m  CC=0.0    ←0
-  │ docker-compose.yml          12L  0C    0m  CC=0.0    ←0
-  │ docker-compose.yml          11L  0C    0m  CC=0.0    ←0
   │
   packages/                       CC̄=2.9    ←in:0  →out:0
   │ grammar                    406L  0C   30m  CC=11     ←1
@@ -280,11 +259,11 @@ LAYERS:
   │ server                      95L  0C    1m  CC=1      ←0
   │ app                         87L  0C    1m  CC=2      ←3
   │ envelope                    85L  0C    9m  CC=6      ←7
-  │ schemas                     82L  0C    0m  CC=0.0    ←0
+  │ schemas                     84L  0C    0m  CC=0.0    ←0
+  │ health                      76L  0C    2m  CC=2      ←0
   │ cli                         70L  0C    3m  CC=10     ←0
   │ tasks                       69L  0C    1m  CC=1      ←0
   │ session_store               65L  2C    5m  CC=5      ←1
-  │ health                      61L  0C    1m  CC=1      ←0
   │ capabilities                56L  0C    2m  CC=5      ←0
   │ schema_registry             53L  0C    4m  CC=3      ←3
   │ sampler                     47L  0C    1m  CC=1      ←0
@@ -298,8 +277,8 @@ LAYERS:
   │ decode                      31L  0C    1m  CC=7      ←1
   │ windows                     31L  0C    1m  CC=8      ←0
   │ cli                         30L  0C    1m  CC=4      ←0
+  │ server                      30L  0C    1m  CC=2      ←0
   │ control_set_value.schema.json    30L  0C    0m  CC=0.0    ←0
-  │ server                      29L  0C    1m  CC=2      ←0
   │ control_click.schema.json    29L  0C    0m  CC=0.0    ←0
   │ control_focus.schema.json    29L  0C    0m  CC=0.0    ←0
   │ pyproject.toml              28L  0C    0m  CC=0.0    ←0
@@ -326,16 +305,53 @@ LAYERS:
   │ info.schema.json            10L  0C    0m  CC=0.0    ←0
   │ validate.schema.json        10L  0C    0m  CC=0.0    ←0
   │ health.schema.json           9L  0C    0m  CC=0.0    ←0
-  │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ __init__                     7L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  examples/                       CC̄=2.7    ←in:0  →out:0
+  │ !! after_adopt.png.meta.json   584L  0C    0m  CC=0.0    ←0
+  │ !! after_release.png.meta.json   551L  0C    0m  CC=0.0    ←0
+  │ !! before_automation.png.meta.json   551L  0C    0m  CC=0.0    ←0
+  │ control_demo               172L  0C    5m  CC=6      ←0
+  │ screenshot_meta            162L  0C    9m  CC=14     ←5
+  │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
+  │ relay_demo                 137L  0C    3m  CC=11     ←0
+  │ mirror_demo                 97L  0C    2m  CC=7      ←0
+  │ my_provider                 92L  1C    8m  CC=3      ←0
+  │ validate_artifacts          84L  0C    3m  CC=12     ←0
+  │ agent                       73L  0C    2m  CC=4      ←0
+  │ run_virtual                 63L  0C    2m  CC=4      ←0
+  │ broker_demo                 57L  0C    1m  CC=9      ←0
+  │ run.sh                      53L  0C    1m  CC=0.0    ←0
+  │ run.sh                      47L  0C    1m  CC=0.0    ←0
+  │ frame-001.png.meta.json     35L  0C    0m  CC=0.0    ←0
+  │ frame-002.png.meta.json     35L  0C    0m  CC=0.0    ←0
+  │ frame-000.png.meta.json     35L  0C    0m  CC=0.0    ←0
+  │ host_capture                29L  0C    1m  CC=1      ←2
+  │ Dockerfile                  29L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  29L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  28L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  28L  0C    0m  CC=0.0    ←0
+  │ screen.png.meta.json        28L  0C    0m  CC=0.0    ←0
+  │ __init__                    27L  0C    2m  CC=1      ←0
+  │ run.sh                      26L  0C    1m  CC=0.0    ←0
+  │ run-host.sh                 25L  0C    0m  CC=0.0    ←0
+  │ run-host.sh                 24L  0C    0m  CC=0.0    ←0
+  │ Dockerfile                  19L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          17L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          16L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              16L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          14L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          12L  0C    0m  CC=0.0    ←0
+  │ docker-compose.yml          11L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
   │ tree.txt                   241L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             150L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             159L  0C    0m  CC=0.0    ←0
   │ app.vql.json               127L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                94L  0C    0m  CC=0.0    ←0
   │ project.sh                  59L  0C    0m  CC=0.0    ←0
@@ -348,10 +364,10 @@ LAYERS:
   │
 
 COUPLING:
-                                          src.vdisplay    packages.vdisplay-agent      packages.dsl2vdisplay            examples.common     packages.rest2vdisplay      packages.mcp2vdisplay       examples.host-mirror        examples.host-relay          examples.ci-agent  examples.headless-virtual      packages.cli2vdisplay      packages.nlp2vdisplay      examples.agent-broker     examples.control-plane      packages.uri2vdisplay
-               src.vdisplay                         ──                          4                          6                         ←1                          1                         ←4                         ←3                         ←3                                                                                                          ←1                         ←1                         ←1                             hub
+                                          src.vdisplay    packages.vdisplay-agent      packages.dsl2vdisplay            examples.common     packages.rest2vdisplay      packages.mcp2vdisplay       examples.host-mirror        examples.host-relay          examples.ci-agent  examples.headless-virtual      packages.cli2vdisplay      packages.nlp2vdisplay      examples.agent-broker     examples.control-plane    examples.control-plugin
+               src.vdisplay                         ──                          4                          6                         ←1                          1                         ←4                         ←3                         ←3                                                                                                          ←1                         ←1                         ←1                         ←1  hub
     packages.vdisplay-agent                         28                         ──                                                                                1                                                                                                                                                                                                                                                                                !! fan-out
-      packages.dsl2vdisplay                          6                                                    ──                                                    ←4                         ←2                                                                                                                                     ←2                                                                                                          ←1  hub
+      packages.dsl2vdisplay                          6                                                    ──                                                    ←4                         ←2                                                                                                                                     ←2                                                                                                              hub
             examples.common                          1                                                                               ──                                                                               ←3                         ←3                         ←2                         ←2                                                                                                                                         hub
      packages.rest2vdisplay                          2                         ←1                          4                                                    ──                                                                                                                                                                                                                                                                              
       packages.mcp2vdisplay                          4                                                     2                                                                               ──                                                                                                                                                                 1                                                                                 
@@ -363,13 +379,13 @@ COUPLING:
       packages.nlp2vdisplay                          1                                                                                                                                     ←1                                                                                                                                                                ──                                                                                 
       examples.agent-broker                          1                                                                                                                                                                                                                                                                                                                                  ──                                                      
      examples.control-plane                          1                                                                                                                                                                                                                                                                                                                                                             ──                           
-      packages.uri2vdisplay                                                                                1                                                                                                                                                                                                                                                                                                                                  ──
+    examples.control-plugin                          1                                                                                                                                                                                                                                                                                                                                                                                        ──
   CYCLES: none
+  HUB: src.vdisplay/ (fan-in=51)
   HUB: examples.common/ (fan-in=10)
   HUB: packages.dsl2vdisplay/ (fan-in=15)
-  HUB: src.vdisplay/ (fan-in=50)
-  SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
   SMELL: src.vdisplay/ fan-out=11 → split needed
+  SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -8,6 +8,7 @@ Runnable examples for different environments. Full index: [docs/examples.md](../
 |-----------|-------------|
 | [agent-broker/](agent-broker/) | **vdisplay-agent** + CLI/DSL/REST clients via `VDISPLAY_AGENT_URL` |
 | [control-plane/](control-plane/) | Semantic UI control (AT-SPI / terminal / browser) with verification |
+| [control-plugin/](control-plugin/) | **PR-18** — example control provider wheel + plugin author guide |
 | [host-mirror/](host-mirror/) | Mirror host desktop via `xrandr` + screenshot |
 | [host-relay/](host-relay/) | Move window off-screen and restore |
 

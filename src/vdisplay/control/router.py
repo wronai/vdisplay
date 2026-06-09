@@ -40,14 +40,33 @@ class RouteResult:
         return payload
 
 
+def _eligible_for_profile(
+    candidates: list[ProviderScore],
+    application_profile: str | None,
+) -> list[ProviderScore]:
+    eligible = [item for item in candidates if item.eligible]
+    if application_profile != "vision_only_surface":
+        return eligible
+    from .profile_inference import profile_for
+
+    profile = profile_for(application_profile)
+    if profile is None:
+        return eligible
+    allowed = set(profile.preferred_providers + profile.fallback_providers)
+    filtered = [item for item in eligible if item.provider in allowed]
+    return filtered or eligible
+
+
 def _select_winner(
     backend: str,
     candidates: list[ProviderScore],
+    *,
+    application_profile: str | None = None,
 ) -> tuple[str, list[str]]:
     requested = (backend or "auto").strip().lower()
     normalized = normalize_backend(requested)
     auto_mode = normalized == "auto"
-    eligible = [item for item in candidates if item.eligible]
+    eligible = _eligible_for_profile(candidates, application_profile)
 
     if auto_mode:
         if not eligible:
@@ -208,7 +227,15 @@ class ControlRouter:
             if not item.eligible
         }
 
-        selected, why_selected = _select_winner(backend, candidates)
+        application_profile = None
+        if profile_inference:
+            application_profile = profile_inference.get("profile_id")
+
+        selected, why_selected = _select_winner(
+            backend,
+            candidates,
+            application_profile=application_profile,
+        )
 
         verify_provider, verify_mode = select_verify_provider(
             candidates,
@@ -216,11 +243,8 @@ class ControlRouter:
             verify_semantic=verify_semantic,
             verify_screenshot=verify_screenshot,
         )
-        application_profile = None
-        if profile_inference:
-            application_profile = profile_inference.get("profile_id")
-            if application_profile:
-                why_selected.append(f"application profile={application_profile}")
+        if application_profile:
+            why_selected.append(f"application profile={application_profile}")
 
         return ProviderRoutingDecision(
             requested_backend=requested,

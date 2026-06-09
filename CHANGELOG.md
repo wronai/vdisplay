@@ -175,6 +175,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.9] - 2026-06-09
+
+### Docs
+- Update README.md
+- Update docs/control-plane.md
+- Update docs/rfc/001-extensibility-model.md
+- Update docs/rfc/extensibility-model.md
+- Update examples/README.md
+- Update examples/control-plane/README.md
+- Update examples/control-plugin/README.md
+- Update project/context.md
+
+### Test
+- Update test-screencast.png
+- Update tests/contract/test_descriptors.py
+- Update tests/contract/test_providers.py
+- Update tests/test_agent_api_contract.py
+- Update tests/test_ax_invoke.py
+- Update tests/test_browser_engine_profiles.py
+- Update tests/test_control_agent.py
+- Update tests/test_control_browser_session.py
+- Update tests/test_control_plugins.py
+- Update tests/test_cross_platform_providers.py
+- ... and 5 more files
+
+### Other
+- Update cursor-dp1.png
+- Update cursor-dp2.png
+- Update cursor-test.png
+- Update examples/control-plugin/pyproject.toml
+- Update examples/control-plugin/src/vdisplay_example_plugin/__init__.py
+- Update examples/control-plugin/src/vdisplay_example_plugin/my_provider.py
+- Update packages/vdisplay-agent/pyproject.toml
+- Update packages/vdisplay-agent/src/vdisplay_agent/__init__.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/schemas.py
+- ... and 13 more files
+
 ## [0.1.8] - 2026-06-09
 
 ### Docs

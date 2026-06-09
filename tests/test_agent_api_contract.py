@@ -15,6 +15,17 @@ def test_agent_health_envelope(agent_client) -> None:
     assert payload["meta"]["broker"] == "vdisplay-agent"
 
 
+def test_agent_version_envelope(agent_client) -> None:
+    from vdisplay_agent import __version__
+
+    client, _runtime = agent_client
+    payload = client.get("/version").json()
+    assert payload["ok"] is True
+    assert payload["action"] == "version"
+    assert payload["data"]["version"] == __version__
+    assert payload["data"]["control_api"] is True
+
+
 def test_agent_capabilities_envelope(agent_client) -> None:
     client, _runtime = agent_client
     payload = client.get("/capabilities").json()

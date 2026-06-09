@@ -214,22 +214,28 @@ class VerifierPipeline:
         after_capture = (visual_payload.get("capture") or {}).get("after")
         if after_capture is None and ctx.before_png is None:
             return None
-        try:
-            import pytesseract
-            from PIL import Image
-        except ImportError:
-            return {"verified": False, "reason": "pytesseract not installed", "method": "ocr"}
+        from .vision_ocr import ocr_available, ocr_png
+
+        ready, reason = ocr_available()
+        if not ready:
+            return {"verified": False, "reason": reason, "method": "ocr"}
 
         after_png, _meta = capture_control_screenshot(
             display=ctx.display,
             target=ctx.target,
             capture_fn=ctx.capture_fn,
         )
-        image = Image.open(io.BytesIO(after_png))
         if spec.region is not None:
+            from PIL import Image
+
+            image = Image.open(io.BytesIO(after_png))
             x, y, w, h = spec.region
-            image = image.crop((x, y, x + w, y + h))
-        text = pytesseract.image_to_string(image)
+            buf = io.BytesIO()
+            image.crop((x, y, x + w, y + h)).save(buf, format="PNG")
+            after_png = buf.getvalue()
+
+        boxes = ocr_png(after_png)
+        text = " ".join(box.text for box in boxes)
         expected = spec.expected_text or ""
         found = expected.lower() in text.lower()
         confidence = 0.9 if found else 0.0
@@ -239,6 +245,7 @@ class VerifierPipeline:
             "expected_text": expected,
             "text": text.strip(),
             "confidence": confidence,
+            "boxes": [box.to_dict() for box in boxes[:20]],
         }
 
     def _aggregate(

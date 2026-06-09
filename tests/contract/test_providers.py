@@ -13,7 +13,7 @@ from vdisplay.control.selector import ControlSelector
 
 def test_registry_lists_builtin_providers() -> None:
     registry = default_provider_registry()
-    assert registry.list_names() == ["atspi", "browser", "terminal", "vision", "x11"]
+    assert registry.list_names() == ["atspi", "ax", "browser", "terminal", "uia", "vision", "x11"]
 
 
 def test_router_evaluate_without_building_provider(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -37,7 +37,7 @@ def test_router_evaluate_without_building_provider(monkeypatch: pytest.MonkeyPat
     assert decision.verify_provider
 
 
-@pytest.mark.parametrize("name", ["atspi", "browser", "x11", "terminal", "vision"])
+@pytest.mark.parametrize("name", ["atspi", "ax", "browser", "uia", "x11", "terminal", "vision"])
 def test_provider_contract_surface(name: str) -> None:
     registry = default_provider_registry()
     try:

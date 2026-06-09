@@ -42,7 +42,7 @@ def test_extension_catalog_shape() -> None:
     assert "terminology" in catalog
     assert "host_environment" in catalog["terminology"]
     assert "providers" in catalog
-    assert len(catalog["providers"]) == 5
+    assert len(catalog["providers"]) == 7
     assert "browser_engine_profiles" in catalog
     assert "application_profiles" in catalog
     assert "selector_extensions" in catalog

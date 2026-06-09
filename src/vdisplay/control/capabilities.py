@@ -67,9 +67,9 @@ POINTER_FALLBACK = ProviderCapabilities(
 
 VISION_SURFACE = ProviderCapabilities(
     can_find=True,
-    can_invoke=False,
-    can_focus=False,
-    can_set_value=False,
+    can_invoke=True,
+    can_focus=True,
+    can_set_value=True,
     has_pixel_bounds=True,
     supports_visual_verify=True,
     supports_ocr_verify=True,

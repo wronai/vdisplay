@@ -6,6 +6,7 @@ from typing import Final
 
 # Query routes
 ACTION_HEALTH: Final = "health"
+ACTION_VERSION: Final = "version"
 ACTION_CAPABILITIES: Final = "capabilities"
 ACTION_DIAGNOSTICS: Final = "diagnostics"
 ACTION_OUTPUTS: Final = "outputs"
@@ -48,6 +49,7 @@ ACTION_CONTROL_SET_VALUE: Final = "control_set_value"
 
 AGENT_ROUTES: Final = {
     "GET /health": ACTION_HEALTH,
+    "GET /version": ACTION_VERSION,
     "GET /capabilities": ACTION_CAPABILITIES,
     "GET /diagnostics": ACTION_DIAGNOSTICS,
     "GET /outputs": ACTION_OUTPUTS,

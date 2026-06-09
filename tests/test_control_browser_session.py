@@ -12,7 +12,8 @@ from fixtures.fake_browser import FakePage
 
 
 @pytest.fixture
-def registry() -> BrowserSessionRegistry:
+def registry(monkeypatch: pytest.MonkeyPatch) -> BrowserSessionRegistry:
+    monkeypatch.setenv("VDISPLAY_BROWSER_DETACHED", "0")
     reg = BrowserSessionRegistry()
     yield reg
     reg.close_all()

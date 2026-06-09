@@ -136,7 +136,7 @@ def _score_electron_desktop(selector: ControlSelector) -> tuple[float, list[str]
     return score, reasons
 
 
-def _score_native_gtk(selector: ControlSelector) -> tuple[float, list[str]]:
+def _score_native_desktop(selector: ControlSelector) -> tuple[float, list[str]]:
     score = 0.0
     reasons: list[str] = []
     if selector.role or selector.name or selector.name_contains:
@@ -186,8 +186,18 @@ def _score_candidate(
         score, reasons = _score_terminal_pty(selector, sid)
     elif profile.profile_id == "electron_desktop":
         score, reasons = _score_electron_desktop(selector)
-    elif profile.profile_id == "native_gtk":
-        score, reasons = _score_native_gtk(selector)
+    elif profile.profile_id in {"native_gtk", "native_windows", "native_macos"}:
+        from .descriptors import HostEnvironmentKind, detect_platform_profile
+
+        host = detect_platform_profile().host_environment
+        host_map = {
+            "native_gtk": (HostEnvironmentKind.LINUX_X11, HostEnvironmentKind.LINUX_WAYLAND),
+            "native_windows": (HostEnvironmentKind.WINDOWS,),
+            "native_macos": (HostEnvironmentKind.DARWIN,),
+        }
+        if host not in host_map[profile.profile_id]:
+            return 0.0, [f"profile {profile.profile_id} not applicable on host={host.value}"]
+        score, reasons = _score_native_desktop(selector)
     else:
         score, reasons = 0.0, []
 

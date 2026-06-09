@@ -64,6 +64,18 @@ def _build_atspi(*, display: str | None = None, session_id: str | None = None) -
     return AtspiControlProvider()
 
 
+def _build_uia(*, display: str | None = None, session_id: str | None = None) -> ControlProvider:
+    from .providers.uia import UiaStubProvider
+
+    return UiaStubProvider(display=display, session_id=session_id)
+
+
+def _build_ax(*, display: str | None = None, session_id: str | None = None) -> ControlProvider:
+    from .providers.ax import AxStubProvider
+
+    return AxStubProvider(display=display, session_id=session_id)
+
+
 def _build_browser(*, display: str | None = None, session_id: str | None = None) -> ControlProvider:
     from .providers.browser_playwright import BrowserPlaywrightProvider
 
@@ -90,6 +102,8 @@ def _build_vision(*, display: str | None = None, session_id: str | None = None) 
 
 _BUILTIN_FACTORIES: dict[str, ProviderFactory] = {
     "atspi": _build_atspi,
+    "uia": _build_uia,
+    "ax": _build_ax,
     "browser": _build_browser,
     "x11": _build_x11,
     "terminal": _build_terminal,

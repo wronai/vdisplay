@@ -103,4 +103,4 @@ def test_extension_catalog_includes_plugins(agent_client) -> None:
     assert payload["ok"] is True
     extensions = payload["data"]["extensions"]
     assert "plugins" in extensions
-    assert len(extensions["plugins"]) >= 4
+    assert len(extensions["plugins"]) >= 7

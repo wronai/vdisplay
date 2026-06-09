@@ -37,7 +37,7 @@ def test_build_routing_semantics_browser_requires_session() -> None:
     assert semantics.host_environment in HostEnvironmentKind
 
 
-def test_x11_provider_ineligible_on_wayland_host(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_x11_provider_ineligible_on_wayland_host_without_xwayland(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.control.descriptors import PlatformProfile
 
     monkeypatch.setattr(
@@ -50,6 +50,10 @@ def test_x11_provider_ineligible_on_wayland_host(monkeypatch: pytest.MonkeyPatch
         ),
     )
     monkeypatch.setattr("vdisplay.control.scoring._xdotool_ready", lambda: (True, "xdotool available"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._xwayland_reachable",
+        lambda display=None: (False, "X display :0 not reachable"),
+    )
     monkeypatch.setattr("vdisplay.control.scoring._atspi_ready", lambda: (True, "atspi ok"))
     monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "browser ok"))
     monkeypatch.setattr("vdisplay.control.scoring._terminal_ready", lambda: (True, "terminal ok"))
@@ -66,6 +70,41 @@ def test_x11_provider_ineligible_on_wayland_host(monkeypatch: pytest.MonkeyPatch
     x11 = next(item for item in ranked if item.provider == "x11")
     assert x11.eligible is False
     assert any("Wayland" in item for item in x11.missing_requirements)
+
+
+def test_x11_provider_eligible_on_wayland_host_with_xwayland(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.control.descriptors import PlatformProfile
+
+    monkeypatch.setattr(
+        "vdisplay.control.descriptors.detect_platform_profile",
+        lambda **kwargs: PlatformProfile(
+            os_family="linux",
+            display_stack="wayland",
+            host_environment=HostEnvironmentKind.LINUX_WAYLAND,
+            security_constraints=["xdotool ineffective on Wayland"],
+        ),
+    )
+    monkeypatch.setattr("vdisplay.control.scoring._xdotool_ready", lambda: (True, "xdotool available"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._xwayland_reachable",
+        lambda display=None: (True, "XWayland reachable on :0"),
+    )
+    monkeypatch.setattr("vdisplay.control.scoring._atspi_ready", lambda: (True, "atspi ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "browser ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._terminal_ready", lambda: (True, "terminal ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._browser_session_ready",
+        lambda _sid: (True, "browser session ok"),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._terminal_session_ready",
+        lambda _sid: (True, "terminal session ok"),
+    )
+
+    ranked, _ = rank_providers(selector=ControlSelector(role="button"))
+    x11 = next(item for item in ranked if item.provider == "x11")
+    assert x11.eligible is True
+    assert any("XWayland" in item for item in x11.reasons)
 
 
 def test_routing_decision_includes_semantics(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -112,10 +151,39 @@ def test_assess_control_capability_blocks_pointer_on_wayland(monkeypatch: pytest
     monkeypatch.setattr("vdisplay.control.policy._browser_ready", lambda: (True, "browser ok"))
     monkeypatch.setattr("vdisplay.control.policy._xdotool_ready", lambda: (True, "xdotool ok"))
     monkeypatch.setattr("vdisplay.control.policy._terminal_ready", lambda: (True, "terminal ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._xwayland_reachable",
+        lambda display=None: (False, "X display not reachable"),
+    )
 
     contract = assess_control_capability()
     assert contract.fallback_to_pointer_injection is False
     assert contract.host_environment == HostEnvironmentKind.LINUX_WAYLAND.value
+
+
+def test_assess_control_capability_allows_pointer_via_xwayland(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.control.descriptors import PlatformProfile
+
+    monkeypatch.setattr(
+        "vdisplay.control.descriptors.detect_platform_profile",
+        lambda **kwargs: PlatformProfile(
+            os_family="linux",
+            display_stack="wayland",
+            host_environment=HostEnvironmentKind.LINUX_WAYLAND,
+        ),
+    )
+    monkeypatch.setattr("vdisplay.control.policy._atspi_ready", lambda: (True, "atspi ok"))
+    monkeypatch.setattr("vdisplay.control.policy._browser_ready", lambda: (True, "browser ok"))
+    monkeypatch.setattr("vdisplay.control.policy._xdotool_ready", lambda: (True, "xdotool ok"))
+    monkeypatch.setattr("vdisplay.control.policy._terminal_ready", lambda: (True, "terminal ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._xwayland_reachable",
+        lambda display=None: (True, "XWayland reachable on :0"),
+    )
+
+    contract = assess_control_capability()
+    assert contract.fallback_to_pointer_injection is True
+    assert any("XWayland" in reason for reason in contract.reasons)
 
 
 def test_capture_policy_includes_host_environment(monkeypatch: pytest.MonkeyPatch) -> None:

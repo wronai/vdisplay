@@ -60,13 +60,15 @@ class ProviderRoutingDecision:
 
 _PROVIDER_ALIASES: dict[str, set[str]] = {
     "atspi": {"atspi", "a11y", "accessibility"},
+    "uia": {"uia", "windows-a11y", "uia-automation"},
+    "ax": {"ax", "macos-a11y", "macos-ax"},
     "browser": {"browser", "playwright", "chromium"},
     "x11": {"x11", "x11-fallback", "pointer"},
     "terminal": {"terminal", "pty", "tui", "screen"},
     "vision": {"vision", "vision-only", "ocr"},
 }
 
-_BUILTIN_PROVIDERS = ("atspi", "terminal", "browser", "x11", "vision")
+_BUILTIN_PROVIDERS = ("atspi", "uia", "ax", "terminal", "browser", "x11", "vision")
 
 
 def _all_provider_names() -> tuple[str, ...]:
@@ -111,6 +113,24 @@ def _atspi_ready() -> tuple[bool, str]:
         return False, str(exc)
 
 
+def _uia_ready() -> tuple[bool, str]:
+    try:
+        from .providers.uia_impl import uia_deps_available
+
+        return uia_deps_available()
+    except Exception as exc:
+        return False, str(exc)
+
+
+def _ax_ready() -> tuple[bool, str]:
+    try:
+        from .providers.ax_impl import ax_deps_available
+
+        return ax_deps_available()
+    except Exception as exc:
+        return False, str(exc)
+
+
 def _browser_ready() -> tuple[bool, str]:
     try:
         from .providers.browser_playwright import _playwright_available
@@ -124,6 +144,34 @@ def _xdotool_ready() -> tuple[bool, str]:
     if shutil.which("xdotool"):
         return True, "xdotool available"
     return False, "xdotool not installed"
+
+
+def _xwayland_reachable(display: str | None = None) -> tuple[bool, str]:
+    """Probe whether an X server (XWayland) accepts connections on the display.
+
+    On Wayland hosts the X11 provider can still drive XWayland clients
+    (e.g. JetBrains Toolbox, X11-forced Electron apps) even though native
+    Wayland windows stay invisible to xdotool.
+    """
+    disp = (display or os.environ.get("DISPLAY") or "").strip()
+    if not disp:
+        return False, "DISPLAY is not set"
+    if not shutil.which("xdotool"):
+        return False, "xdotool not installed"
+    import subprocess
+
+    try:
+        proc = subprocess.run(
+            ["xdotool", "getdisplaygeometry"],
+            env={**os.environ, "DISPLAY": disp},
+            capture_output=True,
+            timeout=3,
+        )
+    except Exception as exc:
+        return False, f"X display probe failed: {exc}"
+    if proc.returncode == 0:
+        return True, f"XWayland reachable on {disp}"
+    return False, f"X display {disp} not reachable"
 
 
 def _terminal_ready() -> tuple[bool, str]:
@@ -153,8 +201,13 @@ def _browser_session_ready(session_id: str | None) -> tuple[bool, str]:
 def _vision_ready() -> tuple[bool, str]:
     try:
         from .providers.vision import VisionStubProvider
+        from .vision_ocr import ocr_available
 
-        return VisionStubProvider().available()
+        provider_ok, provider_reason = VisionStubProvider().available()
+        ocr_ok, ocr_reason = ocr_available()
+        if ocr_ok:
+            return True, f"vision OCR invoke ({ocr_reason})"
+        return provider_ok, provider_reason
     except Exception as exc:
         return False, str(exc)
 
@@ -212,9 +265,17 @@ def selector_context(selector: ControlSelector | None, session_id: str | None) -
     }
 
 
+def _linux_desktop_hosts() -> tuple:
+    from .descriptors import HostEnvironmentKind
+
+    return (HostEnvironmentKind.LINUX_X11, HostEnvironmentKind.LINUX_WAYLAND)
+
+
 def _score_atspi_provider(
     context: dict[str, Any],
 ) -> tuple[float, list[str], list[str], bool, bool, bool, bool]:
+    from .descriptors import HostEnvironmentKind
+
     score = 0.0
     reasons: list[str] = []
     missing: list[str] = []
@@ -222,12 +283,92 @@ def _score_atspi_provider(
     supports_semantic_find = False
     supports_native_invoke = False
 
+    host = context.get("host_environment")
+    if host not in _linux_desktop_hosts():
+        eligible = False
+        missing.append(f"atspi requires Linux desktop host (host={host})")
+        reasons.append("atspi limited to linux_x11/linux_wayland")
+
     ready, ready_reason = _atspi_ready()
-    if ready:
+    if eligible and ready:
         reasons.append(ready_reason)
         supports_semantic_find = True
         supports_native_invoke = True
-    else:
+    elif eligible:
+        eligible = False
+        missing.append(ready_reason)
+
+    if context["desktop"] and not context["terminal"] and not context["browser"]:
+        score += 30
+        reasons.append("desktop selector context")
+    if context["terminal"] or context["browser"]:
+        score -= 40
+        reasons.append("non-desktop selector context")
+
+    return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, False
+
+
+def _score_uia_provider(
+    context: dict[str, Any],
+) -> tuple[float, list[str], list[str], bool, bool, bool, bool]:
+    from .descriptors import HostEnvironmentKind
+
+    score = 0.0
+    reasons: list[str] = []
+    missing: list[str] = []
+    eligible = True
+    supports_semantic_find = False
+    supports_native_invoke = False
+
+    host = context.get("host_environment")
+    if host != HostEnvironmentKind.WINDOWS:
+        eligible = False
+        missing.append(f"uia requires windows host (host={host})")
+        reasons.append("uia limited to windows host")
+
+    ready, ready_reason = _uia_ready()
+    if eligible and ready:
+        reasons.append(ready_reason)
+        supports_semantic_find = True
+        supports_native_invoke = True
+    elif eligible:
+        eligible = False
+        missing.append(ready_reason)
+
+    if context["desktop"] and not context["terminal"] and not context["browser"]:
+        score += 30
+        reasons.append("desktop selector context")
+    if context["terminal"] or context["browser"]:
+        score -= 40
+        reasons.append("non-desktop selector context")
+
+    return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, False
+
+
+def _score_ax_provider(
+    context: dict[str, Any],
+) -> tuple[float, list[str], list[str], bool, bool, bool, bool]:
+    from .descriptors import HostEnvironmentKind
+
+    score = 0.0
+    reasons: list[str] = []
+    missing: list[str] = []
+    eligible = True
+    supports_semantic_find = False
+    supports_native_invoke = False
+
+    host = context.get("host_environment")
+    if host != HostEnvironmentKind.DARWIN:
+        eligible = False
+        missing.append(f"ax requires darwin host (host={host})")
+        reasons.append("ax limited to darwin host")
+
+    ready, ready_reason = _ax_ready()
+    if eligible and ready:
+        reasons.append(ready_reason)
+        supports_semantic_find = True
+        supports_native_invoke = True
+    elif eligible:
         eligible = False
         missing.append(ready_reason)
 
@@ -342,10 +483,18 @@ def _score_x11_provider(
     supports_visual_verify = False
 
     host = context.get("host_environment")
-    if host == HostEnvironmentKind.LINUX_WAYLAND:
+    if host not in (HostEnvironmentKind.LINUX_X11, HostEnvironmentKind.LINUX_WAYLAND):
         eligible = False
-        missing.append("xdotool ineffective on Wayland host")
-        reasons.append("host=linux_wayland blocks pointer fallback")
+        missing.append(f"x11 pointer fallback requires Linux host (host={host})")
+        reasons.append("x11 limited to linux desktop hosts")
+    elif host == HostEnvironmentKind.LINUX_WAYLAND:
+        xwayland_ok, xwayland_reason = _xwayland_reachable(display)
+        if xwayland_ok:
+            reasons.append(f"Wayland host: {xwayland_reason} (XWayland clients only)")
+        else:
+            eligible = False
+            missing.append(f"xdotool ineffective on Wayland host ({xwayland_reason})")
+            reasons.append("host=linux_wayland blocks pointer fallback")
 
     ready, ready_reason = _xdotool_ready()
     display_ok = bool((display or os.environ.get("DISPLAY") or "").strip())
@@ -363,6 +512,9 @@ def _score_x11_provider(
     if context["desktop"] and not context["terminal"] and not context["browser"]:
         score += 10
         reasons.append("desktop fallback context")
+    if context["vision"]:
+        score += 40
+        reasons.append("vision_only_surface pointer fallback")
     if context["browser"] or context["terminal"]:
         score -= 30
         reasons.append("semantic context prefers non-x11 providers")
@@ -385,13 +537,17 @@ def _score_vision_provider(
     if ready:
         reasons.append(ready_reason)
         supports_visual_verify = True
+        from .vision_ocr import ocr_available
+
+        if ocr_available()[0]:
+            supports_native_invoke = True
     else:
         eligible = False
         missing.append(ready_reason)
 
     if context["vision"]:
-        score += 200
-        reasons.append("vision selector context")
+        score -= 500
+        reasons.append("vision OCR defers auto routing to x11/atspi/uia/ax fallback")
         supports_semantic_find = True
     if context["browser"] or context["terminal"]:
         score -= 50
@@ -451,6 +607,10 @@ def score_provider(
     
     if provider == "atspi":
         p_score, p_reasons, missing, eligible, semantic, native, visual = _score_atspi_provider(context)
+    elif provider == "uia":
+        p_score, p_reasons, missing, eligible, semantic, native, visual = _score_uia_provider(context)
+    elif provider == "ax":
+        p_score, p_reasons, missing, eligible, semantic, native, visual = _score_ax_provider(context)
     elif provider == "terminal":
         p_score, p_reasons, missing, eligible, semantic, native, visual = _score_terminal_provider(context, session_id)
     elif provider == "browser":
@@ -462,13 +622,13 @@ def score_provider(
     else:
         p_score, p_reasons, missing, eligible, semantic, native, visual = _score_plugin_provider(provider, context)
 
-    _builtin = ("atspi", "terminal", "browser", "x11", "vision")
+    _builtin = ("atspi", "uia", "ax", "terminal", "browser", "x11", "vision")
     score = (base if provider in _builtin else 0.0) + p_score
     reasons = [f"base score {base}"] + p_reasons if provider in _builtin else p_reasons
 
     if context["vision"] and provider != "vision":
-        score -= 20
-        reasons.append("vision selector prefers vision provider")
+        score += 20
+        reasons.append("vision selector prefers actionable fallback providers")
 
     if forced := context.get("forced_provider"):
         if provider == forced:

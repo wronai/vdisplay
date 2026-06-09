@@ -32,10 +32,14 @@ def test_vision_stub_provider_available() -> None:
     provider = VisionStubProvider()
     ok, reason = provider.available()
     assert ok is True
-    assert "vision stub" in reason
+    assert "vision" in reason
 
 
-def test_vision_stub_find_by_anchor() -> None:
+def test_vision_stub_find_by_anchor(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.provider.ocr_available",
+        lambda: (False, "pytesseract not installed"),
+    )
     provider = VisionStubProvider()
     nodes = provider.find(ControlSelector(vision_anchor="login-button"))
     assert len(nodes) == 1
@@ -46,8 +50,8 @@ def test_vision_stub_find_by_anchor() -> None:
 def test_builtin_provider_count_no_per_engine_explosion() -> None:
     catalog = extension_catalog()
     provider_ids = sorted(item["provider_id"] for item in catalog["providers"])
-    assert provider_ids == ["atspi", "browser", "terminal", "vision", "x11"]
-    assert len(BUILTIN_PROVIDER_DESCRIPTORS) == 5
+    assert provider_ids == ["atspi", "ax", "browser", "terminal", "uia", "vision", "x11"]
+    assert len(BUILTIN_PROVIDER_DESCRIPTORS) == 7
     assert "browser_firefox" not in provider_ids
     assert "browser_chromium" not in provider_ids
 
@@ -59,17 +63,45 @@ def test_infer_vision_only_surface_profile() -> None:
     assert inferred.confidence >= 0.9
 
 
-def test_routing_prefers_vision_for_vision_anchor(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_vision_only_surface_routes_to_x11(monkeypatch: pytest.MonkeyPatch) -> None:
+    """vision_only_surface → x11 fallback, not vision stub."""
+    from vdisplay.control.descriptors import HostEnvironmentKind, PlatformProfile
+
     _mock_readiness(monkeypatch)
+    monkeypatch.setattr(
+        "vdisplay.control.descriptors.detect_platform_profile",
+        lambda **kwargs: PlatformProfile(
+            os_family="linux",
+            display_stack="x11",
+            host_environment=HostEnvironmentKind.LINUX_X11,
+        ),
+    )
     decision = evaluate_provider_routing(
         backend="auto",
         selector=ControlSelector(vision_anchor="play-btn"),
     )
-    assert decision.selected_provider == "vision"
+    assert decision.selected_provider == "x11"
     assert decision.application_profile == "vision_only_surface"
     vision = next(item for item in decision.candidates if item.provider == "vision")
     assert vision.eligible is True
-    assert any("vision selector context" in reason for reason in vision.reasons)
+    assert any("defers auto routing" in reason for reason in vision.reasons)
+
+
+def test_vision_provider_stub_anchor_without_ocr(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.control.providers.vision import VisionProviderStub
+
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.provider.ocr_available",
+        lambda: (False, "pytesseract not installed"),
+    )
+    provider = VisionProviderStub()
+    assert provider.name == "vision"
+    nodes = provider.find(ControlSelector(vision_anchor="test"))
+    assert len(nodes) == 1
+    assert nodes[0].id == "vision:test"
+    result = provider.invoke(nodes[0].id)
+    assert result["ok"] is False
+    assert result.get("stub") is True
 
 
 def test_routing_semantics_vision_requires_no_session() -> None:
@@ -94,6 +126,10 @@ def test_vision_routing_on_wayland_host(monkeypatch: pytest.MonkeyPatch) -> None
             security_constraints=["xdotool ineffective on Wayland"],
         ),
     )
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._xwayland_reachable",
+        lambda display=None: (False, "X display not reachable"),
+    )
 
     decision = evaluate_provider_routing(
         backend="auto",
@@ -102,6 +138,8 @@ def test_vision_routing_on_wayland_host(monkeypatch: pytest.MonkeyPatch) -> None
     assert decision.selected_provider == "vision"
     x11 = next(item for item in decision.candidates if item.provider == "x11")
     assert x11.eligible is False
+    vision = next(item for item in decision.candidates if item.provider == "vision")
+    assert vision.eligible is True
 
 
 def test_x11_fallback_boost_for_vision_profile(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -119,7 +157,7 @@ def test_x11_fallback_boost_for_vision_profile(monkeypatch: pytest.MonkeyPatch) 
     ranked, inference = rank_providers(selector=ControlSelector(vision_anchor="btn"))
     assert inference is not None
     assert inference["profile_id"] == "vision_only_surface"
-    assert ranked[0].provider == "vision"
+    assert ranked[0].provider == "x11"
     x11 = next(item for item in ranked if item.provider == "x11")
     assert x11.eligible is True
-    assert any("fallback provider" in reason for reason in x11.reasons)
+    assert any("primary provider for profile vision_only_surface" in reason for reason in x11.reasons)

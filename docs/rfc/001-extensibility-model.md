@@ -239,7 +239,7 @@ Session gates: browser and terminal providers require an open session (`browser_
 - Rewriting every provider at once.
 - Hard-coding app-specific logic into core.
 - Making every backend support every action.
-- Windows UIA / macOS AX (future phase).
+- Full Windows UIA / macOS AX invoke (stubs shipped in PR-19).
 - pluggy / dynamic hot-reload (entry points only for now).
 - Per-vendor top-level providers (Chrome as provider id).
 
@@ -271,12 +271,15 @@ Session gates: browser and terminal providers require an open session (`browser_
 | PR-15 | `HostEnvironmentKind` on `PlatformProfile` |
 | PR-16 | Browser engine profiles (`browser_firefox`, `browser_chromium`) |
 | PR-17 | Vision provider stub + `vision_only_surface` routing |
+| PR-18 | Plugin author guide + example wheel in `examples/control-plugin/` |
+| PR-19 | Windows UIA / macOS AX provider stubs + host-gated routing |
+| PR-20 | Vision OCR find/invoke (tesseract + pointer fallback) |
+| PR-21 | Full Windows UIA / macOS AX invoke (comtypes + ApplicationServices) |
 
 ## Recommended next PRs
 
-1. **PR-18** — Plugin author guide + example wheel in `examples/control-plugin/`.
-2. **PR-19** — Windows UIA / macOS AX providers (cross-platform phase).
-3. **PR-20** — Vision invoke/OCR implementation (beyond stub).
+1. **PR-22** — Vision template/anchor matching beyond OCR text boxes.
+2. **PR-23** — Cross-platform control plugin examples (UIA/AX wheels).
 
 ## One-line principle
 

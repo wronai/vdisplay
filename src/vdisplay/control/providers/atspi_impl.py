@@ -38,6 +38,12 @@ def _atspi():
     gi.require_version("Atspi", "2.0")
     from gi.repository import Atspi
 
+    try:
+        # Cap per-call D-Bus latency so one hung a11y client (e.g. a Java or
+        # Electron app with a broken AT-SPI bridge) cannot stall the snapshot.
+        Atspi.set_timeout(800, 15000)
+    except Exception:
+        pass
     return Atspi
 
 
@@ -297,14 +303,20 @@ def snapshot_dict(
         return node_id
 
     for app_index in range(desktop.get_child_count()):
-        application = desktop.get_child_at_index(app_index)
-        if application is None:
+        try:
+            application = desktop.get_child_at_index(app_index)
+            if application is None:
+                continue
+            app_name = application.name or None
+            if not _application_matches(application, app):
+                continue
+            app_label = app_name
+            walk(application, str(app_index), None, 0, app_name, None)
+        except Exception:
+            # An unresponsive app on the a11y bus (e.g. a hung Java/Electron
+            # client) raises dbind timeouts — skip it instead of failing the
+            # whole snapshot.
             continue
-        app_name = application.name or None
-        if not _application_matches(application, app):
-            continue
-        app_label = app_name
-        walk(application, str(app_index), None, 0, app_name, None)
 
     return ControlSnapshot(
         backend="atspi",

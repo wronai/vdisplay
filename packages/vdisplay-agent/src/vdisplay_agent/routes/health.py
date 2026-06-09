@@ -8,9 +8,13 @@ from typing import Any
 from fastapi import FastAPI, Header, Query
 from starlette.requests import Request
 
-from .. import schemas as S
+from .. import __version__, schemas as S
 from ..envelope import success
 from ..runtime import AgentRuntime
+
+
+def _control_api_enabled(app: FastAPI) -> bool:
+    return any(getattr(route, "path", None) == "/control/invoke" for route in app.routes)
 
 
 def register_routes(
@@ -24,6 +28,17 @@ def register_routes(
         return success(
             S.ACTION_HEALTH,
             {"status": "ok", "service": "vdisplay-agent", "broker": "vdisplay-agent"},
+        )
+
+    @app.get("/version")
+    def version(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+        check_auth(authorization)
+        return success(
+            S.ACTION_VERSION,
+            {
+                "version": __version__,
+                "control_api": _control_api_enabled(app),
+            },
         )
 
     @app.get("/capabilities")

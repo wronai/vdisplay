@@ -15,7 +15,7 @@ def test_agent_control_diagnostics(agent_client, monkeypatch: pytest.MonkeyPatch
     assert "routing" in payload["data"]
     assert payload["data"]["routing"]["selected_provider"]
     assert "extensions" in payload["data"]
-    assert len(payload["data"]["extensions"]["providers"]) >= 4
+    assert len(payload["data"]["extensions"]["providers"]) >= 7
 
 
 def test_agent_controls_list(agent_client, monkeypatch: pytest.MonkeyPatch) -> None:

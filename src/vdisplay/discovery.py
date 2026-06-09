@@ -13,6 +13,10 @@ def resolve_host_display(preferred: str | None = None) -> str:
     """Pick a real host X11 display, avoiding stale Xvfb :99 from prior sessions."""
     if preferred and not _looks_like_xvfb_only(preferred):
         return preferred
+    if preferred and _display_socket_exists(preferred):
+        # Explicitly requested virtual display (e.g. --display :99) that is
+        # actually live — honor it instead of falling back to the host display.
+        return preferred
 
     env_display = os.environ.get("DISPLAY")
     if env_display and not _looks_like_xvfb_only(env_display):
@@ -22,6 +26,13 @@ def resolve_host_display(preferred: str | None = None) -> str:
         if Path(f"/tmp/.X11-unix/X{candidate.lstrip(':')}").exists():
             return candidate
     return preferred or env_display or ":0"
+
+
+def _display_socket_exists(display: str) -> bool:
+    suffix = display.lstrip(":").split(".")[0]
+    if not suffix.isdigit():
+        return False
+    return Path(f"/tmp/.X11-unix/X{suffix}").exists()
 
 
 def _looks_like_xvfb_only(display: str) -> bool:

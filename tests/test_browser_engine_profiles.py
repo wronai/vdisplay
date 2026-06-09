@@ -121,6 +121,49 @@ def test_dsl_browser_open_vendor_flag() -> None:
     assert request.browser_engine == "firefox"
 
 
+def test_diagnose_control_includes_browser_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.application.services import control as control_svc
+
+    registry = default_registry()
+    registry.close_all()
+    registry.open_mock(FakePage(), session_id="ff-diag", engine="firefox")
+
+    monkeypatch.setattr("vdisplay.control.scoring._atspi_ready", lambda: (True, "ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._xdotool_ready", lambda: (True, "ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._terminal_ready", lambda: (True, "ok"))
+    monkeypatch.setattr("vdisplay.control.scoring._vision_ready", lambda: (True, "ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._browser_session_ready",
+        lambda sid: (True, f"session {sid} open"),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.scoring._terminal_session_ready",
+        lambda _sid: (True, "ok"),
+    )
+
+    try:
+        payload = control_svc.diagnose_control(
+            dom_css="#go",
+            session_id="ff-diag",
+            backend="auto",
+        )
+        assert payload["browser_engine"] == "firefox"
+        assert payload["session_id"] == "ff-diag"
+        assert payload["routing"]["selected_provider"] == "browser"
+    finally:
+        registry.close_all()
+
+
+def test_builtin_provider_count_unchanged() -> None:
+    from vdisplay.control.descriptors import BUILTIN_PROVIDER_DESCRIPTORS, extension_catalog
+
+    catalog = extension_catalog()
+    provider_ids = sorted(item["provider_id"] for item in catalog["providers"])
+    assert provider_ids == ["atspi", "ax", "browser", "terminal", "uia", "vision", "x11"]
+    assert len(BUILTIN_PROVIDER_DESCRIPTORS) == 7
+
+
 def test_dispatch_browser_open_passes_engine(monkeypatch: pytest.MonkeyPatch) -> None:
     opened: dict[str, object] = {}
 

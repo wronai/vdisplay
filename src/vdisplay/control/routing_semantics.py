@@ -46,6 +46,12 @@ _HOST_CONSTRAINTS: dict[HostEnvironmentKind, list[str]] = {
     HostEnvironmentKind.LINUX_HEADLESS: [
         "no interactive desktop — virtual display or session-scoped providers",
     ],
+    HostEnvironmentKind.WINDOWS: [
+        "desktop semantic control via uia provider (atspi/x11 not applicable)",
+    ],
+    HostEnvironmentKind.DARWIN: [
+        "desktop semantic control via ax provider (atspi/x11 not applicable)",
+    ],
 }
 
 _TARGET_SESSION_KIND: dict[EnvironmentKind, SessionKind] = {

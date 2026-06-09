@@ -2,4 +2,6 @@
 
 from .runtime import AgentRuntime
 
-__all__ = ["AgentRuntime"]
+__version__ = "0.1.9"
+
+__all__ = ["AgentRuntime", "__version__"]

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.8-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$4.57-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-4.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.9-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$5.73-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-6.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $4.5681 (7 commits)
-- 👤 **Human dev:** ~$475 (4.7h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $5.7266 (8 commits)
+- 👤 **Human dev:** ~$615 (6.1h @ $100/h, 30min dedup)
 
 Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -115,6 +115,11 @@ Examples for a typical Linux desktop session (`DISPLAY=:0`, Wayland + XWayland).
 
 ### JetBrains Toolbox / IDE
 
+**⚠️ Wayland Users**: JetBrains IDEs run natively on Wayland by default and are **invisible** to X11 tools. Force XWayland mode for control:
+```bash
+env -u WAYLAND_DISPLAY -u XDG_SESSION_TYPE DISPLAY=:0 /snap/bin/pycharm-professional
+```
+
 Toolbox usually runs on XWayland and shows up in window lists:
 
 ```bash
@@ -143,9 +148,20 @@ vdisplay relay screenshot -o after-restore.png --source DP-2
 IntelliJ / PyCharm (when launched via Toolbox, often XWayland):
 
 ```bash
-vdisplay windows --app "IntelliJ"
+# Find PyCharm windows
+vdisplay windows --app "PyCharm"
 vdisplay windows --class idea | jq '.windows[] | {title, pid, nl}'
 vdisplay relay adopt-window --title "vdisplay"   # partial title match
+
+# Control PyCharm via AT-SPI (requires Java ATK Wrapper + screen reader support)
+# Install: sudo apt install libatk-wrapper-java
+# VM option: -Dide.support.screenreaders.enabled=true
+vdisplay control list --backend atspi --app "PyCharm"
+vdisplay control click --role button --name "Chat" --verify
+vdisplay control set-value --role entry --name "Chat input" --value "Your text" --verify
+```
+
+**Note**: For comprehensive test results of control plane functionality, see [examples/control-plane/README.md](examples/control-plane/README.md#test-results-2026-06-09). Testing shows Terminal and Browser control working fully, AT-SPI discovery working but with interaction limitations on Wayland. JetBrains Toolbox successfully controlled via xdotool workaround despite Wayland restrictions. DSL browser control requires session opening before operations. Cursor editor not controllable in native Wayland mode (only screenshot observation possible).
 ```
 
 ### Firefox (XWayland)
@@ -393,12 +409,165 @@ vdisplay control click --backend browser --session-id web-1 --selector "#submit"
 vdisplay diagnose control --selector "#go" --session-id web-1   # routing + profile inference
 ```
 
-### Terminal sessions (TUI / PTY)
+### GNOME desktop control (native apps via AT-SPI)
+
+On **GNOME Wayland**, prefer `atspi` over `x11` — `xdotool` is blocked (`linux_wayland`). Enable accessibility where needed:
 
 ```bash
-dsl2vdisplay -c 'terminal open --session-id term-1 --command bash'
+# one-time / per-shell — GTK/Java/Electron trees
+export GTK_A11Y=1
+export QT_ACCESSIBILITY=1
+export JAVA_TOOL_OPTIONS="-Djavax.accessibility.assistive_technologies=org.GNOME.Accessibility.AtkWrapper"
+
+# diagnose before clicking — shows eligible providers on your host
+vdisplay diagnose control --app firefox --role button --name Reload --backend auto
+```
+
+#### Files (Nautilus)
+
+```bash
+# launch on X11 stack for a fuller tree on Wayland host
+GDK_BACKEND=x11 GTK_A11Y=1 nautilus ~ &
+sleep 2
+
+vdisplay control list --app Nautilus --backend atspi --format tree
+vdisplay control click --app Nautilus --role button --name Home --verify
+vdisplay control click --app Nautilus --role menu item --name Documents --verify
+```
+
+#### Calculator
+
+```bash
+GDK_BACKEND=x11 GTK_A11Y=1 gnome-calculator &
+sleep 1
+
+vdisplay control list --app Calculator --backend atspi
+vdisplay control click --app Calculator --role push button --name 7 --verify
+vdisplay control click --app Calculator --role push button --name equals --verify
+```
+
+#### Text Editor / gedit
+
+```bash
+GDK_BACKEND=x11 GTK_A11Y=1 gnome-text-editor ~/notes.txt &
+sleep 1
+
+vdisplay control set-value --app "Text Editor" --role text --index 0 --value "hello from vdisplay" --verify
+vdisplay control click --role button --name Save --verify
+```
+
+#### Settings (limited tree on Wayland)
+
+```bash
+# Settings is often native Wayland — tree may be shallow; use browser/terminal sessions for automation instead
+vdisplay control list --app Settings --backend atspi --max-depth 3
+vdisplay screenshot -o settings.png --source primary   # visual fallback
+```
+
+#### Firefox desktop window (not browser session)
+
+```bash
+# native Wayland Firefox: AT-SPI partial, x11 blocked — prefer browser session for web UI
+# force X11 window for desktop-window control:
+MOZ_ENABLE_WAYLAND=0 firefox &
+sleep 3
+
+vdisplay control list --app firefox --backend atspi --format tree
+vdisplay control click --backend atspi --app firefox --role button --name Reload --verify
+# do NOT use on Wayland host:
+# vdisplay control click --backend x11 --app firefox --role button --name Reload
+```
+
+#### PyCharm / IntelliJ (Java AT-SPI)
+
+```bash
+vdisplay control list --backend atspi --app "PyCharm"
+vdisplay control click --role button --name "Chat" --verify
+vdisplay control set-value --role entry --name "Chat input" --value "Explain this stack trace" --verify
+```
+
+### GNOME terminal control (PTY sessions)
+
+**GNOME Terminal** on Wayland usually has **no** usable desktop window for control — open a **PTY session** instead (works headless, in CI, and across CLI invocations):
+
+```bash
+# open session (DSL — same semantics as agent POST /session/terminal/open)
+dsl2vdisplay -c 'terminal open --session-id term-1 --command bash --rows 40 --cols 120'
+
+# inspect TUI grid
 vdisplay control list --backend terminal --session-id term-1
-vdisplay control click --backend terminal --session-id term-1 --terminal-line 3 --terminal-col 10
+vdisplay diagnose control --backend terminal --session-id term-1
+
+# send keys at grid coordinates (1-based line/col)
+vdisplay control click --backend terminal --session-id term-1 --terminal-line 1 --terminal-col 0
+vdisplay control set-value --backend terminal --session-id term-1 --terminal-line 2 --value "ls -la" --verify
+```
+
+#### Interactive shell workflow
+
+```bash
+dsl2vdisplay -c 'terminal open --session-id shell-1 --command bash'
+vdisplay control set-value --backend terminal --session-id shell-1 --terminal-line 1 --value "cd ~/github/wronai/vdisplay" --verify
+vdisplay control set-value --backend terminal --session-id shell-1 --terminal-line 2 --value "git status" --verify
+vdisplay control list --backend terminal --session-id shell-1
+```
+
+#### Python REPL
+
+```bash
+dsl2vdisplay -c 'terminal open --session-id py-1 --command python3 --rows 30 --cols 100'
+vdisplay control set-value --backend terminal --session-id py-1 --terminal-line 1 --value "import vdisplay; print(vdisplay.__file__)" --verify
+```
+
+#### htop / ncurses (coordinate + text match)
+
+```bash
+dsl2vdisplay -c 'terminal open --session-id htop-1 --command htop'
+sleep 2
+vdisplay control find --backend terminal --session-id htop-1 --text-contains "Tasks"
+vdisplay control click --backend terminal --session-id htop-1 --terminal-line 5 --terminal-col 0
+```
+
+#### vim / less (read-only navigation)
+
+```bash
+dsl2vdisplay -c 'terminal open --session-id vim-1 --command "vim /tmp/notes.txt"'
+sleep 1
+vdisplay control click --backend terminal --session-id vim-1 --terminal-line 1 --terminal-col 0
+# prefer terminal session over chasing GNOME Terminal / Tilix / kitty desktop windows
+```
+
+#### Long-running terminal with agent broker
+
+```bash
+# terminal 1
+vdisplay agent serve
+
+# terminal 2 — session lives in broker process
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+dsl2vdisplay -c 'terminal open --session-id agent-term --command bash'
+vdisplay control list --backend terminal --session-id agent-term
+```
+
+#### Terminal vs desktop terminal apps (GNOME)
+
+| App | Desktop `control` | Recommended |
+|-----|-------------------|-------------|
+| GNOME Terminal | rarely works (Wayland) | `terminal open` + `--session-id` |
+| Tilix / Terminator | XWayland only | PTY session or `--class Tilix` + screenshot |
+| Alacritty / kitty | native Wayland hidden | PTY session |
+| `ssh` in PTY | N/A | `terminal open --command "ssh host"` |
+
+### Browser + terminal combined (typical dev loop)
+
+```bash
+# web UI in Playwright session (detached across CLI calls)
+vdisplay control browser-open --url http://localhost:3000 --session-id web-1 --headed
+vdisplay control click --backend browser --session-id web-1 --selector "#submit" --verify
+
+# build/logs in PTY
+dsl2vdisplay -c 'terminal open --session-id build-1 --command "npm run dev"'
+vdisplay control set-value --backend terminal --session-id build-1 --terminal-line 1 --value "r" --verify
 ```
 
 ### Desktop app cheat sheet
@@ -788,9 +957,33 @@ vdisplay control click --app DBeaver --role button --name "Execute SQL" --verify
 # 10) Electron app — unlock dialog (Bitwarden / Obsidian)
 vdisplay control click --app Bitwarden --role button --name Unlock --verify
 
-# 11) xdotool fallback when AT-SPI tree is empty
-vdisplay control click --backend x11 --app firefox --role button --name Reload
+# 11) xdotool fallback — **X11 host only** (blocked on GNOME Wayland)
+# vdisplay control click --backend x11 --app firefox --role button --name Reload
+
+# 12) GNOME Files — navigate sidebar
+GDK_BACKEND=x11 GTK_A11Y=1 vdisplay control click --app Nautilus --role button --name Home --verify
+
+# 13) GNOME Calculator — press keys
+vdisplay control click --app Calculator --role push button --name 5 --verify
+
+# 14) PTY terminal — type command and verify grid
+dsl2vdisplay -c 'terminal open --session-id t1 --command bash'
+vdisplay control set-value --backend terminal --session-id t1 --terminal-line 1 --value "echo ok" --verify
+
+# 15) Routing check with selector (browser engine + profile)
+vdisplay diagnose control --selector "#go" --session-id web-1 --backend auto
 ```
+
+### GNOME backend picker
+
+| Goal | Backend | Example |
+|------|---------|---------|
+| GTK app (Files, Calculator) | `atspi` + `GDK_BACKEND=x11` | `control click --app Nautilus --role button --name Home` |
+| Java IDE | `atspi` | `control click --app PyCharm --role button --name Run` |
+| Web app / form | `browser` + session | `control browser-open` then `--selector "#id"` |
+| Shell / TUI / CI | `terminal` + session | `terminal open` then `--terminal-line N` |
+| Canvas / no a11y tree | `vision` (stub) | `diagnose control --vision-anchor btn` |
+| Pointer injection | `x11` | **ineligible on Wayland** — use `atspi` or sessions |
 
 ### Python API Example
 

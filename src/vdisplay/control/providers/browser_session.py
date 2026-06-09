@@ -48,10 +48,17 @@ class BrowserSessionRegistry:
     def __init__(self) -> None:
         self._sessions: dict[str, BrowserSession] = {}
 
+    def _tracks_detached_sessions(self) -> bool:
+        """Only the process-wide default registry merges persisted CDP sessions."""
+        return self is _DEFAULT_REGISTRY
+
     def list_ids(self) -> list[str]:
+        ids = set(self._sessions)
+        if not self._tracks_detached_sessions():
+            return sorted(ids)
+
         from ..browser_session_store import _SESSION_ROOT, load_meta, process_alive
 
-        ids = set(self._sessions)
         if _SESSION_ROOT.is_dir():
             for path in _SESSION_ROOT.glob("*.json"):
                 meta = load_meta(path.stem)
@@ -62,6 +69,8 @@ class BrowserSessionRegistry:
     def get(self, session_id: str) -> BrowserSession | None:
         if session_id in self._sessions:
             return self._sessions[session_id]
+        if not self._tracks_detached_sessions():
+            return None
         return self._attach(session_id)
 
     def require(self, session_id: str) -> BrowserSession:
@@ -93,7 +102,7 @@ class BrowserSessionRegistry:
             session_available,
         )
 
-        if page is None and session_available(sid):
+        if page is None and self._tracks_detached_sessions() and session_available(sid):
             return self._attach(sid)
 
         if page is not None:
