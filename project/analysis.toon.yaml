@@ -1,0 +1,142 @@
+# code2llm | 21f 1915L | python:17,shell:2,yaml:1,toml:1 | 2026-06-09
+# generated in 0.00s
+# CC̅=2.2 | critical:0/104 | dups:0 | cycles:0
+
+HEALTH[0]: ok
+
+REFACTOR[0]: none needed
+
+PIPELINES[65]:
+  [1] Src [main]: main → build_parser
+      PURITY: 100% pure
+  [2] Src [create]: create → _default_virtual_backend
+      PURITY: 100% pure
+  [3] Src [start]: start
+      PURITY: 100% pure
+  [4] Src [stop]: stop
+      PURITY: 100% pure
+  [5] Src [launch]: launch
+      PURITY: 100% pure
+  [6] Src [screenshot_bytes]: screenshot_bytes
+      PURITY: 100% pure
+  [7] Src [save_screenshot]: save_screenshot
+      PURITY: 100% pure
+  [8] Src [adopt_window]: adopt_window
+      PURITY: 100% pure
+  [9] Src [release_window]: release_window
+      PURITY: 100% pure
+  [10] Src [info]: info
+      PURITY: 100% pure
+  [11] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [12] Src [__init__]: __init__
+      PURITY: 100% pure
+  [13] Src [create]: create → _default_mirror_backend
+      PURITY: 100% pure
+  [14] Src [start]: start
+      PURITY: 100% pure
+  [15] Src [stop]: stop
+      PURITY: 100% pure
+  [16] Src [screenshot_bytes]: screenshot_bytes
+      PURITY: 100% pure
+  [17] Src [save_screenshot]: save_screenshot
+      PURITY: 100% pure
+  [18] Src [info]: info
+      PURITY: 100% pure
+  [19] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [20] Src [create]: create → _default_relay_backend
+      PURITY: 100% pure
+  [21] Src [start]: start
+      PURITY: 100% pure
+  [22] Src [stop]: stop
+      PURITY: 100% pure
+  [23] Src [adopt_window]: adopt_window
+      PURITY: 100% pure
+  [24] Src [release_window]: release_window
+      PURITY: 100% pure
+  [25] Src [list_adopted]: list_adopted
+      PURITY: 100% pure
+  [26] Src [info]: info
+      PURITY: 100% pure
+  [27] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [28] Src [__init__]: __init__
+      PURITY: 100% pure
+  [29] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [30] Src [info]: info
+      PURITY: 100% pure
+  [31] Src [start]: start → _list_connected_outputs → run_command
+      PURITY: 100% pure
+  [32] Src [stop]: stop → run_command
+      PURITY: 100% pure
+  [33] Src [screenshot_bytes]: screenshot_bytes → capture_display_png → require_command
+      PURITY: 100% pure
+  [34] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [35] Src [info]: info
+      PURITY: 100% pure
+  [36] Src [launch]: launch
+      PURITY: 100% pure
+  [37] Src [screenshot_bytes]: screenshot_bytes
+      PURITY: 100% pure
+  [38] Src [save_screenshot]: save_screenshot
+      PURITY: 100% pure
+  [39] Src [adopt_window]: adopt_window
+      PURITY: 100% pure
+  [40] Src [release_window]: release_window
+      PURITY: 100% pure
+  [41] Src [as_dict]: as_dict
+      PURITY: 100% pure
+  [42] Src [__init__]: __init__
+      PURITY: 100% pure
+  [43] Src [capabilities]: capabilities
+      PURITY: 100% pure
+  [44] Src [info]: info
+      PURITY: 100% pure
+  [45] Src [start]: start → _wait_for_display
+      PURITY: 100% pure
+  [46] Src [stop]: stop
+      PURITY: 100% pure
+  [47] Src [launch]: launch
+      PURITY: 100% pure
+  [48] Src [screenshot_bytes]: screenshot_bytes → capture_display_png → require_command
+      PURITY: 100% pure
+  [49] Src [adopt_window]: adopt_window
+      PURITY: 100% pure
+  [50] Src [release_window]: release_window
+      PURITY: 100% pure
+
+LAYERS:
+  src/                            CC̄=2.2    ←in:0  →out:0
+  │ linux_x11_relay            250L  2C   14m  CC=11     ←0
+  │ api                        178L  3C   32m  CC=6      ←1
+  │ cli                        173L  0C    3m  CC=14     ←0
+  │ linux_x11_mirror           173L  1C   10m  CC=9      ←0
+  │ linux_xwd                  164L  0C   10m  CC=12     ←2
+  │ linux_xvfb                  98L  1C   10m  CC=3      ←0
+  │ base                        58L  1C   11m  CC=1      ←0
+  │ utils                       46L  0C    3m  CC=2      ←4
+  │ linux_xdotool               45L  1C    6m  CC=2      ←0
+  │ mirror_stub                 34L  1C    4m  CC=1      ←0
+  │ models                      26L  2C    0m  CC=0.0    ←0
+  │ __init__                    12L  0C    0m  CC=0.0    ←0
+  │ exceptions                  10L  3C    0m  CC=0.0    ←0
+  │ base                         9L  1C    1m  CC=1      ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ __init__                     3L  0C    0m  CC=0.0    ←0
+  │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │
+  ./                              CC̄=0.0    ←in:0  →out:0
+  │ !! goal.yaml                  511L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              61L  0C    0m  CC=0.0    ←0
+  │ project.sh                  59L  0C    0m  CC=0.0    ←0
+  │ tree.sh                      1L  0C    0m  CC=0.0    ←0
+  │
+
+COUPLING: no cross-package imports detected
+
+EXTERNAL:
+  validation: run `vallm batch .` → validation.toon
+  duplication: run `redup scan .` → duplication.toon

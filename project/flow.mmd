@@ -1,0 +1,26 @@
+flowchart TD
+%% generated in 0.00s
+
+    %% Entry points (blue)
+    classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
+
+    subgraph Core
+        src__vdisplay__cli__build_parser["build_parser"]
+        src__vdisplay__cli___print_json["_print_json"]
+        src__vdisplay__cli__main["main"]
+        src__vdisplay__api__VirtualDisplaySession__create["create"]
+        src__vdisplay__api__VirtualDisplaySession__start["start"]
+        src__vdisplay__api__VirtualDisplaySession__stop["stop"]
+        src__vdisplay__api__VirtualDisplaySession__launch["launch"]
+        src__vdisplay__api__VirtualDisplaySession__screenshot_bytes["screenshot_bytes"]
+        src__vdisplay__api__VirtualDisplaySession__save_screenshot["save_screenshot"]
+        src__vdisplay__api__VirtualDisplaySession__adopt_window["adopt_window"]
+        src__vdisplay__api__VirtualDisplaySession__release_window["release_window"]
+        src__vdisplay__api__VirtualDisplaySession__info["info"]
+        src__vdisplay__api__VirtualDisplaySession__capabilities["capabilities"]
+        src__vdisplay__api__MirrorSession__create["create"]
+        src__vdisplay__api__MirrorSession__start["start"]
+        ...["+57 more"]
+    end
+
+    class src__vdisplay__cli__build_parser,src__vdisplay__cli___print_json,src__vdisplay__cli__main,src__vdisplay__api__VirtualDisplaySession__create,src__vdisplay__api__VirtualDisplaySession__start,src__vdisplay__api__VirtualDisplaySession__stop,src__vdisplay__api__VirtualDisplaySession__launch,src__vdisplay__api__VirtualDisplaySession__screenshot_bytes,src__vdisplay__api__VirtualDisplaySession__save_screenshot,src__vdisplay__api__VirtualDisplaySession__adopt_window entry

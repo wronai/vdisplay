@@ -1,0 +1,637 @@
+project: /home/tom/github/wronai/vdisplay
+generated_from: code2llm call graph analysis
+stats:
+  total_nodes: 46
+  total_edges: 59
+  modules_count: 8
+nodes:
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move:
+    name: move
+    module: src.vdisplay.input.linux_xdotool
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._xwd_dimensions:
+    name: _xwd_dimensions
+    module: src.vdisplay.capture.linux_xwd
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.utils.run_command_bytes:
+    name: run_command_bytes
+    module: src.vdisplay.utils
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd.capture_display_png:
+    name: capture_display_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start:
+    name: start
+    module: src.vdisplay.backends.linux_xvfb
+    line: 44
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.api._default_mirror_backend:
+    name: _default_mirror_backend
+    module: src.vdisplay.api
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_mirror._output_mode:
+    name: _output_mode
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 158
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._find_window_id:
+    name: _find_window_id
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 145
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 2
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click:
+    name: click
+    module: src.vdisplay.input.linux_xdotool
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._read_xwd_header:
+    name: _read_xwd_header
+    module: src.vdisplay.capture.linux_xwd
+    line: 67
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.cli.build_parser:
+    name: build_parser
+    module: src.vdisplay.cli
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 43
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes:
+    name: screenshot_bytes
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 113
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._output_origin:
+    name: _output_origin
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 204
+    cyclomatic_complexity: 11
+    calls_out: 20
+    calls_in: 1
+  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes:
+    name: screenshot_bytes
+    module: src.vdisplay.backends.linux_xvfb
+    line: 72
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._screen_geometry:
+    name: _screen_geometry
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 192
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._debug_windows:
+    name: _debug_windows
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 231
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 0
+  src.vdisplay.utils.run_command:
+    name: run_command
+    module: src.vdisplay.utils
+    line: 17
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 20
+  src.vdisplay.api._default_virtual_backend:
+    name: _default_virtual_backend
+    module: src.vdisplay.api
+    line: 13
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.capture.linux_xwd._rgb_to_png:
+    name: _rgb_to_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 138
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window:
+    name: adopt_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 60
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._window_geometry:
+    name: _window_geometry
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 162
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.api.WindowRelaySession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 126
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.backends.linux_xvfb._wait_for_display:
+    name: _wait_for_display
+    module: src.vdisplay.backends.linux_xvfb
+    line: 87
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes:
+    name: _xwd_to_rgb_bytes
+    module: src.vdisplay.capture.linux_xwd
+    line: 37
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey:
+    name: hotkey
+    module: src.vdisplay.input.linux_xdotool
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.api.platform_summary:
+    name: platform_summary
+    module: src.vdisplay.api
+    line: 171
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop:
+    name: stop
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 84
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window:
+    name: release_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 96
+    cyclomatic_complexity: 8
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror._resolve_output:
+    name: _resolve_output
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 129
+    cyclomatic_complexity: 9
+    calls_out: 12
+    calls_in: 2
+  src.vdisplay.capture.linux_xwd._header_fields:
+    name: _header_fields
+    module: src.vdisplay.capture.linux_xwd
+    line: 74
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  src.vdisplay.cli.main:
+    name: main
+    module: src.vdisplay.cli
+    line: 76
+    cyclomatic_complexity: 14
+    calls_out: 45
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd.xwd_bytes_to_png:
+    name: xwd_bytes_to_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 26
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.api._default_relay_backend:
+    name: _default_relay_backend
+    module: src.vdisplay.api
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay._offscreen_coordinates:
+    name: _offscreen_coordinates
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 187
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  src.vdisplay.backends.linux_x11_mirror._primary_output:
+    name: _primary_output
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 151
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.api.MirrorSession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 84
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.utils.require_command:
+    name: require_command
+    module: src.vdisplay.utils
+    line: 10
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 6
+  src.vdisplay.cli._print_json:
+    name: _print_json
+    module: src.vdisplay.cli
+    line: 72
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 8
+  src.vdisplay.api.VirtualDisplaySession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 36
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._parse_xwd_header:
+    name: _parse_xwd_header
+    module: src.vdisplay.capture.linux_xwd
+    line: 58
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._decode_pixels:
+    name: _decode_pixels
+    module: src.vdisplay.capture.linux_xwd
+    line: 89
+    cyclomatic_complexity: 12
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text:
+    name: type_text
+    module: src.vdisplay.input.linux_xdotool
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._rgb_to_png_minimal:
+    name: _rgb_to_png_minimal
+    module: src.vdisplay.capture.linux_xwd
+    line: 150
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror._list_connected_outputs:
+    name: _list_connected_outputs
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 119
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start:
+    name: start
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 51
+    cyclomatic_complexity: 8
+    calls_out: 9
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._window_title:
+    name: _window_title
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 177
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+edges:
+- caller: src.vdisplay.cli.main
+  callee: src.vdisplay.cli.build_parser
+  call_type: resolved
+- caller: src.vdisplay.cli.main
+  callee: src.vdisplay.cli._print_json
+  call_type: resolved
+- caller: src.vdisplay.api.VirtualDisplaySession.create
+  callee: src.vdisplay.api._default_virtual_backend
+  call_type: resolved
+- caller: src.vdisplay.api.MirrorSession.create
+  callee: src.vdisplay.api._default_mirror_backend
+  call_type: resolved
+- caller: src.vdisplay.api.WindowRelaySession.create
+  callee: src.vdisplay.api._default_relay_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_virtual_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_mirror_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_relay_backend
+  call_type: resolved
+- caller: src.vdisplay.utils.run_command_bytes
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._resolve_output
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._output_mode
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
+  callee: src.vdisplay.capture.linux_xwd.capture_display_png
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._resolve_output
+  callee: src.vdisplay.backends.linux_x11_mirror._primary_output
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._output_mode
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start
+  callee: src.vdisplay.backends.linux_xvfb._wait_for_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes
+  callee: src.vdisplay.capture.linux_xwd.capture_display_png
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._window_geometry
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._window_title
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._output_origin
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._window_geometry
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._window_title
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  callee: src.vdisplay.backends.linux_x11_relay._screen_geometry
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._screen_geometry
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._output_origin
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._output_origin
+  callee: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._debug_windows
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._debug_windows
+  callee: src.vdisplay.backends.linux_x11_relay._window_title
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._debug_windows
+  callee: src.vdisplay.backends.linux_x11_relay._window_geometry
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.capture_display_png
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.capture_display_png
+  callee: src.vdisplay.utils.run_command_bytes
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.capture_display_png
+  callee: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  callee: src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  callee: src.vdisplay.capture.linux_xwd._xwd_dimensions
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  callee: src.vdisplay.capture.linux_xwd._rgb_to_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._xwd_dimensions
+  callee: src.vdisplay.capture.linux_xwd._parse_xwd_header
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
+  callee: src.vdisplay.capture.linux_xwd._read_xwd_header
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
+  callee: src.vdisplay.capture.linux_xwd._decode_pixels
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._parse_xwd_header
+  callee: src.vdisplay.capture.linux_xwd._header_fields
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._read_xwd_header
+  callee: src.vdisplay.capture.linux_xwd._header_fields
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._rgb_to_png
+  callee: src.vdisplay.capture.linux_xwd._rgb_to_png_minimal
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+modules:
+  src.vdisplay.api:
+  - src.vdisplay.api.MirrorSession.create
+  - src.vdisplay.api.VirtualDisplaySession.create
+  - src.vdisplay.api.WindowRelaySession.create
+  - src.vdisplay.api._default_mirror_backend
+  - src.vdisplay.api._default_relay_backend
+  - src.vdisplay.api._default_virtual_backend
+  - src.vdisplay.api.platform_summary
+  src.vdisplay.backends.linux_x11_mirror:
+  - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
+  - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
+  - src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  - src.vdisplay.backends.linux_x11_mirror._output_mode
+  - src.vdisplay.backends.linux_x11_mirror._primary_output
+  - src.vdisplay.backends.linux_x11_mirror._resolve_output
+  src.vdisplay.backends.linux_x11_relay:
+  - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  - src.vdisplay.backends.linux_x11_relay._debug_windows
+  - src.vdisplay.backends.linux_x11_relay._find_window_id
+  - src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  - src.vdisplay.backends.linux_x11_relay._output_origin
+  - src.vdisplay.backends.linux_x11_relay._screen_geometry
+  - src.vdisplay.backends.linux_x11_relay._window_geometry
+  - src.vdisplay.backends.linux_x11_relay._window_title
+  src.vdisplay.backends.linux_xvfb:
+  - src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes
+  - src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start
+  - src.vdisplay.backends.linux_xvfb._wait_for_display
+  src.vdisplay.capture.linux_xwd:
+  - src.vdisplay.capture.linux_xwd._decode_pixels
+  - src.vdisplay.capture.linux_xwd._header_fields
+  - src.vdisplay.capture.linux_xwd._parse_xwd_header
+  - src.vdisplay.capture.linux_xwd._read_xwd_header
+  - src.vdisplay.capture.linux_xwd._rgb_to_png
+  - src.vdisplay.capture.linux_xwd._rgb_to_png_minimal
+  - src.vdisplay.capture.linux_xwd._xwd_dimensions
+  - src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
+  - src.vdisplay.capture.linux_xwd.capture_display_png
+  - src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  src.vdisplay.cli:
+  - src.vdisplay.cli._print_json
+  - src.vdisplay.cli.build_parser
+  - src.vdisplay.cli.main
+  src.vdisplay.input.linux_xdotool:
+  - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+  - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+  - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+  - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  src.vdisplay.utils:
+  - src.vdisplay.utils.require_command
+  - src.vdisplay.utils.run_command
+  - src.vdisplay.utils.run_command_bytes
+entry_points:
+- src.vdisplay.api.MirrorSession.__init__
+- src.vdisplay.api.MirrorSession.capabilities
+- src.vdisplay.api.MirrorSession.create
+- src.vdisplay.api.MirrorSession.info
+- src.vdisplay.api.MirrorSession.save_screenshot
+- src.vdisplay.api.MirrorSession.screenshot_bytes
+- src.vdisplay.api.MirrorSession.start
+- src.vdisplay.api.MirrorSession.stop
+- src.vdisplay.api.VirtualDisplaySession.__init__
+- src.vdisplay.api.VirtualDisplaySession.adopt_window
+- src.vdisplay.api.VirtualDisplaySession.capabilities
+- src.vdisplay.api.VirtualDisplaySession.create
+- src.vdisplay.api.VirtualDisplaySession.info
+- src.vdisplay.api.VirtualDisplaySession.launch
+- src.vdisplay.api.VirtualDisplaySession.release_window
+- src.vdisplay.api.VirtualDisplaySession.save_screenshot
+- src.vdisplay.api.VirtualDisplaySession.screenshot_bytes
+- src.vdisplay.api.VirtualDisplaySession.start
+- src.vdisplay.api.VirtualDisplaySession.stop
+- src.vdisplay.api.WindowRelaySession.__init__
+- src.vdisplay.api.WindowRelaySession.adopt_window
+- src.vdisplay.api.WindowRelaySession.capabilities
+- src.vdisplay.api.WindowRelaySession.create
+- src.vdisplay.api.WindowRelaySession.info
+- src.vdisplay.api.WindowRelaySession.list_adopted
+- src.vdisplay.api.WindowRelaySession.release_window
+- src.vdisplay.api.WindowRelaySession.start
+- src.vdisplay.api.WindowRelaySession.stop
+- src.vdisplay.backends.base.BaseBackend.__init__
+- src.vdisplay.backends.base.BaseBackend.adopt_window
+- src.vdisplay.backends.base.BaseBackend.as_dict
+- src.vdisplay.backends.base.BaseBackend.capabilities
+- src.vdisplay.backends.base.BaseBackend.info
+- src.vdisplay.backends.base.BaseBackend.launch
+- src.vdisplay.backends.base.BaseBackend.release_window
+- src.vdisplay.backends.base.BaseBackend.save_screenshot
+- src.vdisplay.backends.base.BaseBackend.screenshot_bytes
+- src.vdisplay.backends.base.BaseBackend.start
+- src.vdisplay.backends.base.BaseBackend.stop
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.capabilities
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.info
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.capabilities
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.info
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+- src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.start
+- src.vdisplay.backends.linux_x11_relay._debug_windows
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.__init__
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.adopt_window
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.capabilities
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.info
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.launch
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.release_window
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start
+- src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.stop
+- src.vdisplay.backends.mirror_stub.MirrorStubBackend.__init__
+- src.vdisplay.backends.mirror_stub.MirrorStubBackend.capabilities
+- src.vdisplay.backends.mirror_stub.MirrorStubBackend.info
+- src.vdisplay.backends.mirror_stub.MirrorStubBackend.screenshot_bytes
+- src.vdisplay.capture.base.CaptureBackend.screenshot_png
+- src.vdisplay.cli.main
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.__init__
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput._env
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+- src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text

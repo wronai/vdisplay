@@ -1,0 +1,43 @@
+# redup/duplication | 2 groups | 17f 1283L | 2026-06-09
+
+SUMMARY:
+  files_scanned: 17
+  total_lines:   1283
+  dup_groups:    2
+  dup_fragments: 5
+  saved_lines:   12
+  scan_ms:       1964
+
+HOTSPOTS[3] (files with most duplication):
+  src/vdisplay/api.py  dup=12L  groups=1  frags=3  (0.9%)
+  src/vdisplay/backends/linux_x11_mirror.py  dup=4L  groups=1  frags=1  (0.3%)
+  src/vdisplay/backends/linux_xvfb.py  dup=4L  groups=1  frags=1  (0.3%)
+
+DUPLICATES[2] (ranked by impact):
+  [b8e2782d68a777c3]   STRU  _default_virtual_backend  L=4 N=3 saved=8 sim=1.00
+      src/vdisplay/api.py:13-16  (_default_virtual_backend)
+      src/vdisplay/api.py:19-22  (_default_mirror_backend)
+      src/vdisplay/api.py:25-28  (_default_relay_backend)
+  [3d902e6f1c31b63f]   STRU  screenshot_bytes  L=4 N=2 saved=4 sim=1.00
+      src/vdisplay/backends/linux_x11_mirror.py:113-116  (screenshot_bytes)
+      src/vdisplay/backends/linux_xvfb.py:72-75  (screenshot_bytes)
+
+REFACTOR[2] (ranked by priority):
+  [1] ○ extract_function   → src/vdisplay/utils/_default_virtual_backend.py
+      WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
+      FILES: src/vdisplay/api.py
+  [2] ○ extract_function   → src/vdisplay/backends/utils/screenshot_bytes.py
+      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
+      FILES: src/vdisplay/backends/linux_x11_mirror.py, src/vdisplay/backends/linux_xvfb.py
+
+QUICK_WINS[1] (low risk, high savings — do first):
+  [1] extract_function   saved=8L  → src/vdisplay/utils/_default_virtual_backend.py
+      FILES: api.py
+
+EFFORT_ESTIMATE (total ≈ 0.4h):
+  easy   _default_virtual_backend            saved=8L  ~16min
+  easy   screenshot_bytes                    saved=4L  ~8min
+
+METRICS-TARGET:
+  dup_groups:  2 → 0
+  saved_lines: 12 lines recoverable
