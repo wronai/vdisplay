@@ -44,6 +44,20 @@ def test_describe_output_nl_with_apps() -> None:
     assert "Firefox" in nl
 
 
+def test_describe_output_nl_skips_internal_helpers() -> None:
+    output = {"name": "DP-1", "connected": True, "width": 4096, "height": 2560}
+    windows = [
+        {
+            "app_label": "mutter guard window",
+            "is_internal": True,
+            "type": "helper",
+        }
+    ]
+    nl = describe_output_nl(output, windows)
+    assert "mutter guard" not in nl
+    assert "Wayland" in nl or "No user application" in nl
+
+
 def test_describe_output_nl_empty_monitor() -> None:
     output = {"name": "HDMI-1", "connected": True, "width": 1920, "height": 1080}
     nl = describe_output_nl(output, [])
@@ -56,8 +70,65 @@ def test_window_center_on_output() -> None:
     assert window_center_on_output(window, output)
 
 
+def test_assign_windows_to_monitors() -> None:
+    from vdisplay.nl import assign_windows_to_monitors
+
+    monitors = [
+        {
+            "name": "DP-2",
+            "monitor_index": 0,
+            "x": 4096,
+            "y": 0,
+            "width": 4320,
+            "height": 7680,
+        },
+        {
+            "name": "DP-1",
+            "monitor_index": 1,
+            "x": 0,
+            "y": 1304,
+            "width": 4096,
+            "height": 2560,
+        },
+    ]
+    windows = [
+        {
+            "app_label": "Toolbox",
+            "x": 4520,
+            "y": 496,
+            "width": 880,
+            "height": 1326,
+        }
+    ]
+    assigned = assign_windows_to_monitors(windows, monitors)
+    assert assigned[0]["monitor_id"] == 0
+    assert assigned[0]["monitor_name"] == "DP-2"
+    assert assigned[0]["monitor_index"] == 0
+    assert "on monitor DP-2" in assigned[0]["nl"]
+
+
+def test_ensure_monitor_ids() -> None:
+    from vdisplay.nl import ensure_monitor_ids
+
+    monitors = [{"name": "DP-2", "monitor_index": 0}, {"name": "HDMI-1", "monitor_index": 2}]
+    ensure_monitor_ids(monitors)
+    assert monitors[0]["monitor_id"] == 0
+    assert monitors[1]["monitor_id"] == 2
+
+
 def test_enrich_outputs_nl_adds_field() -> None:
-    outputs = [{"name": "DP-1", "x": 0, "y": 0, "width": 1920, "height": 1080, "connected": True}]
+    monitors = [
+        {
+            "name": "DP-1",
+            "monitor_index": 0,
+            "monitor_id": 0,
+            "x": 0,
+            "y": 0,
+            "width": 1920,
+            "height": 1080,
+            "connected": True,
+        }
+    ]
     windows = [
         {
             "app_label": "Terminal",
@@ -67,6 +138,7 @@ def test_enrich_outputs_nl_adds_field() -> None:
             "height": 600,
         }
     ]
-    enriched = enrich_outputs_nl(outputs, windows)
+    enriched = enrich_outputs_nl(monitors, windows)
     assert enriched[0]["nl"]
+    assert enriched[0]["monitor_id"] == 0
     assert "Terminal" in enriched[0]["nl"]

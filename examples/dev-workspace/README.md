@@ -16,7 +16,8 @@ Inside the container:
 
 ```bash
 pytest tests/ -v
-vdisplay info
+vdisplay all
+vdisplay monitors
 python -c "from vdisplay import VirtualDisplaySession; ..."
 ```
 

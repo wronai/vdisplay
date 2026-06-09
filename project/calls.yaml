@@ -1,93 +1,296 @@
 project: /home/tom/github/wronai/vdisplay
 generated_from: code2llm call graph analysis
 stats:
-  total_nodes: 121
-  total_edges: 148
-  modules_count: 26
+  total_nodes: 320
+  total_edges: 394
+  modules_count: 68
 nodes:
-  src.vdisplay.windows._derive_app_label:
-    name: _derive_app_label
-    module: src.vdisplay.windows
-    line: 241
-    cyclomatic_complexity: 16
-    calls_out: 5
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window:
-    name: release_window
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 129
-    cyclomatic_complexity: 10
-    calls_out: 15
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_query:
-    name: _dispatch_query
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 13
-    cyclomatic_complexity: 2
-    calls_out: 7
-    calls_in: 1
-  packages.uri2vdisplay.src.uri2vdisplay.cli.main:
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli.main:
     name: main
-    module: packages.uri2vdisplay.src.uri2vdisplay.cli
-    line: 11
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
+    line: 13
     cyclomatic_complexity: 4
-    calls_out: 13
-    calls_in: 0
-  src.vdisplay.backends.linux_xvfb._probe_display:
-    name: _probe_display
-    module: src.vdisplay.backends.linux_xvfb
-    line: 134
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 4
-  src.vdisplay.windows._matches_class:
-    name: _matches_class
-    module: src.vdisplay.windows
-    line: 351
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 3
-  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__:
-    name: __init__
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 34
-    cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 0
-  src.vdisplay.api.WindowRelaySession.create:
-    name: create
-    module: src.vdisplay.api
-    line: 126
-    cyclomatic_complexity: 4
-    calls_out: 6
+  src.vdisplay.capture.linux_xwd.is_blank_png:
+    name: is_blank_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 26
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 6
+  src.vdisplay.capture.portal_screencast._close_screencast_session:
+    name: _close_screencast_session
+    module: src.vdisplay.capture.portal_screencast
+    line: 253
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.capture.host._capture_all_from_driver_full:
+    name: _capture_all_from_driver_full
+    module: src.vdisplay.capture.host
+    line: 48
+    cyclomatic_complexity: 7
+    calls_out: 15
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._header_fields:
+    name: _header_fields
+    module: src.vdisplay.capture.linux_xwd
+    line: 230
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  src.vdisplay.nlp._validate_dsl:
+    name: _validate_dsl
+    module: src.vdisplay.nlp
+    line: 67
+    cyclomatic_complexity: 1
+    calls_out: 2
     calls_in: 0
-  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start:
-    name: start
-    module: src.vdisplay.backends.linux_xvfb
-    line: 46
-    cyclomatic_complexity: 4
-    calls_out: 6
+  src.vdisplay.capture.portal_screencast._start_screencast_impl:
+    name: _start_screencast_impl
+    module: src.vdisplay.capture.portal_screencast
+    line: 139
+    cyclomatic_complexity: 9
+    calls_out: 44
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.cli.main:
+    name: main
+    module: packages.vdisplay-agent.src.vdisplay_agent.cli
+    line: 7
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._capture_full_display_png:
+    name: _capture_full_display_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 82
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.capture.providers.drm._drm_devices:
+    name: _drm_devices
+    module: src.vdisplay.capture.providers.drm
+    line: 14
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 2
+  examples.common.screenshot_meta.write_screenshot_meta:
+    name: write_screenshot_meta
+    module: examples.common.screenshot_meta
+    line: 141
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 4
+  src.vdisplay.commands.monitors.register:
+    name: register
+    module: src.vdisplay.commands.monitors
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 4
     calls_in: 0
   src.vdisplay.discovery._display_hint:
     name: _display_hint
     module: src.vdisplay.discovery
-    line: 253
+    line: 297
     cyclomatic_complexity: 3
     calls_out: 2
     calls_in: 1
-  src.vdisplay.windows._dedupe_app_windows:
-    name: _dedupe_app_windows
-    module: src.vdisplay.windows
-    line: 78
-    cyclomatic_complexity: 18
-    calls_out: 22
-    calls_in: 1
-  src.vdisplay.capture.linux_xwd._rgb_to_png:
-    name: _rgb_to_png
-    module: src.vdisplay.capture.linux_xwd
-    line: 138
+  src.vdisplay.discovery.window_discovery_meta:
+    name: window_discovery_meta
+    module: src.vdisplay.discovery
+    line: 316
     cyclomatic_complexity: 2
-    calls_out: 5
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.application.errors.error_from_exception:
+    name: error_from_exception
+    module: src.vdisplay.application.errors
+    line: 30
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 3
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy:
+    name: _dispatch_legacy
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 14
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.capture.providers.engine._providers:
+    name: _providers
+    module: src.vdisplay.capture.providers.engine
+    line: 25
+    cyclomatic_complexity: 4
+    calls_out: 13
+    calls_in: 3
+  src.vdisplay.cli.main:
+    name: main
+    module: src.vdisplay.cli
+    line: 20
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error:
+    name: json_error
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 59
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 9
+  packages.mcp2vdisplay.src.mcp2vdisplay.cli.main:
+    name: main
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
+    line: 6
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  examples.common.screenshot_meta.examples_common_dir:
+    name: examples_common_dir
+    module: examples.common.screenshot_meta
+    line: 11
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror._mirror_exhausted_error:
+    name: _mirror_exhausted_error
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 153
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.application.executor._execute_agent:
+    name: _execute_agent
+    module: src.vdisplay.application.executor
+    line: 156
+    cyclomatic_complexity: 19
+    calls_out: 41
+    calls_in: 1
+  src.vdisplay.windows.filter.matches_title:
+    name: matches_title
+    module: src.vdisplay.windows.filter
+    line: 73
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas:
+    name: all_schemas
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 16
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.capture.portal.PortalProvider.capture_full:
+    name: capture_full
+    module: src.vdisplay.capture.portal
+    line: 214
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.windows.query.scan_windows:
+    name: scan_windows
+    module: src.vdisplay.windows.query
+    line: 55
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_from_runtime:
+    name: json_from_runtime
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 55
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 9
+  src.vdisplay.application.services.discovery.list_windows_local:
+    name: list_windows_local
+    module: src.vdisplay.application.services.discovery
+    line: 98
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.capture.portal_screencast._system_python:
+    name: _system_python
+    module: src.vdisplay.capture.portal_screencast
+    line: 123
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._capture_grim_png:
+    name: _capture_grim_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 162
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 0
+  src.vdisplay.agent_config.use_agent:
+    name: use_agent
+    module: src.vdisplay.agent_config
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame:
+    name: capture_frame
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 189
+    cyclomatic_complexity: 10
+    calls_out: 41
+    calls_in: 0
+  src.vdisplay.windows.filter.matches_app:
+    name: matches_app
+    module: src.vdisplay.windows.filter
+    line: 91
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.application.services.discovery.list_monitors_local:
+    name: list_monitors_local
+    module: src.vdisplay.application.services.discovery
+    line: 41
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._capture_xwd_png:
+    name: _capture_xwd_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 101
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.success:
+    name: success
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 16
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 7
+  src.vdisplay.capture.linux_xwd._capture_scrot_png:
+    name: _capture_scrot_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 111
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_screencast:
+    name: stop_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 165
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast:
+    name: start_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 159
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.application.services.capture._capture_via_agent:
+    name: _capture_via_agent
+    module: src.vdisplay.application.services.capture
+    line: 101
+    cyclomatic_complexity: 8
+    calls_out: 10
     calls_in: 1
   src.vdisplay.api.MirrorSession.create:
     name: create
@@ -96,369 +299,131 @@ nodes:
     cyclomatic_complexity: 6
     calls_out: 8
     calls_in: 0
-  packages.nlp2vdisplay.src.nlp2vdisplay.cli.main:
-    name: main
-    module: packages.nlp2vdisplay.src.nlp2vdisplay.cli
-    line: 11
-    cyclomatic_complexity: 4
-    calls_out: 13
-    calls_in: 0
-  src.vdisplay.backends.linux_x11_mirror._output_mode:
-    name: _output_mode
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 193
-    cyclomatic_complexity: 7
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.windows._normalize_atom_list:
-    name: _normalize_atom_list
-    module: src.vdisplay.windows
-    line: 448
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror:
-    name: handle_mirror
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 39
-    cyclomatic_complexity: 3
+  src.vdisplay.capture.host.capture_all_monitors:
+    name: capture_all_monitors
+    module: src.vdisplay.capture.host
+    line: 270
+    cyclomatic_complexity: 11
     calls_out: 16
-    calls_in: 0
-  src.vdisplay.backends.linux_xvfb._display_socket_exists:
-    name: _display_socket_exists
-    module: src.vdisplay.backends.linux_xvfb
-    line: 130
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.windows._derive_role:
-    name: _derive_role
-    module: src.vdisplay.windows
-    line: 264
-    cyclomatic_complexity: 10
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_mirror._list_connected_outputs:
-    name: _list_connected_outputs
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 135
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch:
-    name: dispatch
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 52
+    calls_in: 2
+  src.vdisplay.windows.query.find_companion_frames:
+    name: find_companion_frames
+    module: src.vdisplay.windows.query
+    line: 199
     cyclomatic_complexity: 8
-    calls_out: 19
-    calls_in: 9
-  src.vdisplay.utils.run_command_bytes:
-    name: run_command_bytes
-    module: src.vdisplay.utils
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 1
+    calls_out: 10
     calls_in: 1
-  src.vdisplay.windows._looks_like_internal_class:
-    name: _looks_like_internal_class
-    module: src.vdisplay.windows
-    line: 332
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 5
-  packages.dsl2vdisplay.src.dsl2vdisplay.cli.main:
-    name: main
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
-    line: 13
-    cyclomatic_complexity: 4
+  src.vdisplay.application.executor._screenshot_local:
+    name: _screenshot_local
+    module: src.vdisplay.application.executor
+    line: 135
+    cyclomatic_complexity: 6
     calls_out: 3
-    calls_in: 0
+    calls_in: 1
+  src.vdisplay.utils.require_command:
+    name: require_command
+    module: src.vdisplay.utils
+    line: 10
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 10
   src.vdisplay.discovery._parse_xrandr_query:
     name: _parse_xrandr_query
     module: src.vdisplay.discovery
-    line: 111
+    line: 142
     cyclomatic_complexity: 8
     calls_out: 12
     calls_in: 1
-  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey:
-    name: hotkey
-    module: src.vdisplay.input.linux_xdotool
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  src.vdisplay.backends.linux_x11_relay._screen_geometry:
-    name: _screen_geometry
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 274
-    cyclomatic_complexity: 2
-    calls_out: 7
-    calls_in: 1
-  src.vdisplay.backends.linux_xvfb._display_candidates:
-    name: _display_candidates
-    module: src.vdisplay.backends.linux_xvfb
-    line: 123
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.windows._decode_xprop_value:
-    name: _decode_xprop_value
-    module: src.vdisplay.windows
-    line: 423
-    cyclomatic_complexity: 6
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.capture.linux_xwd._parse_xwd_header:
-    name: _parse_xwd_header
-    module: src.vdisplay.capture.linux_xwd
-    line: 58
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 1
-  src.vdisplay.discovery._merge_output_metadata:
-    name: _merge_output_metadata
-    module: src.vdisplay.discovery
-    line: 168
-    cyclomatic_complexity: 3
-    calls_out: 18
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_relay._move_window:
-    name: _move_window
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 229
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas:
-    name: all_schemas
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 16
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 3
-  src.vdisplay.discovery.list_outputs:
-    name: list_outputs
-    module: src.vdisplay.discovery
-    line: 45
-    cyclomatic_complexity: 7
-    calls_out: 25
-    calls_in: 6
-  src.vdisplay.discovery.resolve_host_display:
-    name: resolve_host_display
-    module: src.vdisplay.discovery
-    line: 12
-    cyclomatic_complexity: 9
-    calls_out: 6
-    calls_in: 10
-  packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server:
-    name: create_server
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.discovery.find_window_suggestions:
-    name: find_window_suggestions
-    module: src.vdisplay.discovery
-    line: 220
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_relay._find_window_id:
-    name: _find_window_id
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 184
-    cyclomatic_complexity: 12
-    calls_out: 11
-    calls_in: 2
-  src.vdisplay.windows._process_info:
-    name: _process_info
-    module: src.vdisplay.windows
-    line: 473
-    cyclomatic_complexity: 6
-    calls_out: 10
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_relay._offscreen_coordinates:
-    name: _offscreen_coordinates
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 269
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start:
-    name: start
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 51
-    cyclomatic_complexity: 15
-    calls_out: 16
-    calls_in: 0
-  src.vdisplay.utils.run_command:
-    name: run_command
-    module: src.vdisplay.utils
-    line: 17
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 27
-  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display:
-    name: _acquire_display
-    module: src.vdisplay.backends.linux_xvfb
-    line: 92
-    cyclomatic_complexity: 8
-    calls_out: 14
-    calls_in: 0
-  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server:
-    name: create_server
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.server
-    line: 7
-    cyclomatic_complexity: 1
-    calls_out: 14
-    calls_in: 0
-  src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates:
-    name: _mirror_target_candidates
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 186
-    cyclomatic_complexity: 7
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__:
-    name: __init__
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 18
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.to_text:
-    name: to_text
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 104
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr:
-    name: _primary_output_from_xrandr
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 177
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 2
-  src.vdisplay.windows._root_window_id:
-    name: _root_window_id
-    module: src.vdisplay.windows
-    line: 376
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 2
-  src.vdisplay.capture.linux_xwd.xwd_bytes_to_png:
-    name: xwd_bytes_to_png
-    module: src.vdisplay.capture.linux_xwd
+  src.vdisplay.capture.portal_screencast._set_active:
+    name: _set_active
+    module: src.vdisplay.capture.portal_screencast
     line: 26
     cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.backends.linux_x11_relay._window_geometry:
-    name: _window_geometry
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 244
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window:
-    name: adopt_window
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 64
-    cyclomatic_complexity: 12
-    calls_out: 26
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command:
-    name: split_command
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 7
-    cyclomatic_complexity: 4
-    calls_out: 4
+    calls_out: 0
     calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt:
-    name: handle_adopt
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 67
-    cyclomatic_complexity: 1
-    calls_out: 12
-    calls_in: 0
-  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click:
-    name: click
-    module: src.vdisplay.input.linux_xdotool
-    line: 23
-    cyclomatic_complexity: 1
+  src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png:
+    name: capture_png
+    module: src.vdisplay.capture.portal_screencast
+    line: 79
+    cyclomatic_complexity: 4
     calls_out: 4
     calls_in: 0
-  src.vdisplay.windows.inspect_window:
-    name: inspect_window
-    module: src.vdisplay.windows
-    line: 124
+  src.vdisplay.capture.portal._capture_portal_to_file:
+    name: _capture_portal_to_file
+    module: src.vdisplay.capture.portal
+    line: 104
+    cyclomatic_complexity: 11
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.capture.providers.engine._try_providers:
+    name: _try_providers
+    module: src.vdisplay.capture.providers.engine
+    line: 65
+    cyclomatic_complexity: 11
+    calls_out: 15
+    calls_in: 2
+  src.vdisplay.commands.virtual.handle:
+    name: handle
+    module: src.vdisplay.commands.virtual
+    line: 38
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 0
+  src.vdisplay.capture.providers.drm.DrmProvider._capture:
+    name: _capture
+    module: src.vdisplay.capture.providers.drm
+    line: 41
+    cyclomatic_complexity: 11
+    calls_out: 19
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta:
+    name: agent_meta
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  src.vdisplay.capture.host._monitor_source_name:
+    name: _monitor_source_name
+    module: src.vdisplay.capture.host
+    line: 15
     cyclomatic_complexity: 9
-    calls_out: 20
-    calls_in: 2
-  src.vdisplay.windows._looks_like_internal_name:
-    name: _looks_like_internal_name
-    module: src.vdisplay.windows
-    line: 337
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 3
-  src.vdisplay.cli.build_parser:
-    name: build_parser
-    module: src.vdisplay.cli
-    line: 13
-    cyclomatic_complexity: 1
-    calls_out: 61
+    calls_out: 13
     calls_in: 1
-  src.vdisplay.windows._xdotool:
-    name: _xdotool
-    module: src.vdisplay.windows
-    line: 386
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__:
+    name: __init__
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 42
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._load_stash:
+    name: _load_stash
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 225
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.commands.common.add_display_arg:
+    name: add_display_arg
+    module: src.vdisplay.commands.common
+    line: 6
     cyclomatic_complexity: 1
     calls_out: 1
+    calls_in: 7
+  src.vdisplay.nlp._run_local_dsl:
+    name: _run_local_dsl
+    module: src.vdisplay.nlp
+    line: 141
+    cyclomatic_complexity: 7
+    calls_out: 7
     calls_in: 1
-  src.vdisplay.windows.list_windows_enriched:
-    name: list_windows_enriched
-    module: src.vdisplay.windows
-    line: 31
-    cyclomatic_complexity: 16
-    calls_out: 17
-    calls_in: 4
-  src.vdisplay.capture.linux_xwd._rgb_to_png_minimal:
-    name: _rgb_to_png_minimal
-    module: src.vdisplay.capture.linux_xwd
-    line: 150
-    cyclomatic_complexity: 2
-    calls_out: 11
-    calls_in: 1
-  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes:
-    name: screenshot_bytes
-    module: src.vdisplay.backends.linux_xvfb
-    line: 78
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 0
-  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text:
-    name: type_text
-    module: src.vdisplay.input.linux_xdotool
-    line: 31
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema:
-    name: _load_schema
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 8
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move:
-    name: move
-    module: src.vdisplay.input.linux_xdotool
-    line: 15
-    cyclomatic_complexity: 1
-    calls_out: 5
+  examples.host-relay.relay_demo.main:
+    name: main
+    module: examples.host-relay.relay_demo
+    line: 60
+    cyclomatic_complexity: 11
+    calls_out: 33
     calls_in: 0
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb:
     name: schema_for_verb
@@ -467,97 +432,230 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 2
-  src.vdisplay.cli.main:
-    name: main
-    module: src.vdisplay.cli
-    line: 99
-    cyclomatic_complexity: 21
-    calls_out: 55
-    calls_in: 0
-  packages.mcp2vdisplay.src.mcp2vdisplay.cli.main:
-    name: main
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
-    line: 6
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
-  src.vdisplay.backends.linux_xvfb._wait_for_display:
-    name: _wait_for_display
-    module: src.vdisplay.backends.linux_xvfb
-    line: 146
-    cyclomatic_complexity: 7
-    calls_out: 10
+  src.vdisplay.nl._user_visible_app_labels:
+    name: _user_visible_app_labels
+    module: src.vdisplay.nl
+    line: 41
+    cyclomatic_complexity: 9
+    calls_out: 9
     calls_in: 1
-  src.vdisplay.backends.linux_x11_relay._window_title:
-    name: _window_title
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 259
-    cyclomatic_complexity: 1
+  src.vdisplay.capture.linux_xwd._is_valid_png:
+    name: _is_valid_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 22
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 5
+  src.vdisplay.application.runtime.agent_client_optional:
+    name: agent_client_optional
+    module: src.vdisplay.application.runtime
+    line: 17
+    cyclomatic_complexity: 2
     calls_out: 2
     calls_in: 1
-  src.vdisplay.windows._matches_app:
-    name: _matches_app
-    module: src.vdisplay.windows
-    line: 360
+  src.vdisplay.capture.host.capture_host_to_file:
+    name: capture_host_to_file
+    module: src.vdisplay.capture.host
+    line: 234
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 5
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release:
+    name: _parse_release
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 102
     cyclomatic_complexity: 5
     calls_out: 4
+    calls_in: 0
+  packages.rest2vdisplay.src.rest2vdisplay.app.create_app:
+    name: create_app
+    module: packages.rest2vdisplay.src.rest2vdisplay.app
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 38
     calls_in: 3
-  src.vdisplay.backends.linux_x11_relay._window_metadata:
-    name: _window_metadata
+  src.vdisplay.backends.linux_x11_relay._select_adopted_for_release:
+    name: _select_adopted_for_release
     module: src.vdisplay.backends.linux_x11_relay
-    line: 238
+    line: 283
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.api.WindowRelaySession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 126
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.commands.screenshot.handle:
+    name: handle
+    module: src.vdisplay.commands.screenshot
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.windows.query.pick_best_window:
+    name: pick_best_window
+    module: src.vdisplay.windows.query
+    line: 188
+    cyclomatic_complexity: 8
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.windows.scan.search_window_ids:
+    name: search_window_ids
+    module: src.vdisplay.windows.scan
+    line: 99
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.application.runtime.prefer_agent:
+    name: prefer_agent
+    module: src.vdisplay.application.runtime
+    line: 35
     cyclomatic_complexity: 1
     calls_out: 1
-    calls_in: 1
-  src.vdisplay.windows._resolve_window_pid:
-    name: _resolve_window_pid
-    module: src.vdisplay.windows
-    line: 457
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 1
-  src.vdisplay.discovery._looks_like_xvfb_only:
-    name: _looks_like_xvfb_only
-    module: src.vdisplay.discovery
-    line: 27
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 3
-  packages.cli2vdisplay.src.cli2vdisplay.cli.main:
-    name: main
-    module: packages.cli2vdisplay.src.cli2vdisplay.cli
-    line: 10
-    cyclomatic_complexity: 7
-    calls_out: 16
     calls_in: 0
-  src.vdisplay.windows._is_internal_window:
-    name: _is_internal_window
-    module: src.vdisplay.windows
-    line: 288
-    cyclomatic_complexity: 30
-    calls_out: 5
+  src.vdisplay.application.services.discovery.list_adopted:
+    name: list_adopted
+    module: src.vdisplay.application.services.discovery
+    line: 135
+    cyclomatic_complexity: 1
+    calls_out: 4
     calls_in: 1
-  src.vdisplay.capture.linux_xwd.capture_display_png:
-    name: capture_display_png
-    module: src.vdisplay.capture.linux_xwd
-    line: 16
+  src.vdisplay.nl.enrich_outputs_nl:
+    name: enrich_outputs_nl
+    module: src.vdisplay.nl
+    line: 151
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.capture.providers.engine._allow_portal:
+    name: _allow_portal
+    module: src.vdisplay.capture.providers.engine
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.commands.mirror.register:
+    name: register
+    module: src.vdisplay.commands.mirror
+    line: 9
+    cyclomatic_complexity: 1
+    calls_out: 16
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._move_window:
+    name: _move_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 397
     cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 2
-  src.vdisplay.api.platform_summary:
-    name: platform_summary
-    module: src.vdisplay.api
-    line: 177
-    cyclomatic_complexity: 1
-    calls_out: 5
+  src.vdisplay.application.runtime.resolve_apps_only:
+    name: resolve_apps_only
+    module: src.vdisplay.application.runtime
+    line: 40
+    cyclomatic_complexity: 3
+    calls_out: 0
     calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_info:
-    name: handle_info
+  src.vdisplay.windows.normalize.normalize_atom_list:
+    name: normalize_atom_list
+    module: src.vdisplay.windows.normalize
+    line: 23
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.nl.assign_windows_to_monitors:
+    name: assign_windows_to_monitors
+    module: src.vdisplay.nl
+    line: 132
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 3
+  src.vdisplay.backends.linux_xvfb._display_socket_exists:
+    name: _display_socket_exists
+    module: src.vdisplay.backends.linux_xvfb
+    line: 131
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.application.services.capture.capture_screenshot_via_client:
+    name: capture_screenshot_via_client
+    module: src.vdisplay.application.services.capture
+    line: 158
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.commands.all_cmd.handle_outputs:
+    name: handle_outputs
+    module: src.vdisplay.commands.all_cmd
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._related_adopted_ids:
+    name: _related_adopted_ids
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 317
+    cyclomatic_complexity: 7
+    calls_out: 8
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay._pick_primary_release_id:
+    name: _pick_primary_release_id
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 331
+    cyclomatic_complexity: 4
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._capture_portal_png:
+    name: _capture_portal_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 158
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.capture.host.capture_host_png:
+    name: capture_host_png
+    module: src.vdisplay.capture.host
+    line: 97
+    cyclomatic_complexity: 14
+    calls_out: 37
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err:
+    name: _err
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 6
+  src.vdisplay.cli.build_parser:
+    name: build_parser
+    module: src.vdisplay.cli
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows:
+    name: handle_windows
     module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 14
+    line: 46
     cyclomatic_complexity: 1
     calls_out: 9
+    calls_in: 1
+  src.vdisplay.capture.providers.drm.DrmProvider.available:
+    name: available
+    module: src.vdisplay.capture.providers.drm
+    line: 28
+    cyclomatic_complexity: 3
+    calls_out: 2
     calls_in: 0
+  src.vdisplay.capture.portal._system_python:
+    name: _system_python
+    module: src.vdisplay.capture.portal
+    line: 81
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
   src.vdisplay.api.VirtualDisplaySession.create:
     name: create
     module: src.vdisplay.api
@@ -565,61 +663,978 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 6
     calls_in: 0
-  src.vdisplay.windows._matches_title:
-    name: _matches_title
-    module: src.vdisplay.windows
-    line: 342
+  src.vdisplay.discovery.list_monitors:
+    name: list_monitors
+    module: src.vdisplay.discovery
+    line: 311
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  src.vdisplay.commands.diagnose.handle:
+    name: handle
+    module: src.vdisplay.commands.diagnose
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.windows.filter.looks_like_internal_class:
+    name: looks_like_internal_class
+    module: src.vdisplay.windows.filter
+    line: 8
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 5
+  src.vdisplay.capture.portal_screencast._set_active_if_self:
+    name: _set_active_if_self
+    module: src.vdisplay.capture.portal_screencast
+    line: 100
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.vdisplay.agent_config.resolve_agent_url:
+    name: resolve_agent_url
+    module: src.vdisplay.agent_config
+    line: 8
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 11
+  src.vdisplay.backends.linux_x11_relay._window_geometry:
+    name: _window_geometry
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 412
     cyclomatic_complexity: 4
     calls_out: 4
     calls_in: 2
-  src.vdisplay.api._default_mirror_backend:
-    name: _default_mirror_backend
+  src.vdisplay.agent_dispatch.dispatch_via_agent:
+    name: dispatch_via_agent
+    module: src.vdisplay.agent_dispatch
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.api._default_virtual_backend:
+    name: _default_virtual_backend
     module: src.vdisplay.api
-    line: 19
+    line: 13
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 2
-  packages.rest2vdisplay.src.rest2vdisplay.app.create_app:
-    name: create_app
-    module: packages.rest2vdisplay.src.rest2vdisplay.app
-    line: 9
-    cyclomatic_complexity: 1
-    calls_out: 27
+  examples.common.validate_artifacts.validate_directory:
+    name: validate_directory
+    module: examples.common.validate_artifacts
+    line: 53
+    cyclomatic_complexity: 3
+    calls_out: 4
     calls_in: 1
-  src.vdisplay.discovery._list_monitors:
-    name: _list_monitors
+  src.vdisplay.capture.providers.engine.capture_region_png:
+    name: capture_region_png
+    module: src.vdisplay.capture.providers.engine
+    line: 52
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag:
+    name: pick_flag
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 18
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 23
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted:
+    name: list_adopted
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 191
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.application.services.capture.capture_screenshot:
+    name: capture_screenshot
+    module: src.vdisplay.application.services.capture
+    line: 12
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_xvfb._wait_for_display:
+    name: _wait_for_display
+    module: src.vdisplay.backends.linux_xvfb
+    line: 147
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.nlp.run_nl_prompt:
+    name: run_nl_prompt
+    module: src.vdisplay.nlp
+    line: 122
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 2
+  src.vdisplay.windows.query.inspect_window:
+    name: inspect_window
+    module: src.vdisplay.windows.query
+    line: 87
+    cyclomatic_complexity: 9
+    calls_out: 21
+    calls_in: 2
+  src.vdisplay.nlp._default_all:
+    name: _default_all
+    module: src.vdisplay.nlp
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.windows.scan.xprop:
+    name: xprop
+    module: src.vdisplay.windows.scan
+    line: 34
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 1
+  src.vdisplay.windows.scan.format_window_id:
+    name: format_window_id
+    module: src.vdisplay.windows.scan
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._decode_pixels:
+    name: _decode_pixels
+    module: src.vdisplay.capture.linux_xwd
+    line: 245
+    cyclomatic_complexity: 12
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.nlp.nl_to_dsl:
+    name: nl_to_dsl
+    module: src.vdisplay.nlp
+    line: 111
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.capture.host._monitor_capture_region:
+    name: _monitor_capture_region
+    module: src.vdisplay.capture.host
+    line: 36
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay._output_origin:
+    name: _output_origin
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 454
+    cyclomatic_complexity: 11
+    calls_out: 20
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates:
+    name: _mirror_target_candidates
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 237
+    cyclomatic_complexity: 7
+    calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.shutdown:
+    name: shutdown
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 272
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema:
+    name: _load_schema
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 8
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  examples.common.validate_artifacts.validate_image_and_meta:
+    name: validate_image_and_meta
+    module: examples.common.validate_artifacts
+    line: 11
+    cyclomatic_complexity: 12
+    calls_out: 22
+    calls_in: 1
+  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display:
+    name: _acquire_display
+    module: src.vdisplay.backends.linux_xvfb
+    line: 93
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.get_active_screencast:
+    name: get_active_screencast
+    module: src.vdisplay.capture.portal_screencast
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 5
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs:
+    name: outputs
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 72
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.discovery.list_outputs:
+    name: list_outputs
     module: src.vdisplay.discovery
+    line: 45
+    cyclomatic_complexity: 8
+    calls_out: 27
+    calls_in: 9
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release:
+    name: handle_release
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 105
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror._resolve_mirror_targets:
+    name: _resolve_mirror_targets
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 120
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes:
+    name: _xwd_to_rgb_bytes
+    module: src.vdisplay.capture.linux_xwd
+    line: 193
+    cyclomatic_complexity: 6
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.commands.monitors.handle:
+    name: handle
+    module: src.vdisplay.commands.monitors
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png:
+    name: _capture_gnome_screenshot_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 139
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.application.runtime.ExecutionPolicy.meta_for:
+    name: meta_for
+    module: src.vdisplay.application.runtime
+    line: 65
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.discovery._merge_output_metadata:
+    name: _merge_output_metadata
+    module: src.vdisplay.discovery
+    line: 199
+    cyclomatic_complexity: 3
+    calls_out: 18
+    calls_in: 1
+  src.vdisplay.windows.filter.is_internal_window:
+    name: is_internal_window
+    module: src.vdisplay.windows.filter
+    line: 42
+    cyclomatic_complexity: 13
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.capture.portal_screencast._start_screencast:
+    name: _start_screencast
+    module: src.vdisplay.capture.portal_screencast
+    line: 130
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.commands.all_cmd.register:
+    name: register
+    module: src.vdisplay.commands.all_cmd
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.capture.providers.engine.list_capture_providers:
+    name: list_capture_providers
+    module: src.vdisplay.capture.providers.engine
+    line: 56
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay._save_stash:
+    name: _save_stash
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 240
+    cyclomatic_complexity: 4
+    calls_out: 7
+    calls_in: 2
+  src.vdisplay.commands.common.include_all_from_args:
+    name: include_all_from_args
+    module: src.vdisplay.commands.common
+    line: 34
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 3
+  examples.common.screenshot_meta.ensure_common_on_path:
+    name: ensure_common_on_path
+    module: examples.common.screenshot_meta
+    line: 18
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop:
+    name: stop
+    module: src.vdisplay.capture.portal_screencast
+    line: 86
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.application.runtime.agent_client_required:
+    name: agent_client_required
+    module: src.vdisplay.application.runtime
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.application.services.discovery.list_all_local:
+    name: list_all_local
+    module: src.vdisplay.application.services.discovery
+    line: 170
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.windows.normalize.usable_title:
+    name: usable_title
+    module: src.vdisplay.windows.normalize
+    line: 57
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start:
+    name: _parse_virtual_start
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 53
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.application.services.discovery.list_all:
+    name: list_all
+    module: src.vdisplay.application.services.discovery
+    line: 144
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 0
+  packages.uri2vdisplay.src.uri2vdisplay.cli.main:
+    name: main
+    module: packages.uri2vdisplay.src.uri2vdisplay.cli
+    line: 11
+    cyclomatic_complexity: 4
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.capture.providers.x11.X11Provider.capture_full:
+    name: capture_full
+    module: src.vdisplay.capture.providers.x11
+    line: 18
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.windows.scan.xdotool:
+    name: xdotool
+    module: src.vdisplay.windows.scan
+    line: 20
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.windows.normalize.derive_role:
+    name: derive_role
+    module: src.vdisplay.windows.normalize
     line: 82
+    cyclomatic_complexity: 10
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.windows.scan.window_geometry:
+    name: window_geometry
+    module: src.vdisplay.windows.scan
+    line: 78
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.screencast_status:
+    name: screencast_status
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 170
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics:
+    name: diagnostics
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 64
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.discovery._attach_output_nl:
+    name: _attach_output_nl
+    module: src.vdisplay.discovery
+    line: 96
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.windows.rank.dedupe_app_windows:
+    name: dedupe_app_windows
+    module: src.vdisplay.windows.rank
+    line: 29
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.cli_handlers.print_json:
+    name: print_json
+    module: src.vdisplay.cli_handlers
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 16
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__:
+    name: __init__
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror._list_connected_outputs:
+    name: _list_connected_outputs
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 169
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.commands.windows.register:
+    name: register
+    module: src.vdisplay.commands.windows
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.application.services.info.platform_info:
+    name: platform_info
+    module: src.vdisplay.application.services.info
+    line: 12
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.nl.describe_output_nl:
+    name: describe_output_nl
+    module: src.vdisplay.nl
+    line: 59
+    cyclomatic_complexity: 13
+    calls_out: 13
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs:
+    name: handle_outputs
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
+    line: 40
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.commands.windows.handle:
+    name: handle
+    module: src.vdisplay.commands.windows
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes:
+    name: screenshot_bytes
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 108
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  examples.common.screenshot_meta.describe_screenshot_nl:
+    name: describe_screenshot_nl
+    module: examples.common.screenshot_meta
+    line: 50
+    cyclomatic_complexity: 14
+    calls_out: 15
+    calls_in: 1
+  src.vdisplay.windows.scan.root_window_id:
+    name: root_window_id
+    module: src.vdisplay.windows.scan
+    line: 10
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.api._default_relay_backend:
+    name: _default_relay_backend
+    module: src.vdisplay.api
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay._find_window_id:
+    name: _find_window_id
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 352
+    cyclomatic_complexity: 12
+    calls_out: 11
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_mirror._resolve_output:
+    name: _resolve_output
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 179
+    cyclomatic_complexity: 10
+    calls_out: 13
+    calls_in: 2
+  src.vdisplay.capture.portal_screencast._capture_pipewire_node:
+    name: _capture_pipewire_node
+    module: src.vdisplay.capture.portal_screencast
+    line: 265
+    cyclomatic_complexity: 13
+    calls_out: 19
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors:
+    name: handle_monitors
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.discovery.diagnose_display:
+    name: diagnose_display
+    module: src.vdisplay.discovery
+    line: 266
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 3
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows:
+    name: _parse_windows
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._offscreen_coordinates:
+    name: _offscreen_coordinates
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 437
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  examples.common.screenshot_meta.build_screenshot_meta:
+    name: build_screenshot_meta
+    module: examples.common.screenshot_meta
+    line: 91
     cyclomatic_complexity: 6
     calls_out: 10
     calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line:
-    name: execute_dsl_line
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 74
+  src.vdisplay.windows.normalize.resolve_window_pid:
+    name: resolve_window_pid
+    module: src.vdisplay.windows.normalize
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.discovery.find_window_suggestions:
+    name: find_window_suggestions
+    module: src.vdisplay.discovery
+    line: 258
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.utils.run_command_bytes:
+    name: run_command_bytes
+    module: src.vdisplay.utils
+    line: 39
     cyclomatic_complexity: 1
     calls_out: 1
-    calls_in: 4
-  src.vdisplay.cli._print_json:
-    name: _print_json
-    module: src.vdisplay.cli
-    line: 95
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_mirror._try_mirror:
+    name: _try_mirror
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 137
+    cyclomatic_complexity: 5
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.application.services.discovery.list_monitors:
+    name: list_monitors
+    module: src.vdisplay.application.services.discovery
+    line: 31
     cyclomatic_complexity: 1
     calls_out: 2
-    calls_in: 11
-  src.vdisplay.windows._xprop:
-    name: _xprop
-    module: src.vdisplay.windows
-    line: 391
+    calls_in: 0
+  src.vdisplay.windows.filter.window_passes_filters:
+    name: window_passes_filters
+    module: src.vdisplay.windows.filter
+    line: 111
+    cyclomatic_complexity: 11
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.commands.diagnose.register:
+    name: register
+    module: src.vdisplay.commands.diagnose
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.windows.normalize.process_info:
+    name: process_info
+    module: src.vdisplay.windows.normalize
+    line: 44
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._stash_path:
+    name: _stash_path
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 218
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.failure:
+    name: failure
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 2
+  src.vdisplay.api.platform_summary:
+    name: platform_summary
+    module: src.vdisplay.api
+    line: 186
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 2
+  examples.host-relay.relay_demo._capture_phase:
+    name: _capture_phase
+    module: examples.host-relay.relay_demo
+    line: 35
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 3
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand:
+    name: _main_subcommand
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
+    line: 43
+    cyclomatic_complexity: 9
+    calls_out: 19
+    calls_in: 1
+  src.vdisplay.capture.providers.fbdev.FbdevProvider._capture:
+    name: _capture
+    module: src.vdisplay.capture.providers.fbdev
+    line: 40
+    cyclomatic_complexity: 7
+    calls_out: 22
+    calls_in: 0
+  src.vdisplay.nlp._default_monitors:
+    name: _default_monitors
+    module: src.vdisplay.nlp
+    line: 35
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  examples.common.screenshot_meta.png_dimensions:
+    name: png_dimensions
+    module: examples.common.screenshot_meta
+    line: 32
     cyclomatic_complexity: 5
-    calls_out: 11
+    calls_out: 10
+    calls_in: 2
+  packages.cli2vdisplay.src.cli2vdisplay.cli.main:
+    name: main
+    module: packages.cli2vdisplay.src.cli2vdisplay.cli
+    line: 10
+    cyclomatic_complexity: 7
+    calls_out: 16
+    calls_in: 0
+  src.vdisplay.windows.filter.is_trivial_internal:
+    name: is_trivial_internal
+    module: src.vdisplay.windows.filter
+    line: 18
+    cyclomatic_complexity: 5
+    calls_out: 0
+    calls_in: 1
+  src.vdisplay.application.executor._screenshot_agent:
+    name: _screenshot_agent
+    module: src.vdisplay.application.executor
+    line: 266
+    cyclomatic_complexity: 6
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.application.runtime.ExecutionPolicy.route:
+    name: route
+    module: src.vdisplay.application.runtime
+    line: 56
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror._require_xrandr:
+    name: _require_xrandr
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 115
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt:
+    name: handle_adopt
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 86
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok:
+    name: _ok
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 9
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 5
+  src.vdisplay.application.services.discovery.diagnose:
+    name: diagnose
+    module: src.vdisplay.application.services.discovery
+    line: 199
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._capture_hint:
+    name: _capture_hint
+    module: src.vdisplay.capture.linux_xwd
+    line: 54
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._rgb_to_png:
+    name: _rgb_to_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 294
+    cyclomatic_complexity: 2
+    calls_out: 5
     calls_in: 1
   src.vdisplay.discovery.list_windows:
     name: list_windows
     module: src.vdisplay.discovery
-    line: 194
+    line: 225
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.application.services.discovery.list_windows_payload:
+    name: list_windows_payload
+    module: src.vdisplay.application.services.discovery
+    line: 52
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server:
+    name: create_server
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.application.executor._execute_local:
+    name: _execute_local
+    module: src.vdisplay.application.executor
+    line: 48
+    cyclomatic_complexity: 19
+    calls_out: 24
+    calls_in: 1
+  src.vdisplay.nl.ensure_monitor_ids:
+    name: ensure_monitor_ids
+    module: src.vdisplay.nl
+    line: 110
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.discovery._looks_like_xvfb_only:
+    name: _looks_like_xvfb_only
+    module: src.vdisplay.discovery
+    line: 27
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 5
+  src.vdisplay.capture.portal_screencast.stop_screencast_session:
+    name: stop_screencast_session
+    module: src.vdisplay.capture.portal_screencast
+    line: 116
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 2
+  src.vdisplay.commands.info.handle:
+    name: handle
+    module: src.vdisplay.commands.info
+    line: 14
     cyclomatic_complexity: 1
     calls_out: 2
+    calls_in: 0
+  src.vdisplay.windows.filter.is_junk_title:
+    name: is_junk_title
+    module: src.vdisplay.windows.filter
+    line: 26
+    cyclomatic_complexity: 6
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd.capture_display_png:
+    name: capture_display_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 88
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  src.vdisplay.backends.linux_x11_relay._state_as_match_info:
+    name: _state_as_match_info
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 249
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.vdisplay.application.services.discovery._run_discovery:
+    name: _run_discovery
+    module: src.vdisplay.application.services.discovery
+    line: 21
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.commands.screenshot.register:
+    name: register
+    module: src.vdisplay.commands.screenshot
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.nlp._display_suffix:
+    name: _display_suffix
+    module: src.vdisplay.nlp
+    line: 23
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 2
+  src.vdisplay.backends.linux_xvfb._probe_display:
+    name: _probe_display
+    module: src.vdisplay.backends.linux_xvfb
+    line: 135
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display:
+    name: _with_display
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 26
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime:
+    name: from_runtime
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 2
+  examples.common.screenshot_meta.print_artifact:
+    name: print_artifact
+    module: examples.common.screenshot_meta
+    line: 161
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 4
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt:
+    name: _parse_adopt
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 88
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast._start_screencast_subprocess:
+    name: _start_screencast_subprocess
+    module: src.vdisplay.capture.portal_screencast
+    line: 331
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start:
+    name: handle_virtual_start
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot:
+    name: handle_screenshot
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 29
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.capture.providers.fbdev.FbdevProvider.available:
+    name: available
+    module: src.vdisplay.capture.providers.fbdev
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.nlp.parse_display:
+    name: parse_display
+    module: src.vdisplay.nlp
+    line: 7
+    cyclomatic_complexity: 10
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.application.services.capture.capture_screenshot_local:
+    name: capture_screenshot_local
+    module: src.vdisplay.application.services.capture
+    line: 50
+    cyclomatic_complexity: 7
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.nl.find_monitor_for_window:
+    name: find_monitor_for_window
+    module: src.vdisplay.nl
+    line: 122
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._read_xwd_header:
+    name: _read_xwd_header
+    module: src.vdisplay.capture.linux_xwd
+    line: 223
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.nlp._default_windows:
+    name: _default_windows
+    module: src.vdisplay.nlp
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.windows.rank.pick_best_from_group:
+    name: pick_best_from_group
+    module: src.vdisplay.windows.rank
+    line: 14
+    cyclomatic_complexity: 9
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.capture.portal.PortalProvider.capture_region:
+    name: capture_region
+    module: src.vdisplay.capture.portal
+    line: 217
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  examples.common.validate_artifacts.main:
+    name: main
+    module: examples.common.validate_artifacts
+    line: 64
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.utils.run_command:
+    name: run_command
+    module: src.vdisplay.utils
+    line: 17
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 29
+  src.vdisplay.nl.describe_window_nl:
+    name: describe_window_nl
+    module: src.vdisplay.nl
+    line: 6
+    cyclomatic_complexity: 14
+    calls_out: 16
     calls_in: 2
   packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl:
     name: uri_to_dsl
@@ -628,34 +1643,27 @@ nodes:
     cyclomatic_complexity: 7
     calls_out: 12
     calls_in: 1
-  src.vdisplay.api._default_relay_backend:
-    name: _default_relay_backend
-    module: src.vdisplay.api
-    line: 25
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.windows.find_companion_frames:
-    name: find_companion_frames
-    module: src.vdisplay.windows
-    line: 103
-    cyclomatic_complexity: 16
-    calls_out: 20
-    calls_in: 1
-  packages.rest2vdisplay.src.rest2vdisplay.cli.main:
-    name: main
-    module: packages.rest2vdisplay.src.rest2vdisplay.cli
-    line: 6
-    cyclomatic_complexity: 2
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.capture.linux_xwd._header_fields:
-    name: _header_fields
-    module: src.vdisplay.capture.linux_xwd
-    line: 74
+  src.vdisplay.commands.all_cmd.register_outputs:
+    name: register_outputs
+    module: src.vdisplay.commands.all_cmd
+    line: 32
     cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 2
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd.xwd_bytes_to_png:
+    name: xwd_bytes_to_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 182
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.application.executor.execute:
+    name: execute
+    module: src.vdisplay.application.executor
+    line: 16
+    cyclomatic_complexity: 6
+    calls_out: 11
+    calls_in: 4
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy:
     name: _main_legacy
     module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
@@ -663,207 +1671,1603 @@ nodes:
     cyclomatic_complexity: 10
     calls_out: 17
     calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_cmd:
-    name: _dispatch_cmd
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 31
+  src.vdisplay.capture.linux_xwd._parse_xwd_header:
+    name: _parse_xwd_header
+    module: src.vdisplay.capture.linux_xwd
+    line: 214
     cyclomatic_complexity: 3
-    calls_out: 11
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag:
-    name: pick_flag
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 17
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 24
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line:
-    name: parse_line
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 25
-    cyclomatic_complexity: 40
-    calls_out: 36
-    calls_in: 2
-  src.vdisplay.api._default_virtual_backend:
-    name: _default_virtual_backend
-    module: src.vdisplay.api
-    line: 13
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.backends.linux_x11_relay._output_origin:
-    name: _output_origin
-    module: src.vdisplay.backends.linux_x11_relay
-    line: 286
-    cyclomatic_complexity: 11
-    calls_out: 20
-    calls_in: 1
-  src.vdisplay.windows.find_windows:
-    name: find_windows
-    module: src.vdisplay.windows
-    line: 193
-    cyclomatic_complexity: 28
-    calls_out: 12
-    calls_in: 2
-  src.vdisplay.discovery.diagnose_display:
-    name: diagnose_display
-    module: src.vdisplay.discovery
-    line: 228
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 4
-  src.vdisplay.backends.linux_x11_mirror._resolve_output:
-    name: _resolve_output
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 145
-    cyclomatic_complexity: 10
-    calls_out: 13
-    calls_in: 2
-  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop:
-    name: stop
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 100
-    cyclomatic_complexity: 5
-    calls_out: 3
-    calls_in: 0
-  src.vdisplay.capture.linux_xwd._xwd_dimensions:
-    name: _xwd_dimensions
-    module: src.vdisplay.capture.linux_xwd
-    line: 32
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes:
-    name: _xwd_to_rgb_bytes
-    module: src.vdisplay.capture.linux_xwd
-    line: 37
-    cyclomatic_complexity: 6
-    calls_out: 9
-    calls_in: 1
-  src.vdisplay.capture.linux_xwd._decode_pixels:
-    name: _decode_pixels
-    module: src.vdisplay.capture.linux_xwd
-    line: 89
-    cyclomatic_complexity: 12
-    calls_out: 7
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs:
-    name: handle_outputs
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 33
-    cyclomatic_complexity: 1
     calls_out: 5
-    calls_in: 0
-  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes:
-    name: screenshot_bytes
-    module: src.vdisplay.backends.linux_x11_mirror
-    line: 129
-    cyclomatic_complexity: 2
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._window_title:
+    name: _window_title
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 427
+    cyclomatic_complexity: 1
     calls_out: 2
-    calls_in: 0
-  src.vdisplay.utils.require_command:
-    name: require_command
-    module: src.vdisplay.utils
-    line: 10
+    calls_in: 1
+  src.vdisplay.nlp._default_display_suffix:
+    name: _default_display_suffix
+    module: src.vdisplay.nlp
+    line: 27
     cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 6
+    calls_out: 1
+    calls_in: 3
+  src.vdisplay.windows.filter.is_visible_app:
+    name: is_visible_app
+    module: src.vdisplay.windows.filter
+    line: 34
+    cyclomatic_complexity: 9
+    calls_out: 1
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command:
+    name: split_command
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 8
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.capture.portal.capture_portal_png:
+    name: capture_portal_png
+    module: src.vdisplay.capture.portal
+    line: 88
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 2
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict:
     name: validate_command_dict
     module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
     line: 28
     cyclomatic_complexity: 3
     calls_out: 6
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release:
-    name: handle_release
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 85
-    cyclomatic_complexity: 1
-    calls_out: 11
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows:
-    name: handle_windows
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 47
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand:
-    name: _main_subcommand
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
-    line: 43
-    cyclomatic_complexity: 9
-    calls_out: 19
-    calls_in: 1
-  examples.host-mirror.mirror_demo.main:
-    name: main
-    module: examples.host-mirror.mirror_demo
-    line: 15
-    cyclomatic_complexity: 5
-    calls_out: 23
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_validate:
-    name: handle_validate
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 77
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 0
-  packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.nl_to_dsl:
-    name: nl_to_dsl
-    module: packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl
-    line: 6
-    cyclomatic_complexity: 15
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr:
+    name: _primary_output_from_xrandr
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 211
+    cyclomatic_complexity: 3
     calls_out: 4
     calls_in: 2
-  src.vdisplay.windows._parse_wm_class:
-    name: _parse_wm_class
-    module: src.vdisplay.windows
-    line: 435
+  src.vdisplay.application.services.session.relay_screenshot:
+    name: relay_screenshot
+    module: src.vdisplay.application.services.session
+    line: 174
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.windows.normalize.parse_wm_class:
+    name: parse_wm_class
+    module: src.vdisplay.windows.normalize
+    line: 10
     cyclomatic_complexity: 7
     calls_out: 9
     calls_in: 1
-  src.vdisplay.windows._format_window_id:
-    name: _format_window_id
-    module: src.vdisplay.windows
-    line: 507
+  src.vdisplay.client.AgentClient.__init__:
+    name: __init__
+    module: src.vdisplay.client
+    line: 18
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.commands.mirror.handle:
+    name: handle
+    module: src.vdisplay.commands.mirror
+    line: 30
     cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.windows.filter.is_companion_frame:
+    name: is_companion_frame
+    module: src.vdisplay.windows.filter
+    line: 158
+    cyclomatic_complexity: 9
+    calls_out: 11
+    calls_in: 1
+  src.vdisplay.capture.providers.engine.capture_full_png:
+    name: capture_full_png
+    module: src.vdisplay.capture.providers.engine
+    line: 48
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.windows.normalize.derive_app_label:
+    name: derive_app_label
+    module: src.vdisplay.windows.normalize
+    line: 61
+    cyclomatic_complexity: 14
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch:
+    name: dispatch
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 32
+    cyclomatic_complexity: 13
+    calls_out: 27
+    calls_in: 9
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line:
+    name: execute_dsl_line
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 107
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 4
+  src.vdisplay.capture.portal_screencast.start_screencast_session:
+    name: start_screencast_session
+    module: src.vdisplay.capture.portal_screencast
+    line: 105
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.commands.common.add_window_filter_args:
+    name: add_window_filter_args
+    module: src.vdisplay.commands.common
+    line: 20
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 4
+  src.vdisplay.backends.linux_xvfb._display_candidates:
+    name: _display_candidates
+    module: src.vdisplay.backends.linux_xvfb
+    line: 124
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.commands.all_cmd.handle:
+    name: handle
+    module: src.vdisplay.commands.all_cmd
+    line: 19
+    cyclomatic_complexity: 1
     calls_out: 3
     calls_in: 1
-  src.vdisplay.windows.pick_best_window:
-    name: pick_best_window
-    module: src.vdisplay.windows
-    line: 230
-    cyclomatic_complexity: 10
-    calls_out: 5
+  src.vdisplay.capture.portal._portal_impl:
+    name: _portal_impl
+    module: src.vdisplay.capture.portal
+    line: 14
+    cyclomatic_complexity: 4
+    calls_out: 28
     calls_in: 1
-  src.vdisplay.capture.linux_xwd._read_xwd_header:
-    name: _read_xwd_header
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move:
+    name: move
+    module: src.vdisplay.input.linux_xdotool
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.agent_dispatch.agent_client:
+    name: agent_client
+    module: src.vdisplay.agent_dispatch
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.agent_config.resolve_agent_token:
+    name: resolve_agent_token
+    module: src.vdisplay.agent_config
+    line: 14
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.nl.window_center_on_output:
+    name: window_center_on_output
+    module: src.vdisplay.nl
+    line: 94
+    cyclomatic_complexity: 3
+    calls_out: 18
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop:
+    name: stop
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 79
+    cyclomatic_complexity: 5
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.commands.relay.handle_list_windows:
+    name: handle_list_windows
+    module: src.vdisplay.commands.relay
+    line: 52
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.discovery.resolve_host_display:
+    name: resolve_host_display
+    module: src.vdisplay.discovery
+    line: 12
+    cyclomatic_complexity: 9
+    calls_out: 6
+    calls_in: 18
+  src.vdisplay.commands.nlp.handle:
+    name: handle
+    module: src.vdisplay.commands.nlp
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot:
+    name: _parse_screenshot
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 41
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.windows.filter.matches_class:
+    name: matches_class
+    module: src.vdisplay.windows.filter
+    line: 82
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.capture.providers.fbdev._fb_info:
+    name: _fb_info
+    module: src.vdisplay.capture.providers.fbdev
+    line: 12
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_mirror._output_mode:
+    name: _output_mode
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 244
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 1
+  examples.common.screenshot_meta.meta_path_for:
+    name: meta_path_for
+    module: examples.common.screenshot_meta
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click:
+    name: click
+    module: src.vdisplay.input.linux_xdotool
+    line: 23
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  examples.host-mirror.mirror_demo.main:
+    name: main
+    module: examples.host-mirror.mirror_demo
+    line: 33
+    cyclomatic_complexity: 5
+    calls_out: 28
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._is_wayland_session:
+    name: _is_wayland_session
     module: src.vdisplay.capture.linux_xwd
-    line: 67
+    line: 49
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 3
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey:
+    name: hotkey
+    module: src.vdisplay.input.linux_xdotool
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror:
+    name: _parse_mirror
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 76
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.windows.query.find_windows:
+    name: find_windows
+    module: src.vdisplay.windows.query
+    line: 157
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.flatten_envelope:
+    name: flatten_envelope
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 76
+    cyclomatic_complexity: 6
+    calls_out: 3
+    calls_in: 1
+  examples.agent-broker.broker_demo.main:
+    name: main
+    module: examples.agent-broker.broker_demo
+    line: 15
+    cyclomatic_complexity: 9
+    calls_out: 35
+    calls_in: 0
+  src.vdisplay.capture.linux_xwd._rgb_to_png_minimal:
+    name: _rgb_to_png_minimal
+    module: src.vdisplay.capture.linux_xwd
+    line: 306
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 1
+  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes:
+    name: screenshot_bytes
+    module: src.vdisplay.backends.linux_xvfb
+    line: 77
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start:
+    name: start
+    module: src.vdisplay.backends.linux_xvfb
+    line: 45
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror:
+    name: handle_mirror
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 60
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._state_matches:
+    name: _state_matches
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 261
+    cyclomatic_complexity: 10
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.windows.query.list_windows_enriched:
+    name: list_windows_enriched
+    module: src.vdisplay.windows.query
+    line: 25
     cyclomatic_complexity: 2
     calls_out: 5
+    calls_in: 5
+  packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities:
+    name: platform_capabilities
+    module: packages.vdisplay-agent.src.vdisplay_agent.runtime
+    line: 37
+    cyclomatic_complexity: 5
+    calls_out: 11
+    calls_in: 0
+  src.vdisplay.application.services.session.mirror_screenshot:
+    name: mirror_screenshot
+    module: src.vdisplay.application.services.session
+    line: 97
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._window_metadata:
+    name: _window_metadata
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 406
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 1
-  src.vdisplay.windows._window_geometry:
-    name: _window_geometry
-    module: src.vdisplay.windows
-    line: 486
-    cyclomatic_complexity: 4
-    calls_out: 8
+  src.vdisplay.api._default_mirror_backend:
+    name: _default_mirror_backend
+    module: src.vdisplay.api
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window:
+    name: release_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 139
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.capture.providers.x11.X11Provider.capture_region:
+    name: capture_region
+    module: src.vdisplay.capture.providers.x11
+    line: 30
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.discovery._list_monitors:
+    name: _list_monitors
+    module: src.vdisplay.discovery
+    line: 113
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.windows.filter.looks_like_internal_name:
+    name: looks_like_internal_name
+    module: src.vdisplay.windows.filter
+    line: 13
+    cyclomatic_complexity: 3
+    calls_out: 2
     calls_in: 3
+  src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start:
+    name: start
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 51
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.windows.rank.pick_largest:
+    name: pick_largest
+    module: src.vdisplay.windows.rank
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  src.vdisplay.payloads.all_payload:
+    name: all_payload
+    module: src.vdisplay.payloads
+    line: 68
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.commands.relay.handle:
+    name: handle
+    module: src.vdisplay.commands.relay
+    line: 57
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 0
+  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server:
+    name: create_server
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.server
+    line: 7
+    cyclomatic_complexity: 1
+    calls_out: 20
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start:
+    name: start
+    module: src.vdisplay.capture.portal_screencast
+    line: 46
+    cyclomatic_complexity: 12
+    calls_out: 17
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch:
+    name: _parse_launch
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 63
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 0
+  src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text:
+    name: type_text
+    module: src.vdisplay.input.linux_xdotool
+    line: 31
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay._restore_window:
+    name: _restore_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 339
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.commands.register_all:
+    name: register_all
+    module: src.vdisplay.commands
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.start:
+    name: start
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 67
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.application.runtime.get_execution_policy:
+    name: get_execution_policy
+    module: src.vdisplay.application.runtime
+    line: 75
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  src.vdisplay.backends.linux_x11_relay._screen_geometry:
+    name: _screen_geometry
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 442
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.capture.linux_xwd._crop_png:
+    name: _crop_png
+    module: src.vdisplay.capture.linux_xwd
+    line: 64
+    cyclomatic_complexity: 2
+    calls_out: 15
+    calls_in: 4
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success:
+    name: json_success
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 51
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  examples.common.screenshot_meta.save_png_with_meta:
+    name: save_png_with_meta
+    module: examples.common.screenshot_meta
+    line: 148
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.windows.filter.filter_windows:
+    name: filter_windows
+    module: src.vdisplay.windows.filter
+    line: 134
+    cyclomatic_complexity: 14
+    calls_out: 6
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line:
+    name: parse_line
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 133
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.commands.agent.handle:
+    name: handle
+    module: src.vdisplay.commands.agent
+    line: 23
+    cyclomatic_complexity: 7
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.client.AgentClient._normalize_payload:
+    name: _normalize_payload
+    module: src.vdisplay.client
+    line: 71
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window:
+    name: adopt_window
+    module: src.vdisplay.backends.linux_x11_relay
+    line: 73
+    cyclomatic_complexity: 12
+    calls_out: 27
+    calls_in: 0
+  src.vdisplay.backends.linux_x11_mirror._output_capture_region:
+    name: _output_capture_region
+    module: src.vdisplay.backends.linux_x11_mirror
+    line: 220
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.commands.common.add_all_arg:
+    name: add_all_arg
+    module: src.vdisplay.commands.common
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.capture.linux_xwd._xwd_dimensions:
+    name: _xwd_dimensions
+    module: src.vdisplay.capture.linux_xwd
+    line: 188
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.windows.scan.decode_xprop_value:
+    name: decode_xprop_value
+    module: src.vdisplay.windows.scan
+    line: 66
+    cyclomatic_complexity: 6
+    calls_out: 6
+    calls_in: 1
 edges:
+- caller: packages.mcp2vdisplay.src.mcp2vdisplay.cli.main
+  callee: packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server
+  call_type: resolved
+- caller: packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors
+  call_type: resolved
+- caller: packages.cli2vdisplay.src.cli2vdisplay.cli.main
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  call_type: resolved
+- caller: packages.uri2vdisplay.src.uri2vdisplay.cli.main
+  callee: packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl
+  call_type: resolved
+- caller: packages.uri2vdisplay.src.uri2vdisplay.cli.main
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  call_type: resolved
+- caller: packages.rest2vdisplay.src.rest2vdisplay.app.create_app
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.cli.main
+  callee: packages.rest2vdisplay.src.rest2vdisplay.app.create_app
+  call_type: resolved
+- caller: examples.host-mirror.mirror_demo.main
+  callee: src.vdisplay.discovery.diagnose_display
+  call_type: resolved
+- caller: examples.host-mirror.mirror_demo.main
+  callee: src.vdisplay.discovery.list_monitors
+  call_type: resolved
+- caller: examples.host-mirror.mirror_demo.main
+  callee: src.vdisplay.payloads.all_payload
+  call_type: resolved
+- caller: examples.host-relay.relay_demo._capture_phase
+  callee: src.vdisplay.payloads.all_payload
+  call_type: resolved
+- caller: examples.host-relay.relay_demo._capture_phase
+  callee: src.vdisplay.capture.linux_xwd.capture_display_png
+  call_type: resolved
+- caller: examples.host-relay.relay_demo._capture_phase
+  callee: examples.common.screenshot_meta.save_png_with_meta
+  call_type: resolved
+- caller: examples.host-relay.relay_demo._capture_phase
+  callee: examples.common.screenshot_meta.print_artifact
+  call_type: resolved
+- caller: examples.host-relay.relay_demo.main
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: examples.host-relay.relay_demo.main
+  callee: examples.host-relay.relay_demo._capture_phase
+  call_type: resolved
+- caller: examples.common.validate_artifacts.validate_image_and_meta
+  callee: examples.common.screenshot_meta.meta_path_for
+  call_type: resolved
+- caller: examples.common.validate_artifacts.validate_image_and_meta
+  callee: examples.common.screenshot_meta.png_dimensions
+  call_type: resolved
+- caller: examples.common.validate_artifacts.validate_directory
+  callee: examples.common.validate_artifacts.validate_image_and_meta
+  call_type: resolved
+- caller: examples.common.validate_artifacts.main
+  callee: examples.common.validate_artifacts.validate_directory
+  call_type: resolved
+- caller: examples.common.screenshot_meta.ensure_common_on_path
+  callee: examples.common.screenshot_meta.examples_common_dir
+  call_type: resolved
+- caller: examples.common.screenshot_meta.build_screenshot_meta
+  callee: examples.common.screenshot_meta.png_dimensions
+  call_type: resolved
+- caller: examples.common.screenshot_meta.build_screenshot_meta
+  callee: examples.common.screenshot_meta.describe_screenshot_nl
+  call_type: resolved
+- caller: examples.common.screenshot_meta.build_screenshot_meta
+  callee: examples.common.screenshot_meta.meta_path_for
+  call_type: resolved
+- caller: examples.common.screenshot_meta.write_screenshot_meta
+  callee: examples.common.screenshot_meta.build_screenshot_meta
+  call_type: resolved
+- caller: examples.common.screenshot_meta.write_screenshot_meta
+  callee: examples.common.screenshot_meta.meta_path_for
+  call_type: resolved
+- caller: examples.common.screenshot_meta.save_png_with_meta
+  callee: examples.common.screenshot_meta.write_screenshot_meta
+  call_type: resolved
+- caller: src.vdisplay.cli.build_parser
+  callee: src.vdisplay.commands.register_all
+  call_type: resolved
+- caller: src.vdisplay.cli.main
+  callee: src.vdisplay.cli.build_parser
+  call_type: resolved
+- caller: src.vdisplay.nl.describe_output_nl
+  callee: src.vdisplay.nl._user_visible_app_labels
+  call_type: resolved
+- caller: src.vdisplay.nl.find_monitor_for_window
+  callee: src.vdisplay.nl.window_center_on_output
+  call_type: resolved
+- caller: src.vdisplay.nl.assign_windows_to_monitors
+  callee: src.vdisplay.nl.ensure_monitor_ids
+  call_type: resolved
+- caller: src.vdisplay.nl.assign_windows_to_monitors
+  callee: src.vdisplay.nl.find_monitor_for_window
+  call_type: resolved
+- caller: src.vdisplay.nl.assign_windows_to_monitors
+  callee: src.vdisplay.nl.describe_window_nl
+  call_type: resolved
+- caller: src.vdisplay.nl.enrich_outputs_nl
+  callee: src.vdisplay.nl.describe_output_nl
+  call_type: resolved
+- caller: src.vdisplay.nl.enrich_outputs_nl
+  callee: src.vdisplay.nl.window_center_on_output
+  call_type: resolved
+- caller: src.vdisplay.api.VirtualDisplaySession.create
+  callee: src.vdisplay.api._default_virtual_backend
+  call_type: resolved
+- caller: src.vdisplay.api.MirrorSession.create
+  callee: src.vdisplay.api._default_mirror_backend
+  call_type: resolved
+- caller: src.vdisplay.api.WindowRelaySession.create
+  callee: src.vdisplay.api._default_relay_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_virtual_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_mirror_backend
+  call_type: resolved
+- caller: src.vdisplay.api.platform_summary
+  callee: src.vdisplay.api._default_relay_backend
+  call_type: resolved
 - caller: src.vdisplay.utils.run_command_bytes
   callee: src.vdisplay.utils.run_command
   call_type: resolved
-- caller: src.vdisplay.capture.linux_xwd.capture_display_png
+- caller: src.vdisplay.agent_config.use_agent
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.nlp._default_display_suffix
+  callee: src.vdisplay.nlp._display_suffix
+  call_type: resolved
+- caller: src.vdisplay.nlp._default_all
+  callee: src.vdisplay.nlp._default_display_suffix
+  call_type: resolved
+- caller: src.vdisplay.nlp._default_monitors
+  callee: src.vdisplay.nlp._default_display_suffix
+  call_type: resolved
+- caller: src.vdisplay.nlp._default_windows
+  callee: src.vdisplay.nlp._default_display_suffix
+  call_type: resolved
+- caller: src.vdisplay.nlp._validate_dsl
+  callee: src.vdisplay.nlp._display_suffix
+  call_type: resolved
+- caller: src.vdisplay.nlp.nl_to_dsl
+  callee: src.vdisplay.nlp.parse_display
+  call_type: resolved
+- caller: src.vdisplay.nlp.nl_to_dsl
+  callee: src.vdisplay.nlp._default_all
+  call_type: resolved
+- caller: src.vdisplay.nlp.run_nl_prompt
+  callee: src.vdisplay.nlp.nl_to_dsl
+  call_type: resolved
+- caller: src.vdisplay.nlp.run_nl_prompt
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  call_type: resolved
+- caller: src.vdisplay.nlp.run_nl_prompt
+  callee: src.vdisplay.nlp._run_local_dsl
+  call_type: resolved
+- caller: src.vdisplay.discovery.resolve_host_display
+  callee: src.vdisplay.discovery._looks_like_xvfb_only
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_outputs
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_outputs
+  callee: src.vdisplay.discovery._parse_xrandr_query
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_outputs
+  callee: src.vdisplay.discovery._list_monitors
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_outputs
+  callee: src.vdisplay.nl.ensure_monitor_ids
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_outputs
+  callee: src.vdisplay.discovery._merge_output_metadata
+  call_type: resolved
+- caller: src.vdisplay.discovery._attach_output_nl
+  callee: src.vdisplay.nl.assign_windows_to_monitors
+  call_type: resolved
+- caller: src.vdisplay.discovery._attach_output_nl
+  callee: src.vdisplay.nl.enrich_outputs_nl
+  call_type: resolved
+- caller: src.vdisplay.discovery._attach_output_nl
+  callee: src.vdisplay.windows.query.list_windows_enriched
+  call_type: resolved
+- caller: src.vdisplay.discovery._list_monitors
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.discovery._parse_xrandr_query
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_windows
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_windows
+  callee: src.vdisplay.windows.query.list_windows_enriched
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_windows
+  callee: src.vdisplay.nl.assign_windows_to_monitors
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_windows
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.discovery.find_window_suggestions
+  callee: src.vdisplay.windows.query.find_windows
+  call_type: resolved
+- caller: src.vdisplay.discovery.diagnose_display
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.discovery.diagnose_display
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.discovery.diagnose_display
+  callee: src.vdisplay.discovery._display_hint
+  call_type: resolved
+- caller: src.vdisplay.discovery.diagnose_display
+  callee: src.vdisplay.capture.providers.engine.list_capture_providers
+  call_type: resolved
+- caller: src.vdisplay.discovery._display_hint
+  callee: src.vdisplay.discovery._looks_like_xvfb_only
+  call_type: resolved
+- caller: src.vdisplay.discovery.list_monitors
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.commands.mirror.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.common.add_window_filter_args
+  callee: src.vdisplay.commands.common.add_all_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.relay.handle_list_windows
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows
+  call_type: resolved
+- caller: src.vdisplay.commands.relay.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.register
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.register
+  callee: src.vdisplay.commands.common.add_window_filter_args
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.handle
+  callee: src.vdisplay.commands.common.include_all_from_args
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.register_outputs
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.register_outputs
+  callee: src.vdisplay.commands.common.add_window_filter_args
+  call_type: resolved
+- caller: src.vdisplay.commands.all_cmd.handle_outputs
+  callee: src.vdisplay.commands.all_cmd.handle
+  call_type: resolved
+- caller: src.vdisplay.commands.register_all
+  callee: src.vdisplay.commands.mirror.register
+  call_type: resolved
+- caller: src.vdisplay.commands.screenshot.register
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.screenshot.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.monitors.register
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.monitors.register
+  callee: src.vdisplay.commands.common.add_all_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.monitors.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.monitors.handle
+  callee: src.vdisplay.commands.common.include_all_from_args
+  call_type: resolved
+- caller: src.vdisplay.commands.agent.handle
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.commands.agent.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.agent.handle
+  callee: packages.rest2vdisplay.src.rest2vdisplay.app.create_app
+  call_type: resolved
+- caller: src.vdisplay.commands.info.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.nlp.handle
+  callee: src.vdisplay.nlp.run_nl_prompt
+  call_type: resolved
+- caller: src.vdisplay.commands.virtual.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.diagnose.register
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.diagnose.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.windows.register
+  callee: src.vdisplay.commands.common.add_display_arg
+  call_type: resolved
+- caller: src.vdisplay.commands.windows.register
+  callee: src.vdisplay.commands.common.add_window_filter_args
+  call_type: resolved
+- caller: src.vdisplay.commands.windows.handle
+  callee: src.vdisplay.cli_handlers.print_json
+  call_type: resolved
+- caller: src.vdisplay.commands.windows.handle
+  callee: src.vdisplay.commands.common.include_all_from_args
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._require_xrandr
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._resolve_output
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._resolve_mirror_targets
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._mirror_exhausted_error
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._output_mode
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
+  callee: src.vdisplay.backends.linux_x11_mirror._try_mirror
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
+  callee: src.vdisplay.backends.linux_x11_mirror._output_capture_region
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
+  callee: src.vdisplay.capture.linux_xwd.capture_display_png
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._resolve_mirror_targets
+  callee: src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._resolve_mirror_targets
+  callee: src.vdisplay.backends.linux_x11_mirror._resolve_output
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._try_mirror
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._resolve_output
+  callee: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._output_capture_region
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates
+  callee: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_mirror._output_mode
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start
+  callee: src.vdisplay.backends.linux_xvfb._wait_for_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes
+  callee: src.vdisplay.capture.linux_xwd._capture_xwd_png
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
+  callee: src.vdisplay.backends.linux_xvfb._probe_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
+  callee: src.vdisplay.backends.linux_xvfb._display_candidates
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
+  callee: src.vdisplay.backends.linux_xvfb._display_socket_exists
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_xvfb._wait_for_display
+  callee: src.vdisplay.backends.linux_xvfb._probe_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.start
+  callee: src.vdisplay.backends.linux_x11_relay._load_stash
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._window_geometry
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._move_window
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.windows.query.find_companion_frames
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._save_stash
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._window_metadata
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._select_adopted_for_release
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._pick_primary_release_id
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._save_stash
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  callee: src.vdisplay.backends.linux_x11_relay._restore_window
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted
+  callee: src.vdisplay.nl.assign_windows_to_monitors
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._load_stash
+  callee: src.vdisplay.backends.linux_x11_relay._stash_path
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._save_stash
+  callee: src.vdisplay.backends.linux_x11_relay._stash_path
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._state_matches
+  callee: src.vdisplay.backends.linux_x11_relay._state_as_match_info
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._select_adopted_for_release
+  callee: src.vdisplay.backends.linux_x11_relay._related_adopted_ids
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._select_adopted_for_release
+  callee: src.vdisplay.backends.linux_x11_relay._state_matches
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._restore_window
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
+  callee: src.vdisplay.windows.query.find_windows
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
+  callee: src.vdisplay.windows.query.pick_best_window
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
+  callee: src.vdisplay.discovery.find_window_suggestions
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._move_window
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._window_metadata
+  callee: src.vdisplay.windows.query.inspect_window
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._window_geometry
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._window_title
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  callee: src.vdisplay.backends.linux_x11_relay._screen_geometry
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._screen_geometry
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._output_origin
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.backends.linux_x11_relay._output_origin
+  callee: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
+  call_type: resolved
+- caller: src.vdisplay.capture.portal.capture_portal_png
+  callee: src.vdisplay.capture.portal._capture_portal_to_file
+  call_type: resolved
+- caller: src.vdisplay.capture.portal._capture_portal_to_file
+  callee: src.vdisplay.capture.portal._system_python
+  call_type: resolved
+- caller: src.vdisplay.capture.portal._capture_portal_to_file
+  callee: src.vdisplay.capture.portal._portal_impl
+  call_type: resolved
+- caller: src.vdisplay.capture.portal.PortalProvider.capture_full
+  callee: src.vdisplay.capture.portal.capture_portal_png
+  call_type: resolved
+- caller: src.vdisplay.capture.portal.PortalProvider.capture_region
+  callee: src.vdisplay.capture.linux_xwd._crop_png
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._providers
+  callee: src.vdisplay.discovery._looks_like_xvfb_only
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._providers
+  callee: src.vdisplay.capture.providers.engine._allow_portal
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._providers
+  callee: src.vdisplay.capture.linux_xwd._is_wayland_session
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine.capture_full_png
+  callee: src.vdisplay.capture.providers.engine._try_providers
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine.capture_full_png
+  callee: src.vdisplay.capture.providers.engine._providers
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine.capture_region_png
+  callee: src.vdisplay.capture.providers.engine._try_providers
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine.capture_region_png
+  callee: src.vdisplay.capture.providers.engine._providers
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine.list_capture_providers
+  callee: src.vdisplay.capture.providers.engine._providers
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._try_providers
+  callee: src.vdisplay.discovery._looks_like_xvfb_only
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._try_providers
+  callee: src.vdisplay.capture.linux_xwd._is_wayland_session
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.engine._try_providers
+  callee: src.vdisplay.capture.linux_xwd.is_blank_png
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.drm.DrmProvider.available
+  callee: src.vdisplay.capture.providers.drm._drm_devices
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.drm.DrmProvider._capture
   callee: src.vdisplay.utils.require_command
   call_type: resolved
-- caller: src.vdisplay.capture.linux_xwd.capture_display_png
-  callee: src.vdisplay.utils.run_command_bytes
+- caller: src.vdisplay.capture.providers.drm.DrmProvider._capture
+  callee: src.vdisplay.capture.providers.drm._drm_devices
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.fbdev.FbdevProvider.available
+  callee: src.vdisplay.capture.providers.fbdev._fb_info
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
+  callee: src.vdisplay.capture.providers.fbdev._fb_info
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.x11.X11Provider.capture_full
+  callee: src.vdisplay.capture.linux_xwd._capture_scrot_png
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.x11.X11Provider.capture_full
+  callee: src.vdisplay.capture.linux_xwd._capture_xwd_png
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.x11.X11Provider.capture_region
+  callee: src.vdisplay.capture.linux_xwd._capture_scrot_png
+  call_type: resolved
+- caller: src.vdisplay.capture.providers.x11.X11Provider.capture_region
+  callee: src.vdisplay.capture.linux_xwd._crop_png
+  call_type: resolved
+- caller: src.vdisplay.application.services.session.mirror_screenshot
+  callee: src.vdisplay.capture.host.capture_host_to_file
+  call_type: resolved
+- caller: src.vdisplay.application.services.session.relay_screenshot
+  callee: src.vdisplay.capture.host.capture_host_to_file
+  call_type: resolved
+- caller: src.vdisplay.application.services.info.platform_info
+  callee: src.vdisplay.api.platform_summary
+  call_type: resolved
+- caller: src.vdisplay.application.services.info.platform_info
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: src.vdisplay.windows.rank.pick_best_from_group
+  callee: src.vdisplay.windows.rank.pick_largest
+  call_type: resolved
+- caller: src.vdisplay.windows.rank.dedupe_app_windows
+  callee: src.vdisplay.windows.rank.pick_best_from_group
+  call_type: resolved
+- caller: src.vdisplay.windows.query.list_windows_enriched
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.windows.query.list_windows_enriched
+  callee: src.vdisplay.windows.scan.root_window_id
+  call_type: resolved
+- caller: src.vdisplay.windows.query.list_windows_enriched
+  callee: src.vdisplay.windows.query.scan_windows
+  call_type: resolved
+- caller: src.vdisplay.windows.query.list_windows_enriched
+  callee: src.vdisplay.windows.rank.dedupe_app_windows
+  call_type: resolved
+- caller: src.vdisplay.windows.query.scan_windows
+  callee: src.vdisplay.windows.scan.search_window_ids
+  call_type: resolved
+- caller: src.vdisplay.windows.query.scan_windows
+  callee: src.vdisplay.windows.query.inspect_window
+  call_type: resolved
+- caller: src.vdisplay.windows.query.scan_windows
+  callee: src.vdisplay.windows.filter.window_passes_filters
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.scan.xprop
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.normalize.parse_wm_class
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.normalize.normalize_atom_list
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.normalize.resolve_window_pid
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.normalize.process_info
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.scan.window_geometry
+  call_type: resolved
+- caller: src.vdisplay.windows.query.inspect_window
+  callee: src.vdisplay.windows.normalize.derive_app_label
+  call_type: resolved
+- caller: src.vdisplay.windows.query.find_windows
+  callee: src.vdisplay.windows.query.list_windows_enriched
+  call_type: resolved
+- caller: src.vdisplay.windows.query.find_windows
+  callee: src.vdisplay.windows.filter.filter_windows
+  call_type: resolved
+- caller: src.vdisplay.windows.query.pick_best_window
+  callee: src.vdisplay.windows.rank.pick_largest
+  call_type: resolved
+- caller: src.vdisplay.windows.query.find_companion_frames
+  callee: src.vdisplay.windows.query.list_windows_enriched
+  call_type: resolved
+- caller: src.vdisplay.windows.query.find_companion_frames
+  callee: src.vdisplay.windows.filter.is_companion_frame
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.root_window_id
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.xdotool
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.xprop
+  callee: src.vdisplay.windows.scan.format_window_id
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.xprop
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.xprop
+  callee: src.vdisplay.windows.scan.decode_xprop_value
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.window_geometry
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.windows.scan.search_window_ids
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.resolve_window_pid
+  callee: src.vdisplay.windows.scan.xdotool
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.usable_title
+  callee: src.vdisplay.windows.filter.looks_like_internal_name
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.derive_app_label
+  callee: src.vdisplay.windows.normalize.usable_title
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.derive_app_label
+  callee: src.vdisplay.windows.filter.looks_like_internal_class
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.derive_role
+  callee: src.vdisplay.windows.filter.looks_like_internal_class
+  call_type: resolved
+- caller: src.vdisplay.windows.normalize.derive_role
+  callee: src.vdisplay.windows.filter.looks_like_internal_name
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.is_internal_window
+  callee: src.vdisplay.windows.filter.is_trivial_internal
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.is_internal_window
+  callee: src.vdisplay.windows.filter.is_junk_title
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.is_internal_window
+  callee: src.vdisplay.windows.filter.looks_like_internal_name
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.is_internal_window
+  callee: src.vdisplay.windows.filter.is_visible_app
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.is_internal_window
+  callee: src.vdisplay.windows.filter.looks_like_internal_class
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.window_passes_filters
+  callee: src.vdisplay.windows.filter.matches_class
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.window_passes_filters
+  callee: src.vdisplay.windows.filter.matches_app
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.filter_windows
+  callee: src.vdisplay.windows.filter.matches_class
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.filter_windows
+  callee: src.vdisplay.windows.filter.matches_app
+  call_type: resolved
+- caller: src.vdisplay.windows.filter.filter_windows
+  callee: src.vdisplay.windows.filter.matches_title
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
+  call_type: resolved
+- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
+  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+  callee: src.vdisplay.capture.providers.engine.list_capture_providers
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+  callee: src.vdisplay.capture.portal_screencast.get_active_screencast
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+  callee: src.vdisplay.api.platform_summary
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics
+  callee: src.vdisplay.discovery.diagnose_display
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs
+  callee: src.vdisplay.discovery.list_outputs
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast
+  callee: src.vdisplay.capture.portal_screencast.start_screencast_session
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_screencast
+  callee: src.vdisplay.capture.portal_screencast.stop_screencast_session
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.screencast_status
+  callee: src.vdisplay.capture.portal_screencast.get_active_screencast
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame
+  callee: src.vdisplay.capture.host.capture_host_to_file
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame
+  callee: src.vdisplay.capture.host.capture_all_monitors
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.shutdown
+  callee: src.vdisplay.capture.portal_screencast.stop_screencast_session
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.success
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.failure
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.success
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.failure
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.json_from_runtime
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+  callee: src.vdisplay.application.errors.error_from_exception
+  call_type: resolved
+- caller: packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.failure
+  call_type: resolved
+- caller: examples.agent-broker.broker_demo.main
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.agent_dispatch.agent_client
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.agent_dispatch.dispatch_via_agent
+  callee: src.vdisplay.application.executor.execute
+  call_type: resolved
+- caller: src.vdisplay.client.AgentClient.__init__
+  callee: src.vdisplay.agent_config.resolve_agent_token
+  call_type: resolved
+- caller: src.vdisplay.client.AgentClient._normalize_payload
+  callee: packages.vdisplay-agent.src.vdisplay_agent.envelope.flatten_envelope
+  call_type: resolved
+- caller: src.vdisplay.capture.host._monitor_source_name
+  callee: src.vdisplay.discovery.list_monitors
+  call_type: resolved
+- caller: src.vdisplay.capture.host._monitor_capture_region
+  callee: src.vdisplay.discovery.list_monitors
+  call_type: resolved
+- caller: src.vdisplay.capture.host._capture_all_from_driver_full
+  callee: src.vdisplay.capture.providers.engine.capture_full_png
+  call_type: resolved
+- caller: src.vdisplay.capture.host._capture_all_from_driver_full
+  callee: src.vdisplay.capture.host._monitor_capture_region
+  call_type: resolved
+- caller: src.vdisplay.capture.host._capture_all_from_driver_full
+  callee: src.vdisplay.capture.linux_xwd._crop_png
+  call_type: resolved
+- caller: src.vdisplay.capture.host._capture_all_from_driver_full
+  callee: src.vdisplay.capture.linux_xwd.is_blank_png
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.capture.host._monitor_source_name
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.discovery.list_monitors
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.capture.host._monitor_capture_region
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.backends.linux_x11_mirror._try_mirror
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_png
+  callee: src.vdisplay.capture.linux_xwd.capture_display_png
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_host_to_file
+  callee: src.vdisplay.capture.host.capture_host_png
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_all_monitors
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_all_monitors
+  callee: src.vdisplay.discovery.list_monitors
+  call_type: resolved
+- caller: src.vdisplay.capture.host.capture_all_monitors
+  callee: src.vdisplay.capture.host._capture_all_from_driver_full
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.is_blank_png
+  callee: src.vdisplay.capture.linux_xwd._is_valid_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_hint
+  callee: src.vdisplay.capture.linux_xwd._is_wayland_session
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_full_display_png
+  callee: src.vdisplay.capture.providers.engine.capture_full_png
   call_type: resolved
 - caller: src.vdisplay.capture.linux_xwd.capture_display_png
+  callee: src.vdisplay.capture.providers.engine.capture_full_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd.capture_display_png
+  callee: src.vdisplay.capture.providers.engine.capture_region_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_xwd_png
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_xwd_png
+  callee: src.vdisplay.utils.run_command_bytes
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_xwd_png
   callee: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_scrot_png
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_scrot_png
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png
+  callee: src.vdisplay.utils.run_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png
+  callee: src.vdisplay.capture.linux_xwd._is_valid_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_portal_png
+  callee: src.vdisplay.capture.portal.capture_portal_png
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_grim_png
+  callee: src.vdisplay.utils.require_command
+  call_type: resolved
+- caller: src.vdisplay.capture.linux_xwd._capture_grim_png
+  callee: src.vdisplay.utils.run_command
   call_type: resolved
 - caller: src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
   callee: src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
@@ -892,419 +3296,164 @@ edges:
 - caller: src.vdisplay.capture.linux_xwd._rgb_to_png
   callee: src.vdisplay.capture.linux_xwd._rgb_to_png_minimal
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
-  callee: src.vdisplay.utils.require_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
+  callee: src.vdisplay.capture.portal_screencast._start_screencast
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
-  callee: src.vdisplay.utils.run_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
+  callee: src.vdisplay.capture.portal_screencast._set_active
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
-  callee: src.vdisplay.utils.require_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png
+  callee: src.vdisplay.capture.portal_screencast._capture_pipewire_node
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
-  callee: src.vdisplay.utils.run_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+  callee: src.vdisplay.capture.portal_screencast._set_active_if_self
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
-  callee: src.vdisplay.utils.require_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+  callee: src.vdisplay.capture.portal_screencast._set_active
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
-  callee: src.vdisplay.utils.run_command
+- caller: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+  callee: src.vdisplay.capture.portal_screencast._close_screencast_session
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
-  callee: src.vdisplay.utils.require_command
+- caller: src.vdisplay.capture.portal_screencast.start_screencast_session
+  callee: src.vdisplay.capture.portal_screencast.get_active_screencast
   call_type: resolved
-- caller: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
-  callee: src.vdisplay.utils.run_command
+- caller: src.vdisplay.capture.portal_screencast.stop_screencast_session
+  callee: src.vdisplay.capture.portal_screencast.get_active_screencast
   call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_info
-  callee: src.vdisplay.api.platform_summary
+- caller: src.vdisplay.capture.portal_screencast._start_screencast
+  callee: src.vdisplay.capture.portal_screencast._start_screencast_impl
   call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs
-  callee: src.vdisplay.discovery.diagnose_display
+- caller: src.vdisplay.capture.portal_screencast._start_screencast
+  callee: src.vdisplay.capture.portal_screencast._start_screencast_subprocess
   call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs
+- caller: src.vdisplay.capture.portal_screencast._start_screencast_subprocess
+  callee: src.vdisplay.capture.portal_screencast._system_python
+  call_type: resolved
+- caller: src.vdisplay.application.runtime.agent_client_optional
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.application.runtime.agent_client_required
+  callee: src.vdisplay.application.runtime.agent_client_optional
+  call_type: resolved
+- caller: src.vdisplay.application.runtime.prefer_agent
+  callee: src.vdisplay.agent_config.use_agent
+  call_type: resolved
+- caller: src.vdisplay.application.runtime.ExecutionPolicy.route
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.application.runtime.ExecutionPolicy.meta_for
+  callee: src.vdisplay.agent_config.resolve_agent_url
+  call_type: resolved
+- caller: src.vdisplay.application.executor.execute
+  callee: src.vdisplay.application.runtime.get_execution_policy
+  call_type: resolved
+- caller: src.vdisplay.application.executor.execute
+  callee: src.vdisplay.application.executor._execute_local
+  call_type: resolved
+- caller: src.vdisplay.application.executor.execute
+  callee: src.vdisplay.application.executor._execute_agent
+  call_type: resolved
+- caller: src.vdisplay.application.executor.execute
+  callee: src.vdisplay.application.errors.error_from_exception
+  call_type: resolved
+- caller: src.vdisplay.application.executor._execute_local
+  callee: src.vdisplay.application.executor._screenshot_local
+  call_type: resolved
+- caller: src.vdisplay.application.executor._screenshot_local
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.application.executor._execute_agent
+  callee: src.vdisplay.application.runtime.agent_client_required
+  call_type: resolved
+- caller: src.vdisplay.application.executor._screenshot_agent
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.application.services.capture.capture_screenshot
+  callee: src.vdisplay.application.executor.execute
+  call_type: resolved
+- caller: src.vdisplay.application.services.capture.capture_screenshot_local
+  callee: src.vdisplay.capture.host.capture_host_to_file
+  call_type: resolved
+- caller: src.vdisplay.application.services.capture.capture_screenshot_local
+  callee: src.vdisplay.capture.host.capture_all_monitors
+  call_type: resolved
+- caller: src.vdisplay.application.services.capture.capture_screenshot_via_client
+  callee: src.vdisplay.application.services.capture._capture_via_agent
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery._run_discovery
+  callee: src.vdisplay.application.executor.execute
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_monitors
+  callee: src.vdisplay.application.services.discovery._run_discovery
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_monitors_local
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_monitors_local
   callee: src.vdisplay.discovery.list_outputs
   call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows
+- caller: src.vdisplay.application.services.discovery.list_windows_payload
+  callee: src.vdisplay.application.runtime.resolve_apps_only
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_windows_payload
+  callee: src.vdisplay.application.services.discovery._run_discovery
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_windows_payload
+  callee: src.vdisplay.application.services.discovery.list_windows_local
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_windows_local
+  callee: src.vdisplay.discovery.resolve_host_display
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_windows_local
+  callee: src.vdisplay.application.runtime.resolve_apps_only
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_windows_local
   callee: src.vdisplay.discovery.list_windows
   call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_validate
+- caller: src.vdisplay.application.services.discovery.list_windows_local
+  callee: src.vdisplay.discovery.window_discovery_meta
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_all
+  callee: src.vdisplay.application.services.discovery._run_discovery
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_all_local
+  callee: src.vdisplay.application.services.discovery.list_monitors_local
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_all_local
+  callee: src.vdisplay.application.services.discovery.list_windows_local
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.list_all_local
+  callee: src.vdisplay.application.services.discovery.list_adopted
+  call_type: resolved
+- caller: src.vdisplay.application.services.discovery.diagnose
   callee: src.vdisplay.discovery.diagnose_display
-  call_type: resolved
-- caller: packages.nlp2vdisplay.src.nlp2vdisplay.cli.main
-  callee: packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.nl_to_dsl
-  call_type: resolved
-- caller: packages.nlp2vdisplay.src.nlp2vdisplay.cli.main
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  call_type: resolved
-- caller: packages.mcp2vdisplay.src.mcp2vdisplay.cli.main
-  callee: packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server
-  call_type: resolved
-- caller: packages.cli2vdisplay.src.cli2vdisplay.cli.main
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  call_type: resolved
-- caller: packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
-  callee: packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.nl_to_dsl
-  call_type: resolved
-- caller: packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
-  call_type: resolved
-- caller: examples.host-mirror.mirror_demo.main
-  callee: src.vdisplay.discovery.diagnose_display
-  call_type: resolved
-- caller: examples.host-mirror.mirror_demo.main
-  callee: src.vdisplay.discovery.list_outputs
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_cmd
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_query
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_cmd
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.to_text
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  call_type: resolved
-- caller: packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
-  call_type: resolved
-- caller: src.vdisplay.api.VirtualDisplaySession.create
-  callee: src.vdisplay.api._default_virtual_backend
-  call_type: resolved
-- caller: src.vdisplay.api.MirrorSession.create
-  callee: src.vdisplay.api._default_mirror_backend
-  call_type: resolved
-- caller: src.vdisplay.api.WindowRelaySession.create
-  callee: src.vdisplay.api._default_relay_backend
-  call_type: resolved
-- caller: src.vdisplay.api.platform_summary
-  callee: src.vdisplay.api._default_virtual_backend
-  call_type: resolved
-- caller: src.vdisplay.api.platform_summary
-  callee: src.vdisplay.api._default_mirror_backend
-  call_type: resolved
-- caller: src.vdisplay.api.platform_summary
-  callee: src.vdisplay.api._default_relay_backend
-  call_type: resolved
-- caller: src.vdisplay.cli.main
-  callee: src.vdisplay.cli.build_parser
-  call_type: resolved
-- caller: src.vdisplay.cli.main
-  callee: src.vdisplay.cli._print_json
-  call_type: resolved
-- caller: src.vdisplay.cli.main
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start
-  callee: src.vdisplay.backends.linux_xvfb._wait_for_display
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes
-  callee: src.vdisplay.capture.linux_xwd.capture_display_png
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
-  callee: src.vdisplay.backends.linux_xvfb._probe_display
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
-  callee: src.vdisplay.backends.linux_xvfb._display_candidates
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
-  callee: src.vdisplay.backends.linux_xvfb._display_socket_exists
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_xvfb._wait_for_display
-  callee: src.vdisplay.backends.linux_xvfb._probe_display
-  call_type: resolved
-- caller: packages.rest2vdisplay.src.rest2vdisplay.cli.main
-  callee: packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-  call_type: resolved
-- caller: src.vdisplay.discovery.resolve_host_display
-  callee: src.vdisplay.discovery._looks_like_xvfb_only
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_outputs
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_outputs
-  callee: src.vdisplay.discovery._parse_xrandr_query
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_outputs
-  callee: src.vdisplay.discovery._list_monitors
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_outputs
-  callee: src.vdisplay.discovery._merge_output_metadata
-  call_type: resolved
-- caller: src.vdisplay.discovery._list_monitors
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.discovery._parse_xrandr_query
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_windows
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.discovery.list_windows
-  callee: src.vdisplay.windows.list_windows_enriched
-  call_type: resolved
-- caller: src.vdisplay.discovery.find_window_suggestions
-  callee: src.vdisplay.windows.find_windows
-  call_type: resolved
-- caller: src.vdisplay.discovery.diagnose_display
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.discovery.diagnose_display
-  callee: src.vdisplay.discovery.list_outputs
-  call_type: resolved
-- caller: src.vdisplay.discovery.diagnose_display
-  callee: src.vdisplay.discovery._display_hint
-  call_type: resolved
-- caller: src.vdisplay.discovery._display_hint
-  callee: src.vdisplay.discovery._looks_like_xvfb_only
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
-  callee: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
-  callee: src.vdisplay.backends.linux_x11_mirror._resolve_output
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
-  callee: src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
-  callee: src.vdisplay.backends.linux_x11_mirror._output_mode
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
-  callee: src.vdisplay.capture.linux_xwd.capture_display_png
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror._resolve_output
-  callee: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates
-  callee: src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_mirror._output_mode
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
-  callee: src.vdisplay.discovery.list_outputs
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
-  call_type: resolved
-- caller: src.vdisplay.windows.list_windows_enriched
-  callee: src.vdisplay.utils.require_command
-  call_type: resolved
-- caller: src.vdisplay.windows.list_windows_enriched
-  callee: src.vdisplay.windows._root_window_id
-  call_type: resolved
-- caller: src.vdisplay.windows.list_windows_enriched
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.windows.list_windows_enriched
-  callee: src.vdisplay.windows._dedupe_app_windows
-  call_type: resolved
-- caller: src.vdisplay.windows.find_companion_frames
-  callee: src.vdisplay.windows.list_windows_enriched
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._xprop
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._parse_wm_class
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._normalize_atom_list
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._resolve_window_pid
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._process_info
-  call_type: resolved
-- caller: src.vdisplay.windows.inspect_window
-  callee: src.vdisplay.windows._window_geometry
-  call_type: resolved
-- caller: src.vdisplay.windows.find_windows
-  callee: src.vdisplay.windows.list_windows_enriched
-  call_type: resolved
-- caller: src.vdisplay.windows.find_windows
-  callee: src.vdisplay.windows._matches_class
-  call_type: resolved
-- caller: src.vdisplay.windows.find_windows
-  callee: src.vdisplay.windows._matches_app
-  call_type: resolved
-- caller: src.vdisplay.windows.find_windows
-  callee: src.vdisplay.windows._matches_title
-  call_type: resolved
-- caller: src.vdisplay.windows._derive_app_label
-  callee: src.vdisplay.windows._looks_like_internal_class
-  call_type: resolved
-- caller: src.vdisplay.windows._derive_app_label
-  callee: src.vdisplay.windows._looks_like_internal_name
-  call_type: resolved
-- caller: src.vdisplay.windows._derive_role
-  callee: src.vdisplay.windows._looks_like_internal_class
-  call_type: resolved
-- caller: src.vdisplay.windows._derive_role
-  callee: src.vdisplay.windows._looks_like_internal_name
-  call_type: resolved
-- caller: src.vdisplay.windows._is_internal_window
-  callee: src.vdisplay.windows._looks_like_internal_name
-  call_type: resolved
-- caller: src.vdisplay.windows._is_internal_window
-  callee: src.vdisplay.windows._looks_like_internal_class
-  call_type: resolved
-- caller: src.vdisplay.windows._root_window_id
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.windows._xdotool
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.windows._xprop
-  callee: src.vdisplay.windows._format_window_id
-  call_type: resolved
-- caller: src.vdisplay.windows._xprop
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.windows._xprop
-  callee: src.vdisplay.windows._decode_xprop_value
-  call_type: resolved
-- caller: src.vdisplay.windows._resolve_window_pid
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.windows._window_geometry
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command
-  call_type: resolved
-- caller: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
-  call_type: resolved
-- caller: packages.uri2vdisplay.src.uri2vdisplay.cli.main
-  callee: packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl
-  call_type: resolved
-- caller: packages.uri2vdisplay.src.uri2vdisplay.cli.main
-  callee: packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__
-  callee: src.vdisplay.discovery.resolve_host_display
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.windows._window_geometry
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.backends.linux_x11_relay._move_window
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.windows.find_companion_frames
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.backends.linux_x11_relay._window_metadata
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-  callee: src.vdisplay.backends.linux_x11_relay._window_title
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
-  callee: src.vdisplay.backends.linux_x11_relay._find_window_id
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
-  callee: src.vdisplay.windows.find_windows
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
-  callee: src.vdisplay.windows.pick_best_window
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._find_window_id
-  callee: src.vdisplay.discovery.find_window_suggestions
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._move_window
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._window_metadata
-  callee: src.vdisplay.windows.inspect_window
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._window_geometry
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._window_title
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
-  callee: src.vdisplay.backends.linux_x11_relay._screen_geometry
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._screen_geometry
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._output_origin
-  callee: src.vdisplay.utils.run_command
-  call_type: resolved
-- caller: src.vdisplay.backends.linux_x11_relay._output_origin
-  callee: src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
   call_type: resolved
 modules:
+  examples.agent-broker.broker_demo:
+  - examples.agent-broker.broker_demo.main
+  examples.common.screenshot_meta:
+  - examples.common.screenshot_meta.build_screenshot_meta
+  - examples.common.screenshot_meta.describe_screenshot_nl
+  - examples.common.screenshot_meta.ensure_common_on_path
+  - examples.common.screenshot_meta.examples_common_dir
+  - examples.common.screenshot_meta.meta_path_for
+  - examples.common.screenshot_meta.png_dimensions
+  - examples.common.screenshot_meta.print_artifact
+  - examples.common.screenshot_meta.save_png_with_meta
+  - examples.common.screenshot_meta.write_screenshot_meta
+  examples.common.validate_artifacts:
+  - examples.common.validate_artifacts.main
+  - examples.common.validate_artifacts.validate_directory
+  - examples.common.validate_artifacts.validate_image_and_meta
   examples.host-mirror.mirror_demo:
   - examples.host-mirror.mirror_demo.main
+  examples.host-relay.relay_demo:
+  - examples.host-relay.relay_demo._capture_phase
+  - examples.host-relay.relay_demo.main
   packages.cli2vdisplay.src.cli2vdisplay.cli:
   - packages.cli2vdisplay.src.cli2vdisplay.cli.main
   packages.dsl2vdisplay.src.dsl2vdisplay.bus:
-  - packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_cmd
-  - packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_query
+  - packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy
   - packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
   - packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
   packages.dsl2vdisplay.src.dsl2vdisplay.cli:
@@ -1312,18 +3461,28 @@ modules:
   - packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
   - packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar:
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows
+  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
   - packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line
   - packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
   - packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command
-  - packages.dsl2vdisplay.src.dsl2vdisplay.grammar.to_text
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command:
+  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
+  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
   - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
   - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
   - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
+  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot
+  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query:
-  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_info
+  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors
   - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs
-  - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_validate
   - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry:
   - packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema
@@ -1335,18 +3494,39 @@ modules:
   - packages.mcp2vdisplay.src.mcp2vdisplay.cli.main
   packages.mcp2vdisplay.src.mcp2vdisplay.server:
   - packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
-  packages.nlp2vdisplay.src.nlp2vdisplay.cli:
-  - packages.nlp2vdisplay.src.nlp2vdisplay.cli.main
-  packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl:
-  - packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.nl_to_dsl
   packages.rest2vdisplay.src.rest2vdisplay.app:
   - packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-  packages.rest2vdisplay.src.rest2vdisplay.cli:
-  - packages.rest2vdisplay.src.rest2vdisplay.cli.main
   packages.uri2vdisplay.src.uri2vdisplay.cli:
   - packages.uri2vdisplay.src.uri2vdisplay.cli.main
   packages.uri2vdisplay.src.uri2vdisplay.decode:
   - packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl
+  packages.vdisplay-agent.src.vdisplay_agent.cli:
+  - packages.vdisplay-agent.src.vdisplay_agent.cli.main
+  packages.vdisplay-agent.src.vdisplay_agent.envelope:
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.failure
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.flatten_envelope
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.json_from_runtime
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success
+  - packages.vdisplay-agent.src.vdisplay_agent.envelope.success
+  packages.vdisplay-agent.src.vdisplay_agent.runtime:
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.screencast_status
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.shutdown
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast
+  - packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_screencast
+  src.vdisplay.agent_config:
+  - src.vdisplay.agent_config.resolve_agent_token
+  - src.vdisplay.agent_config.resolve_agent_url
+  - src.vdisplay.agent_config.use_agent
+  src.vdisplay.agent_dispatch:
+  - src.vdisplay.agent_dispatch.agent_client
+  - src.vdisplay.agent_dispatch.dispatch_via_agent
   src.vdisplay.api:
   - src.vdisplay.api.MirrorSession.create
   - src.vdisplay.api.VirtualDisplaySession.create
@@ -1355,25 +3535,77 @@ modules:
   - src.vdisplay.api._default_relay_backend
   - src.vdisplay.api._default_virtual_backend
   - src.vdisplay.api.platform_summary
+  src.vdisplay.application.errors:
+  - src.vdisplay.application.errors.error_from_exception
+  src.vdisplay.application.executor:
+  - src.vdisplay.application.executor._execute_agent
+  - src.vdisplay.application.executor._execute_local
+  - src.vdisplay.application.executor._screenshot_agent
+  - src.vdisplay.application.executor._screenshot_local
+  - src.vdisplay.application.executor.execute
+  src.vdisplay.application.runtime:
+  - src.vdisplay.application.runtime.ExecutionPolicy.meta_for
+  - src.vdisplay.application.runtime.ExecutionPolicy.route
+  - src.vdisplay.application.runtime.agent_client_optional
+  - src.vdisplay.application.runtime.agent_client_required
+  - src.vdisplay.application.runtime.get_execution_policy
+  - src.vdisplay.application.runtime.prefer_agent
+  - src.vdisplay.application.runtime.resolve_apps_only
+  src.vdisplay.application.services.capture:
+  - src.vdisplay.application.services.capture._capture_via_agent
+  - src.vdisplay.application.services.capture.capture_screenshot
+  - src.vdisplay.application.services.capture.capture_screenshot_local
+  - src.vdisplay.application.services.capture.capture_screenshot_via_client
+  src.vdisplay.application.services.discovery:
+  - src.vdisplay.application.services.discovery._run_discovery
+  - src.vdisplay.application.services.discovery.diagnose
+  - src.vdisplay.application.services.discovery.list_adopted
+  - src.vdisplay.application.services.discovery.list_all
+  - src.vdisplay.application.services.discovery.list_all_local
+  - src.vdisplay.application.services.discovery.list_monitors
+  - src.vdisplay.application.services.discovery.list_monitors_local
+  - src.vdisplay.application.services.discovery.list_windows_local
+  - src.vdisplay.application.services.discovery.list_windows_payload
+  src.vdisplay.application.services.info:
+  - src.vdisplay.application.services.info.platform_info
+  src.vdisplay.application.services.session:
+  - src.vdisplay.application.services.session.mirror_screenshot
+  - src.vdisplay.application.services.session.relay_screenshot
   src.vdisplay.backends.linux_x11_mirror:
   - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__
   - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
   - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.start
   - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.stop
   - src.vdisplay.backends.linux_x11_mirror._list_connected_outputs
+  - src.vdisplay.backends.linux_x11_mirror._mirror_exhausted_error
   - src.vdisplay.backends.linux_x11_mirror._mirror_target_candidates
+  - src.vdisplay.backends.linux_x11_mirror._output_capture_region
   - src.vdisplay.backends.linux_x11_mirror._output_mode
   - src.vdisplay.backends.linux_x11_mirror._primary_output_from_xrandr
+  - src.vdisplay.backends.linux_x11_mirror._require_xrandr
+  - src.vdisplay.backends.linux_x11_mirror._resolve_mirror_targets
   - src.vdisplay.backends.linux_x11_mirror._resolve_output
+  - src.vdisplay.backends.linux_x11_mirror._try_mirror
   src.vdisplay.backends.linux_x11_relay:
   - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.__init__
   - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
+  - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted
   - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
+  - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.start
   - src.vdisplay.backends.linux_x11_relay._find_window_id
+  - src.vdisplay.backends.linux_x11_relay._load_stash
   - src.vdisplay.backends.linux_x11_relay._move_window
   - src.vdisplay.backends.linux_x11_relay._offscreen_coordinates
   - src.vdisplay.backends.linux_x11_relay._output_origin
+  - src.vdisplay.backends.linux_x11_relay._pick_primary_release_id
+  - src.vdisplay.backends.linux_x11_relay._related_adopted_ids
+  - src.vdisplay.backends.linux_x11_relay._restore_window
+  - src.vdisplay.backends.linux_x11_relay._save_stash
   - src.vdisplay.backends.linux_x11_relay._screen_geometry
+  - src.vdisplay.backends.linux_x11_relay._select_adopted_for_release
+  - src.vdisplay.backends.linux_x11_relay._stash_path
+  - src.vdisplay.backends.linux_x11_relay._state_as_match_info
+  - src.vdisplay.backends.linux_x11_relay._state_matches
   - src.vdisplay.backends.linux_x11_relay._window_geometry
   - src.vdisplay.backends.linux_x11_relay._window_metadata
   - src.vdisplay.backends.linux_x11_relay._window_title
@@ -1385,9 +3617,26 @@ modules:
   - src.vdisplay.backends.linux_xvfb._display_socket_exists
   - src.vdisplay.backends.linux_xvfb._probe_display
   - src.vdisplay.backends.linux_xvfb._wait_for_display
+  src.vdisplay.capture.host:
+  - src.vdisplay.capture.host._capture_all_from_driver_full
+  - src.vdisplay.capture.host._monitor_capture_region
+  - src.vdisplay.capture.host._monitor_source_name
+  - src.vdisplay.capture.host.capture_all_monitors
+  - src.vdisplay.capture.host.capture_host_png
+  - src.vdisplay.capture.host.capture_host_to_file
   src.vdisplay.capture.linux_xwd:
+  - src.vdisplay.capture.linux_xwd._capture_full_display_png
+  - src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png
+  - src.vdisplay.capture.linux_xwd._capture_grim_png
+  - src.vdisplay.capture.linux_xwd._capture_hint
+  - src.vdisplay.capture.linux_xwd._capture_portal_png
+  - src.vdisplay.capture.linux_xwd._capture_scrot_png
+  - src.vdisplay.capture.linux_xwd._capture_xwd_png
+  - src.vdisplay.capture.linux_xwd._crop_png
   - src.vdisplay.capture.linux_xwd._decode_pixels
   - src.vdisplay.capture.linux_xwd._header_fields
+  - src.vdisplay.capture.linux_xwd._is_valid_png
+  - src.vdisplay.capture.linux_xwd._is_wayland_session
   - src.vdisplay.capture.linux_xwd._parse_xwd_header
   - src.vdisplay.capture.linux_xwd._read_xwd_header
   - src.vdisplay.capture.linux_xwd._rgb_to_png
@@ -1395,12 +3644,96 @@ modules:
   - src.vdisplay.capture.linux_xwd._xwd_dimensions
   - src.vdisplay.capture.linux_xwd._xwd_to_rgb_bytes
   - src.vdisplay.capture.linux_xwd.capture_display_png
+  - src.vdisplay.capture.linux_xwd.is_blank_png
   - src.vdisplay.capture.linux_xwd.xwd_bytes_to_png
+  src.vdisplay.capture.portal:
+  - src.vdisplay.capture.portal.PortalProvider.capture_full
+  - src.vdisplay.capture.portal.PortalProvider.capture_region
+  - src.vdisplay.capture.portal._capture_portal_to_file
+  - src.vdisplay.capture.portal._portal_impl
+  - src.vdisplay.capture.portal._system_python
+  - src.vdisplay.capture.portal.capture_portal_png
+  src.vdisplay.capture.portal_screencast:
+  - src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png
+  - src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
+  - src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+  - src.vdisplay.capture.portal_screencast._capture_pipewire_node
+  - src.vdisplay.capture.portal_screencast._close_screencast_session
+  - src.vdisplay.capture.portal_screencast._set_active
+  - src.vdisplay.capture.portal_screencast._set_active_if_self
+  - src.vdisplay.capture.portal_screencast._start_screencast
+  - src.vdisplay.capture.portal_screencast._start_screencast_impl
+  - src.vdisplay.capture.portal_screencast._start_screencast_subprocess
+  - src.vdisplay.capture.portal_screencast._system_python
+  - src.vdisplay.capture.portal_screencast.get_active_screencast
+  - src.vdisplay.capture.portal_screencast.start_screencast_session
+  - src.vdisplay.capture.portal_screencast.stop_screencast_session
+  src.vdisplay.capture.providers.drm:
+  - src.vdisplay.capture.providers.drm.DrmProvider._capture
+  - src.vdisplay.capture.providers.drm.DrmProvider.available
+  - src.vdisplay.capture.providers.drm._drm_devices
+  src.vdisplay.capture.providers.engine:
+  - src.vdisplay.capture.providers.engine._allow_portal
+  - src.vdisplay.capture.providers.engine._providers
+  - src.vdisplay.capture.providers.engine._try_providers
+  - src.vdisplay.capture.providers.engine.capture_full_png
+  - src.vdisplay.capture.providers.engine.capture_region_png
+  - src.vdisplay.capture.providers.engine.list_capture_providers
+  src.vdisplay.capture.providers.fbdev:
+  - src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
+  - src.vdisplay.capture.providers.fbdev.FbdevProvider.available
+  - src.vdisplay.capture.providers.fbdev._fb_info
+  src.vdisplay.capture.providers.x11:
+  - src.vdisplay.capture.providers.x11.X11Provider.capture_full
+  - src.vdisplay.capture.providers.x11.X11Provider.capture_region
   src.vdisplay.cli:
-  - src.vdisplay.cli._print_json
   - src.vdisplay.cli.build_parser
   - src.vdisplay.cli.main
+  src.vdisplay.cli_handlers:
+  - src.vdisplay.cli_handlers.print_json
+  src.vdisplay.client:
+  - src.vdisplay.client.AgentClient.__init__
+  - src.vdisplay.client.AgentClient._normalize_payload
+  src.vdisplay.commands:
+  - src.vdisplay.commands.register_all
+  src.vdisplay.commands.agent:
+  - src.vdisplay.commands.agent.handle
+  src.vdisplay.commands.all_cmd:
+  - src.vdisplay.commands.all_cmd.handle
+  - src.vdisplay.commands.all_cmd.handle_outputs
+  - src.vdisplay.commands.all_cmd.register
+  - src.vdisplay.commands.all_cmd.register_outputs
+  src.vdisplay.commands.common:
+  - src.vdisplay.commands.common.add_all_arg
+  - src.vdisplay.commands.common.add_display_arg
+  - src.vdisplay.commands.common.add_window_filter_args
+  - src.vdisplay.commands.common.include_all_from_args
+  src.vdisplay.commands.diagnose:
+  - src.vdisplay.commands.diagnose.handle
+  - src.vdisplay.commands.diagnose.register
+  src.vdisplay.commands.info:
+  - src.vdisplay.commands.info.handle
+  src.vdisplay.commands.mirror:
+  - src.vdisplay.commands.mirror.handle
+  - src.vdisplay.commands.mirror.register
+  src.vdisplay.commands.monitors:
+  - src.vdisplay.commands.monitors.handle
+  - src.vdisplay.commands.monitors.register
+  src.vdisplay.commands.nlp:
+  - src.vdisplay.commands.nlp.handle
+  src.vdisplay.commands.relay:
+  - src.vdisplay.commands.relay.handle
+  - src.vdisplay.commands.relay.handle_list_windows
+  src.vdisplay.commands.screenshot:
+  - src.vdisplay.commands.screenshot.handle
+  - src.vdisplay.commands.screenshot.register
+  src.vdisplay.commands.virtual:
+  - src.vdisplay.commands.virtual.handle
+  src.vdisplay.commands.windows:
+  - src.vdisplay.commands.windows.handle
+  - src.vdisplay.commands.windows.register
   src.vdisplay.discovery:
+  - src.vdisplay.discovery._attach_output_nl
   - src.vdisplay.discovery._display_hint
   - src.vdisplay.discovery._list_monitors
   - src.vdisplay.discovery._looks_like_xvfb_only
@@ -1408,69 +3741,147 @@ modules:
   - src.vdisplay.discovery._parse_xrandr_query
   - src.vdisplay.discovery.diagnose_display
   - src.vdisplay.discovery.find_window_suggestions
+  - src.vdisplay.discovery.list_monitors
   - src.vdisplay.discovery.list_outputs
   - src.vdisplay.discovery.list_windows
   - src.vdisplay.discovery.resolve_host_display
+  - src.vdisplay.discovery.window_discovery_meta
   src.vdisplay.input.linux_xdotool:
   - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
   - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
   - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
   - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
+  src.vdisplay.nl:
+  - src.vdisplay.nl._user_visible_app_labels
+  - src.vdisplay.nl.assign_windows_to_monitors
+  - src.vdisplay.nl.describe_output_nl
+  - src.vdisplay.nl.describe_window_nl
+  - src.vdisplay.nl.enrich_outputs_nl
+  - src.vdisplay.nl.ensure_monitor_ids
+  - src.vdisplay.nl.find_monitor_for_window
+  - src.vdisplay.nl.window_center_on_output
+  src.vdisplay.nlp:
+  - src.vdisplay.nlp._default_all
+  - src.vdisplay.nlp._default_display_suffix
+  - src.vdisplay.nlp._default_monitors
+  - src.vdisplay.nlp._default_windows
+  - src.vdisplay.nlp._display_suffix
+  - src.vdisplay.nlp._run_local_dsl
+  - src.vdisplay.nlp._validate_dsl
+  - src.vdisplay.nlp.nl_to_dsl
+  - src.vdisplay.nlp.parse_display
+  - src.vdisplay.nlp.run_nl_prompt
+  src.vdisplay.payloads:
+  - src.vdisplay.payloads.all_payload
   src.vdisplay.utils:
   - src.vdisplay.utils.require_command
   - src.vdisplay.utils.run_command
   - src.vdisplay.utils.run_command_bytes
-  src.vdisplay.windows:
-  - src.vdisplay.windows._decode_xprop_value
-  - src.vdisplay.windows._dedupe_app_windows
-  - src.vdisplay.windows._derive_app_label
-  - src.vdisplay.windows._derive_role
-  - src.vdisplay.windows._format_window_id
-  - src.vdisplay.windows._is_internal_window
-  - src.vdisplay.windows._looks_like_internal_class
-  - src.vdisplay.windows._looks_like_internal_name
-  - src.vdisplay.windows._matches_app
-  - src.vdisplay.windows._matches_class
-  - src.vdisplay.windows._matches_title
-  - src.vdisplay.windows._normalize_atom_list
-  - src.vdisplay.windows._parse_wm_class
-  - src.vdisplay.windows._process_info
-  - src.vdisplay.windows._resolve_window_pid
-  - src.vdisplay.windows._root_window_id
-  - src.vdisplay.windows._window_geometry
-  - src.vdisplay.windows._xdotool
-  - src.vdisplay.windows._xprop
-  - src.vdisplay.windows.find_companion_frames
-  - src.vdisplay.windows.find_windows
-  - src.vdisplay.windows.inspect_window
-  - src.vdisplay.windows.list_windows_enriched
-  - src.vdisplay.windows.pick_best_window
+  src.vdisplay.windows.filter:
+  - src.vdisplay.windows.filter.filter_windows
+  - src.vdisplay.windows.filter.is_companion_frame
+  - src.vdisplay.windows.filter.is_internal_window
+  - src.vdisplay.windows.filter.is_junk_title
+  - src.vdisplay.windows.filter.is_trivial_internal
+  - src.vdisplay.windows.filter.is_visible_app
+  - src.vdisplay.windows.filter.looks_like_internal_class
+  - src.vdisplay.windows.filter.looks_like_internal_name
+  - src.vdisplay.windows.filter.matches_app
+  - src.vdisplay.windows.filter.matches_class
+  - src.vdisplay.windows.filter.matches_title
+  - src.vdisplay.windows.filter.window_passes_filters
+  src.vdisplay.windows.normalize:
+  - src.vdisplay.windows.normalize.derive_app_label
+  - src.vdisplay.windows.normalize.derive_role
+  - src.vdisplay.windows.normalize.normalize_atom_list
+  - src.vdisplay.windows.normalize.parse_wm_class
+  - src.vdisplay.windows.normalize.process_info
+  - src.vdisplay.windows.normalize.resolve_window_pid
+  - src.vdisplay.windows.normalize.usable_title
+  src.vdisplay.windows.query:
+  - src.vdisplay.windows.query.find_companion_frames
+  - src.vdisplay.windows.query.find_windows
+  - src.vdisplay.windows.query.inspect_window
+  - src.vdisplay.windows.query.list_windows_enriched
+  - src.vdisplay.windows.query.pick_best_window
+  - src.vdisplay.windows.query.scan_windows
+  src.vdisplay.windows.rank:
+  - src.vdisplay.windows.rank.dedupe_app_windows
+  - src.vdisplay.windows.rank.pick_best_from_group
+  - src.vdisplay.windows.rank.pick_largest
+  src.vdisplay.windows.scan:
+  - src.vdisplay.windows.scan.decode_xprop_value
+  - src.vdisplay.windows.scan.format_window_id
+  - src.vdisplay.windows.scan.root_window_id
+  - src.vdisplay.windows.scan.search_window_ids
+  - src.vdisplay.windows.scan.window_geometry
+  - src.vdisplay.windows.scan.xdotool
+  - src.vdisplay.windows.scan.xprop
 entry_points:
+- examples.agent-broker.broker_demo.main
+- examples.agent-broker.run.cleanup
+- examples.ci-agent.agent._load_common
 - examples.ci-agent.agent.main
+- examples.common.screenshot_meta.ensure_common_on_path
+- examples.common.validate_artifacts.main
+- examples.headless-virtual.run_virtual._load_common
 - examples.headless-virtual.run_virtual.main
+- examples.host-mirror.mirror_demo._load_common
 - examples.host-mirror.mirror_demo.main
 - examples.host-mirror.run._resolve_host_display
+- examples.host-relay.relay_demo._load_common
 - examples.host-relay.relay_demo.main
 - examples.host-relay.run._resolve_host_display
+- examples.run_all_examples.clean_output
+- examples.run_all_examples.validate_dir
 - packages.cli2vdisplay.src.cli2vdisplay.cli.main
 - packages.dsl2vdisplay.src.dsl2vdisplay.cli.main
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start
+- packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start
+- packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_all
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_capabilities
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_health
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_info
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs
 - packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_validate
-- packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows
 - packages.dsl2vdisplay.src.dsl2vdisplay.result.DslResult.to_dict
 - packages.mcp2vdisplay.src.mcp2vdisplay.cli.main
 - packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - packages.nlp2vdisplay.src.nlp2vdisplay.cli.main
+- packages.nlp2vdisplay.src.nlp2vdisplay.to_dsl.parse_display
 - packages.rest2vdisplay.src.rest2vdisplay.cli.main
 - packages.uri2vdisplay.src.uri2vdisplay.cli.main
+- packages.vdisplay-agent.src.vdisplay_agent.cli.main
+- packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime._relay_session
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.adopt_window
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.capture_frame
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.release_window
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.screencast_status
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.shutdown
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_mirror
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_relay
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_screencast
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_virtual
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_screencast
+- packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.stop_session
+- packages.vdisplay-agent.src.vdisplay_agent.server.create_app
+- src.vdisplay.agent_dispatch.agent_client
+- src.vdisplay.agent_dispatch.dispatch_via_agent
 - src.vdisplay.api.MirrorSession.__init__
 - src.vdisplay.api.MirrorSession.capabilities
 - src.vdisplay.api.MirrorSession.create
@@ -1499,6 +3910,34 @@ entry_points:
 - src.vdisplay.api.WindowRelaySession.release_window
 - src.vdisplay.api.WindowRelaySession.start
 - src.vdisplay.api.WindowRelaySession.stop
+- src.vdisplay.application.commands.CommandRequest.from_dsl
+- src.vdisplay.application.commands.CommandResult.failure
+- src.vdisplay.application.commands.CommandResult.success
+- src.vdisplay.application.commands.CommandResult.to_dict
+- src.vdisplay.application.commands.CommandResult.to_dsl_result
+- src.vdisplay.application.errors.ApplicationError.to_dict
+- src.vdisplay.application.runtime.ExecutionPolicy.meta_for
+- src.vdisplay.application.runtime.ExecutionPolicy.route
+- src.vdisplay.application.runtime.prefer_agent
+- src.vdisplay.application.services.capture.capture_screenshot
+- src.vdisplay.application.services.capture.capture_screenshot_local
+- src.vdisplay.application.services.capture.capture_screenshot_via_client
+- src.vdisplay.application.services.discovery.diagnose
+- src.vdisplay.application.services.discovery.list_all
+- src.vdisplay.application.services.discovery.list_all_local
+- src.vdisplay.application.services.discovery.list_monitors
+- src.vdisplay.application.services.discovery.list_windows_payload
+- src.vdisplay.application.services.info.platform_info
+- src.vdisplay.application.services.session.mirror_screenshot
+- src.vdisplay.application.services.session.mirror_start
+- src.vdisplay.application.services.session.relay_adopt
+- src.vdisplay.application.services.session.relay_list_adopted
+- src.vdisplay.application.services.session.relay_release
+- src.vdisplay.application.services.session.relay_screenshot
+- src.vdisplay.application.services.session.unsupported_session_action
+- src.vdisplay.application.services.session.virtual_launch
+- src.vdisplay.application.services.session.virtual_screenshot
+- src.vdisplay.application.services.session.virtual_start
 - src.vdisplay.backends.base.BaseBackend.__init__
 - src.vdisplay.backends.base.BaseBackend.adopt_window
 - src.vdisplay.backends.base.BaseBackend.as_dict
@@ -1511,6 +3950,7 @@ entry_points:
 - src.vdisplay.backends.base.BaseBackend.start
 - src.vdisplay.backends.base.BaseBackend.stop
 - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.__init__
+- src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend._activate_mirror
 - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.capabilities
 - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.info
 - src.vdisplay.backends.linux_x11_mirror.LinuxX11MirrorBackend.screenshot_bytes
@@ -1523,7 +3963,6 @@ entry_points:
 - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.list_adopted
 - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.release_window
 - src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.start
-- src.vdisplay.backends.linux_x11_relay._window_geometry
 - src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.__init__
 - src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
 - src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.adopt_window
@@ -1539,11 +3978,102 @@ entry_points:
 - src.vdisplay.backends.mirror_stub.MirrorStubBackend.info
 - src.vdisplay.backends.mirror_stub.MirrorStubBackend.screenshot_bytes
 - src.vdisplay.capture.base.CaptureBackend.screenshot_png
+- src.vdisplay.capture.linux_xwd._capture_full_display_png
+- src.vdisplay.capture.linux_xwd._capture_gnome_screenshot_png
+- src.vdisplay.capture.linux_xwd._capture_grim_png
+- src.vdisplay.capture.linux_xwd._capture_hint
+- src.vdisplay.capture.linux_xwd._capture_portal_png
+- src.vdisplay.capture.portal.PortalProvider.available
+- src.vdisplay.capture.portal.PortalProvider.capture_full
+- src.vdisplay.capture.portal.PortalProvider.capture_region
+- src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png
+- src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
+- src.vdisplay.capture.portal_screencast.PortalScreenCastSession.status
+- src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+- src.vdisplay.capture.providers.base.CaptureProvider.available
+- src.vdisplay.capture.providers.base.CaptureProvider.capture_full
+- src.vdisplay.capture.providers.base.CaptureProvider.capture_region
+- src.vdisplay.capture.providers.drm.DrmProvider._capture
+- src.vdisplay.capture.providers.drm.DrmProvider.available
+- src.vdisplay.capture.providers.drm.DrmProvider.capture_full
+- src.vdisplay.capture.providers.drm.DrmProvider.capture_region
+- src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
+- src.vdisplay.capture.providers.fbdev.FbdevProvider.available
+- src.vdisplay.capture.providers.fbdev.FbdevProvider.capture_full
+- src.vdisplay.capture.providers.fbdev.FbdevProvider.capture_region
+- src.vdisplay.capture.providers.mss.MssProvider.__init__
+- src.vdisplay.capture.providers.mss.MssProvider._grab
+- src.vdisplay.capture.providers.mss.MssProvider.available
+- src.vdisplay.capture.providers.mss.MssProvider.capture_full
+- src.vdisplay.capture.providers.mss.MssProvider.capture_region
+- src.vdisplay.capture.providers.x11.X11Provider.__init__
+- src.vdisplay.capture.providers.x11.X11Provider.available
+- src.vdisplay.capture.providers.x11.X11Provider.capture_full
+- src.vdisplay.capture.providers.x11.X11Provider.capture_region
 - src.vdisplay.cli.main
+- src.vdisplay.cli_handlers.all_payload
+- src.vdisplay.cli_handlers.dispatch_cli
+- src.vdisplay.cli_handlers.monitors_payload
+- src.vdisplay.cli_handlers.screenshot_payload
+- src.vdisplay.cli_handlers.windows_payload
+- src.vdisplay.client.AgentClient.__init__
+- src.vdisplay.client.AgentClient._normalize_payload
+- src.vdisplay.client.AgentClient._request
+- src.vdisplay.client.AgentClient.adopt_window
+- src.vdisplay.client.AgentClient.capabilities
+- src.vdisplay.client.AgentClient.capture_frame
+- src.vdisplay.client.AgentClient.capture_png_bytes
+- src.vdisplay.client.AgentClient.diagnostics
+- src.vdisplay.client.AgentClient.health
+- src.vdisplay.client.AgentClient.outputs
+- src.vdisplay.client.AgentClient.release_window
+- src.vdisplay.client.AgentClient.screencast_status
+- src.vdisplay.client.AgentClient.start_mirror
+- src.vdisplay.client.AgentClient.start_relay
+- src.vdisplay.client.AgentClient.start_screencast
+- src.vdisplay.client.AgentClient.start_virtual
+- src.vdisplay.client.AgentClient.stop_screencast
+- src.vdisplay.client.AgentClient.stop_session
+- src.vdisplay.client.AgentClient.windows
+- src.vdisplay.commands.agent.handle
+- src.vdisplay.commands.agent.register
+- src.vdisplay.commands.all_cmd.handle_outputs
+- src.vdisplay.commands.all_cmd.register
+- src.vdisplay.commands.all_cmd.register_outputs
+- src.vdisplay.commands.diagnose.handle
+- src.vdisplay.commands.diagnose.register
+- src.vdisplay.commands.info.handle
+- src.vdisplay.commands.info.register
+- src.vdisplay.commands.io.print_json
+- src.vdisplay.commands.mirror.handle
+- src.vdisplay.commands.monitors.handle
+- src.vdisplay.commands.monitors.register
+- src.vdisplay.commands.nlp.handle
+- src.vdisplay.commands.nlp.register
+- src.vdisplay.commands.relay.handle
+- src.vdisplay.commands.relay.handle_list_windows
+- src.vdisplay.commands.relay.register
+- src.vdisplay.commands.screenshot.handle
+- src.vdisplay.commands.screenshot.register
+- src.vdisplay.commands.virtual.handle
+- src.vdisplay.commands.virtual.register
+- src.vdisplay.commands.windows.handle
+- src.vdisplay.commands.windows.register
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.__init__
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput._env
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move
 - src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text
-- src.vdisplay.windows._window_sort_key
+- src.vdisplay.nlp._adopt_dsl
+- src.vdisplay.nlp._default_monitors
+- src.vdisplay.nlp._default_windows
+- src.vdisplay.nlp._mirror_dsl
+- src.vdisplay.nlp._release_dsl
+- src.vdisplay.nlp._screenshot_dsl
+- src.vdisplay.nlp._validate_dsl
+- src.vdisplay.payloads.adopted_payload
+- src.vdisplay.payloads.local_windows_payload
+- src.vdisplay.payloads.monitors_payload
+- src.vdisplay.windows.rank.window_area
+- src.vdisplay.windows.rank.window_sort_key

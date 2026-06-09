@@ -14,6 +14,8 @@ docker compose up --build
 
 Screenshot is saved to `output/screen.png`.
 
+Does not require `vdisplay-agent` — runs in-process inside the container. For desktop hosts with multiple clients, see [agent-broker](../agent-broker/).
+
 ## What it does
 
 1. Starts `VirtualDisplaySession` on `DISPLAY=:99`

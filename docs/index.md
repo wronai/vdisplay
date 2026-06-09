@@ -8,18 +8,30 @@ Cross-platform virtual display orchestration for Python agents, CI pipelines, an
 |----------|-------------|
 | [README.md](../README.md) | Project overview, API summary, CLI reference |
 | [Installation](installation.md) | System dependencies and Python setup |
+| [Agent broker](agent-broker.md) | **vdisplay-agent** — install once, REST/MCP/DSL, ScreenCast |
 | [Docker guide](docker-guide.md) | Running vdisplay in containers |
 | [Examples index](examples.md) | All usage examples by environment |
 | [Troubleshooting](troubleshooting.md) | Common CLI errors and fixes |
 | [packages/README.md](../packages/README.md) | Control layer (DSL, MCP, REST, NL) |
 
+## Recommended desktop setup
+
+```bash
+pip install -e "packages/vdisplay-agent[serve]"
+vdisplay-agent serve --port 8765
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+```
+
+Try: [examples/agent-broker](../examples/agent-broker/) · full guide: [agent-broker.md](agent-broker.md)
+
 ## Modes
 
-| Mode | Class | Use when |
-|------|-------|----------|
-| `virtual` | `VirtualDisplaySession` | You need an isolated headless display (Xvfb) |
-| `mirror` | `MirrorSession` | You want to duplicate an existing screen output |
-| `relay` | `WindowRelaySession` | You want to hide/restore a window on the same X11 session |
+| Mode | Class / API | Use when |
+|------|-------------|----------|
+| `virtual` | `VirtualDisplaySession` | Isolated headless display (Xvfb) |
+| `mirror` | `MirrorSession` | Duplicate an existing screen output |
+| `relay` | `WindowRelaySession` | Hide/restore a window on the same session |
+| `screencast` | Agent `POST /session/screencast/start` | Wayland host capture after one portal consent |
 
 See [README.md — Modes](../README.md#modes) for the capability matrix.
 
@@ -29,46 +41,45 @@ Monitors and windows returned by the API, CLI, and control layer include **`nl`*
 
 | Object | Source | `nl` describes |
 |--------|--------|----------------|
-| Monitor | `vdisplay outputs`, DSL `OUTPUTS` | Resolution, rotation, primary flag, visible app names on that output |
-| Window | `vdisplay relay list-windows`, DSL `WINDOWS` | App label, role, size, position, process, WM class |
-| Adopted window | `vdisplay relay list`, `adopt-window` | Same as window, for stashed off-screen windows |
+| Monitor | `vdisplay monitors`, `vdisplay all`, DSL `MONITORS` | resolution, rotation, primary, visible apps |
+| Window | `vdisplay windows`, `vdisplay all`, DSL `WINDOWS` | app label, size, monitor, process |
+| Adopted window | `vdisplay relay list`, `vdisplay all` | off-screen stashed windows |
 
 Example:
 
 ```bash
-vdisplay outputs | jq '.outputs[].nl'
-vdisplay relay list-windows --apps-only | jq '.windows[].nl'
+vdisplay all | jq '{monitors: .monitors[].nl, windows: .windows[].nl}'
 ```
 
 ## Examples by environment
 
-| Environment | Path | Docker | Host X11 required |
-|-------------|------|--------|-------------------|
+| Environment | Path | Docker | Host desktop |
+|-------------|------|--------|--------------|
+| **Agent broker** | [examples/agent-broker](../examples/agent-broker/) | No | Yes |
 | Headless virtual display | [examples/headless-virtual](../examples/headless-virtual/) | Yes | No |
 | CI / agent screenshot | [examples/ci-agent](../examples/ci-agent/) | Yes | No |
 | Dev workspace (mounted) | [examples/dev-workspace](../examples/dev-workspace/) | Yes | No |
-| Mirror host desktop | [examples/host-mirror](../examples/host-mirror/) | Yes | Yes |
-| Relay host windows | [examples/host-relay](../examples/host-relay/) | Yes | Yes |
+| Mirror host desktop | [examples/host-mirror](../examples/host-mirror/) | Optional | Yes |
+| Relay host windows | [examples/host-relay](../examples/host-relay/) | Optional | Yes |
 
 Details: [examples.md](examples.md)
 
 ## Python API (minimal)
 
 ```python
-from vdisplay import VirtualDisplaySession, MirrorSession, WindowRelaySession
-from vdisplay.discovery import list_outputs, list_windows
+from vdisplay import VirtualDisplaySession
+from vdisplay.client import AgentClient
 
-for monitor in list_outputs():
-    print(monitor["name"], monitor["nl"])
-
-for window in list_windows(apps_only=True):
-    print(window["app_label"], window["nl"])
-
+# In-process virtual display
 vd = VirtualDisplaySession.create(width=1920, height=1080)
 vd.start()
-vd.launch(["xterm"])
 vd.save_screenshot("screen.png")
 vd.stop()
+
+# Via broker (when VDISPLAY_AGENT_URL is set)
+client = AgentClient("http://127.0.0.1:8765")
+client.outputs()
+client.start_virtual(width=1280, height=720, display=":99")
 ```
 
 Full API: [README.md](../README.md#python-api)
@@ -76,20 +87,30 @@ Full API: [README.md](../README.md#python-api)
 ## CLI (minimal)
 
 ```bash
-vdisplay info
-vdisplay outputs
-vdisplay relay list-windows --apps-only
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765   # optional broker
+vdisplay monitors
 vdisplay virtual screenshot -o screen.png --display :99
 ```
 
-Full CLI: [README.md](../README.md#cli)
+Full CLI: [README.md](../README.md)
 
 ## Control layer
 
+With broker (recommended on a desktop host):
+
 ```bash
-dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
-dsl2vdisplay -c 'WINDOWS DISPLAY :0'
+vdisplay-agent serve --port 8765
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+dsl2vdisplay -c 'MONITORS'
+rest2vdisplay serve --port 8216 --agent-url $VDISPLAY_AGENT_URL
+mcp2vdisplay serve
+```
+
+Without broker (in-process, tests, containers):
+
+```bash
+dsl2vdisplay -c 'MONITORS DISPLAY :0'
 nlp2vdisplay to-dsl "show windows on the primary monitor"
 ```
 
-See [packages/README.md](../packages/README.md).
+See [packages/README.md](../packages/README.md) and [agent-broker.md](agent-broker.md).

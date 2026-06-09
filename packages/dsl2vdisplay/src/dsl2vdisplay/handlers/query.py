@@ -12,15 +12,9 @@ def handle_health(cmd: dict[str, Any], *, line: str) -> DslResult:
 
 
 def handle_info(cmd: dict[str, Any], *, line: str) -> DslResult:
-    from vdisplay.api import platform_summary
-    from vdisplay import VirtualDisplaySession, MirrorSession, WindowRelaySession
+    from vdisplay.application.services import info as info_service
 
-    data = {
-        "platform": platform_summary(),
-        "virtual": VirtualDisplaySession.create().capabilities(),
-        "mirror": MirrorSession.create().capabilities(),
-        "relay": WindowRelaySession.create().capabilities(),
-    }
+    data = info_service.platform_info()
     return DslResult(
         ok=True,
         command=line,
@@ -30,26 +24,31 @@ def handle_info(cmd: dict[str, Any], *, line: str) -> DslResult:
     )
 
 
-def handle_outputs(cmd: dict[str, Any], *, line: str) -> DslResult:
-    from vdisplay.discovery import diagnose_display, list_outputs
+def handle_monitors(cmd: dict[str, Any], *, line: str) -> DslResult:
+    from vdisplay.application.services import discovery
 
-    display = cmd.get("display")
-    data = {"diagnostic": diagnose_display(display), "outputs": list_outputs(display)}
+    data = discovery.list_monitors(cmd.get("display"), include_all=not bool(cmd.get("apps_only", False)))
     return DslResult(
         ok=True,
         command=line,
-        action="outputs",
+        action="monitors",
         output=json.dumps(data, indent=2),
         data=data,
     )
 
 
-def handle_windows(cmd: dict[str, Any], *, line: str) -> DslResult:
-    from vdisplay.discovery import list_windows
+def handle_outputs(cmd: dict[str, Any], *, line: str) -> DslResult:
+    result = handle_monitors(cmd, line=line)
+    result.action = "outputs"
+    return result
 
-    windows = list_windows(
+
+def handle_windows(cmd: dict[str, Any], *, line: str) -> DslResult:
+    from vdisplay.application.services import discovery
+
+    data = discovery.list_windows_payload(
         cmd.get("display"),
-        apps_only=bool(cmd.get("apps_only", True)),
+        include_all=not bool(cmd.get("apps_only", False)),
         match_class=cmd.get("class"),
         match_pid=cmd.get("pid"),
         match_app=cmd.get("app"),
@@ -58,8 +57,27 @@ def handle_windows(cmd: dict[str, Any], *, line: str) -> DslResult:
         ok=True,
         command=line,
         action="windows",
-        output=json.dumps(windows, indent=2),
-        data={"windows": windows},
+        output=json.dumps(data, indent=2),
+        data=data,
+    )
+
+
+def handle_all(cmd: dict[str, Any], *, line: str) -> DslResult:
+    from vdisplay.application.services import discovery
+
+    data = discovery.list_all(
+        cmd.get("display"),
+        include_all=not bool(cmd.get("apps_only", False)),
+        match_class=cmd.get("class"),
+        match_pid=cmd.get("pid"),
+        match_app=cmd.get("app"),
+    )
+    return DslResult(
+        ok=True,
+        command=line,
+        action="all",
+        output=json.dumps(data, indent=2),
+        data=data,
     )
 
 
@@ -75,7 +93,7 @@ def handle_capabilities(cmd: dict[str, Any], *, line: str) -> DslResult:
 
 
 def handle_validate(cmd: dict[str, Any], *, line: str) -> DslResult:
-    from vdisplay.discovery import diagnose_display
+    from vdisplay.application.services import discovery
 
     tools = {
         "Xvfb": shutil.which("Xvfb"),
@@ -84,7 +102,7 @@ def handle_validate(cmd: dict[str, Any], *, line: str) -> DslResult:
         "xdotool": shutil.which("xdotool"),
     }
     missing = [k for k, v in tools.items() if v is None]
-    diag = diagnose_display(cmd.get("display"))
+    diag = discovery.diagnose(cmd.get("display"))
     ok = not missing
     data = {"tools": tools, "missing": missing, "diagnostic": diag}
     return DslResult(

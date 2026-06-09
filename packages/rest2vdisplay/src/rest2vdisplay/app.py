@@ -1,20 +1,61 @@
 from __future__ import annotations
 
 import json
+import os
 
 from dsl2vdisplay import dispatch
 from dsl2vdisplay.schema_registry import all_schemas, schema_for_verb
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse, PlainTextResponse
+from starlette.requests import Request
+from starlette.responses import Response
 
 
-def create_app():
-    from fastapi import FastAPI, Request
-    from fastapi.responses import JSONResponse, PlainTextResponse, Response
+def create_app(*, agent_url: str | None = None):
+    """
+    REST adapter for vdisplay.
 
-    app = FastAPI(title="rest2vdisplay", version="0.1.0")
+    When VDISPLAY_AGENT_URL is set (or --agent-url), DSL commands route through
+    vdisplay-agent — this process does not perform capture/input directly.
+    """
+    if agent_url:
+        os.environ.setdefault("VDISPLAY_AGENT_URL", agent_url.rstrip("/"))
+
+    app = FastAPI(
+        title="rest2vdisplay",
+        version="0.1.0",
+        description="HTTP adapter → dsl2vdisplay → vdisplay-agent (when configured)",
+    )
 
     @app.get("/health")
-    def health() -> dict[str, str]:
-        return {"status": "ok", "service": "rest2vdisplay"}
+    def health() -> dict[str, object]:
+        from vdisplay.agent_config import resolve_agent_url
+
+        payload: dict[str, object] = {"status": "ok", "service": "rest2vdisplay"}
+        url = resolve_agent_url()
+        if url:
+            from vdisplay.client import AgentClient
+
+            payload["broker"] = url
+            payload["agent"] = AgentClient(url).health()
+        return payload
+
+    @app.get("/capabilities")
+    def capabilities() -> JSONResponse:
+        from vdisplay.agent_config import resolve_agent_url
+
+        url = resolve_agent_url()
+        if not url:
+            return JSONResponse(
+                {
+                    "ok": False,
+                    "error": "Set VDISPLAY_AGENT_URL to query agent capabilities",
+                },
+                status_code=503,
+            )
+        from vdisplay.client import AgentClient
+
+        return JSONResponse(AgentClient(url).capabilities())
 
     @app.get("/v1/schema/{verb}")
     def get_schema(verb: str) -> JSONResponse:

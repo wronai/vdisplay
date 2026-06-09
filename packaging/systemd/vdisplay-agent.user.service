@@ -1,0 +1,15 @@
+[Unit]
+Description=vdisplay-agent local broker (sessions, capture, discovery)
+Documentation=file:%h/github/wronai/vdisplay/docs/agent-broker.md
+After=network.target
+
+[Service]
+Type=simple
+Environment=DISPLAY=:0
+# Adjust ExecStart to your vdisplay-agent path (`which vdisplay-agent`)
+ExecStart=%h/.local/bin/vdisplay-agent serve --host 127.0.0.1 --port 8765
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

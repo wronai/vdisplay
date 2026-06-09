@@ -2,7 +2,7 @@ import struct
 
 import pytest
 
-from vdisplay.capture.linux_xwd import xwd_bytes_to_png
+from vdisplay.capture.linux_xwd import is_blank_png, xwd_bytes_to_png
 
 
 def _make_xwd(width: int, height: int, pixels: bytes) -> bytes:
@@ -43,3 +43,10 @@ def test_xwd_to_png_2x1():
     data = _make_xwd(2, 1, pixels)
     png = xwd_bytes_to_png(data)
     assert len(png) > 32
+    assert not is_blank_png(png)
+
+
+def test_is_blank_png_detects_black_frame():
+    black = xwd_bytes_to_png(_make_xwd(4, 4, bytes([0, 0, 0, 0]) * 16))
+    assert is_blank_png(black)
+    assert not is_blank_png(xwd_bytes_to_png(_make_xwd(1, 1, bytes([0, 0, 255, 0]))))

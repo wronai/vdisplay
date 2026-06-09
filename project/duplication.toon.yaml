@@ -1,51 +1,102 @@
-# redup/duplication | 3 groups | 41f 3274L | 2026-06-09
+# redup/duplication | 8 groups | 96f 8654L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 41
-  total_lines:   3274
-  dup_groups:    3
-  dup_fragments: 7
-  saved_lines:   15
-  scan_ms:       2213
+  files_scanned: 96
+  total_lines:   8654
+  dup_groups:    8
+  dup_fragments: 20
+  saved_lines:   109
+  scan_ms:       2303
 
-HOTSPOTS[4] (files with most duplication):
-  src/vdisplay/api.py  dup=12L  groups=1  frags=3  (0.4%)
-  src/vdisplay/windows.py  dup=6L  groups=1  frags=2  (0.2%)
-  src/vdisplay/backends/linux_x11_mirror.py  dup=4L  groups=1  frags=1  (0.1%)
-  src/vdisplay/backends/linux_xvfb.py  dup=4L  groups=1  frags=1  (0.1%)
+HOTSPOTS[7] (files with most duplication):
+  src/vdisplay/payloads.py  dup=46L  groups=1  frags=2  (0.5%)
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py  dup=34L  groups=1  frags=2  (0.4%)
+  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py  dup=20L  groups=1  frags=2  (0.2%)
+  src/vdisplay/api.py  dup=12L  groups=1  frags=3  (0.1%)
+  examples/ci-agent/agent.py  dup=11L  groups=1  frags=1  (0.1%)
+  examples/headless-virtual/run_virtual.py  dup=11L  groups=1  frags=1  (0.1%)
+  examples/host-mirror/mirror_demo.py  dup=11L  groups=1  frags=1  (0.1%)
 
-DUPLICATES[3] (ranked by impact):
+DUPLICATES[8] (ranked by impact):
+  [443c93126a62d7a9] ! EXAC  _load_common  L=11 N=4 saved=33 sim=1.00
+      examples/ci-agent/agent.py:15-25  (_load_common)
+      examples/headless-virtual/run_virtual.py:13-23  (_load_common)
+      examples/host-mirror/mirror_demo.py:16-26  (_load_common)
+      examples/host-relay/relay_demo.py:18-28  (_load_common)
+  [673d29d90b55293e]   STRU  local_windows_payload  L=23 N=2 saved=23 sim=1.00
+      src/vdisplay/payloads.py:14-36  (local_windows_payload)
+      src/vdisplay/payloads.py:39-61  (windows_payload)
+  [1e6593980c4874fb]   STRU  handle_windows  L=17 N=2 saved=17 sim=1.00
+      packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:46-62  (handle_windows)
+      packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:65-81  (handle_all)
+  [074206dcbb6b73b7]   STRU  _parse_mirror  L=10 N=2 saved=10 sim=1.00
+      packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:76-85  (_parse_mirror)
+      packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:102-111  (_parse_release)
+  [25fa0495b0a2c2f8]   STRU  register  L=5 N=3 saved=10 sim=1.00
+      src/vdisplay/commands/all_cmd.py:12-16  (register)
+      src/vdisplay/commands/monitors.py:10-14  (register)
+      src/vdisplay/commands/windows.py:10-14  (register)
   [b8e2782d68a777c3]   STRU  _default_virtual_backend  L=4 N=3 saved=8 sim=1.00
       src/vdisplay/api.py:13-16  (_default_virtual_backend)
       src/vdisplay/api.py:19-22  (_default_mirror_backend)
       src/vdisplay/api.py:25-28  (_default_relay_backend)
-  [3d902e6f1c31b63f]   STRU  screenshot_bytes  L=4 N=2 saved=4 sim=1.00
-      src/vdisplay/backends/linux_x11_mirror.py:129-132  (screenshot_bytes)
-      src/vdisplay/backends/linux_xvfb.py:78-81  (screenshot_bytes)
-  [f5bfacfda8981cef]   STRU  _looks_like_internal_class  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/windows.py:332-334  (_looks_like_internal_class)
-      src/vdisplay/windows.py:337-339  (_looks_like_internal_name)
+  [7168a023bfc45913]   EXAC  _system_python  L=5 N=2 saved=5 sim=1.00
+      src/vdisplay/capture/portal.py:81-85  (_system_python)
+      src/vdisplay/capture/portal_screencast.py:123-127  (_system_python)
+  [f5bfacfda8981cef]   STRU  looks_like_internal_class  L=3 N=2 saved=3 sim=1.00
+      src/vdisplay/windows/filter.py:8-10  (looks_like_internal_class)
+      src/vdisplay/windows/filter.py:13-15  (looks_like_internal_name)
 
-REFACTOR[3] (ranked by priority):
-  [1] ○ extract_function   → src/vdisplay/utils/_default_virtual_backend.py
+REFACTOR[8] (ranked by priority):
+  [1] ○ extract_function   → examples/utils/_load_common.py
+      WHY: 4 occurrences of 11-line block across 4 files — saves 33 lines
+      FILES: examples/ci-agent/agent.py, examples/headless-virtual/run_virtual.py, examples/host-mirror/mirror_demo.py, examples/host-relay/relay_demo.py
+  [2] ○ extract_function   → src/vdisplay/utils/local_windows_payload.py
+      WHY: 2 occurrences of 23-line block across 1 files — saves 23 lines
+      FILES: src/vdisplay/payloads.py
+  [3] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/handlers/utils/handle_windows.py
+      WHY: 2 occurrences of 17-line block across 1 files — saves 17 lines
+      FILES: packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py
+  [4] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_parse_mirror.py
+      WHY: 2 occurrences of 10-line block across 1 files — saves 10 lines
+      FILES: packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
+  [5] ○ extract_function   → src/vdisplay/commands/utils/register.py
+      WHY: 3 occurrences of 5-line block across 3 files — saves 10 lines
+      FILES: src/vdisplay/commands/all_cmd.py, src/vdisplay/commands/monitors.py, src/vdisplay/commands/windows.py
+  [6] ○ extract_function   → src/vdisplay/utils/_default_virtual_backend.py
       WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
       FILES: src/vdisplay/api.py
-  [2] ○ extract_function   → src/vdisplay/backends/utils/screenshot_bytes.py
-      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
-      FILES: src/vdisplay/backends/linux_x11_mirror.py, src/vdisplay/backends/linux_xvfb.py
-  [3] ○ extract_function   → src/vdisplay/utils/_looks_like_internal_class.py
+  [7] ○ extract_function   → src/vdisplay/capture/utils/_system_python.py
+      WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
+      FILES: src/vdisplay/capture/portal.py, src/vdisplay/capture/portal_screencast.py
+  [8] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
-      FILES: src/vdisplay/windows.py
+      FILES: src/vdisplay/windows/filter.py
 
-QUICK_WINS[1] (low risk, high savings — do first):
-  [1] extract_function   saved=8L  → src/vdisplay/utils/_default_virtual_backend.py
+QUICK_WINS[6] (low risk, high savings — do first):
+  [1] extract_function   saved=33L  → examples/utils/_load_common.py
+      FILES: agent.py, run_virtual.py, mirror_demo.py +1
+  [2] extract_function   saved=23L  → src/vdisplay/utils/local_windows_payload.py
+      FILES: payloads.py
+  [3] extract_function   saved=17L  → packages/dsl2vdisplay/src/dsl2vdisplay/handlers/utils/handle_windows.py
+      FILES: query.py
+  [4] extract_function   saved=10L  → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_parse_mirror.py
+      FILES: grammar.py
+  [5] extract_function   saved=10L  → src/vdisplay/commands/utils/register.py
+      FILES: all_cmd.py, monitors.py, windows.py
+  [6] extract_function   saved=8L  → src/vdisplay/utils/_default_virtual_backend.py
       FILES: api.py
 
-EFFORT_ESTIMATE (total ≈ 0.5h):
+EFFORT_ESTIMATE (total ≈ 3.6h):
+  medium _load_common                        saved=33L  ~66min
+  medium local_windows_payload               saved=23L  ~46min
+  medium handle_windows                      saved=17L  ~34min
+  easy   _parse_mirror                       saved=10L  ~20min
+  easy   register                            saved=10L  ~20min
   easy   _default_virtual_backend            saved=8L  ~16min
-  easy   screenshot_bytes                    saved=4L  ~8min
-  easy   _looks_like_internal_class          saved=3L  ~6min
+  easy   _system_python                      saved=5L  ~10min
+  easy   looks_like_internal_class           saved=3L  ~6min
 
 METRICS-TARGET:
-  dup_groups:  3 → 0
-  saved_lines: 15 lines recoverable
+  dup_groups:  8 → 0
+  saved_lines: 109 lines recoverable

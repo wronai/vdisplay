@@ -1,52 +1,54 @@
-# vdisplay | 188 func | 35f | 5026L | python | 2026-06-09
+# vdisplay | 478 func | 86f | 14097L | python | 2026-06-09
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.8  critical=19 (limit:10)  dup=0  cycles=0
+  CC̄=3.3  critical=30 (limit:10)  dup=0  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      parse_line = 40 (limit:15)
-  !!! cc_exceeded      _is_internal_window = 30 (limit:15)
-  !!! cc_exceeded      find_windows = 28 (limit:15)
-  !!! high_fan_out     main = 24 (limit:10)
-  !!  cc_exceeded      main = 21 (limit:15)
-  !!  high_fan_out     build_parser = 19 (limit:10)
-  !!  high_fan_out     main = 17 (limit:10)
-  !!  high_fan_out     create_app = 17 (limit:10)
-  !!  high_fan_out     main = 15 (limit:10)
-  !!  high_fan_out     list_outputs = 15 (limit:10)
+  !!! high_fan_out     create_app = 36 (limit:10)
+  !!! high_fan_out     _start_screencast_impl = 25 (limit:10)
+  !!! high_fan_out     _execute_agent = 25 (limit:10)
+  !!! high_fan_out     create_app = 23 (limit:10)
+  !!! high_fan_out     _portal_impl = 23 (limit:10)
+  !!! high_fan_out     capture_host_png = 23 (limit:10)
+  !!! high_fan_out     main = 21 (limit:10)
+  !!! high_fan_out     main = 20 (limit:10)
+  !!  high_fan_out     main = 19 (limit:10)
+  !!  high_fan_out     main = 19 (limit:10)
 
-MODULES[72] (top by size):
-  M[planfile.yaml] 539L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/windows.py] 513L C:0 F:25 CC↑30 D:2 (python)
+MODULES[140] (top by size):
+  M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
+  M[examples/host-relay/output/after_adopt.png.meta.json] 584L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/host-mirror/output/mirror.png.meta.json] 565L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/host-relay/output/after_release.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
+  M[examples/host-relay/output/before_automation.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/backends/linux_x11_relay.py] 310L C:2 F:15 CC↑12 D:0 (python)
-  M[src/vdisplay/discovery.py] 266L C:0 F:10 CC↑9 D:6 (python)
-  M[src/vdisplay/cli.py] 240L C:0 F:3 CC↑21 D:0 (python)
-  M[src/vdisplay/backends/linux_x11_mirror.py] 208L C:1 F:11 CC↑15 D:0 (python)
-  M[src/vdisplay/api.py] 184L C:3 F:32 CC↑6 D:2 (python)
-  M[src/vdisplay/capture/linux_xwd.py] 164L C:0 F:10 CC↑12 D:2 (python)
-  M[src/vdisplay/backends/linux_xvfb.py] 163L C:1 F:14 CC↑8 D:0 (python)
-  M[packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py] 120L C:0 F:4 CC↑40 D:1 (python)
-  M[packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py] 97L C:0 F:6 CC↑4 D:0 (python)
-  M[packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py] 96L C:0 F:5 CC↑3 D:0 (python)
-  M[prefact.yaml] 94L C:0 F:0 CC↑0 D:0 (yaml)
-  M[packages/dsl2vdisplay/src/dsl2vdisplay/bus.py] 75L C:0 F:4 CC↑8 D:6 (python)
-  LANGS: python:41/toml:7/json:6/other:5/yml:5/shell:4/yaml:4
+  M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
+  M[src/vdisplay/capture/portal_screencast.py] 365L C:1 F:16 CC↑13 D:2 (python)
+  M[src/vdisplay/discovery.py] 329L C:0 F:13 CC↑9 D:11 (python)
+  M[src/vdisplay/capture/host.py] 320L C:0 F:6 CC↑14 D:3 (python)
+  M[src/vdisplay/capture/linux_xwd.py] 320L C:0 F:21 CC↑12 D:7 (python)
+  M[src/vdisplay/application/executor.py] 304L C:0 F:6 CC↑19 D:4 (python)
+  M[packages/vdisplay-agent/src/vdisplay_agent/runtime.py] 283L C:2 F:16 CC↑10 D:0 (python)
+  M[src/vdisplay/backends/linux_x11_mirror.py] 259L C:1 F:17 CC↑10 D:1 (python)
+  M[tree.txt] 241L C:0 F:0 CC↑0 D:0 (txt)
+  LANGS: python:97/json:14/toml:8/shell:6/other:5/yml:5/yaml:4/txt:1
 
 HOTSPOTS[10]:
-  ★ main fan=24  // Orchestrates 24 calls
-  ★ build_parser fan=19  // Orchestrates 19 calls
-  ★ main fan=17  // Orchestrates 17 calls
-  ★ create_app fan=17  // Orchestrates 17 calls
-  ★ main fan=15  // Orchestrates 15 calls
+  ★ create_app fan=36  // Orchestrates 36 calls
+  ★ _start_screencast_impl fan=25  // Orchestrates 25 calls
+  ★ _execute_agent fan=25  // Orchestrates 25 calls
+  ★ create_app fan=23  // REST adapter for vdisplay.
 
-REFACTOR[15]:
-  [1] H/L Split find_windows (CC=28)
-  [2] H/L Split _is_internal_window (CC=30)
-  [3] H/L Split parse_line (CC=40)
-  [4] H/H Split god module src/vdisplay/windows.py (513L, 0 classes)
+When VDISPLAY_AGENT_URL is set (or --agent-url), DSL
+  ★ _portal_impl fan=23  // Orchestrates 23 calls
+
+REFACTOR[12]:
+  [1] H/H Split god module examples/host-mirror/output/mirror.png.meta.json (565L, 0 classes)
+  [2] H/H Split god module examples/host-relay/output/after_adopt.png.meta.json (584L, 0 classes)
+  [3] H/H Split god module examples/host-relay/output/after_release.png.meta.json (551L, 0 classes)
+  [4] H/H Split god module examples/host-relay/output/before_automation.png.meta.json (551L, 0 classes)
   [5] H/H Split god module goal.yaml (512L, 0 classes)
 
 EVOLUTION:
-  2026-06-09 CC̄=3.8 crit=19 5026L // Automated analysis
+  2026-06-09 CC̄=3.3 crit=30 14097L // Automated analysis

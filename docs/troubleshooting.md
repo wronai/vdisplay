@@ -17,7 +17,8 @@ Or check:
 
 ```bash
 vdisplay diagnose
-dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
+vdisplay monitors
+# or: dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
 ```
 
 ## `vdisplay info` works, but mirror fails
@@ -27,10 +28,10 @@ dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
 Your system has only one X11 output (often named `screen` on NVIDIA/optimus setups).
 
 ```bash
-vdisplay outputs
+vdisplay monitors
 ```
 
-Mirror mode requires **two physical or logical outputs**. With one monitor:
+Mirror mode requires **two physical or logical monitors**. With one monitor:
 
 ```bash
 # use virtual display instead
@@ -42,8 +43,8 @@ vdisplay virtual screenshot -o screen.png --display :99
 The window must be **open and visible** on the current `DISPLAY`.
 
 ```bash
-# list application windows with pid, class, app_label
-vdisplay relay list-windows --apps-only
+# list application windows with pid, class, app_label, nl
+vdisplay windows --apps-only
 
 # match by app name, class, pid or title
 vdisplay relay adopt-window --app "JetBrains"
@@ -58,7 +59,7 @@ Common causes:
 
 - Firefox is not running
 - **Firefox on Wayland native** has no X11 window — use XWayland apps or virtual display instead
-- Title differs — use `--app` or `--pid` from `list-windows`
+- Title differs — use `--app` or `--pid` from `vdisplay windows`
 
 ## `xwd: unable to open display`
 
@@ -102,9 +103,57 @@ r.stop()
 ## Quick diagnostic checklist
 
 ```bash
-vdisplay info          # capabilities + outputs
-vdisplay outputs       # monitor names for mirror
-vdisplay relay list-windows   # window titles for relay
+vdisplay info          # capabilities + monitors
+vdisplay all           # monitors + windows + adopted
+vdisplay monitors      # monitor names for mirror
+vdisplay windows       # window titles for relay
 echo $DISPLAY          # should be :0 or similar
 xrandr --query         # raw output list
+```
+
+## vdisplay-agent and capture
+
+### `MONITORS` / `/outputs` hangs or times out
+
+Older builds called slow window enrichment (xdotool) on every `/outputs` request. Current agent uses fast monitor listing only. Upgrade and restart:
+
+```bash
+vdisplay-agent serve --port 8765
+curl -s --max-time 5 http://127.0.0.1:8765/outputs | jq .monitor_count
+```
+
+Use DSL `ALL` or agent `/windows` when you need window lists with `nl`.
+
+### `VDISPLAY_AGENT_URL` set but CLI still runs in-process
+
+Check that `VDISPLAY_AGENT_BROKER=1` is **not** set in your shell (that flag is for the broker process only). Verify:
+
+```bash
+curl -s $VDISPLAY_AGENT_URL/health
+vdisplay agent health
+```
+
+### Host mirror screenshot times out (Wayland + NVIDIA)
+
+Virtual display capture works; host mirror often fails without DRM/fbdev access or a portal ScreenCast session:
+
+- Add user to `video` group for `/dev/fb0` (fbdev provider)
+- NVIDIA kmsgrab via ffmpeg may still fail on proprietary drivers
+- Set `VDISPLAY_CAPTURE_ALLOW_PORTAL=1` on the **agent** to opt in to portal capture (one consent per portal session)
+- Etap 2: start persistent ScreenCast in the agent (`POST /session/screencast/start`), then retry host capture
+
+Workaround for agents:
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+vdisplay virtual screenshot -o screen.png --display :99
+```
+
+### REST `POST /v1/dsl` returns 422
+
+Ensure `rest2vdisplay` is up to date. Route expects raw DSL body (`text/plain`) or JSON `{"verb":"MONITORS"}`. Check broker first:
+
+```bash
+curl -s http://127.0.0.1:8216/health | jq .
+curl -s -X POST http://127.0.0.1:8216/v1/dsl -H 'content-type: text/plain' -d 'HEALTH'
 ```

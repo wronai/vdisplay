@@ -8,7 +8,6 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from ..discovery import find_window_suggestions, resolve_host_display
-from ..nl import describe_window_nl
 from ..windows import (
     _matches_app,
     _matches_title,
@@ -48,7 +47,7 @@ class LinuxX11RelayBackend(BaseBackend):
 
     def capabilities(self) -> Capabilities:
         return Capabilities(
-            capture=False,
+            capture=True,
             input_control=True,
             window_adopt=True,
             isolation=False,
@@ -152,7 +151,7 @@ class LinuxX11RelayBackend(BaseBackend):
         if not any([window_id, match_title, match_class, match_pid is not None, match_app]):
             raise VDisplayError(
                 "Provide --title, --class, --pid, --app or --window-id. "
-                "Run: vdisplay relay list-windows --apps-only"
+                "Run: vdisplay windows --apps-only"
             )
 
         to_release = _select_adopted_for_release(
@@ -190,6 +189,14 @@ class LinuxX11RelayBackend(BaseBackend):
         return primary
 
     def list_adopted(self) -> list[dict[str, str | int | None]]:
+        from ..discovery import list_outputs
+        from ..nl import assign_windows_to_monitors
+
+        try:
+            monitors = list_outputs(self.display, enrich_nl=False)
+        except Exception:
+            monitors = []
+
         adopted: list[dict[str, str | int | None]] = []
         for state in self._adopted.values():
             info = {
@@ -204,9 +211,8 @@ class LinuxX11RelayBackend(BaseBackend):
                 "height": state.height,
                 "type": "frame" if state.wm_class == "mutter-x11-frames" else "application",
             }
-            info["nl"] = describe_window_nl(info)
             adopted.append(info)
-        return adopted
+        return assign_windows_to_monitors(adopted, monitors)
 
 
 def _stash_path(display: str, stash_prefix: str) -> Path:
@@ -354,7 +360,7 @@ def _find_window_id(
     if not any([match_title, match_class, match_pid is not None, match_app]):
         raise VDisplayError(
             "Provide --title, --class, --pid, --app or --window-id. "
-            "Run: vdisplay relay list-windows --apps-only"
+            "Run: vdisplay windows --apps-only"
         )
 
     matches = find_windows(
@@ -377,7 +383,7 @@ def _find_window_id(
             hint += f" pid={match_pid}"
         if match_app:
             hint += f" app={match_app!r}"
-        hint += ". Run: vdisplay relay list-windows --apps-only"
+        hint += ". Run: vdisplay windows --apps-only"
         if suggestions:
             labels = ", ".join(
                 f"{s.get('app_label')!r} (pid={s.get('pid')}, id={s.get('window_id')})"

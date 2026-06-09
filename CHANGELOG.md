@@ -8,6 +8,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-06-09
 
 ### Fixed
+- Fix unused-imports issues (ticket-9090e7e1)
+- Fix ai-boilerplate issues (ticket-da4b8cab)
+- Fix unused-imports issues (ticket-9b868046)
+- Fix unused-imports issues (ticket-215d9116)
+
+## [0.1.10] - 2026-06-09
+
+### Fixed
+- Fix relative-imports issues (ticket-bc4fbaac)
+
+## [0.1.10] - 2026-06-09
+
+### Fixed
+- Fix string-concat issues (ticket-cc7c365d)
+- Fix relative-imports issues (ticket-0f4aedb9)
+- Fix unused-imports issues (ticket-36a8a2af)
+- Fix magic-numbers issues (ticket-20438fcd)
+- Fix relative-imports issues (ticket-d5951b18)
+- Fix string-concat issues (ticket-10941dcd)
+- Fix unused-imports issues (ticket-00e996ed)
+- Fix magic-numbers issues (ticket-e37dad70)
+- Fix string-concat issues (ticket-d4bc4bb6)
+- Fix unused-imports issues (ticket-6aa68d86)
+- Fix relative-imports issues (ticket-b8e6fd0e)
+- Fix string-concat issues (ticket-f60368ec)
+- Fix unused-imports issues (ticket-4c9ad6b9)
+- Fix relative-imports issues (ticket-30618d18)
+- Fix unused-imports issues (ticket-d9ad4975)
+- Fix unused-imports issues (ticket-87773354)
+- Fix smart-return-type issues (ticket-966763b1)
+- Fix unused-imports issues (ticket-b104c395)
+- Fix llm-hallucinations issues (ticket-96ea26a7)
+- Fix string-concat issues (ticket-c3ceaaf1)
+
+## [0.1.10] - 2026-06-09
+
+### Fixed
 - Fix unused-imports issues (ticket-74fd3f8a)
 - Fix ai-boilerplate issues (ticket-82e7f2eb)
 - Fix unused-imports issues (ticket-2e96cf60)
@@ -94,6 +131,86 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix smart-return-type issues (ticket-c92056bf)
 
 ## [Unreleased]
+
+### Added
+- `src/vdisplay/application/` — shared use-case layer (`discovery`, `capture`, `session`, `info`) with single agent vs local routing in `application/runtime.py`
+- `src/vdisplay/commands/` — CLI command registry; each subcommand uses `set_defaults(func=handle)`
+- `src/vdisplay/windows/` package — split into `scan`, `normalize`, `filter`, `rank`, `query` (replaces monolithic `windows.py`)
+- README: expanded examples (screenshots, NL/DSL, agent broker), docs/examples cross-links, project layout section
+
+### Added
+- `vdisplay_agent/envelope.py` + `schemas.py` — stable agent HTTP envelope and route→action map
+- `tests/test_agent_api_contract.py` — envelope shape + SDK flatten tests
+- `application/commands.py` — shared `CommandRequest` / `CommandResult` model for CLI, DSL, REST, agent
+- `application/errors.py` — stable `ErrorCode` envelope for failures
+- `application/executor.py` — single `execute()` entry with agent vs local routing
+- `docs/api-contract.md` — frozen command/response contract and agent endpoint map
+
+### Fixed
+- `pyproject.toml` — `[dependency-groups] dev` + `tool.uv.default-groups` so `uv sync` / `goal -a` install Pillow, fastapi, dsl2vdisplay, vdisplay-agent, uvicorn for tests
+- `is_blank_png` — valid minimal PNGs no longer flagged blank when Pillow is missing
+- `test_host_capture` — force mirror fallback path when mocking mirror capture
+- `pyproject.toml` — replace `file:packages/...` optional-deps with uv workspace members so `uv sync` / `goal -a` can resolve editable metadata
+
+### Changed
+- `application/runtime.py` — `ExecutionPolicy` is the only agent-vs-local decision point
+- `application/services/discovery.py` — local implementations (`*_local`) + routing via executor
+- `application/services/capture.py` — `capture_screenshot_local()`; public API routes through executor
+- `agent_dispatch.py` — thin deprecated shim over `executor.execute(force_route="agent")`
+- `dsl2vdisplay/bus.py` — routes all verbs through `executor.execute()` (legacy handlers only for `LAUNCH`/`VIRTUAL_STOP`)
+- `vdisplay_agent/server.py` — all endpoints return `{ok, action, data, meta, error?}` envelope
+- `client.py` — flattens agent envelope for backward-compatible SDK dicts
+- `cli.py` — thin dispatcher (`args.func(args)`); parser built from command registry
+- `payloads.py` — delegates to `application.services.discovery` (backward-compatible shims)
+- `cli_handlers.py` — deprecated shim over application services
+- `dsl2vdisplay/handlers/query.py` — uses application services instead of direct `payloads` imports
+- `vdisplay-agent/runtime.py` — `list_windows` calls `discovery.list_windows_local` (breaks agent↔payloads cycle)
+- `nlp.py` — local DSL fallback routes through `discovery` services
+- Refactored high-CC functions: `grammar.parse_line`, `nlp.nl_to_dsl`, `linux_x11_mirror.start`, `agent_dispatch.dispatch_via_agent`
+
+### Docs
+- Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
+
+## [0.1.4] - 2026-06-09
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/agent-broker.md
+- Update docs/api-contract.md
+- Update docs/docker-guide.md
+- Update docs/examples.md
+- Update docs/index.md
+- ... and 13 more files
+
+### Test
+- Update tests/conftest.py
+- Update tests/test_agent.py
+- Update tests/test_agent_api_contract.py
+- Update tests/test_agent_client.py
+- Update tests/test_agent_dispatch.py
+- Update tests/test_agent_integration.py
+- Update tests/test_capture_crop.py
+- Update tests/test_capture_providers.py
+- Update tests/test_capture_xwd.py
+- Update tests/test_cli_commands.py
+- ... and 7 more files
+
+### Other
+- Update .code2llm_cache/__init___1781006059576366457_262.pkl
+- Update .code2llm_cache/agent_dispatch_1781006048535269308_992.pkl
+- Update .code2llm_cache/broker_demo_1781005725296511351_1963.pkl
+- Update .code2llm_cache/bus_1781006192104554953_4010.pkl
+- Update .code2llm_cache/capture_1781006048360267771_4557.pkl
+- Update .code2llm_cache/client_1781006188410521314_6703.pkl
+- Update .code2llm_cache/commands_1781006029876105852_5006.pkl
+- Update .code2llm_cache/discovery_1781006045165239718_5854.pkl
+- Update .code2llm_cache/envelope_1781006187047508909_2932.pkl
+- Update .code2llm_cache/errors_1781006026272074389_1327.pkl
+- ... and 66 more files
 
 ## [0.1.3] - 2026-06-09
 

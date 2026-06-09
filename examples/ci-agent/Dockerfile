@@ -15,7 +15,10 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 RUN pip install --no-cache-dir -e ".[pillow]"
 
+COPY examples/common /app/examples/common
 COPY examples/ci-agent/agent.py ./agent.py
+
+ENV PYTHONPATH=/app/examples/common
 
 ENV VD_OUTPUT_DIR=/output
 ENV VD_FRAMES=3

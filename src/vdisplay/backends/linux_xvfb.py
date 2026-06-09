@@ -7,7 +7,6 @@ import time
 from pathlib import Path
 from typing import Sequence
 
-from ..capture.linux_xwd import capture_display_png
 from ..exceptions import BackendNotAvailableError, CapabilityError
 from ..models import Capabilities, SessionInfo
 from .base import BaseBackend
@@ -78,7 +77,9 @@ class LinuxXvfbBackend(BaseBackend):
     def screenshot_bytes(self) -> bytes:
         if not self._active:
             raise CapabilityError("Display session is not active")
-        return capture_display_png(self.display)
+        from ..capture.linux_xwd import _capture_xwd_png
+
+        return _capture_xwd_png(self.display)
 
     def adopt_window(self, *, match_title: str | None = None, window_id: str | None = None) -> None:
         raise CapabilityError(

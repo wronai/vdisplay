@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import io
+import os
 import shutil
 import struct
 import subprocess
 import tempfile
 import zlib
 from pathlib import Path
-from typing import BinaryIO
+from typing import BinaryIO, Callable
 
 from ..exceptions import VDisplayError
 from ..utils import require_command, run_command, run_command_bytes
@@ -15,6 +16,73 @@ from ..utils import require_command, run_command, run_command_bytes
 XWD_VERSION = 7
 ZPIXMAP = 2
 LSB_FIRST = 0
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
+
+
+def _is_valid_png(data: bytes) -> bool:
+    return len(data) >= len(PNG_SIGNATURE) and data[: len(PNG_SIGNATURE)] == PNG_SIGNATURE
+
+
+def is_blank_png(data: bytes) -> bool:
+    """True when PNG is empty, invalid, or nearly all black (common on GNOME Wayland + X11 capture)."""
+    if not _is_valid_png(data):
+        return True
+    try:
+        from PIL import Image
+    except ImportError:
+        # Minimal PNG encoder (no Pillow) produces small but valid captures.
+        return not _is_valid_png(data)
+
+    image = Image.open(io.BytesIO(data)).convert("RGB")
+    sample = image.resize((min(64, image.width), min(64, image.height)))
+    pixels = list(sample.get_flattened_data())
+    if not pixels:
+        return True
+    brightness = [0.299 * r + 0.587 * g + 0.114 * b for r, g, b in pixels]
+    if max(brightness) < 8:
+        return True
+    if len(set(pixels)) <= 1 and max(brightness) < 32:
+        return True
+    return False
+
+
+def _is_wayland_session() -> bool:
+    session = (os.environ.get("XDG_SESSION_TYPE") or "").lower()
+    return session == "wayland" or bool(os.environ.get("WAYLAND_DISPLAY"))
+
+
+def _capture_hint(display: str) -> str:
+    if _is_wayland_session():
+        return (
+            f"Session is Wayland (DISPLAY={display} is XWayland). "
+            "Use driver-level capture (DRM/fbdev via `video` group) or vdisplay virtual framebuffer. "
+            "Portal is opt-in: VDISPLAY_CAPTURE_ALLOW_PORTAL=1."
+        )
+    return f"Verify DISPLAY={display}; driver chain tries DRM, fbdev, mss, scrot, xwd."
+
+
+def _crop_png(full_png: bytes, region: tuple[int, int, int, int]) -> bytes:
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise VDisplayError("monitor crop requires Pillow") from exc
+
+    x, y, width, height = region
+    image = Image.open(io.BytesIO(full_png))
+    left = max(0, min(x, image.width))
+    top = max(0, min(y, image.height))
+    right = max(left + 1, min(x + width, image.width))
+    bottom = max(top + 1, min(y + height, image.height))
+    cropped = image.crop((left, top, right, bottom))
+    buf = io.BytesIO()
+    cropped.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def _capture_full_display_png(display: str) -> bytes:
+    from .providers.engine import capture_full_png
+
+    return capture_full_png(display).png
 
 
 def capture_display_png(
@@ -22,24 +90,12 @@ def capture_display_png(
     *,
     region: tuple[int, int, int, int] | None = None,
 ) -> bytes:
-    """Capture display as PNG. Optional region is (x, y, width, height)."""
+    """Capture display as PNG via driver-level provider chain."""
+    from .providers.engine import capture_full_png, capture_region_png
+
     if region is not None:
-        return _capture_scrot_png(display, region)
-
-    if shutil.which("xwd") is not None:
-        try:
-            return _capture_xwd_png(display)
-        except (subprocess.CalledProcessError, VDisplayError):
-            if shutil.which("scrot") is not None:
-                return _capture_scrot_png(display, None)
-            raise
-
-    if shutil.which("scrot") is not None:
-        return _capture_scrot_png(display, None)
-
-    raise VDisplayError(
-        "No capture tool available. Install x11-apps (xwd) or scrot."
-    )
+        return capture_region_png(display, region).png
+    return capture_full_png(display).png
 
 
 def _capture_xwd_png(display: str) -> bytes:
@@ -57,14 +113,70 @@ def _capture_scrot_png(
     region: tuple[int, int, int, int] | None,
 ) -> bytes:
     require_command("scrot")
-    with tempfile.NamedTemporaryFile(suffix=".png") as tmp:
-        args = ["scrot"]
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        args = ["scrot", "-o"]
         if region is not None:
             x, y, width, height = region
             args.extend(["-a", f"{x},{y},{width},{height}"])
-        args.append(tmp.name)
-        run_command(args, env={"DISPLAY": display}, text=False, timeout=60)
-        return Path(tmp.name).read_bytes()
+        args.append(str(tmp_path))
+        result = run_command(
+            args,
+            env={"DISPLAY": display},
+            text=False,
+            check=False,
+            timeout=60,
+        )
+        data = tmp_path.read_bytes() if tmp_path.exists() else b""
+        if result.returncode != 0 or not _is_valid_png(data):
+            return b""
+        return data
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+
+def _capture_gnome_screenshot_png() -> bytes:
+    require_command("gnome-screenshot")
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        result = run_command(
+            ["gnome-screenshot", "-f", str(tmp_path)],
+            timeout=12,
+            text=False,
+            check=False,
+        )
+        data = tmp_path.read_bytes() if tmp_path.is_file() else b""
+        if result.returncode != 0 or not _is_valid_png(data):
+            raise VDisplayError("gnome-screenshot failed")
+        return data
+    finally:
+        tmp_path.unlink(missing_ok=True)
+
+
+def _capture_portal_png(*, interactive: bool) -> bytes:
+    return capture_portal_png(interactive=interactive, timeout_s=20.0)
+
+
+def _capture_grim_png() -> bytes:
+    require_command("grim")
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        tmp_path = Path(tmp.name)
+    try:
+        result = run_command(
+            ["grim", str(tmp_path)],
+            env=os.environ.copy(),
+            timeout=30,
+            text=False,
+            check=False,
+        )
+        data = tmp_path.read_bytes() if tmp_path.is_file() else b""
+        if result.returncode != 0 or not _is_valid_png(data):
+            raise VDisplayError("grim failed (GNOME needs portal/gnome-screenshot, not grim)")
+        return data
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 
 def xwd_bytes_to_png(data: bytes) -> bytes:

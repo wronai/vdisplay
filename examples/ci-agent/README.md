@@ -14,6 +14,8 @@ docker compose run --rm ci-agent
 
 Frames are saved to `output/frame-000.png`, `output/frame-001.png`, …
 
+On a **desktop host** with GUI apps, consider [examples/agent-broker](../agent-broker/) instead — virtual capture still works in-process, but the broker centralizes sessions for multiple clients.
+
 ## Environment variables
 
 | Variable | Default | Description |

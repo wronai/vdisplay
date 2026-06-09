@@ -49,8 +49,7 @@ class LinuxX11MirrorBackend(BaseBackend):
         )
 
     def start(self) -> None:
-        if shutil.which("xrandr") is None:
-            raise BackendNotAvailableError("xrandr is not installed")
+        _require_xrandr()
         if self._active:
             return
 
@@ -59,43 +58,23 @@ class LinuxX11MirrorBackend(BaseBackend):
             raise BackendNotAvailableError("No connected X11 outputs found")
 
         source = _resolve_output(self.source, outputs, self.display)
-        if self.target is None:
-            targets = _mirror_target_candidates(self.display, source, outputs)
-            if not targets:
-                raise BackendNotAvailableError(
-                    "Mirror requires at least two connected outputs "
-                    f"(found: {', '.join(outputs)}). Run: vdisplay outputs"
-                )
-        else:
-            targets = [_resolve_output(self.target, outputs, self.display)]
+        targets = _resolve_mirror_targets(self.target, source, outputs, self.display)
 
         failures: list[str] = []
         for target in targets:
             self._previous_target_mode = _output_mode(self.display, target)
-            result = run_command(
-                ["xrandr", "--output", target, "--same-as", source],
-                env={"DISPLAY": self.display},
-                text=True,
-                check=False,
-            )
-            if result.returncode == 0:
-                self._resolved_source = source
-                self._resolved_target = target
-                self._active = True
+            ok, failure = _try_mirror(self.display, source, target)
+            if ok:
+                self._activate_mirror(source, target)
                 return
-            err = (result.stderr or result.stdout or "").strip()
-            failures.append(
-                f"--output {target} --same-as {source}"
-                + (f": {err}" if err else "")
-            )
+            failures.append(failure)
 
-        hint = ", ".join(o for o in outputs if o != source)
-        raise VDisplayError(
-            "xrandr mirror failed for all targets: "
-            + "; ".join(failures)
-            + f". Try: VD_TARGET={targets[0] if targets else 'HDMI-1'} ./run.sh"
-            + (f" (connected: {hint})" if hint else "")
-        )
+        raise _mirror_exhausted_error(source, targets, outputs, failures)
+
+    def _activate_mirror(self, source: str, target: str) -> None:
+        self._resolved_source = source
+        self._resolved_target = target
+        self._active = True
 
     def stop(self) -> None:
         if not self._active or self._resolved_target is None:
@@ -133,6 +112,60 @@ class LinuxX11MirrorBackend(BaseBackend):
         return capture_display_png(self.display, region=region)
 
 
+def _require_xrandr() -> None:
+    if shutil.which("xrandr") is None:
+        raise BackendNotAvailableError("xrandr is not installed")
+
+
+def _resolve_mirror_targets(
+    target: str | None,
+    source: str,
+    outputs: list[str],
+    display: str,
+) -> list[str]:
+    if target is not None:
+        return [_resolve_output(target, outputs, display)]
+    candidates = _mirror_target_candidates(display, source, outputs)
+    if candidates:
+        return candidates
+    raise BackendNotAvailableError(
+        "Mirror requires at least two connected outputs "
+        f"(found: {', '.join(outputs)}). Run: vdisplay monitors"
+    )
+
+
+def _try_mirror(display: str, source: str, target: str) -> tuple[bool, str]:
+    result = run_command(
+        ["xrandr", "--output", target, "--same-as", source],
+        env={"DISPLAY": display},
+        text=True,
+        check=False,
+    )
+    if result.returncode == 0:
+        return True, ""
+    err = (result.stderr or result.stdout or "").strip()
+    failure = f"--output {target} --same-as {source}"
+    if err:
+        failure += f": {err}"
+    return False, failure
+
+
+def _mirror_exhausted_error(
+    source: str,
+    targets: list[str],
+    outputs: list[str],
+    failures: list[str],
+) -> VDisplayError:
+    hint = ", ".join(o for o in outputs if o != source)
+    message = (
+        "xrandr mirror failed for all targets: "
+        + "; ".join(failures)
+        + f". Try: VD_TARGET={targets[0] if targets else 'HDMI-1'} ./run.sh"
+        + (f" (connected: {hint})" if hint else "")
+    )
+    return VDisplayError(message)
+
+
 def _list_connected_outputs(display: str) -> list[str]:
     result = run_command(["xrandr", "--query"], env={"DISPLAY": display}, text=True)
     outputs: list[str] = []
@@ -165,7 +198,7 @@ def _resolve_output(name: str, outputs: list[str], display: str) -> str:
 
     hint = (
         f"Unknown output '{name}'. Connected: {', '.join(outputs)}. "
-        "Run: vdisplay outputs"
+        "Run: vdisplay monitors"
     )
     if len(outputs) < 2:
         hint += (

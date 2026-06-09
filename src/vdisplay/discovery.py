@@ -42,7 +42,13 @@ _ROTATION_DEGREES = {
 }
 
 
-def list_outputs(display: str | None = None) -> list[dict[str, str | bool | int | None]]:
+def list_outputs(
+    display: str | None = None,
+    *,
+    enrich_nl: bool = True,
+    apps_only: bool = False,
+) -> list[dict[str, str | bool | int | None]]:
+    """List connected monitors (xrandr outputs). Alias: list_monitors()."""
     if shutil.which("xrandr") is None:
         raise BackendNotAvailableError("xrandr is not installed")
 
@@ -54,43 +60,53 @@ def list_outputs(display: str | None = None) -> list[dict[str, str | bool | int 
     monitors = _list_monitors(display)
     if monitors:
         outputs = _merge_output_metadata(monitors, query_meta)
-        return _attach_output_nl(display, outputs)
-
-    outputs: list[dict[str, str | bool | int | None]] = []
-    for name, meta in query_meta.items():
-        if name.startswith("_"):
-            continue
-        outputs.append(
-            {
-                "name": name,
-                "connected": meta.get("connected", True),
-                "primary": meta.get("primary", False),
-                "geometry": meta.get("geometry"),
-                "monitor_index": None,
-                "label": name,
-                "width": meta.get("width"),
-                "height": meta.get("height"),
-                "x": meta.get("x"),
-                "y": meta.get("y"),
-                "rotation": meta.get("rotation"),
-                "rotation_degrees": meta.get("rotation_degrees"),
-            }
+    else:
+        outputs = []
+        for name, meta in query_meta.items():
+            if name.startswith("_"):
+                continue
+            outputs.append(
+                {
+                    "name": name,
+                    "connected": meta.get("connected", True),
+                    "primary": meta.get("primary", False),
+                    "geometry": meta.get("geometry"),
+                    "monitor_index": None,
+                    "label": name,
+                    "width": meta.get("width"),
+                    "height": meta.get("height"),
+                    "x": meta.get("x"),
+                    "y": meta.get("y"),
+                    "rotation": meta.get("rotation"),
+                    "rotation_degrees": meta.get("rotation_degrees"),
+                }
+            )
+        outputs.sort(
+            key=lambda o: (o.get("monitor_index") is None, o.get("monitor_index") or 0, str(o.get("name")))
         )
-    outputs.sort(key=lambda o: (o.get("monitor_index") is None, o.get("monitor_index") or 0, str(o.get("name"))))
-    return _attach_output_nl(display, outputs)
+
+    from .nl import ensure_monitor_ids
+
+    outputs = ensure_monitor_ids(outputs)
+    if enrich_nl:
+        return _attach_output_nl(display, outputs, apps_only=apps_only)
+    return outputs
 
 
 def _attach_output_nl(
     display: str,
     outputs: list[dict[str, str | bool | int | None]],
+    *,
+    apps_only: bool = False,
 ) -> list[dict[str, str | bool | int | None]]:
-    from .nl import enrich_outputs_nl
+    from .nl import assign_windows_to_monitors, enrich_outputs_nl
     from .windows import list_windows_enriched
 
     try:
-        windows = list_windows_enriched(display, only_visible=True, apps_only=True)
+        windows = list_windows_enriched(display, only_visible=True, apps_only=apps_only)
     except Exception:
         windows = []
+    windows = assign_windows_to_monitors(windows, outputs)
     return enrich_outputs_nl(outputs, windows)
 
 
@@ -136,7 +152,7 @@ def _parse_xrandr_query(display: str) -> dict[str, dict[str, str | bool | int | 
             "_error": (
                 f"xrandr failed on DISPLAY={display}"
                 + (f": {stderr}" if stderr else "")
-                + ". Try: unset DISPLAY && vdisplay outputs"
+                + ". Try: unset DISPLAY && vdisplay monitors"
             )
         }
 
@@ -217,10 +233,16 @@ def list_windows(
     match_pid: int | None = None,
     match_app: str | None = None,
 ) -> list[dict]:
+    from .nl import assign_windows_to_monitors
     from .windows import list_windows_enriched
 
     display = resolve_host_display(display)
-    return list_windows_enriched(
+    monitors: list[dict] = []
+    try:
+        monitors = list_outputs(display, enrich_nl=False)
+    except Exception:
+        monitors = []
+    windows = list_windows_enriched(
         display,
         only_visible=only_visible,
         apps_only=apps_only,
@@ -230,6 +252,7 @@ def list_windows(
         match_pid=match_pid,
         match_app=match_app,
     )
+    return assign_windows_to_monitors(windows, monitors)
 
 
 def find_window_suggestions(display: str, match_title: str, limit: int = 8) -> list[dict]:
@@ -262,6 +285,12 @@ def diagnose_display(display: str | None = None) -> dict:
     }
     if outputs_error:
         payload["outputs_error"] = outputs_error
+    try:
+        from .capture.providers.engine import list_capture_providers
+
+        payload["capture_providers"] = list_capture_providers(resolved)
+    except Exception as exc:
+        payload["capture_providers_error"] = str(exc)
     return payload
 
 
@@ -274,8 +303,27 @@ def _display_hint(display: str, resolved: str, outputs: list[dict]) -> str | Non
     if len(outputs) < 2:
         return (
             "Only one X11 output visible. Mirror needs two outputs — "
-            "check GNOME Displays or run: vdisplay outputs"
+            "check GNOME Displays or run: vdisplay monitors"
         )
     return None
 
+
+def list_monitors(display: str | None = None) -> list[dict[str, str | bool | int | None]]:
+    """Alias for list_outputs()."""
+    return list_outputs(display)
+
+
+def window_discovery_meta(display: str) -> dict[str, str]:
+    session_type = os.environ.get("XDG_SESSION_TYPE", "unknown")
+    meta: dict[str, str] = {
+        "session_type": session_type,
+        "window_source": "x11",
+    }
+    if session_type == "wayland":
+        meta["hint"] = (
+            f"Session is Wayland. vdisplay lists X11/XWayland windows on {display} via xdotool. "
+            "Native Wayland apps (Firefox, Cursor, GNOME Terminal, etc.) are not visible here — "
+            "only XWayland clients. Use `vdisplay windows --apps-only` for application windows only."
+        )
+    return meta
 

@@ -1,58 +1,37 @@
-# code2llm/evolution | 182 func | 29f | 2026-06-09
+# code2llm/evolution | 451 func | 75f | 2026-06-09
 # generated in 0.00s
 
-NEXT[10] (ranked by impact):
-  [1] !! SPLIT           src/vdisplay/windows.py
-      WHY: 513L, 0 classes, max CC=30
-      EFFORT: ~4h  IMPACT: 15390
+NEXT[5] (ranked by impact):
+  [1] !  SPLIT-FUNC      _execute_agent  CC=19  fan=25
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 475
 
-  [2] !  SPLIT-FUNC      main  CC=21  fan=24
-      WHY: CC=21 exceeds 15
-      EFFORT: ~1h  IMPACT: 504
+  [2] !  SPLIT-FUNC      _execute_local  CC=19  fan=18
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 342
 
-  [3] !! SPLIT-FUNC      parse_line  CC=40  fan=7
-      WHY: CC=40 exceeds 15
-      EFFORT: ~1h  IMPACT: 280
-
-  [4] !  SPLIT-FUNC      list_windows_enriched  CC=16  fan=14
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 224
-
-  [5] !  SPLIT-FUNC      _dedupe_app_windows  CC=18  fan=10
-      WHY: CC=18 exceeds 15
-      EFFORT: ~1h  IMPACT: 180
-
-  [6] !! SPLIT-FUNC      find_windows  CC=28  fan=6
-      WHY: CC=28 exceeds 15
-      EFFORT: ~1h  IMPACT: 168
-
-  [7] !  SPLIT-FUNC      LinuxX11MirrorBackend.start  CC=15  fan=11
+  [3] !  SPLIT-FUNC      AgentClient._request  CC=15  fan=15
       WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 165
+      EFFORT: ~1h  IMPACT: 225
 
-  [8] !  SPLIT-FUNC      find_companion_frames  CC=16  fan=6
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 96
+  [4] !! SPLIT           planfile.yaml
+      WHY: 1319L, 0 classes, max CC=0
+      EFFORT: ~4h  IMPACT: 0
 
-  [9] !! SPLIT-FUNC      _is_internal_window  CC=30  fan=3
-      WHY: CC=30 exceeds 15
-      EFFORT: ~1h  IMPACT: 90
-
-  [10] !! SPLIT           planfile.yaml
-      WHY: 539L, 0 classes, max CC=0
+  [5] !! SPLIT           goal.yaml
+      WHY: 512L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
-RISKS[3]:
+RISKS[2]:
   ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting src/vdisplay/windows.py may break 25 import paths
   ⚠ Splitting goal.yaml may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          3.9 → ≤2.7
-  max-CC:      40 → ≤20
-  god-modules: 3 → 0
-  high-CC(≥15): 10 → ≤5
+  CC̄:          3.2 → ≤2.2
+  max-CC:      19 → ≤9
+  god-modules: 2 → 0
+  high-CC(≥15): 3 → ≤1
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +59,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=2.2 → now CC̄=3.9
+  prev CC̄=3.1 → now CC̄=3.2

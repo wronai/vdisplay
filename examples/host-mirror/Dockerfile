@@ -8,6 +8,7 @@ RUN apt-get update \
         x11-xserver-utils \
         xdotool \
         scrot \
+        scrot \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -16,7 +17,10 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 RUN pip install --no-cache-dir -e ".[pillow]"
 
+COPY examples/common /app/examples/common
 COPY examples/host-mirror/mirror_demo.py ./mirror_demo.py
+
+ENV PYTHONPATH=/app/examples/common
 
 ENV VD_OUTPUT_DIR=/output
 ENV VD_SOURCE=primary

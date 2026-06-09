@@ -1,0 +1,320 @@
+"""Host desktop capture via driver-level providers (DRM/fbdev/XCB/X11) and mirror."""
+
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Any
+
+from ..capture.linux_xwd import _crop_png, capture_display_png, is_blank_png
+from ..capture.providers.engine import capture_full_png
+from ..discovery import list_monitors, resolve_host_display
+from ..exceptions import BackendNotAvailableError, VDisplayError
+
+
+def _monitor_source_name(display: str, monitor: int, source: str) -> str:
+    monitors = list_monitors(display)
+    if not monitors:
+        raise BackendNotAvailableError(f"No monitors on {display}")
+
+    normalized = (source or "primary").strip().lower()
+    if normalized not in {"primary", "default"}:
+        for item in monitors:
+            if str(item.get("name", "")).lower() == normalized:
+                return str(item["name"])
+        return source
+
+    if 1 <= monitor <= len(monitors):
+        return str(monitors[monitor - 1]["name"])
+
+    for item in monitors:
+        if item.get("primary"):
+            return str(item["name"])
+    return str(monitors[0]["name"])
+
+
+def _monitor_capture_region(display: str, output_name: str) -> tuple[int, int, int, int] | None:
+    for output in list_monitors(display):
+        if output.get("name") != output_name:
+            continue
+        x, y = output.get("x"), output.get("y")
+        width, height = output.get("width"), output.get("height")
+        if None in (x, y, width, height):
+            return None
+        return int(x), int(y), int(width), int(height)
+    return None
+
+
+def _capture_all_from_driver_full(
+    display: str,
+    monitors: list[dict[str, Any]],
+    output_dir: Path,
+) -> list[dict[str, Any]] | None:
+    try:
+        result = capture_full_png(display)
+    except VDisplayError:
+        return None
+
+    captures: list[dict[str, Any]] = []
+    for index, monitor in enumerate(monitors, start=1):
+        name = str(monitor.get("name") or f"monitor-{index}")
+        region = _monitor_capture_region(display, name)
+        if region is None:
+            raise VDisplayError(f"monitor region missing for {name}")
+        png = _crop_png(result.png, region)
+        if is_blank_png(png):
+            raise VDisplayError(f"driver crop blank for {name}")
+        out_path = output_dir / f"{name}.png"
+        out_path.write_bytes(png)
+        meta: dict[str, Any] = {
+            "path": str(out_path.resolve()),
+            "bytes": len(png),
+            "display": display,
+            "source": name,
+            "monitor": index,
+            "method": f"{result.provider}+crop",
+            "monitor_index": index,
+            "monitor_name": name,
+            "region": {
+                "x": region[0],
+                "y": region[1],
+                "width": region[2],
+                "height": region[3],
+            },
+        }
+        try:
+            from PIL import Image
+
+            with Image.open(out_path) as image:
+                meta["width"] = image.width
+                meta["height"] = image.height
+        except Exception:
+            pass
+        captures.append(meta)
+    return captures
+
+
+def capture_host_png(
+    *,
+    monitor: int = 1,
+    display: str | None = None,
+    source: str | None = None,
+    target: str | None = None,
+    prefer_mirror: bool = False,
+) -> tuple[bytes, dict[str, Any]]:
+    """
+    Capture host desktop via driver-level providers, optionally via mirror session.
+
+    Provider order: active portal ScreenCast session → DRM → fbdev → mss (XCB) → x11 (scrot/xwd).
+    Portal screenshot is opt-in only (VDISPLAY_CAPTURE_ALLOW_PORTAL=1).
+    """
+    resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
+    source_name = _monitor_source_name(resolved, monitor, source or "primary")
+    monitors = list_monitors(resolved)
+    meta: dict[str, Any] = {
+        "display": resolved,
+        "source": source_name,
+        "monitor": monitor,
+        "method": "",
+        "target": target,
+    }
+    errors: list[str] = []
+    region = _monitor_capture_region(resolved, source_name)
+
+    def _try_screencast() -> tuple[bytes, dict[str, Any]] | None:
+        try:
+            from .portal_screencast import get_active_screencast
+
+            session = get_active_screencast()
+            if session is None or not session.is_ready:
+                return None
+            png = session.capture_png()
+            if region is not None:
+                png = _crop_png(png, region)
+            if is_blank_png(png):
+                errors.append("portal-screencast: blank frame")
+                return None
+            extra = {"method": "portal-screencast", "screencast_nodes": session.node_ids}
+            if region is not None:
+                extra["region"] = {
+                    "x": region[0],
+                    "y": region[1],
+                    "width": region[2],
+                    "height": region[3],
+                }
+            return png, extra
+        except VDisplayError as exc:
+            errors.append(f"portal-screencast: {exc}")
+            return None
+
+    screencast_hit = _try_screencast()
+    if screencast_hit is not None:
+        png, extra = screencast_hit
+        meta.update(extra)
+        return png, meta
+
+    def _try_mirror() -> tuple[bytes, dict[str, Any]] | None:
+        if len(monitors) < 2:
+            return None
+        try:
+            from ..api import MirrorSession
+
+            session = MirrorSession.create(
+                source=source_name,
+                target=target,
+                display=resolved,
+            )
+            session.start()
+            try:
+                png = session.screenshot_bytes()
+                if is_blank_png(png):
+                    errors.append("mirror: blank frame")
+                    return None
+                info = session.info()
+                mirror_meta = {
+                    "method": "mirror",
+                    "target": info.get("target") or target,
+                    "session": info,
+                }
+                return png, mirror_meta
+            finally:
+                session.stop()
+        except (VDisplayError, BackendNotAvailableError) as exc:
+            errors.append(f"mirror: {exc}")
+            return None
+
+    if prefer_mirror:
+        mirror_hit = _try_mirror()
+        if mirror_hit is not None:
+            png, extra = mirror_hit
+            meta.update(extra)
+            return png, meta
+
+    if region is not None:
+        try:
+            png = capture_display_png(resolved, region=region)
+            if not is_blank_png(png):
+                meta["method"] = "monitor-region"
+                meta["region"] = {
+                    "x": region[0],
+                    "y": region[1],
+                    "width": region[2],
+                    "height": region[3],
+                }
+                return png, meta
+            errors.append("monitor-region: blank frame")
+        except VDisplayError as exc:
+            errors.append(f"monitor-region: {exc}")
+
+    try:
+        png = capture_display_png(resolved)
+        if not is_blank_png(png):
+            meta["method"] = "full-display"
+            return png, meta
+        errors.append("full-display: blank frame")
+    except VDisplayError as exc:
+        errors.append(f"full-display: {exc}")
+
+    if not prefer_mirror:
+        mirror_hit = _try_mirror()
+        if mirror_hit is not None:
+            png, extra = mirror_hit
+            meta.update(extra)
+            return png, meta
+
+    raise VDisplayError(
+        "vdisplay host capture failed (blank or unavailable). "
+        f"DISPLAY={resolved}, source={source_name}. "
+        f"Tried: {'; '.join(errors) or 'no strategy'}. "
+        "For driver-level host capture add user to `video` group (DRM/fbdev), "
+        "or use `vdisplay virtual screenshot` for owned framebuffers."
+    )
+
+
+def capture_host_to_file(
+    path: str | Path,
+    *,
+    monitor: int = 1,
+    display: str | None = None,
+    source: str | None = None,
+    target: str | None = None,
+    prefer_mirror: bool = False,
+) -> dict[str, Any]:
+    """Write host capture PNG to path; return metadata dict."""
+    out = Path(path).expanduser()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    png, meta = capture_host_png(
+        monitor=monitor,
+        display=display,
+        source=source,
+        target=target,
+        prefer_mirror=prefer_mirror,
+    )
+    out.write_bytes(png)
+    meta["path"] = str(out.resolve())
+    meta["bytes"] = len(png)
+    try:
+        from ..capture.linux_xwd import PNG_SIGNATURE
+
+        if png[: len(PNG_SIGNATURE)] == PNG_SIGNATURE:
+            from PIL import Image
+
+            with Image.open(out) as image:
+                meta["width"] = image.width
+                meta["height"] = image.height
+    except Exception:
+        pass
+    return meta
+
+
+def capture_all_monitors(
+    *,
+    display: str | None = None,
+    out_dir: str | Path | None = None,
+    target: str | None = None,
+    method: str = "auto",
+    prefer_mirror: bool = False,
+) -> list[dict[str, Any]]:
+    """Capture each connected monitor (mirror per output when prefer_mirror)."""
+    resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
+    monitors = list_monitors(resolved)
+    if not monitors:
+        raise BackendNotAvailableError(f"No monitors on {resolved}")
+
+    output_dir = Path(out_dir).expanduser() if out_dir else None
+    if output_dir is not None:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        if not prefer_mirror:
+            bulk = _capture_all_from_driver_full(resolved, monitors, output_dir)
+            if bulk is not None:
+                for item in bulk:
+                    item["method_requested"] = method
+                return bulk
+
+    captures: list[dict[str, Any]] = []
+    for index, monitor in enumerate(monitors, start=1):
+        name = str(monitor.get("name") or f"monitor-{index}")
+        if output_dir is not None:
+            meta = capture_host_to_file(
+                output_dir / f"{name}.png",
+                monitor=index,
+                display=resolved,
+                source=name,
+                target=target,
+                prefer_mirror=prefer_mirror,
+            )
+        else:
+            png, meta = capture_host_png(
+                monitor=index,
+                display=resolved,
+                source=name,
+                target=target,
+                prefer_mirror=prefer_mirror,
+            )
+            meta = dict(meta)
+            meta["bytes"] = len(png)
+        meta["monitor_index"] = index
+        meta["monitor_name"] = name
+        meta["method_requested"] = method
+        captures.append(meta)
+    return captures

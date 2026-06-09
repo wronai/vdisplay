@@ -2,12 +2,14 @@
 
 app {
   name: vdisplay;
-  version: 0.1.2;
+  version: 0.1.3;
 }
 
 dependencies {
   pillow: Pillow>=10.0;
-  dev: "pytest>=8.0, Pillow>=10.0, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+  dev: "pytest>=8.0, Pillow>=10.0, fastapi>=0.110, httpx>=0.27, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60";
+  control: "dsl2vdisplay, nlp2vdisplay";
+  agent: "vdisplay-agent, fastapi>=0.110, uvicorn>=0.27";
 }
 
 interface[type="api"] {
@@ -27,7 +29,7 @@ tests {
 }
 
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, DISPLAY;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, WAYLAND_DISPLAY, VDISPLAY_CAPTURE_ALLOW_PORTAL;
 }
 
 deploy {

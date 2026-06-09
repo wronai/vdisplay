@@ -1,0 +1,241 @@
+.
+├── app.doql.less
+├── CHANGELOG.md
+├── examples
+│   ├── ci-agent
+│   │   ├── agent.py
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── output
+│   │   │   ├── frame-000.png
+│   │   │   ├── frame-000.png.meta.json
+│   │   │   ├── frame-001.png
+│   │   │   ├── frame-001.png.meta.json
+│   │   │   ├── frame-002.png
+│   │   │   └── frame-002.png.meta.json
+│   │   └── README.md
+│   ├── common
+│   │   ├── screenshot_meta.py
+│   │   └── validate_artifacts.py
+│   ├── dev-workspace
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   └── README.md
+│   ├── headless-virtual
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── output
+│   │   │   ├── screen.png
+│   │   │   └── screen.png.meta.json
+│   │   ├── README.md
+│   │   └── run_virtual.py
+│   ├── host-mirror
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── mirror_demo.py
+│   │   ├── output
+│   │   │   ├── mirror.png
+│   │   │   └── mirror.png.meta.json
+│   │   ├── README.md
+│   │   └── run.sh
+│   ├── host-relay
+│   │   ├── docker-compose.yml
+│   │   ├── Dockerfile
+│   │   ├── output
+│   │   │   ├── after_adopt.png
+│   │   │   ├── after_adopt.png.meta.json
+│   │   │   ├── after_release.png
+│   │   │   ├── after_release.png.meta.json
+│   │   │   ├── before_automation.png
+│   │   │   └── before_automation.png.meta.json
+│   │   ├── README.md
+│   │   ├── relay_demo.py
+│   │   ├── run-host.sh
+│   │   └── run.sh
+│   ├── README.md
+│   └── run_all_examples.sh
+├── goal.yaml
+├── LICENSE
+├── packages
+│   ├── cli2vdisplay
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       ├── cli2vdisplay
+│   │       │   └── cli.py
+│   │       └── cli2vdisplay.egg-info
+│   │           ├── dependency_links.txt
+│   │           ├── entry_points.txt
+│   │           ├── PKG-INFO
+│   │           ├── requires.txt
+│   │           ├── SOURCES.txt
+│   │           └── top_level.txt
+│   ├── dsl2vdisplay
+│   │   ├── pyproject.toml
+│   │   ├── src
+│   │   │   ├── dsl2vdisplay
+│   │   │   │   ├── bus.py
+│   │   │   │   ├── cli.py
+│   │   │   │   ├── grammar.py
+│   │   │   │   ├── handlers
+│   │   │   │   │   ├── command.py
+│   │   │   │   │   ├── __init__.py
+│   │   │   │   │   └── query.py
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── result.py
+│   │   │   │   ├── schema
+│   │   │   │   │   └── commands
+│   │   │   │   └── schema_registry.py
+│   │   │   └── dsl2vdisplay.egg-info
+│   │   │       ├── dependency_links.txt
+│   │   │       ├── entry_points.txt
+│   │   │       ├── PKG-INFO
+│   │   │       ├── requires.txt
+│   │   │       ├── SOURCES.txt
+│   │   │       └── top_level.txt
+│   │   └── tests
+│   │       └── test_parity.py
+│   ├── mcp2vdisplay
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       └── mcp2vdisplay
+│   │           ├── cli.py
+│   │           └── server.py
+│   ├── nlp2vdisplay
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       ├── nlp2vdisplay
+│   │       │   ├── cli.py
+│   │       │   └── to_dsl.py
+│   │       └── nlp2vdisplay.egg-info
+│   │           ├── dependency_links.txt
+│   │           ├── entry_points.txt
+│   │           ├── PKG-INFO
+│   │           ├── requires.txt
+│   │           ├── SOURCES.txt
+│   │           └── top_level.txt
+│   ├── README.md
+│   ├── rest2vdisplay
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       ├── rest2vdisplay
+│   │       │   ├── app.py
+│   │       │   └── cli.py
+│   │       └── rest2vdisplay.egg-info
+│   │           ├── dependency_links.txt
+│   │           ├── entry_points.txt
+│   │           ├── PKG-INFO
+│   │           ├── requires.txt
+│   │           ├── SOURCES.txt
+│   │           └── top_level.txt
+│   ├── uri2vdisplay
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       ├── uri2vdisplay
+│   │       │   ├── cli.py
+│   │       │   └── decode.py
+│   │       └── uri2vdisplay.egg-info
+│   │           ├── dependency_links.txt
+│   │           ├── entry_points.txt
+│   │           ├── PKG-INFO
+│   │           ├── requires.txt
+│   │           ├── SOURCES.txt
+│   │           └── top_level.txt
+│   └── vdisplay-agent
+│       ├── pyproject.toml
+│       └── src
+│           ├── vdisplay_agent
+│           │   ├── cli.py
+│           │   ├── __init__.py
+│           │   ├── runtime.py
+│           │   └── server.py
+│           └── vdisplay_agent.egg-info
+│               ├── dependency_links.txt
+│               ├── entry_points.txt
+│               ├── PKG-INFO
+│               ├── requires.txt
+│               ├── SOURCES.txt
+│               └── top_level.txt
+├── planfile.yaml
+├── prefact.yaml
+├── project.sh
+├── pyproject.toml
+├── README.md
+├── src
+│   ├── vdisplay
+│   │   ├── agent_config.py
+│   │   ├── agent_dispatch.py
+│   │   ├── api.py
+│   │   ├── backends
+│   │   │   ├── base.py
+│   │   │   ├── __init__.py
+│   │   │   ├── linux_x11_mirror.py
+│   │   │   ├── linux_x11_relay.py
+│   │   │   ├── linux_xvfb.py
+│   │   │   └── mirror_stub.py
+│   │   ├── capture
+│   │   │   ├── base.py
+│   │   │   ├── host.py
+│   │   │   ├── __init__.py
+│   │   │   ├── linux_xwd.py
+│   │   │   ├── portal.py
+│   │   │   └── providers
+│   │   │       ├── base.py
+│   │   │       ├── drm.py
+│   │   │       ├── engine.py
+│   │   │       ├── fbdev.py
+│   │   │       ├── __init__.py
+│   │   │       ├── mss.py
+│   │   │       └── x11.py
+│   │   ├── client.py
+│   │   ├── cli_handlers.py
+│   │   ├── cli.py
+│   │   ├── discovery.py
+│   │   ├── exceptions.py
+│   │   ├── __init__.py
+│   │   ├── input
+│   │   │   ├── __init__.py
+│   │   │   └── linux_xdotool.py
+│   │   ├── models.py
+│   │   ├── nlp.py
+│   │   ├── nl.py
+│   │   ├── payloads.py
+│   │   ├── utils.py
+│   │   └── windows.py
+│   └── vdisplay.egg-info
+│       ├── dependency_links.txt
+│       ├── entry_points.txt
+│       ├── PKG-INFO
+│       ├── requires.txt
+│       ├── SOURCES.txt
+│       └── top_level.txt
+├── SUMD.md
+├── SUMR.md
+├── testql-scenarios
+│   └── generated-cli-tests.testql.toon.yaml
+├── tests
+│   ├── conftest.py
+│   ├── test_agent_client.py
+│   ├── test_agent_dispatch.py
+│   ├── test_agent.py
+│   ├── test_capture_crop.py
+│   ├── test_capture_providers.py
+│   ├── test_capture_xwd.py
+│   ├── test_cli_commands.py
+│   ├── test_host_capture.py
+│   ├── test_import.py
+│   ├── test_linux_xvfb_integration.py
+│   ├── test_mirror_primary.py
+│   ├── test_nlp_pipeline.py
+│   ├── test_nl.py
+│   ├── test_outputs_rotation.py
+│   ├── test_relay_release.py
+│   ├── test_screenshot_meta.py
+│   ├── test_windows_dedupe.py
+│   └── test_windows.py
+├── TODO.md
+├── tree.sh
+├── tree.txt
+├── uv.lock
+└── VERSION
+
+53 directories, 186 files

@@ -3,10 +3,28 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
 from vdisplay import VirtualDisplaySession
+
+
+def _load_common() -> None:
+    import sys
+    from pathlib import Path
+
+    here = Path(__file__).resolve()
+    for base in (here.parent, here.parent.parent, Path("/app")):
+        for common in (base / "common", base / "examples" / "common"):
+            if (common / "screenshot_meta.py").exists():
+                sys.path.insert(0, str(common))
+                return
+    raise ImportError("examples/common not found")
+
+
+_load_common()
+from screenshot_meta import print_artifact, write_screenshot_meta  # noqa: E402
 
 
 def main() -> None:
@@ -23,9 +41,20 @@ def main() -> None:
     try:
         path = session.save_screenshot(str(out_file))
         info = session.info()
-        print(f"saved: {path}")
-        print(f"display: {info['metadata']['display']}")
-        print(f"size: {info['width']}x{info['height']}")
+        meta = write_screenshot_meta(
+            path,
+            label="Headless virtual display baseline capture",
+            session_kind="virtual",
+            display=info["metadata"]["display"],
+            phase="baseline",
+            session_info=info,
+            extra={
+                "expected_width": width,
+                "expected_height": height,
+            },
+        )
+        print_artifact(meta)
+        print(json.dumps({"saved": path, "info": info}, indent=2))
     finally:
         session.stop()
 

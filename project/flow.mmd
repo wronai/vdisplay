@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.01s
+%% generated in 0.02s
 
     %% Entry points (blue)
     classDef entry fill:#4dabf7,stroke:#1971c2,color:#fff
@@ -9,22 +9,22 @@ flowchart TD
     end
 
     subgraph Core
-        src__vdisplay__backends__mirror_stub__MirrorStubBackend__capabilities["capabilities"]
-        src__vdisplay__backends__mirror_stub__MirrorStubBackend__info["info"]
-        src__vdisplay__backends__mirror_stub__MirrorStubBackend__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__capture__base__CaptureBackend__screenshot_png["screenshot_png"]
-        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput___env["_env"]
-        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__move["move"]
-        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__click["click"]
-        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text["type_text"]
-        src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey["hotkey"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_health["handle_health"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_info["handle_info"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_outputs["handle_outputs"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_windows["handle_windows"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_capabilities["handle_capabilities"]
-        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_validate["handle_validate"]
-        ...["+90 more"]
+        packages__mcp2vdisplay__src__mcp2vdisplay__cli__main["main"]
+        packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server["create_server"]
+        packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server["create_server"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli__main["main"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy["_main_legacy"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand["_main_subcommand"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_windows["_parse_windows"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_screenshot["_parse_screenshot"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_virtual_start["_parse_virtual_start"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_launch["_parse_launch"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_mirror["_parse_mirror"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_adopt["_parse_adopt"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_release["_parse_release"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__result__DslResult__to_dict["to_dict"]
+        packages__dsl2vdisplay__src__dsl2vdisplay__handlers__command__handle_screenshot["handle_screenshot"]
+        ...["+237 more"]
     end
 
-    class src__vdisplay__backends__mirror_stub__MirrorStubBackend__capabilities,src__vdisplay__backends__mirror_stub__MirrorStubBackend__info,src__vdisplay__backends__mirror_stub__MirrorStubBackend__screenshot_bytes,src__vdisplay__capture__base__CaptureBackend__screenshot_png,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput___env,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__move,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__click,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__type_text,src__vdisplay__input__linux_xdotool__LinuxXdotoolInput__hotkey,packages__dsl2vdisplay__src__dsl2vdisplay__handlers__query__handle_health entry
+    class packages__mcp2vdisplay__src__mcp2vdisplay__cli__main,packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server,packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server,packages__dsl2vdisplay__src__dsl2vdisplay__cli__main,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_windows,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_screenshot,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_virtual_start,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_launch entry

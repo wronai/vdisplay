@@ -7,6 +7,7 @@ Sterowanie `vdisplay` przez DSL i bus CQRS. Adaptery delegują do `dsl2vdisplay.
 | Package | Role | Entry |
 |---------|------|-------|
 | `dsl2vdisplay` | Grammar + Schema + bus CQRS | `dsl2vdisplay` |
+| `vdisplay-agent` | Localhost broker (sessions, capture, discovery) | `vdisplay-agent` |
 | `uri2vdisplay` | `vdisplay://cmd/...` → DSL | `uri2vdisplay` |
 | `nlp2vdisplay` | NL → DSL | `nlp2vdisplay` |
 | `cli2vdisplay` | REPL / exec | `cli2vdisplay` |
@@ -15,69 +16,118 @@ Sterowanie `vdisplay` przez DSL i bus CQRS. Adaptery delegują do `dsl2vdisplay.
 
 ## Flow
 
+**Recommended:** run `vdisplay-agent` once, point all adapters at it:
+
+```bash
+vdisplay-agent serve --port 8765
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+```
+
 ```mermaid
 flowchart TB
-  subgraph adapters [Adapters]
+  subgraph adapters [Adapters — no capture/input]
     URI[uri2vdisplay]
     NLP[nlp2vdisplay]
-    CLI[cli2vdisplay]
+    CLI[cli2vdisplay / vdisplay]
     MCP[mcp2vdisplay]
     REST[rest2vdisplay]
   end
   subgraph control [Control]
     DSL[dsl2vdisplay.dispatch]
-    Q[QueryHandler]
-    C[CommandHandler]
   end
-  subgraph domain [Domain src/vdisplay]
-    VD[VirtualDisplaySession]
-    MR[MirrorSession]
-    RL[WindowRelaySession]
+  subgraph broker [vdisplay-agent localhost]
+    AG[AgentRuntime + providers]
   end
   URI --> DSL
   NLP --> DSL
   CLI --> DSL
   MCP --> DSL
   REST --> DSL
-  DSL --> Q
-  DSL --> C
-  Q --> VD
-  C --> VD
-  C --> MR
-  C --> RL
+  DSL -->|VDISPLAY_AGENT_URL| AG
+  DSL -->|no URL| LOCAL[vdisplay in-process]
 ```
+
+When `VDISPLAY_AGENT_URL` is set, `dispatch()` routes to `vdisplay.agent_dispatch` — clients never call portal/DRM/X11 directly. Without the URL, the same DSL runs in-process (development / tests).
+
+Inside the broker, `VDISPLAY_AGENT_BROKER=1` prevents recursive HTTP calls back to itself.
 
 ## DSL verbs
 
-**Query:** `HEALTH`, `INFO`, `OUTPUTS`, `WINDOWS`, `CAPABILITIES`, `VALIDATE`
+**Query:** `HEALTH`, `INFO`, `OUTPUTS`, `MONITORS`, `WINDOWS`, `ALL`, `CAPABILITIES`, `VALIDATE`
 
 **Command:** `SCREENSHOT`, `VIRTUAL_START`, `VIRTUAL_STOP`, `LAUNCH`, `MIRROR`, `ADOPT`, `RELEASE`
 
 ## Install
 
 ```bash
-pip install -e packages/dsl2vdisplay
-pip install -e packages/uri2vdisplay packages/nlp2vdisplay packages/cli2vdisplay
-pip install -e "packages/mcp2vdisplay[mcp]" "packages/rest2vdisplay[rest]"
+pip install -e .
+pip install -e ".[control]"   # dsl2vdisplay + nlp2vdisplay from packages/
+# broker + adapters:
+pip install -e "packages/vdisplay-agent[serve]"
+pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
 ```
 
 ## Output objects (`nl`)
 
 Query responses for monitors and windows include **`nl`** — a natural-language description of their contents. Useful for `nlp2vdisplay` and agent tooling.
 
+The agent `/outputs` endpoint returns monitors **without** window enrichment (fast). Use `/windows` or DSL `ALL` for full state with `nl`.
+
+CLI equivalents:
+
 ```bash
-dsl2vdisplay -c 'OUTPUTS DISPLAY :0'   # each output has "nl"
-dsl2vdisplay -c 'WINDOWS DISPLAY :0'   # each window has "nl"
-nlp2vdisplay to-dsl "list application windows on display zero"
+vdisplay all
+vdisplay monitors
+vdisplay windows --apps-only
+vdisplay nlp "list monitors on display zero"
+dsl2vdisplay -c 'MONITORS DISPLAY :0'   # same JSON as vdisplay monitors
+dsl2vdisplay -c 'WINDOWS DISPLAY :0'    # same JSON as vdisplay windows
+nlp2vdisplay "list monitors on display zero"              # NL → DSL → JSON
+nlp2vdisplay to-dsl --dsl-only "list monitors on display zero"  # DSL only
 ```
+
+## REST adapter
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+rest2vdisplay serve --port 8216 --agent-url $VDISPLAY_AGENT_URL
+
+curl -s http://127.0.0.1:8216/health | jq .
+curl -s -X POST http://127.0.0.1:8216/v1/dsl \
+  -H 'content-type: application/json' \
+  -d '{"verb":"MONITORS"}' | jq .
+```
+
+| Route | Method | Description |
+|-------|--------|-------------|
+| `/health` | GET | Adapter + broker status |
+| `/capabilities` | GET | Agent capabilities (503 without URL) |
+| `/v1/dsl` | POST | DSL as JSON or `text/plain` |
+| `/v1/commands` | POST | Alias for `/v1/dsl` |
+| `/v1/schema` | GET | All verb schemas |
+
+## MCP adapter
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+mcp2vdisplay serve
+```
+
+Tools: `vdisplay_agent_status`, `vdisplay_run_command`, `vdisplay_run_dsl`, `vdisplay_to_dsl`.
 
 ## Examples
 
 ```bash
-dsl2vdisplay -c 'INFO'
-dsl2vdisplay -c 'OUTPUTS DISPLAY :0'
-dsl2vdisplay -c 'WINDOWS DISPLAY :0'
-cli2vdisplay exec 'SCREENSHOT OUT screen.png DISPLAY :99'
-rest2vdisplay serve --port 8216
+# 1. Start broker (install once)
+vdisplay-agent serve --port 8765
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+
+# 2. Any adapter — same permissions/runtime
+dsl2vdisplay -c 'MONITORS'
+rest2vdisplay serve --port 8216 --agent-url $VDISPLAY_AGENT_URL
 mcp2vdisplay serve
+vdisplay monitors
+vdisplay virtual screenshot -o /tmp/vd.png
 ```
+
+Full broker reference: [docs/agent-broker.md](../docs/agent-broker.md)

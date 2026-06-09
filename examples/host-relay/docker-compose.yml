@@ -7,8 +7,11 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ${XAUTHORITY:-${HOME}/.Xauthority}:/root/.Xauthority:ro
+      - ./output:/output
     environment:
       DISPLAY: ${HOST_DISPLAY:-${DISPLAY:-:0}}
       XAUTHORITY: /root/.Xauthority
-      WINDOW_TITLE: ${WINDOW_TITLE:-xterm}
+      VD_OUTPUT_DIR: /output
+      WINDOW_TITLE: ${WINDOW_TITLE:-}
+      WINDOW_APP: ${WINDOW_APP:-JetBrains}
       VD_TARGET: offscreen

@@ -1,179 +1,254 @@
-# vdisplay | 54f 3843L | python:49,shell:4,less:1 | 2026-06-09
-# stats: 133 func | 18 cls | 54 mod | CC̄=4.8 | critical:16 | cycles:0
-# alerts[5]: CC parse_line=40; CC _is_internal_window=30; CC find_windows=28; CC main=21; CC _dedupe_app_windows=18
-# hotspots[5]: main fan=21; main fan=16; create_app fan=16; main fan=15; dispatch fan=13
-# evolution: baseline
+# vdisplay | 140f 14097L | yaml:4,txt:1,shell:6,toml:8,python:97,json:14,yml:5 | 2026-06-09
+# generated in 0.02s
+# stats: 478 func | 0 cls | 140 mod | CC̄=3.3 | critical:3 | cycles:0
+# alerts[5]: fan-out create_app=36; fan-out _execute_agent=25; fan-out _start_screencast_impl=25; fan-out _portal_impl=23; fan-out capture_host_png=23
+# hotspots[5]: create_app fan=36; _start_screencast_impl fan=25; _execute_agent fan=25; create_app fan=23; _portal_impl fan=23
+# evolution: CC̄ 3.1→3.3 (regressed +0.2)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[54]:
-  app.doql.less,45
-  examples/ci-agent/agent.py,44
-  examples/headless-virtual/run_virtual.py,35
-  examples/host-mirror/mirror_demo.py,56
-  examples/host-mirror/run.sh,54
-  examples/host-relay/relay_demo.py,39
-  examples/host-relay/run.sh,48
-  packages/cli2vdisplay/src/cli2vdisplay/cli.py,35
-  packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py,5
-  packages/dsl2vdisplay/src/dsl2vdisplay/bus.py,76
-  packages/dsl2vdisplay/src/dsl2vdisplay/cli.py,71
-  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py,121
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py,2
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py,97
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py,98
-  packages/dsl2vdisplay/src/dsl2vdisplay/result.py,27
-  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py,39
-  packages/dsl2vdisplay/tests/test_parity.py,15
-  packages/mcp2vdisplay/src/mcp2vdisplay/cli.py,24
-  packages/mcp2vdisplay/src/mcp2vdisplay/server.py,38
-  packages/nlp2vdisplay/src/nlp2vdisplay/cli.py,31
-  packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py,25
-  packages/rest2vdisplay/src/rest2vdisplay/app.py,47
-  packages/rest2vdisplay/src/rest2vdisplay/cli.py,25
-  packages/uri2vdisplay/src/uri2vdisplay/cli.py,31
-  packages/uri2vdisplay/src/uri2vdisplay/decode.py,32
+M[140]:
+  examples/agent-broker/broker_demo.py,57
+  examples/agent-broker/run.sh,26
+  examples/ci-agent/Dockerfile,29
+  examples/ci-agent/agent.py,73
+  examples/ci-agent/docker-compose.yml,14
+  examples/ci-agent/output/frame-000.png.meta.json,35
+  examples/ci-agent/output/frame-001.png.meta.json,35
+  examples/ci-agent/output/frame-002.png.meta.json,35
+  examples/common/screenshot_meta.py,162
+  examples/common/validate_artifacts.py,84
+  examples/dev-workspace/Dockerfile,19
+  examples/dev-workspace/docker-compose.yml,11
+  examples/headless-virtual/Dockerfile,28
+  examples/headless-virtual/docker-compose.yml,12
+  examples/headless-virtual/output/screen.png.meta.json,28
+  examples/headless-virtual/run_virtual.py,63
+  examples/host-mirror/Dockerfile,28
+  examples/host-mirror/docker-compose.yml,16
+  examples/host-mirror/mirror_demo.py,88
+  examples/host-mirror/output/mirror.png.meta.json,565
+  examples/host-mirror/run.sh,53
+  examples/host-relay/Dockerfile,29
+  examples/host-relay/docker-compose.yml,17
+  examples/host-relay/output/after_adopt.png.meta.json,584
+  examples/host-relay/output/after_release.png.meta.json,551
+  examples/host-relay/output/before_automation.png.meta.json,551
+  examples/host-relay/relay_demo.py,138
+  examples/host-relay/run.sh,47
+  examples/host-relay/run-host.sh,24
+  examples/run_all_examples.sh,62
+  goal.yaml,512
+  packages/cli2vdisplay/pyproject.toml,16
+  packages/cli2vdisplay/src/cli2vdisplay/cli.py,34
+  packages/dsl2vdisplay/pyproject.toml,28
+  packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py,4
+  packages/dsl2vdisplay/src/dsl2vdisplay/bus.py,108
+  packages/dsl2vdisplay/src/dsl2vdisplay/cli.py,70
+  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py,160
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py,1
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py,120
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py,115
+  packages/dsl2vdisplay/src/dsl2vdisplay/result.py,26
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/health.schema.json,9
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/info.schema.json,10
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/mirror.schema.json,13
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/outputs.schema.json,10
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/screenshot.schema.json,13
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/validate.schema.json,10
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py,38
+  packages/mcp2vdisplay/pyproject.toml,19
+  packages/mcp2vdisplay/src/mcp2vdisplay/cli.py,23
+  packages/mcp2vdisplay/src/mcp2vdisplay/server.py,53
+  packages/nlp2vdisplay/pyproject.toml,16
+  packages/nlp2vdisplay/src/nlp2vdisplay/cli.py,41
+  packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py,13
+  packages/rest2vdisplay/pyproject.toml,19
+  packages/rest2vdisplay/src/rest2vdisplay/app.py,87
+  packages/rest2vdisplay/src/rest2vdisplay/cli.py,35
+  packages/uri2vdisplay/pyproject.toml,16
+  packages/uri2vdisplay/src/uri2vdisplay/cli.py,30
+  packages/uri2vdisplay/src/uri2vdisplay/decode.py,31
+  packages/vdisplay-agent/pyproject.toml,19
+  packages/vdisplay-agent/src/vdisplay_agent/__init__.py,5
+  packages/vdisplay-agent/src/vdisplay_agent/cli.py,33
+  packages/vdisplay-agent/src/vdisplay_agent/envelope.py,85
+  packages/vdisplay-agent/src/vdisplay_agent/runtime.py,283
+  packages/vdisplay-agent/src/vdisplay_agent/schemas.py,44
+  packages/vdisplay-agent/src/vdisplay_agent/server.py,190
+  planfile.yaml,1319
+  prefact.yaml,94
   project.sh,59
-  src/vdisplay/__init__.py,13
-  src/vdisplay/api.py,185
-  src/vdisplay/backends/__init__.py,2
-  src/vdisplay/backends/base.py,62
-  src/vdisplay/backends/linux_x11_mirror.py,227
-  src/vdisplay/backends/linux_x11_relay.py,311
+  pyproject.toml,116
+  src/vdisplay/__init__.py,12
+  src/vdisplay/agent_config.py,22
+  src/vdisplay/agent_dispatch.py,30
+  src/vdisplay/api.py,193
+  src/vdisplay/application/__init__.py,6
+  src/vdisplay/application/commands.py,183
+  src/vdisplay/application/errors.py,39
+  src/vdisplay/application/executor.py,304
+  src/vdisplay/application/runtime.py,76
+  src/vdisplay/application/services/__init__.py,3
+  src/vdisplay/application/services/capture.py,160
+  src/vdisplay/application/services/discovery.py,203
+  src/vdisplay/application/services/info.py,24
+  src/vdisplay/application/services/session.py,190
+  src/vdisplay/backends/__init__.py,1
+  src/vdisplay/backends/base.py,64
+  src/vdisplay/backends/linux_x11_mirror.py,259
+  src/vdisplay/backends/linux_x11_relay.py,478
   src/vdisplay/backends/linux_xvfb.py,164
-  src/vdisplay/backends/mirror_stub.py,35
-  src/vdisplay/capture/__init__.py,4
-  src/vdisplay/capture/base.py,10
-  src/vdisplay/capture/linux_xwd.py,209
-  src/vdisplay/cli.py,241
-  src/vdisplay/discovery.py,267
-  src/vdisplay/exceptions.py,11
-  src/vdisplay/input/__init__.py,4
-  src/vdisplay/input/linux_xdotool.py,46
-  src/vdisplay/models.py,27
-  src/vdisplay/utils.py,47
-  src/vdisplay/windows.py,514
-  tests/test_capture_xwd.py,46
-  tests/test_import.py,23
-  tests/test_linux_xvfb_integration.py,22
-  tests/test_mirror_primary.py,43
-  tests/test_outputs_rotation.py,35
-  tests/test_windows.py,48
-  tests/test_windows_dedupe.py,26
-  tree.sh,2
+  src/vdisplay/backends/mirror_stub.py,34
+  src/vdisplay/capture/__init__.py,15
+  src/vdisplay/capture/base.py,9
+  src/vdisplay/capture/host.py,320
+  src/vdisplay/capture/linux_xwd.py,320
+  src/vdisplay/capture/portal.py,221
+  src/vdisplay/capture/portal_screencast.py,365
+  src/vdisplay/capture/providers/__init__.py,3
+  src/vdisplay/capture/providers/base.py,22
+  src/vdisplay/capture/providers/drm.py,89
+  src/vdisplay/capture/providers/engine.py,99
+  src/vdisplay/capture/providers/fbdev.py,77
+  src/vdisplay/capture/providers/mss.py,60
+  src/vdisplay/capture/providers/x11.py,35
+  src/vdisplay/cli.py,32
+  src/vdisplay/cli_handlers.py,34
+  src/vdisplay/client.py,188
+  src/vdisplay/commands/__init__.py,40
+  src/vdisplay/commands/agent.py,45
+  src/vdisplay/commands/all_cmd.py,46
+  src/vdisplay/commands/common.py,35
+  src/vdisplay/commands/diagnose.py,18
+  src/vdisplay/commands/info.py,16
+  src/vdisplay/commands/io.py,7
+  src/vdisplay/commands/mirror.py,53
+  src/vdisplay/commands/monitors.py,19
+  src/vdisplay/commands/nlp.py,23
+  src/vdisplay/commands/relay.py,97
+  src/vdisplay/commands/screenshot.py,47
+  src/vdisplay/commands/virtual.py,72
+  src/vdisplay/commands/windows.py,29
+  src/vdisplay/discovery.py,329
+  src/vdisplay/exceptions.py,10
+  src/vdisplay/input/__init__.py,3
+  src/vdisplay/input/linux_xdotool.py,45
+  src/vdisplay/models.py,26
+  src/vdisplay/nl.py,158
+  src/vdisplay/nlp.py,158
+  src/vdisplay/payloads.py,86
+  src/vdisplay/utils.py,46
+  src/vdisplay/windows/__init__.py,46
+  src/vdisplay/windows/constants.py,19
+  src/vdisplay/windows/filter.py,173
+  src/vdisplay/windows/normalize.py,103
+  src/vdisplay/windows/query.py,209
+  src/vdisplay/windows/rank.py,43
+  src/vdisplay/windows/scan.py,110
+  testql-scenarios/generated-cli-tests.testql.toon.yaml,20
+  tree.txt,241
 D:
-  examples/ci-agent/agent.py:
-    e: main
-    main()
-  examples/headless-virtual/run_virtual.py:
-    e: main
-    main()
-  examples/host-mirror/mirror_demo.py:
-    e: main
-    main()
-  examples/host-relay/relay_demo.py:
-    e: main
-    main()
-  packages/cli2vdisplay/src/cli2vdisplay/cli.py:
-    e: main
-    main(argv)
-  packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py:
+  src/vdisplay/application/executor.py:
+    e: execute,_execute_local,_screenshot_local,_execute_agent,_screenshot_agent,_mirror_agent
+    execute(cmd)
+    _execute_local(cmd)
+    _screenshot_local(cmd;capture_module)
+    _execute_agent(cmd)
+    _screenshot_agent(cmd;client)
+    _mirror_agent(cmd;client)
+  src/vdisplay/client.py:
+    e: AgentClient
+    AgentClient: __init__(1),_request(2),_normalize_payload(0),health(0),capabilities(0),diagnostics(0),outputs(0),windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),capture_frame(0),capture_png_bytes(0),adopt_window(0),release_window(0)  # HTTP client for the local vdisplay-agent broker...
+  examples/common/screenshot_meta.py:
+    e: examples_common_dir,ensure_common_on_path,meta_path_for,png_dimensions,describe_screenshot_nl,build_screenshot_meta,write_screenshot_meta,save_png_with_meta,print_artifact
+    examples_common_dir()
+    ensure_common_on_path()
+    meta_path_for(image_path)
+    png_dimensions(path)
+    describe_screenshot_nl()
+    build_screenshot_meta(image_path)
+    write_screenshot_meta(image_path)
+    save_png_with_meta(image_path;png_bytes)
+    print_artifact(meta)
+  src/vdisplay/nl.py:
+    e: describe_window_nl,_user_visible_app_labels,describe_output_nl,window_center_on_output,ensure_monitor_ids,find_monitor_for_window,assign_windows_to_monitors,enrich_outputs_nl
+    describe_window_nl(info)
+    _user_visible_app_labels(windows)
+    describe_output_nl(output;windows)
+    window_center_on_output(window;output)
+    ensure_monitor_ids(monitors)
+    find_monitor_for_window(window;monitors)
+    assign_windows_to_monitors(windows;monitors)
+    enrich_outputs_nl(outputs;windows)
+  src/vdisplay/windows/normalize.py:
+    e: parse_wm_class,normalize_atom_list,resolve_window_pid,process_info,usable_title,derive_app_label,derive_role
+    parse_wm_class(raw)
+    normalize_atom_list(raw)
+    resolve_window_pid(display;window_id;props)
+    process_info(pid)
+    usable_title(candidate)
+    derive_app_label()
+    derive_role()
+  src/vdisplay/windows/filter.py:
+    e: looks_like_internal_class,looks_like_internal_name,is_trivial_internal,is_junk_title,is_visible_app,is_internal_window,matches_title,matches_class,matches_app,window_passes_filters,filter_windows,is_companion_frame
+    looks_like_internal_class(value)
+    looks_like_internal_name(value)
+    is_trivial_internal()
+    is_junk_title(title;net_wm_name)
+    is_visible_app(role;title;net_wm_name;width;height)
+    is_internal_window()
+    matches_title(info;needle)
+    matches_class(info;needle)
+    matches_app(info;needle)
+    window_passes_filters(info)
+    filter_windows(windows)
+    is_companion_frame(candidate;window)
+  src/vdisplay/capture/host.py:
+    e: _monitor_source_name,_monitor_capture_region,_capture_all_from_driver_full,capture_host_png,capture_host_to_file,capture_all_monitors
+    _monitor_source_name(display;monitor;source)
+    _monitor_capture_region(display;output_name)
+    _capture_all_from_driver_full(display;monitors;output_dir)
+    capture_host_png()
+    capture_host_to_file(path)
+    capture_all_monitors()
   packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:
-    e: _dispatch_query,_dispatch_cmd,dispatch,execute_dsl_line
-    _dispatch_query(cmd)
-    _dispatch_cmd(cmd)
+    e: _dispatch_legacy,dispatch,_dispatch_fallback,execute_dsl_line
+    _dispatch_legacy(cmd)
     dispatch(envelope)
+    _dispatch_fallback(cmd)
     execute_dsl_line(line)
-  packages/dsl2vdisplay/src/dsl2vdisplay/cli.py:
-    e: main,_main_legacy,_main_subcommand
+  src/vdisplay/capture/portal_screencast.py:
+    e: PortalScreenCastSession,get_active_screencast,_set_active,_set_active_if_self,start_screencast_session,stop_screencast_session,_system_python,_start_screencast,_start_screencast_impl,_listen_portal_request,_close_screencast_session,_capture_pipewire_node,_start_screencast_subprocess
+    PortalScreenCastSession: start(0),status(0),capture_png(0),stop(0)  # Hold an open portal ScreenCast session and grab PNG frames f...
+    get_active_screencast()
+    _set_active(session)
+    _set_active_if_self(session)
+    start_screencast_session()
+    stop_screencast_session()
+    _system_python()
+    _start_screencast()
+    _start_screencast_impl()
+    _listen_portal_request(bus;request_path;callback)
+    _close_screencast_session(session_path)
+    _capture_pipewire_node(node_id)
+    _start_screencast_subprocess()
+  examples/common/validate_artifacts.py:
+    e: validate_image_and_meta,validate_directory,main
+    validate_image_and_meta(image_path)
+    validate_directory(root)
     main(argv)
-    _main_legacy(argv)
-    _main_subcommand(argv)
-  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:
-    e: split_command,pick_flag,parse_line,to_text
-    split_command(line)
-    pick_flag(tokens;flag)
-    parse_line(line)
-    to_text(cmd)
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py:
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py:
-    e: handle_screenshot,handle_virtual_start,handle_mirror,handle_adopt,handle_release
-    handle_screenshot(cmd)
-    handle_virtual_start(cmd)
-    handle_mirror(cmd)
-    handle_adopt(cmd)
-    handle_release(cmd)
-  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:
-    e: handle_health,handle_info,handle_outputs,handle_windows,handle_capabilities,handle_validate
-    handle_health(cmd)
-    handle_info(cmd)
-    handle_outputs(cmd)
-    handle_windows(cmd)
-    handle_capabilities(cmd)
-    handle_validate(cmd)
-  packages/dsl2vdisplay/src/dsl2vdisplay/result.py:
-    e: DslResult
-    DslResult: to_dict(0)
-  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py:
-    e: _load_schema,all_schemas,schema_for_verb,validate_command_dict
-    _load_schema(name)
-    all_schemas()
-    schema_for_verb(verb)
-    validate_command_dict(cmd)
-  packages/dsl2vdisplay/tests/test_parity.py:
-    e: test_parity_info_text_vs_dict,test_health
-    test_parity_info_text_vs_dict()
-    test_health()
-  packages/mcp2vdisplay/src/mcp2vdisplay/cli.py:
-    e: main,create_server
-    main()
-    create_server()
-  packages/mcp2vdisplay/src/mcp2vdisplay/server.py:
-    e: create_server
-    create_server()
-  packages/nlp2vdisplay/src/nlp2vdisplay/cli.py:
-    e: main
-    main(argv)
-  packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py:
-    e: nl_to_dsl
-    nl_to_dsl(prompt)
-  packages/rest2vdisplay/src/rest2vdisplay/app.py:
-    e: create_app
-    create_app()
-  packages/rest2vdisplay/src/rest2vdisplay/cli.py:
-    e: main
-    main()
-  packages/uri2vdisplay/src/uri2vdisplay/cli.py:
-    e: main
-    main(argv)
-  packages/uri2vdisplay/src/uri2vdisplay/decode.py:
-    e: uri_to_dsl
-    uri_to_dsl(uri)
-  src/vdisplay/__init__.py:
-  src/vdisplay/api.py:
-    e: _default_virtual_backend,_default_mirror_backend,_default_relay_backend,platform_summary,VirtualDisplaySession,MirrorSession,WindowRelaySession
-    VirtualDisplaySession: __init__(1),create(5),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),info(0),capabilities(0)
-    MirrorSession: __init__(1),create(5),start(0),stop(0),screenshot_bytes(0),save_screenshot(1),info(0),capabilities(0)
-    WindowRelaySession: __init__(1),create(3),start(0),stop(0),adopt_window(0),release_window(0),list_adopted(0),info(0),capabilities(0)
-    _default_virtual_backend()
-    _default_mirror_backend()
-    _default_relay_backend()
-    platform_summary()
-  src/vdisplay/backends/__init__.py:
-  src/vdisplay/backends/base.py:
-    e: BaseBackend
-    BaseBackend: __init__(0),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),as_dict(0)
-  src/vdisplay/backends/linux_x11_mirror.py:
-    e: _list_connected_outputs,_resolve_output,_primary_output_from_xrandr,_output_capture_region,_mirror_target_candidates,_output_mode,LinuxX11MirrorBackend
-    LinuxX11MirrorBackend: __init__(3),capabilities(0),info(0),start(0),stop(0),screenshot_bytes(0)
-    _list_connected_outputs(display)
-    _resolve_output(name;outputs;display)
-    _primary_output_from_xrandr(display)
-    _output_capture_region(display;output_name)
-    _mirror_target_candidates(display;source;outputs)
-    _output_mode(display;output)
   src/vdisplay/backends/linux_x11_relay.py:
-    e: _find_window_id,_move_window,_window_metadata,_window_geometry,_window_title,_offscreen_coordinates,_screen_geometry,_output_origin,WindowState,LinuxX11RelayBackend
+    e: WindowState,LinuxX11RelayBackend,_stash_path,_load_stash,_save_stash,_state_as_match_info,_state_matches,_select_adopted_for_release,_related_adopted_ids,_pick_primary_release_id,_restore_window,_find_window_id,_move_window,_window_metadata,_window_geometry,_window_title,_offscreen_coordinates,_screen_geometry,_output_origin
     WindowState:
-    LinuxX11RelayBackend: __init__(2),capabilities(0),info(0),start(0),adopt_window(0),release_window(0),list_adopted(0)  # Move windows between monitors/outputs within the same X11 se
+    LinuxX11RelayBackend(BaseBackend): __init__(2),capabilities(0),info(0),start(0),adopt_window(0),release_window(0),list_adopted(0)  # Move windows between monitors/outputs within the same X11 se...
+    _stash_path(display;stash_prefix)
+    _load_stash(display;stash_prefix)
+    _save_stash(display;stash_prefix;adopted)
+    _state_as_match_info(state)
+    _state_matches(state)
+    _select_adopted_for_release(adopted)
+    _related_adopted_ids(adopted;seed_id)
+    _pick_primary_release_id(adopted;window_ids)
+    _restore_window(display;state)
     _find_window_id(display)
     _move_window(display;window_id;x;y)
     _window_metadata(display;window_id)
@@ -182,25 +257,20 @@ D:
     _offscreen_coordinates(display)
     _screen_geometry(display)
     _output_origin(display;target)
-  src/vdisplay/backends/linux_xvfb.py:
-    e: _display_candidates,_display_socket_exists,_probe_display,_wait_for_display,LinuxXvfbBackend
-    LinuxXvfbBackend: __init__(3),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),adopt_window(0),release_window(0),_acquire_display(1)
-    _display_candidates(preferred)
-    _display_socket_exists(display)
-    _probe_display(display)
-    _wait_for_display(display)
-  src/vdisplay/backends/mirror_stub.py:
-    e: MirrorStubBackend
-    MirrorStubBackend: __init__(2),capabilities(0),info(0),screenshot_bytes(0)
-  src/vdisplay/capture/__init__.py:
-  src/vdisplay/capture/base.py:
-    e: CaptureBackend
-    CaptureBackend: screenshot_png(0)
   src/vdisplay/capture/linux_xwd.py:
-    e: capture_display_png,_capture_xwd_png,_capture_scrot_png,xwd_bytes_to_png,_xwd_dimensions,_xwd_to_rgb_bytes,_parse_xwd_header,_read_xwd_header,_header_fields,_decode_pixels,_rgb_to_png,_rgb_to_png_minimal
+    e: _is_valid_png,is_blank_png,_is_wayland_session,_capture_hint,_crop_png,_capture_full_display_png,capture_display_png,_capture_xwd_png,_capture_scrot_png,_capture_gnome_screenshot_png,_capture_portal_png,_capture_grim_png,xwd_bytes_to_png,_xwd_dimensions,_xwd_to_rgb_bytes,_parse_xwd_header,_read_xwd_header,_header_fields,_decode_pixels,_rgb_to_png,_rgb_to_png_minimal
+    _is_valid_png(data)
+    is_blank_png(data)
+    _is_wayland_session()
+    _capture_hint(display)
+    _crop_png(full_png;region)
+    _capture_full_display_png(display)
     capture_display_png(display)
     _capture_xwd_png(display)
     _capture_scrot_png(display;region)
+    _capture_gnome_screenshot_png()
+    _capture_portal_png()
+    _capture_grim_png()
     xwd_bytes_to_png(data)
     _xwd_dimensions(data)
     _xwd_to_rgb_bytes(data)
@@ -210,16 +280,74 @@ D:
     _decode_pixels(header;pixels)
     _rgb_to_png(rgb;width;height)
     _rgb_to_png_minimal(rgb;width;height)
-  src/vdisplay/cli.py:
-    e: build_parser,_print_json,main
-    build_parser()
-    _print_json(payload)
+  examples/host-relay/relay_demo.py:
+    e: _load_common,_capture_phase,main
+    _load_common()
+    _capture_phase(output_dir)
+    main()
+  src/vdisplay/capture/portal.py:
+    e: PortalProvider,_portal_impl,_system_python,capture_portal_png,_capture_portal_to_file
+    PortalProvider: available(0),capture_full(0),capture_region(1)  # Opt-in portal capture (VDISPLAY_CAPTURE_ALLOW_PORTAL=1). Not...
+    _portal_impl(out)
+    _system_python()
+    capture_portal_png()
+    _capture_portal_to_file(out)
+  src/vdisplay/capture/providers/engine.py:
+    e: _allow_portal,_providers,capture_full_png,capture_region_png,list_capture_providers,_try_providers
+    _allow_portal()
+    _providers(display)
+    capture_full_png(display)
+    capture_region_png(display;region)
+    list_capture_providers(display)
+    _try_providers(providers)
+  src/vdisplay/capture/providers/drm.py:
+    e: DrmProvider,_drm_devices
+    DrmProvider: available(0),capture_full(0),capture_region(1),_capture(1)
+    _drm_devices()
+  packages/dsl2vdisplay/src/dsl2vdisplay/cli.py:
+    e: main,_main_legacy,_main_subcommand
     main(argv)
+    _main_legacy(argv)
+    _main_subcommand(argv)
+  src/vdisplay/nlp.py:
+    e: parse_display,_display_suffix,_default_display_suffix,_default_all,_default_monitors,_default_windows,_screenshot_dsl,_mirror_dsl,_release_dsl,_adopt_dsl,_validate_dsl,nl_to_dsl,run_nl_prompt,_run_local_dsl
+    parse_display(text)
+    _display_suffix(display)
+    _default_display_suffix(display)
+    _default_all(_text;display)
+    _default_monitors(_text;display)
+    _default_windows(_text;display)
+    _screenshot_dsl(prompt;_display)
+    _mirror_dsl(_prompt;_display)
+    _release_dsl(text;_display)
+    _adopt_dsl(text;_display)
+    _validate_dsl(_text;display)
+    nl_to_dsl(prompt)
+    run_nl_prompt(prompt)
+    _run_local_dsl(line)
+  src/vdisplay/backends/linux_x11_mirror.py:
+    e: LinuxX11MirrorBackend,_require_xrandr,_resolve_mirror_targets,_try_mirror,_mirror_exhausted_error,_list_connected_outputs,_resolve_output,_primary_output_from_xrandr,_output_capture_region,_mirror_target_candidates,_output_mode
+    LinuxX11MirrorBackend(BaseBackend): __init__(3),capabilities(0),info(0),start(0),_activate_mirror(2),stop(0),screenshot_bytes(0)
+    _require_xrandr()
+    _resolve_mirror_targets(target;source;outputs;display)
+    _try_mirror(display;source;target)
+    _mirror_exhausted_error(source;targets;outputs;failures)
+    _list_connected_outputs(display)
+    _resolve_output(name;outputs;display)
+    _primary_output_from_xrandr(display)
+    _output_capture_region(display;output_name)
+    _mirror_target_candidates(display;source;outputs)
+    _output_mode(display;output)
+  packages/vdisplay-agent/src/vdisplay_agent/runtime.py:
+    e: SessionRecord,AgentRuntime
+    SessionRecord:
+    AgentRuntime: platform_capabilities(0),diagnostics(0),outputs(0),list_windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),capture_frame(1),adopt_window(1),release_window(1),_relay_session(1),shutdown(0)  # Privileged runtime: owns sessions and native capture provide...
   src/vdisplay/discovery.py:
-    e: resolve_host_display,_looks_like_xvfb_only,list_outputs,_list_monitors,_parse_xrandr_query,_merge_output_metadata,list_windows,find_window_suggestions,diagnose_display,_display_hint
+    e: resolve_host_display,_looks_like_xvfb_only,list_outputs,_attach_output_nl,_list_monitors,_parse_xrandr_query,_merge_output_metadata,list_windows,find_window_suggestions,diagnose_display,_display_hint,list_monitors,window_discovery_meta
     resolve_host_display(preferred)
     _looks_like_xvfb_only(display)
     list_outputs(display)
+    _attach_output_nl(display;outputs)
     _list_monitors(display)
     _parse_xrandr_query(display)
     _merge_output_metadata(monitors;query_meta)
@@ -227,79 +355,390 @@ D:
     find_window_suggestions(display;match_title;limit)
     diagnose_display(display)
     _display_hint(display;resolved;outputs)
-  src/vdisplay/exceptions.py:
-    e: VDisplayError,BackendNotAvailableError,CapabilityError
-    VDisplayError:
-    BackendNotAvailableError:
-    CapabilityError:
-  src/vdisplay/input/__init__.py:
-  src/vdisplay/input/linux_xdotool.py:
-    e: LinuxXdotoolInput
-    LinuxXdotoolInput: __init__(1),_env(0),move(2),click(1),type_text(1),hotkey(0)
-  src/vdisplay/models.py:
-    e: Capabilities,SessionInfo
-    Capabilities:
-    SessionInfo:
+    list_monitors(display)
+    window_discovery_meta(display)
+  src/vdisplay/windows/rank.py:
+    e: window_area,pick_largest,pick_best_from_group,dedupe_app_windows,window_sort_key
+    window_area(window)
+    pick_largest(windows)
+    pick_best_from_group(group)
+    dedupe_app_windows(windows)
+    window_sort_key(info)
+  src/vdisplay/windows/query.py:
+    e: list_windows_enriched,scan_windows,inspect_window,find_windows,pick_best_window,find_companion_frames
+    list_windows_enriched(display)
+    scan_windows(display)
+    inspect_window(display;window_id)
+    find_windows(display)
+    pick_best_window(matches)
+    find_companion_frames(display;window)
+  examples/agent-broker/broker_demo.py:
+    e: main
+    main()
+  src/vdisplay/backends/linux_xvfb.py:
+    e: LinuxXvfbBackend,_display_candidates,_display_socket_exists,_probe_display,_wait_for_display
+    LinuxXvfbBackend(BaseBackend): __init__(3),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),adopt_window(0),release_window(0),_acquire_display(1)
+    _display_candidates(preferred)
+    _display_socket_exists(display)
+    _probe_display(display)
+    _wait_for_display(display)
+  src/vdisplay/capture/providers/mss.py:
+    e: MssProvider
+    MssProvider: __init__(1),available(0),capture_full(0),capture_region(1),_grab(1)
+  src/vdisplay/application/services/capture.py:
+    e: capture_screenshot,capture_screenshot_local,_capture_via_agent,capture_screenshot_via_client
+    capture_screenshot()
+    capture_screenshot_local()
+    _capture_via_agent(client)
+    capture_screenshot_via_client(client)
+  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:
+    e: split_command,pick_flag,_with_display,_parse_windows,_parse_screenshot,_parse_virtual_start,_parse_launch,_parse_mirror,_parse_adopt,_parse_release,parse_line,to_text
+    split_command(line)
+    pick_flag(tokens;flag)
+    _with_display(rest;cmd)
+    _parse_windows(rest;cmd)
+    _parse_screenshot(rest;cmd)
+    _parse_virtual_start(rest;cmd)
+    _parse_launch(rest;cmd)
+    _parse_mirror(rest;cmd)
+    _parse_adopt(rest;cmd)
+    _parse_release(rest;cmd)
+    parse_line(line)
+    to_text(cmd)
+  packages/cli2vdisplay/src/cli2vdisplay/cli.py:
+    e: main
+    main(argv)
+  packages/uri2vdisplay/src/uri2vdisplay/decode.py:
+    e: uri_to_dsl
+    uri_to_dsl(uri)
+  packages/nlp2vdisplay/src/nlp2vdisplay/cli.py:
+    e: main
+    main(argv)
+  src/vdisplay/commands/agent.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/capture/providers/fbdev.py:
+    e: FbdevProvider,_fb_info
+    FbdevProvider: available(0),capture_full(0),capture_region(1),_capture(1)
+    _fb_info()
+  src/vdisplay/api.py:
+    e: VirtualDisplaySession,MirrorSession,WindowRelaySession,_default_virtual_backend,_default_mirror_backend,_default_relay_backend,platform_summary
+    VirtualDisplaySession: __init__(1),create(4),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),info(0),capabilities(0)
+    MirrorSession: __init__(1),create(4),start(0),stop(0),screenshot_bytes(0),save_screenshot(1),info(0),capabilities(0)
+    WindowRelaySession: __init__(1),create(2),start(0),stop(0),adopt_window(0),release_window(0),list_adopted(0),info(0),capabilities(0)
+    _default_virtual_backend()
+    _default_mirror_backend()
+    _default_relay_backend()
+    platform_summary()
+  src/vdisplay/windows/scan.py:
+    e: root_window_id,xdotool,format_window_id,xprop,decode_xprop_value,window_geometry,search_window_ids
+    root_window_id(display)
+    xdotool(display)
+    format_window_id(window_id)
+    xprop(display;window_id)
+    decode_xprop_value(raw)
+    window_geometry(display;window_id)
+    search_window_ids(display)
+  packages/vdisplay-agent/src/vdisplay_agent/envelope.py:
+    e: agent_meta,success,failure,from_runtime,json_success,json_from_runtime,json_error,strip_ok,flatten_envelope
+    agent_meta()
+    success(action;data)
+    failure(action;error)
+    from_runtime(action;payload)
+    json_success(action;data)
+    json_from_runtime(action;payload)
+    json_error(action;exc)
+    strip_ok(payload)
+    flatten_envelope(payload)
+  examples/host-mirror/mirror_demo.py:
+    e: _load_common,main
+    _load_common()
+    main()
+  src/vdisplay/commands/relay.py:
+    e: register,handle_list_windows,handle
+    register(sub)
+    handle_list_windows(args)
+    handle(args)
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:
+    e: handle_health,handle_info,handle_monitors,handle_outputs,handle_windows,handle_all,handle_capabilities,handle_validate
+    handle_health(cmd)
+    handle_info(cmd)
+    handle_monitors(cmd)
+    handle_outputs(cmd)
+    handle_windows(cmd)
+    handle_all(cmd)
+    handle_capabilities(cmd)
+    handle_validate(cmd)
+  packages/uri2vdisplay/src/uri2vdisplay/cli.py:
+    e: main
+    main(argv)
+  examples/headless-virtual/run_virtual.py:
+    e: _load_common,main
+    _load_common()
+    main()
+  examples/ci-agent/agent.py:
+    e: _load_common,main
+    _load_common()
+    main()
+  src/vdisplay/agent_config.py:
+    e: resolve_agent_url,resolve_agent_token,use_agent
+    resolve_agent_url(explicit)
+    resolve_agent_token()
+    use_agent(explicit)
+  src/vdisplay/commands/virtual.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/capture/providers/x11.py:
+    e: X11Provider
+    X11Provider: __init__(1),available(0),capture_full(0),capture_region(1)
+  src/vdisplay/application/runtime.py:
+    e: ExecutionPolicy,agent_client_optional,agent_client_required,prefer_agent,resolve_apps_only,get_execution_policy
+    ExecutionPolicy: route(1),meta_for(1)  # Decide whether a command runs via vdisplay-agent or in-proce...
+    agent_client_optional()
+    agent_client_required()
+    prefer_agent()
+    resolve_apps_only()
+    get_execution_policy()
+  src/vdisplay/application/errors.py:
+    e: ErrorCode,ApplicationError,error_from_exception
+    ErrorCode(StrEnum):
+    ApplicationError: to_dict(0)
+    error_from_exception(exc)
+  src/vdisplay/application/commands.py:
+    e: CommandVerb,CommandRequest,CommandResult
+    CommandVerb(StrEnum):
+    CommandRequest: from_dsl(1)
+    CommandResult: to_dict(0),to_dsl_result(0),success(0),failure(0)
+  src/vdisplay/application/services/discovery.py:
+    e: _run_discovery,list_monitors,list_monitors_local,list_windows_payload,list_windows_local,list_adopted,list_all,list_all_local,diagnose
+    _run_discovery(cmd)
+    list_monitors(display)
+    list_monitors_local(display)
+    list_windows_payload(display)
+    list_windows_local(display)
+    list_adopted(display)
+    list_all(display)
+    list_all_local(display)
+    diagnose(display)
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py:
+    e: _load_schema,all_schemas,schema_for_verb,validate_command_dict
+    _load_schema(name)
+    all_schemas()
+    schema_for_verb(verb)
+    validate_command_dict(cmd)
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py:
+    e: _ok,_err,handle_screenshot,handle_virtual_start,handle_mirror,handle_adopt,handle_release
+    _ok(line;action;data)
+    _err(line;action;error;data)
+    handle_screenshot(cmd)
+    handle_virtual_start(cmd)
+    handle_mirror(cmd)
+    handle_adopt(cmd)
+    handle_release(cmd)
+  packages/rest2vdisplay/src/rest2vdisplay/cli.py:
+    e: main
+    main()
+  packages/vdisplay-agent/src/vdisplay_agent/cli.py:
+    e: main
+    main(argv)
+  src/vdisplay/commands/mirror.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  packages/vdisplay-agent/src/vdisplay_agent/server.py:
+    e: create_app
+    create_app(runtime)
+  packages/mcp2vdisplay/src/mcp2vdisplay/cli.py:
+    e: main,create_server
+    main()
+    create_server()
+  packages/rest2vdisplay/src/rest2vdisplay/app.py:
+    e: create_app
+    create_app()
+  src/vdisplay/cli.py:
+    e: build_parser,main
+    build_parser()
+    main(argv)
   src/vdisplay/utils.py:
     e: require_command,run_command,run_command_bytes
     require_command(name)
     run_command(args)
     run_command_bytes(args)
-  src/vdisplay/windows.py:
-    e: list_windows_enriched,_dedupe_app_windows,find_companion_frames,inspect_window,find_windows,pick_best_window,_derive_app_label,_derive_role,_is_internal_window,_looks_like_internal_class,_looks_like_internal_name,_matches_title,_matches_class,_matches_app,_window_sort_key,_root_window_id,_xdotool,_xprop,_decode_xprop_value,_parse_wm_class,_normalize_atom_list,_resolve_window_pid,_process_info,_window_geometry,_format_window_id
-    list_windows_enriched(display)
-    _dedupe_app_windows(windows)
-    find_companion_frames(display;window)
-    inspect_window(display;window_id)
-    find_windows(display)
-    pick_best_window(matches)
-    _derive_app_label()
-    _derive_role()
-    _is_internal_window()
-    _looks_like_internal_class(value)
-    _looks_like_internal_name(value)
-    _matches_title(info;needle)
-    _matches_class(info;needle)
-    _matches_app(info;needle)
-    _window_sort_key(info)
-    _root_window_id(display)
-    _xdotool(display)
-    _xprop(display;window_id)
-    _decode_xprop_value(raw)
-    _parse_wm_class(raw)
-    _normalize_atom_list(raw)
-    _resolve_window_pid(display;window_id;props)
-    _process_info(pid)
-    _window_geometry(display;window_id)
-    _format_window_id(window_id)
-  tests/test_capture_xwd.py:
-    e: _make_xwd,test_xwd_to_png_red_pixel,test_xwd_to_png_2x1
-    _make_xwd(width;height;pixels)
-    test_xwd_to_png_red_pixel()
-    test_xwd_to_png_2x1()
-  tests/test_import.py:
-    e: test_imports,test_platform_summary,test_capabilities
-    test_imports()
-    test_platform_summary()
-    test_capabilities()
-  tests/test_linux_xvfb_integration.py:
-    e: test_virtual_display_screenshot
-    test_virtual_display_screenshot(tmp_path)
-  tests/test_mirror_primary.py:
-    e: test_primary_output_from_xrandr,test_mirror_target_candidates_prefers_non_primary,_FakeResult
-    _FakeResult: __init__(2)
-    test_primary_output_from_xrandr(monkeypatch)
-    test_mirror_target_candidates_prefers_non_primary(monkeypatch)
-  tests/test_outputs_rotation.py:
-    e: test_rotation_degrees_mapping,test_parse_xrandr_query_rotation_from_sample
-    test_rotation_degrees_mapping()
-    test_parse_xrandr_query_rotation_from_sample()
-  tests/test_windows.py:
-    e: test_parse_wm_class,test_derive_app_label_prefers_title,test_internal_helper_window,test_matches_title_on_app_label
-    test_parse_wm_class()
-    test_derive_app_label_prefers_title()
-    test_internal_helper_window()
-    test_matches_title_on_app_label()
-  tests/test_windows_dedupe.py:
-    e: test_dedupe_prefers_application_over_mutter_frame
-    test_dedupe_prefers_application_over_mutter_frame()
+  src/vdisplay/commands/common.py:
+    e: add_display_arg,add_all_arg,add_window_filter_args,include_all_from_args
+    add_display_arg(parser)
+    add_all_arg(parser)
+    add_window_filter_args(parser)
+    include_all_from_args(args)
+  src/vdisplay/commands/__init__.py:
+    e: register_all
+    register_all(sub)
+  src/vdisplay/commands/nlp.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/application/services/session.py:
+    e: virtual_start,virtual_launch,virtual_screenshot,mirror_start,mirror_screenshot,relay_adopt,relay_release,relay_list_adopted,relay_screenshot,unsupported_session_action
+    virtual_start()
+    virtual_launch(command)
+    virtual_screenshot(output)
+    mirror_start()
+    mirror_screenshot(output)
+    relay_adopt()
+    relay_release()
+    relay_list_adopted(display)
+    relay_screenshot(output)
+    unsupported_session_action(kind;action)
+  src/vdisplay/application/services/info.py:
+    e: platform_info
+    platform_info()
+  src/vdisplay/input/linux_xdotool.py:
+    e: LinuxXdotoolInput
+    LinuxXdotoolInput: __init__(1),_env(0),move(2),click(1),type_text(1),hotkey(0)
+  src/vdisplay/agent_dispatch.py:
+    e: agent_client,dispatch_via_agent
+    agent_client(url)
+    dispatch_via_agent(cmd)
+  packages/mcp2vdisplay/src/mcp2vdisplay/server.py:
+    e: create_server
+    create_server()
+  packages/dsl2vdisplay/src/dsl2vdisplay/result.py:
+    e: DslResult
+    DslResult: to_dict(0)
+  packages/nlp2vdisplay/src/nlp2vdisplay/to_dsl.py:
+    e: parse_display,nl_to_dsl
+    parse_display(text)
+    nl_to_dsl(prompt)
+  src/vdisplay/payloads.py:
+    e: monitors_payload,local_windows_payload,windows_payload,adopted_payload,all_payload
+    monitors_payload(display)
+    local_windows_payload(display)
+    windows_payload(display)
+    adopted_payload(display)
+    all_payload(display)
+  src/vdisplay/cli_handlers.py:
+    e: print_json,monitors_payload,windows_payload,all_payload,screenshot_payload,dispatch_cli
+    print_json(payload)
+    monitors_payload()
+    windows_payload()
+    all_payload()
+    screenshot_payload()
+    dispatch_cli(args)
+  src/vdisplay/commands/io.py:
+    e: print_json
+    print_json(payload)
+  src/vdisplay/commands/all_cmd.py:
+    e: register,handle,register_outputs,handle_outputs
+    register(sub)
+    handle(args)
+    register_outputs(sub)
+    handle_outputs(args)
+  src/vdisplay/commands/screenshot.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/commands/monitors.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/commands/info.py:
+    e: register,handle
+    register(sub)
+    handle(_args)
+  src/vdisplay/commands/diagnose.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/commands/windows.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/backends/base.py:
+    e: BaseBackend
+    BaseBackend: __init__(0),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),as_dict(0)
+  src/vdisplay/backends/mirror_stub.py:
+    e: MirrorStubBackend
+    MirrorStubBackend(BaseBackend): __init__(2),capabilities(0),info(0),screenshot_bytes(0)
+  src/vdisplay/capture/base.py:
+    e: CaptureBackend
+    CaptureBackend(ABC): screenshot_png(0)
+  src/vdisplay/capture/providers/base.py:
+    e: ProviderResult,CaptureProvider
+    ProviderResult:
+    CaptureProvider(Protocol): available(0),capture_full(0),capture_region(1)
+  goal.yaml:
+  tree.txt:
+  prefact.yaml:
+  project.sh:
+  packages/mcp2vdisplay/pyproject.toml:
+  packages/dsl2vdisplay/pyproject.toml:
+  packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/health.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/outputs.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/mirror.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/info.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/screenshot.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema/commands/validate.schema.json:
+  packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py:
+  packages/cli2vdisplay/pyproject.toml:
+  packages/uri2vdisplay/pyproject.toml:
+  packages/rest2vdisplay/pyproject.toml:
+  packages/nlp2vdisplay/pyproject.toml:
+  packages/vdisplay-agent/pyproject.toml:
+  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
+  examples/run_all_examples.sh:
+    e: validate_dir,clean_output
+    validate_dir()
+    clean_output()
+  examples/host-mirror/run.sh:
+    e: _resolve_host_display
+    _resolve_host_display()
+  examples/host-mirror/docker-compose.yml:
+  examples/host-mirror/Dockerfile:
+  examples/host-mirror/output/mirror.png.meta.json:
+  examples/headless-virtual/docker-compose.yml:
+  examples/headless-virtual/Dockerfile:
+  examples/headless-virtual/output/screen.png.meta.json:
+  examples/ci-agent/docker-compose.yml:
+  examples/ci-agent/Dockerfile:
+  examples/ci-agent/output/frame-001.png.meta.json:
+  examples/ci-agent/output/frame-002.png.meta.json:
+  examples/ci-agent/output/frame-000.png.meta.json:
+  examples/host-relay/run.sh:
+    e: _resolve_host_display
+    _resolve_host_display()
+  examples/host-relay/docker-compose.yml:
+  examples/host-relay/run-host.sh:
+  examples/host-relay/Dockerfile:
+  examples/host-relay/output/after_adopt.png.meta.json:
+  examples/host-relay/output/after_release.png.meta.json:
+  examples/host-relay/output/before_automation.png.meta.json:
+  examples/dev-workspace/docker-compose.yml:
+  examples/dev-workspace/Dockerfile:
+  src/vdisplay/exceptions.py:
+    e: VDisplayError,BackendNotAvailableError,CapabilityError
+    VDisplayError(Exception):
+    BackendNotAvailableError(VDisplayError):
+    CapabilityError(VDisplayError):
+  src/vdisplay/__init__.py:
+  src/vdisplay/models.py:
+    e: Capabilities,SessionInfo
+    Capabilities:
+    SessionInfo:
+  src/vdisplay/backends/__init__.py:
+  src/vdisplay/capture/__init__.py:
+  src/vdisplay/capture/providers/__init__.py:
+  src/vdisplay/application/services/__init__.py:
+  src/vdisplay/windows/__init__.py:
+  src/vdisplay/windows/constants.py:
+  src/vdisplay/input/__init__.py:
+  testql-scenarios/generated-cli-tests.testql.toon.yaml:
+  planfile.yaml:
+  pyproject.toml:
+  packages/vdisplay-agent/src/vdisplay_agent/schemas.py:
+  examples/agent-broker/run.sh:
+    e: cleanup
+    cleanup()
+  src/vdisplay/application/__init__.py:
