@@ -60,16 +60,8 @@ class PortalScreenCastSession:
 
         self.session_path = str(payload.get("session_path") or "")
         self.streams = list(payload.get("streams") or [])
-        self.node_ids = [int(node) for node in payload.get("node_ids") or [] if str(node).isdigit()]
-        if not self.node_ids and self.streams:
-            for stream in self.streams:
-                node = stream.get("node_id")
-                if node is not None:
-                    self.node_ids.append(int(node))
-        self.stream_targets = [str(item) for item in payload.get("stream_targets") or []]
-        if not self.stream_targets and self.streams:
-            for stream in self.streams:
-                self.stream_targets.append(_stream_target(int(stream["node_id"]), stream.get("properties") or {}))
+        self.node_ids = self._parse_node_ids(payload)
+        self.stream_targets = self._parse_stream_targets(payload)
         fd = payload.get("pipewire_fd")
         self.pipewire_fd = int(fd) if fd is not None else None
         self.active = True
@@ -82,6 +74,22 @@ class PortalScreenCastSession:
             "source": self.source,
             "has_pipewire_fd": bool(self.session_path),
         }
+
+    def _parse_node_ids(self, payload: dict[str, Any]) -> list[int]:
+        node_ids = [int(n) for n in payload.get("node_ids") or [] if str(n).isdigit()]
+        if not node_ids and self.streams:
+            for stream in self.streams:
+                node = stream.get("node_id")
+                if node is not None:
+                    node_ids.append(int(node))
+        return node_ids
+
+    def _parse_stream_targets(self, payload: dict[str, Any]) -> list[str]:
+        targets = [str(item) for item in payload.get("stream_targets") or []]
+        if not targets and self.streams:
+            for stream in self.streams:
+                targets.append(_stream_target(int(stream["node_id"]), stream.get("properties") or {}))
+        return targets
 
     def status(self) -> dict[str, Any]:
         return {

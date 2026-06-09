@@ -73,42 +73,32 @@ def _config_from_args(args: argparse.Namespace) -> SamplerConfig:
 
 def handle(args: argparse.Namespace) -> int:
     url = resolve_agent_url(allow_auto=True)
-
     if args.action == "stop":
-        if not url:
-            raise SystemExit("agent not running — nothing to stop")
-        print_json(AgentClient(url).sampler_stop())
-        return 0
-
+        return _handle_stop(url)
     if args.action == "status":
-        if not url:
-            print_json({"ok": True, "running": False, "agent_url": None})
-            return 0
-        print_json(AgentClient(url).sampler_status())
-        return 0
+        return _handle_status(url)
+    return _handle_start(args, url)
 
+
+def _handle_stop(url: str | None) -> int:
+    if not url:
+        raise SystemExit("agent not running — nothing to stop")
+    print_json(AgentClient(url).sampler_stop())
+    return 0
+
+
+def _handle_status(url: str | None) -> int:
+    if not url:
+        print_json({"ok": True, "running": False, "agent_url": None})
+        return 0
+    print_json(AgentClient(url).sampler_status())
+    return 0
+
+
+def _handle_start(args: argparse.Namespace, url: str | None) -> int:
     config = _config_from_args(args)
-    use_agent = url is not None and not args.local_only
-
-    if use_agent:
-        result = start_sampler_via_agent(AgentClient(url), config)
-        print_json(result)
-        if args.wait:
-            client = AgentClient(url)
-            seen = 0
-            while True:
-                st = client.sampler_status()
-                if not st.get("running"):
-                    print_json(st)
-                    break
-                saved = int(st.get("frames_saved") or 0)
-                if args.progress and saved > seen:
-                    for frame in st.get("recent_frames") or []:
-                        if int(frame.get("frame_index", -1)) >= seen:
-                            print(json.dumps(frame), flush=True)
-                    seen = saved
-                time.sleep(max(0.1, config.interval_s / 2))
-        return 0
+    if url is not None and not args.local_only:
+        return _start_agent(args, url, config)
 
     def on_frame(meta: dict) -> None:
         if args.progress:
@@ -116,3 +106,27 @@ def handle(args: argparse.Namespace) -> int:
 
     print_json(run_sampler(config, on_frame=on_frame if args.progress else None))
     return 0
+
+
+def _start_agent(args: argparse.Namespace, url: str, config: SamplerConfig) -> int:
+    client = AgentClient(url)
+    print_json(start_sampler_via_agent(client, config))
+    if args.wait:
+        _wait_for_sampler(client, args.progress, config.interval_s)
+    return 0
+
+
+def _wait_for_sampler(client: AgentClient, progress: bool, interval_s: float) -> None:
+    seen = 0
+    while True:
+        st = client.sampler_status()
+        if not st.get("running"):
+            print_json(st)
+            break
+        saved = int(st.get("frames_saved") or 0)
+        if progress and saved > seen:
+            for frame in st.get("recent_frames") or []:
+                if int(frame.get("frame_index", -1)) >= seen:
+                    print(json.dumps(frame), flush=True)
+            seen = saved
+        time.sleep(max(0.1, interval_s / 2))

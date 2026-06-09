@@ -166,6 +166,40 @@ def _release(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
     )
 
 
+def _diagnose_control(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    return _strip_ok(client.diagnose_control(display=cmd.display))
+
+
+def _controls_list(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from .control import control_request_body
+
+    return _strip_ok(client.list_controls(control_request_body(cmd)))
+
+
+def _controls_find(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from .control import control_request_body
+
+    return _strip_ok(client.find_controls(control_request_body(cmd)))
+
+
+def _control_click(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from .control import control_request_body
+
+    return _strip_ok(client.invoke_control(control_request_body(cmd)))
+
+
+def _control_focus(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from .control import control_request_body
+
+    return _strip_ok(client.focus_control(control_request_body(cmd)))
+
+
+def _control_set_value(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    from .control import control_request_body
+
+    return _strip_ok(client.set_control_value(control_request_body(cmd)))
+
+
 _AGENT_HANDLERS: dict[CommandVerb, AgentHandler] = {
     CommandVerb.HEALTH: _health,
     CommandVerb.INFO: _info,
@@ -180,6 +214,12 @@ _AGENT_HANDLERS: dict[CommandVerb, AgentHandler] = {
     CommandVerb.MIRROR: _mirror,
     CommandVerb.ADOPT: _adopt,
     CommandVerb.RELEASE: _release,
+    CommandVerb.DIAGNOSE_CONTROL: _diagnose_control,
+    CommandVerb.CONTROLS_LIST: _controls_list,
+    CommandVerb.CONTROLS_FIND: _controls_find,
+    CommandVerb.CONTROL_CLICK: _control_click,
+    CommandVerb.CONTROL_FOCUS: _control_focus,
+    CommandVerb.CONTROL_SET_VALUE: _control_set_value,
 }
 
 

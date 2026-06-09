@@ -15,6 +15,7 @@ ACTION_WINDOWS: Final = "windows"
 ACTION_VIRTUAL_START: Final = "virtual_start"
 ACTION_MIRROR_START: Final = "mirror_start"
 ACTION_RELAY_START: Final = "relay_start"
+ACTION_TERMINAL_START: Final = "terminal_start"
 ACTION_SCREENCAST_START: Final = "screencast_start"
 ACTION_SCREENCAST_STOP: Final = "screencast_stop"
 ACTION_SCREENCAST_STATUS: Final = "screencast_status"
@@ -45,6 +46,7 @@ AGENT_ROUTES: Final = {
     "POST /session/virtual/start": ACTION_VIRTUAL_START,
     "POST /session/mirror/start": ACTION_MIRROR_START,
     "POST /session/relay/start": ACTION_RELAY_START,
+    "POST /session/terminal/open": ACTION_TERMINAL_START,
     "POST /session/screencast/start": ACTION_SCREENCAST_START,
     "POST /session/screencast/stop": ACTION_SCREENCAST_STOP,
     "GET /session/screencast/status": ACTION_SCREENCAST_STATUS,

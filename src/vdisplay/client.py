@@ -15,6 +15,46 @@ from .application.errors import ApplicationError, ErrorCode, error_from_exceptio
 from .exceptions import VDisplayError
 
 
+def _route_outputs_query(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
+    """Route MONITORS/OUTPUTS commands."""
+    query: list[str] = []
+    if cmd.display:
+        query.append(f"display={cmd.display}")
+    if not cmd.include_all:
+        query.append("include_all=false")
+    suffix = f"?{'&'.join(query)}" if query else ""
+    return "GET", f"/outputs{suffix}", None
+
+
+def _route_windows_query(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
+    """Route WINDOWS command with query parameters."""
+    params = {
+        "display": cmd.display,
+        "include_all": str(cmd.include_all).lower(),
+        "match_class": cmd.match_class,
+        "match_pid": cmd.match_pid,
+        "match_app": cmd.match_app,
+        "min_width": cmd.min_width or None,
+        "min_height": cmd.min_height or None,
+    }
+    query = [f"{key}={value}" for key, value in params.items() if value is not None]
+    suffix = f"?{'&'.join(query)}" if query else ""
+    return "GET", f"/windows{suffix}", None
+
+
+def _route_control_command(verb: CommandVerb, body: dict[str, Any]) -> tuple[str, str, dict[str, Any] | None]:
+    """Route control-related commands."""
+    if verb == CommandVerb.CONTROLS_LIST:
+        return "POST", "/controls/list", body
+    if verb == CommandVerb.CONTROLS_FIND:
+        return "POST", "/controls/find", body
+    if verb == CommandVerb.CONTROL_CLICK:
+        return "POST", "/control/invoke", body
+    if verb == CommandVerb.CONTROL_FOCUS:
+        return "POST", "/control/focus", body
+    return "POST", "/control/set-value", body
+
+
 def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
     """Map CommandRequest to broker HTTP (method, path, body)."""
     verb = cmd.verb
@@ -23,32 +63,29 @@ def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None
     if verb == CommandVerb.CAPABILITIES:
         return "GET", "/capabilities", None
     if verb in {CommandVerb.MONITORS, CommandVerb.OUTPUTS}:
-        query: list[str] = []
-        if cmd.display:
-            query.append(f"display={cmd.display}")
-        if not cmd.include_all:
-            query.append("include_all=false")
-        suffix = f"?{'&'.join(query)}" if query else ""
-        return "GET", f"/outputs{suffix}", None
+        return _route_outputs_query(cmd)
     if verb == CommandVerb.WINDOWS:
-        params = {
-            "display": cmd.display,
-            "include_all": str(cmd.include_all).lower(),
-            "match_class": cmd.match_class,
-            "match_pid": cmd.match_pid,
-            "match_app": cmd.match_app,
-            "min_width": cmd.min_width or None,
-            "min_height": cmd.min_height or None,
-        }
-        query = [f"{key}={value}" for key, value in params.items() if value is not None]
-        suffix = f"?{'&'.join(query)}" if query else ""
-        return "GET", f"/windows{suffix}", None
+        return _route_windows_query(cmd)
     if verb == CommandVerb.VIRTUAL_START:
         return (
             "POST",
             "/session/virtual/start",
             {"width": cmd.width, "height": cmd.height, "display": cmd.vd_display},
         )
+    if verb == CommandVerb.DIAGNOSE_CONTROL:
+        suffix = f"?display={cmd.display}" if cmd.display else ""
+        return "GET", f"/diagnostics/control{suffix}", None
+    if verb in {
+        CommandVerb.CONTROLS_LIST,
+        CommandVerb.CONTROLS_FIND,
+        CommandVerb.CONTROL_CLICK,
+        CommandVerb.CONTROL_FOCUS,
+        CommandVerb.CONTROL_SET_VALUE,
+    }:
+        from .application.handlers.control import control_request_body
+
+        body = control_request_body(cmd)
+        return _route_control_command(verb, body)
     raise VDisplayError(f"agent request has no direct route for verb: {verb.value}")
 
 

@@ -1,0 +1,17 @@
+{
+  "$id": "dsl2vdisplay/commands/controls_list",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "CONTROLS_LIST" },
+    "display": { "type": "string" },
+    "app": { "type": "string" },
+    "window_title": { "type": "string" },
+    "window_id": { "type": "string" },
+    "control_backend": { "type": "string" },
+    "max_depth": { "type": "integer" },
+    "format": { "type": "string" },
+    "session_id": { "type": "string" }
+  },
+  "additionalProperties": false
+}

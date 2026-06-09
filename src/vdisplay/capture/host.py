@@ -239,6 +239,66 @@ def _capture_all_from_screencast(
     return captures, warnings
 
 
+def _try_screencast_capture(screencast_session, region, errors) -> tuple[bytes, dict[str, Any]] | None:
+    try:
+        from .portal_screencast import get_active_screencast
+        from .linux_xwd import _is_wayland_session
+
+        session = screencast_session or get_active_screencast()
+        if session is None or not session.is_ready:
+            hint = "vdisplay agent screencast start"
+            if _is_wayland_session():
+                hint = "vdisplay-agent serve, then vdisplay agent screencast start (or export VDISPLAY_AGENT_URL=http://127.0.0.1:8765)"
+            errors.append(f"portal-screencast: no active session (run: {hint})")
+            return None
+        png = session.capture_png()
+        crop_region = region
+        if crop_region is not None:
+            cropped = _crop_png(png, crop_region)
+            if not is_blank_png(cropped):
+                png = cropped
+            else:
+                crop_region = None
+        if is_blank_png(png):
+            from .portal_screencast import invalidate_screencast_session
+            invalidate_screencast_session(session)
+            errors.append("portal-screencast: blank frame (stale ScreenCast — run: vdisplay agent screencast start)")
+            return None
+        extra = {"method": "portal-screencast", "screencast_nodes": session.node_ids}
+        if crop_region is not None:
+            extra["region"] = {
+                "x": crop_region[0], "y": crop_region[1], 
+                "width": crop_region[2], "height": crop_region[3]
+            }
+        else:
+            extra["screencast_full_frame"] = True
+        return png, extra
+    except VDisplayError as exc:
+        errors.append(f"portal-screencast: {exc}")
+        return None
+
+def _try_mirror_capture(monitors, source_name, target, resolved, errors) -> tuple[bytes, dict[str, Any]] | None:
+    if len(monitors) < 2:
+        return None
+    try:
+        from ..api import MirrorSession
+
+        session = MirrorSession.create(source=source_name, target=target, display=resolved)
+        session.start()
+        try:
+            png = session.screenshot_bytes()
+            if is_blank_png(png):
+                errors.append("mirror: blank frame")
+                return None
+            info = session.info()
+            return png, {"method": "mirror", "target": info.get("target") or target, "session": info}
+        finally:
+            session.stop()
+    except (VDisplayError, BackendNotAvailableError) as exc:
+        errors.append(f"mirror: {exc}")
+        return None
+
+
 def capture_host_png(
     *,
     monitor: int = 1,
@@ -249,76 +309,17 @@ def capture_host_png(
     screencast_session=None,
     region: tuple[int, int, int, int] | None = None,
 ) -> tuple[bytes, dict[str, Any]]:
-    """
-    Capture host desktop via driver-level providers, optionally via mirror session.
-
-    Provider order: active portal ScreenCast session → DRM → fbdev → mss (XCB) → x11 (scrot/xwd).
-    Portal screenshot is opt-in only (VDISPLAY_CAPTURE_ALLOW_PORTAL=1).
-    """
     resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
     source_name = _monitor_source_name(resolved, monitor, source or "primary")
     monitors = list_monitors(resolved)
     meta: dict[str, Any] = {
-        "display": resolved,
-        "source": source_name,
-        "monitor": monitor,
-        "method": "",
-        "target": target,
+        "display": resolved, "source": source_name, "monitor": monitor, 
+        "method": "", "target": target
     }
     errors: list[str] = []
-    if region is None:
-        region = _monitor_capture_region(resolved, source_name)
+    region = region or _monitor_capture_region(resolved, source_name)
 
-    def _try_screencast() -> tuple[bytes, dict[str, Any]] | None:
-        try:
-            from .portal_screencast import get_active_screencast
-            from .linux_xwd import _is_wayland_session
-
-            session = screencast_session
-            if session is None:
-                session = get_active_screencast()
-            if session is None or not session.is_ready:
-                hint = "vdisplay agent screencast start"
-                if _is_wayland_session():
-                    hint = (
-                        "vdisplay-agent serve, then vdisplay agent screencast start "
-                        "(or export VDISPLAY_AGENT_URL=http://127.0.0.1:8765)"
-                    )
-                errors.append(f"portal-screencast: no active session (run: {hint})")
-                return None
-            png = session.capture_png()
-            crop_region = region
-            if crop_region is not None:
-                cropped = _crop_png(png, crop_region)
-                if not is_blank_png(cropped):
-                    png = cropped
-                else:
-                    crop_region = None
-            if is_blank_png(png):
-                from .portal_screencast import invalidate_screencast_session
-
-                invalidate_screencast_session(session)
-                errors.append(
-                    "portal-screencast: blank frame (stale ScreenCast — "
-                    "run: vdisplay agent screencast start)"
-                )
-                return None
-            extra = {"method": "portal-screencast", "screencast_nodes": session.node_ids}
-            if crop_region is not None:
-                extra["region"] = {
-                    "x": crop_region[0],
-                    "y": crop_region[1],
-                    "width": crop_region[2],
-                    "height": crop_region[3],
-                }
-            else:
-                extra["screencast_full_frame"] = True
-            return png, extra
-        except VDisplayError as exc:
-            errors.append(f"portal-screencast: {exc}")
-            return None
-
-    screencast_hit = _try_screencast()
+    screencast_hit = _try_screencast_capture(screencast_session, region, errors)
     if screencast_hit is not None:
         png, extra = screencast_hit
         meta.update(extra)
@@ -327,38 +328,8 @@ def capture_host_png(
     if _wayland_host_session(resolved):
         raise VDisplayError(_host_capture_error(resolved, source_name, errors))
 
-    def _try_mirror() -> tuple[bytes, dict[str, Any]] | None:
-        if len(monitors) < 2:
-            return None
-        try:
-            from ..api import MirrorSession
-
-            session = MirrorSession.create(
-                source=source_name,
-                target=target,
-                display=resolved,
-            )
-            session.start()
-            try:
-                png = session.screenshot_bytes()
-                if is_blank_png(png):
-                    errors.append("mirror: blank frame")
-                    return None
-                info = session.info()
-                mirror_meta = {
-                    "method": "mirror",
-                    "target": info.get("target") or target,
-                    "session": info,
-                }
-                return png, mirror_meta
-            finally:
-                session.stop()
-        except (VDisplayError, BackendNotAvailableError) as exc:
-            errors.append(f"mirror: {exc}")
-            return None
-
     if prefer_mirror:
-        mirror_hit = _try_mirror()
+        mirror_hit = _try_mirror_capture(monitors, source_name, target, resolved, errors)
         if mirror_hit is not None:
             png, extra = mirror_hit
             meta.update(extra)
@@ -370,10 +341,7 @@ def capture_host_png(
             if not is_blank_png(png):
                 meta["method"] = "monitor-region"
                 meta["region"] = {
-                    "x": region[0],
-                    "y": region[1],
-                    "width": region[2],
-                    "height": region[3],
+                    "x": region[0], "y": region[1], "width": region[2], "height": region[3]
                 }
                 return png, meta
             errors.append("monitor-region: blank frame")
@@ -390,7 +358,7 @@ def capture_host_png(
         errors.append(f"full-display: {exc}")
 
     if not prefer_mirror:
-        mirror_hit = _try_mirror()
+        mirror_hit = _try_mirror_capture(monitors, source_name, target, resolved, errors)
         if mirror_hit is not None:
             png, extra = mirror_hit
             meta.update(extra)
@@ -461,6 +429,66 @@ def capture_host_to_file(
     return meta
 
 
+def _capture_individual_monitors(
+    monitors: list[dict[str, Any]], resolved: str, output_dir: Path | None, 
+    target: str | None, method: str, prefer_mirror: bool, screencast_session
+) -> list[dict[str, Any]]:
+    captures: list[dict[str, Any]] = []
+    for index, monitor in enumerate(monitors, start=1):
+        name = str(monitor.get("name") or f"monitor-{index}")
+        if output_dir is not None:
+            meta = capture_host_to_file(
+                output_dir / f"{name}.png", monitor=index, display=resolved,
+                source=name, target=target, prefer_mirror=prefer_mirror,
+                screencast_session=screencast_session
+            )
+        else:
+            png, meta = capture_host_png(
+                monitor=index, display=resolved, source=name,
+                target=target, prefer_mirror=prefer_mirror,
+                screencast_session=screencast_session
+            )
+            meta = dict(meta)
+            meta["bytes"] = len(png)
+            
+        meta["monitor_index"] = index
+        meta["monitor_name"] = name
+        meta["method_requested"] = method
+        captures.append(meta)
+    return captures
+
+
+def _try_bulk_capture(
+    resolved: str, monitors: list[dict[str, Any]], output_dir: Path | None,
+    method: str, prefer_mirror: bool, screencast_session
+) -> tuple[list[dict[str, Any]], list[str]] | None:
+    if output_dir is None or prefer_mirror:
+        return None
+        
+    warnings: list[str] = []
+    if screencast_session is not None and screencast_session.is_ready:
+        bulk_sc = _capture_all_from_screencast(resolved, monitors, output_dir, screencast_session)
+        if bulk_sc is not None:
+            captures, warnings = bulk_sc
+            for item in captures:
+                item["method_requested"] = method
+            return captures, warnings
+            
+    if screencast_session is None or not screencast_session.is_ready:
+        if _wayland_host_session(resolved):
+            raise VDisplayError(
+                "Wayland host capture requires an active ScreenCast session — "
+                "run: vdisplay agent serve, then vdisplay agent screencast start"
+            )
+        bulk = _capture_all_from_driver_full(resolved, monitors, output_dir)
+        if bulk is not None:
+            for item in bulk:
+                item["method_requested"] = method
+            return bulk, warnings
+            
+    return None
+
+
 def capture_all_monitors(
     *,
     display: str | None = None,
@@ -470,7 +498,6 @@ def capture_all_monitors(
     prefer_mirror: bool = False,
     screencast_session=None,
 ) -> dict[str, Any]:
-    """Capture each connected monitor (mirror per output when prefer_mirror)."""
     resolved = resolve_host_display(display or os.environ.get("DISPLAY"))
     monitors = list_monitors(resolved)
     if not monitors:
@@ -479,65 +506,19 @@ def capture_all_monitors(
     if screencast_session is None:
         try:
             from .portal_screencast import get_active_screencast
-
             screencast_session = get_active_screencast()
         except Exception:
             screencast_session = None
 
-    warnings: list[str] = []
     output_dir = Path(out_dir).expanduser() if out_dir else None
     if output_dir is not None:
         output_dir.mkdir(parents=True, exist_ok=True)
-        if not prefer_mirror and screencast_session is not None and screencast_session.is_ready:
-            bulk_sc = _capture_all_from_screencast(
-                resolved,
-                monitors,
-                output_dir,
-                screencast_session,
-            )
-            if bulk_sc is not None:
-                captures, warnings = bulk_sc
-                for item in captures:
-                    item["method_requested"] = method
-                return {"captures": captures, "warnings": warnings, "count": len(captures)}
-        if not prefer_mirror and (screencast_session is None or not screencast_session.is_ready):
-            if _wayland_host_session(resolved):
-                raise VDisplayError(
-                    "Wayland host capture requires an active ScreenCast session — "
-                    "run: vdisplay agent serve, then vdisplay agent screencast start"
-                )
-            bulk = _capture_all_from_driver_full(resolved, monitors, output_dir)
-            if bulk is not None:
-                for item in bulk:
-                    item["method_requested"] = method
-                return {"captures": bulk, "warnings": warnings, "count": len(bulk)}
+        
+    bulk_result = _try_bulk_capture(resolved, monitors, output_dir, method, prefer_mirror, screencast_session)
+    if bulk_result is not None:
+        return {"captures": bulk_result[0], "warnings": bulk_result[1], "count": len(bulk_result[0])}
 
-    captures: list[dict[str, Any]] = []
-    for index, monitor in enumerate(monitors, start=1):
-        name = str(monitor.get("name") or f"monitor-{index}")
-        if output_dir is not None:
-            meta = capture_host_to_file(
-                output_dir / f"{name}.png",
-                monitor=index,
-                display=resolved,
-                source=name,
-                target=target,
-                prefer_mirror=prefer_mirror,
-                screencast_session=screencast_session,
-            )
-        else:
-            png, meta = capture_host_png(
-                monitor=index,
-                display=resolved,
-                source=name,
-                target=target,
-                prefer_mirror=prefer_mirror,
-                screencast_session=screencast_session,
-            )
-            meta = dict(meta)
-            meta["bytes"] = len(png)
-        meta["monitor_index"] = index
-        meta["monitor_name"] = name
-        meta["method_requested"] = method
-        captures.append(meta)
-    return {"captures": captures, "warnings": warnings, "count": len(captures)}
+    captures = _capture_individual_monitors(
+        monitors, resolved, output_dir, target, method, prefer_mirror, screencast_session
+    )
+    return {"captures": captures, "warnings": [], "count": len(captures)}

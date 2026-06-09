@@ -7,7 +7,7 @@ from typing import Any
 from vdisplay import MirrorSession, VirtualDisplaySession, WindowRelaySession
 from vdisplay.exceptions import VDisplayError
 
-from ..session_store import SessionStore
+from ..session_store import SessionRecord, SessionStore
 
 
 def _session_started(record, *, mode: str) -> dict[str, Any]:
@@ -93,10 +93,52 @@ def screencast_status(store: SessionStore) -> dict[str, Any]:
     return {"ok": True, **session.status()}
 
 
+def start_terminal(
+    store: SessionStore,
+    *,
+    command: str | None = None,
+    session_id: str | None = None,
+    rows: int = 24,
+    cols: int = 80,
+    lines: list[str] | None = None,
+    title: str | None = None,
+) -> dict[str, Any]:
+    from vdisplay.control.providers.terminal_session import default_registry
+
+    registry = default_registry()
+    if command:
+        session = registry.open_process(command, session_id=session_id, rows=rows, cols=cols, title=title)
+    else:
+        session = registry.open_mock(
+            session_id=session_id,
+            lines=lines or ["READY"],
+            rows=rows,
+            cols=cols,
+            title=title,
+        )
+    record = SessionRecord(
+        session_id=session.session_id,
+        kind="terminal",
+        handle=session,
+    )
+    store.sessions[session.session_id] = record
+    return {
+        "ok": True,
+        "session_id": session.session_id,
+        "mode": "terminal",
+        "command": session.command,
+        "title": session.title,
+        "rows": rows,
+        "cols": cols,
+    }
+
+
 def stop_session(store: SessionStore, session_id: str) -> dict[str, Any]:
     record = store.pop(session_id)
     if record.kind == "relay" and record.handle is store.relay:
         store.clear_relay()
+    elif record.kind == "terminal":
+        record.handle.close()
     else:
         record.handle.stop()
     return {"ok": True, "session_id": session_id, "stopped": True}

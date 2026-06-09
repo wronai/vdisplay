@@ -12,13 +12,16 @@ from typing import Any
 
 from ...exceptions import VDisplayError
 from ..base import ControlProvider
-from ..models import ControlBounds, ControlNode, ControlRole, ControlSnapshot
+from ..models import ControlAction, ControlActionKind, ControlBounds, ControlNode, ControlRole, ControlSnapshot, ElementCapabilities
 from ..selector import ControlSelector, find_matches
 
 _ROLE_MAP = {
     "push button": ControlRole.BUTTON,
+    "button": ControlRole.BUTTON,
+    "toggle button": ControlRole.BUTTON,
     "entry": ControlRole.INPUT,
     "text": ControlRole.INPUT,
+    "label": ControlRole.LABEL,
 }
 
 
@@ -48,7 +51,7 @@ def _vdisplay_src_path() -> Path:
     return root.parent if root.name == "vdisplay" and (root.parent / "vdisplay").is_dir() else root
 
 
-def _run_subprocess(payload: dict[str, Any]) -> dict[str, Any]:
+def _run_subprocess(payload: dict[str, Any], *, timeout_s: float = 60) -> dict[str, Any]:
     src_path = _vdisplay_src_path()
     env = os.environ.copy()
     env["PYTHONPATH"] = str(src_path) + os.pathsep + env.get("PYTHONPATH", "")
@@ -66,7 +69,7 @@ except Exception as exc:
         [_system_python(), "-c", script, json.dumps(payload)],
         capture_output=True,
         text=True,
-        timeout=60,
+        timeout=timeout_s,
         check=False,
         env=env,
     )
@@ -80,6 +83,24 @@ except Exception as exc:
     return result
 
 
+def _actions_from_dict(raw_actions: list[dict[str, Any]] | None) -> list[ControlAction]:
+    actions: list[ControlAction] = []
+    for item in raw_actions or []:
+        kind = item.get("kind", ControlActionKind.INVOKE.value)
+        try:
+            action_kind = ControlActionKind(kind)
+        except ValueError:
+            action_kind = ControlActionKind.INVOKE
+        actions.append(
+            ControlAction(
+                kind=action_kind,
+                name=item.get("name"),
+                description=item.get("description"),
+            )
+        )
+    return actions
+
+
 def _snapshot_from_dict(data: dict[str, Any]) -> ControlSnapshot:
     nodes: dict[str, ControlNode] = {}
     for node_id, raw in (data.get("nodes") or {}).items():
@@ -87,6 +108,9 @@ def _snapshot_from_dict(data: dict[str, Any]) -> ControlSnapshot:
         if raw.get("bounds"):
             b = raw["bounds"]
             bounds = ControlBounds(int(b["x"]), int(b["y"]), int(b["width"]), int(b["height"]))
+        capabilities = None
+        if raw.get("capabilities"):
+            capabilities = ElementCapabilities.from_dict(raw["capabilities"])
         nodes[node_id] = ControlNode(
             id=raw["id"],
             backend=raw.get("backend", "atspi"),
@@ -96,7 +120,11 @@ def _snapshot_from_dict(data: dict[str, Any]) -> ControlSnapshot:
             bounds=bounds,
             window_id=raw.get("window_id"),
             app_label=raw.get("app_label"),
+            window_title=raw.get("window_title"),
+            provider_ref=raw.get("provider_ref"),
             state=raw.get("state") or {},
+            actions=_actions_from_dict(raw.get("actions")),
+            capabilities=capabilities,
             text_value=raw.get("text_value"),
             parent_id=raw.get("parent_id"),
             children_ids=list(raw.get("children_ids") or []),
@@ -127,9 +155,34 @@ class AtspiControlProvider(ControlProvider):
             except Exception as exc:
                 return False, str(exc)
         try:
-            result = _run_subprocess({"op": "available"})
+            result = _run_subprocess({"op": "available"}, timeout_s=10)
             return True, str(result.get("reason") or "AT-SPI2 bus active (system python)")
         except VDisplayError as exc:
+            return False, str(exc)
+
+    def probe_integration(self, *, timeout_s: float = 8.0) -> tuple[bool, str]:
+        """Verify AT-SPI can return a shallow accessibility snapshot."""
+        ready, reason = self.available()
+        if not ready:
+            return False, reason
+        try:
+            if not self._use_subprocess:
+                from .atspi_impl import snapshot_dict
+
+                snapshot = snapshot_dict(max_depth=1)
+            else:
+                result = _run_subprocess(
+                    {"op": "snapshot", "params": {"max_depth": 1}},
+                    timeout_s=timeout_s,
+                )
+                snapshot = result.get("snapshot") or {}
+            nodes = snapshot.get("nodes") or {}
+            if nodes:
+                return True, "AT-SPI snapshot probe ok"
+            return False, "AT-SPI snapshot probe returned no nodes"
+        except VDisplayError as exc:
+            return False, str(exc)
+        except Exception as exc:
             return False, str(exc)
 
     def snapshot(

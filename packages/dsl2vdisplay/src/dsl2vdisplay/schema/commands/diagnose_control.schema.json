@@ -1,0 +1,10 @@
+{
+  "$id": "dsl2vdisplay/commands/diagnose_control",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "DIAGNOSE_CONTROL" },
+    "display": { "type": "string" }
+  },
+  "additionalProperties": false
+}

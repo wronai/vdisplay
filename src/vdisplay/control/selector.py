@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass, field, replace
+from typing import Any
 
 from .models import ControlNode, ControlRole
 
 
 @dataclass(frozen=True)
 class ControlSelector:
+    """Unified selector for desktop, browser, terminal, and vision backends."""
+
     role: str | None = None
     name: str | None = None
     name_contains: str | None = None
@@ -17,9 +20,26 @@ class ControlSelector:
     window_id: str | None = None
     window_title: str | None = None
     index: int = 0
+    backend: str | None = None
+    environment: str | None = None
+    text: str | None = None
+    text_contains: str | None = None
+    value: str | None = None
+    accessibility_id: str | None = None
+    path: str | None = None
+    dom_css: str | None = None
+    dom_xpath: str | None = None
+    terminal_line: int | None = None
+    terminal_col: int | None = None
+    session_id: str | None = None
+    vision_anchor: str | None = None
+    extra: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
     def from_dict(cls, payload: dict) -> ControlSelector:
+        known = {f.name for f in cls.__dataclass_fields__.values()}  # type: ignore[attr-defined]
+        extra = dict(payload.get("extra") or {})
+        extra.update({k: v for k, v in payload.items() if k not in known})
         return cls(
             role=payload.get("role"),
             name=payload.get("name"),
@@ -28,7 +48,58 @@ class ControlSelector:
             window_id=payload.get("window_id"),
             window_title=payload.get("window_title"),
             index=int(payload.get("index") or 0),
+            backend=payload.get("backend"),
+            environment=payload.get("environment"),
+            text=payload.get("text"),
+            text_contains=payload.get("text_contains"),
+            value=payload.get("value"),
+            accessibility_id=payload.get("accessibility_id"),
+            path=payload.get("path"),
+            dom_css=payload.get("dom_css"),
+            dom_xpath=payload.get("dom_xpath"),
+            terminal_line=payload.get("terminal_line"),
+            terminal_col=payload.get("terminal_col"),
+            session_id=payload.get("session_id"),
+            vision_anchor=payload.get("vision_anchor"),
+            extra=extra,
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        extra = payload.pop("extra", None) or {}
+        result = {key: value for key, value in payload.items() if value is not None and value != ""}
+        if extra:
+            result["extra"] = extra
+        return result
+
+    def active_fields(self) -> set[str]:
+        """Return selector dimensions set for the current target environment."""
+        fields = {
+            key for key, value in self.to_dict().items()
+            if key not in {"index", "extra"} and value is not None and value != ""
+        }
+        if self.index:
+            fields.add("index")
+
+        env_map = {
+            "browser": ("dom_css", "dom_xpath", "text", "text_contains", "role", "name"),
+            "terminal": ("terminal_line", "terminal_col", "session_id", "text", "text_contains"),
+            "vision": ("vision_anchor", "text", "text_contains"),
+        }
+        
+        env_match = self.environment
+        if not env_match:
+            if self.dom_css or self.dom_xpath:
+                env_match = "browser"
+            elif self.terminal_line is not None:
+                env_match = "terminal"
+            elif self.vision_anchor:
+                env_match = "vision"
+                
+        if env_match in env_map:
+            return fields | {k for k in env_map[env_match] if getattr(self, k, None)}
+            
+        return fields
 
 
 def _normalize(value: str | None) -> str:
@@ -42,6 +113,28 @@ def _role_matches(node: ControlNode, role: str | None) -> bool:
     return node.role.value == wanted or _normalize(node.role.name) == wanted
 
 
+def _app_matches(node: ControlNode, app: str | None) -> bool:
+    if not app:
+        return True
+    needle = _normalize(app)
+    if needle in _normalize(node.app_label):
+        return True
+    if needle in _normalize(node.window_title):
+        return True
+    return False
+
+
+def _window_title_matches(node: ControlNode, window_title: str | None) -> bool:
+    if not window_title:
+        return True
+    needle = _normalize(window_title)
+    if needle in _normalize(node.window_title):
+        return True
+    if node.role == ControlRole.WINDOW and needle in _normalize(node.name):
+        return True
+    return False
+
+
 def _name_matches(node: ControlNode, *, exact: str | None, contains: str | None) -> bool:
     node_name = _normalize(node.name)
     if exact is not None and node_name != _normalize(exact):
@@ -51,16 +144,52 @@ def _name_matches(node: ControlNode, *, exact: str | None, contains: str | None)
     return True
 
 
+def _text_matches(node: ControlNode, *, exact: str | None, contains: str | None) -> bool:
+    if exact is None and contains is None:
+        return True
+    text = _normalize(node.text_value or node.name)
+    if exact is not None and text != _normalize(exact):
+        return False
+    if contains is not None and _normalize(contains) not in text:
+        return False
+    return True
+
+
+def _terminal_line_matches(node: ControlNode, line: int | None) -> bool:
+    if line is None:
+        return True
+    node_line = node.state.get("terminal_line")
+    if node_line is None:
+        return False
+    return int(node_line) == int(line)
+
+
+def _terminal_col_matches(node: ControlNode, col: int | None) -> bool:
+    if col is None:
+        return True
+    node_col = node.state.get("terminal_col")
+    if node_col is None:
+        return True
+    return int(node_col) == int(col)
+
+
 def _score(node: ControlNode, selector: ControlSelector) -> int:
     score = 0
-    if selector.role and node.role.value == _normalize(selector.role):
-        score += 40
-    if selector.name and _normalize(node.name) == _normalize(selector.name):
-        score += 50
-    if selector.name_contains and _normalize(selector.name_contains) in _normalize(node.name or ""):
-        score += 20
-    if selector.app and _normalize(node.app_label) == _normalize(selector.app):
-        score += 10
+    def _add_if(cond, check_fn, points):
+        if cond and check_fn():
+            return points
+        return 0
+
+    score += _add_if(selector.role, lambda: node.role.value == _normalize(selector.role), 40)
+    score += _add_if(selector.name, lambda: _normalize(node.name) == _normalize(selector.name), 50)
+    score += _add_if(selector.name_contains, lambda: _normalize(selector.name_contains) in _normalize(node.name or ""), 20)
+    score += _add_if(selector.app, lambda: _app_matches(node, selector.app), 10)
+    score += _add_if(selector.window_title, lambda: _window_title_matches(node, selector.window_title), 15)
+    score += _add_if(selector.text, lambda: _normalize(node.text_value or node.name) == _normalize(selector.text), 25)
+    score += _add_if(selector.terminal_line, lambda: node.state.get("terminal_line") == selector.terminal_line, 35)
+    score += _add_if(selector.terminal_col, lambda: node.state.get("terminal_col") == selector.terminal_col, 20)
+    score += _add_if(selector.accessibility_id, lambda: selector.accessibility_id == node.provider_ref, 60)
+
     if node.bounds is not None and node.bounds.width > 0 and node.bounds.height > 0:
         score += 5
     return score
@@ -73,11 +202,19 @@ def find_matches(nodes: dict[str, ControlNode], selector: ControlSelector) -> li
             continue
         if not _name_matches(node, exact=selector.name, contains=selector.name_contains):
             continue
-        if selector.app and _normalize(node.app_label) != _normalize(selector.app):
+        if not _text_matches(node, exact=selector.text, contains=selector.text_contains):
+            continue
+        if selector.accessibility_id and selector.accessibility_id != node.provider_ref:
+            continue
+        if not _app_matches(node, selector.app):
             continue
         if selector.window_id and str(node.window_id) != str(selector.window_id):
             continue
-        if selector.window_title and _normalize(selector.window_title) not in _normalize(node.name):
+        if not _window_title_matches(node, selector.window_title):
+            continue
+        if not _terminal_line_matches(node, selector.terminal_line):
+            continue
+        if not _terminal_col_matches(node, selector.terminal_col):
             continue
         matches.append(node)
     matches.sort(key=lambda item: _score(item, selector), reverse=True)
@@ -109,6 +246,8 @@ _ROLE_ALIASES = {
     "label": ControlRole.LABEL,
     "panel": ControlRole.PANEL,
     "window": ControlRole.WINDOW,
+    "link": ControlRole.UNKNOWN,
+    "tab": ControlRole.UNKNOWN,
 }
 
 
@@ -118,45 +257,66 @@ def parse_role(value: str | None) -> ControlRole | None:
     return _ROLE_ALIASES.get(_normalize(value))
 
 
-_SIMPLE_SELECTOR = re.compile(
-    r"^(?P<role>[a-z_]+)(?:\[(?P<attrs>[^\]]+)\])?$",
-    re.IGNORECASE,
+_ROLE_PREFIX = re.compile(r"^([a-z_]+)", re.IGNORECASE)
+_BRACKET_ATTRS = re.compile(r"\[([^\]]+)\]")
+_ATTR = re.compile(
+    r'(?P<key>name|app|window_title|text|css|xpath|id|line|col)(?P<op>=|~)?["\'](?P<val>[^"\']+)["\']'
 )
-_ATTR = re.compile(r'(?P<key>name|app)(?P<op>=|~)["\'](?P<val>[^"\']+)["\']')
+_LINE_PREFIX = re.compile(r"^line\[(\d+)\]", re.IGNORECASE)
+
+
+def _apply_attr(selector: ControlSelector, key: str, op: str | None, val: str) -> ControlSelector:
+    kwargs = {}
+    if key == "name":
+        kwargs["name" if op == "=" else "name_contains"] = val
+    elif key == "text":
+        kwargs["text" if op == "=" else "text_contains"] = val
+    elif key == "app":
+        kwargs["app"] = val
+    elif key == "window_title":
+        kwargs["window_title"] = val
+    elif key == "css":
+        kwargs["dom_css"] = val
+        kwargs["environment"] = "browser"
+    elif key == "xpath":
+        kwargs["dom_xpath"] = val
+        kwargs["environment"] = "browser"
+    elif key == "id":
+        kwargs["accessibility_id"] = val
+    elif key == "line":
+        kwargs["terminal_line"] = int(val)
+        kwargs["environment"] = "terminal"
+    elif key == "col":
+        kwargs["terminal_col"] = int(val)
+        kwargs["environment"] = "terminal"
+
+    return replace(selector, **kwargs) if kwargs else selector
 
 
 def parse_selector(expr: str) -> ControlSelector:
     text = (expr or "").strip()
     if not text:
         return ControlSelector()
-    match = _SIMPLE_SELECTOR.match(text)
-    if not match:
+    if text.startswith("#") or text.startswith("."):
+        return ControlSelector(dom_css=text, environment="browser")
+    if text.startswith("//") or text.startswith("(/"):
+        return ControlSelector(dom_xpath=text, environment="browser")
+        
+    line_match = _LINE_PREFIX.match(text)
+    role_match = _ROLE_PREFIX.match(text)
+    
+    rest = text
+    if line_match:
+        selector = ControlSelector(terminal_line=int(line_match.group(1)), environment="terminal")
+        rest = text[line_match.end() :]
+    elif not role_match or "[" not in text:
+        if role_match and role_match.group(0) == text:
+            return ControlSelector(role=role_match.group(0))
         return ControlSelector(name=text)
-    role = match.group("role")
-    attrs = match.group("attrs") or ""
-    selector = ControlSelector(role=role)
-    for attr in _ATTR.finditer(attrs):
-        key, op, val = attr.group("key"), attr.group("op"), attr.group("val")
-        if key == "name" and op == "=":
-            selector = ControlSelector(
-                role=selector.role,
-                name=val,
-                app=selector.app,
-                index=selector.index,
-            )
-        elif key == "name" and op == "~":
-            selector = ControlSelector(
-                role=selector.role,
-                name_contains=val,
-                app=selector.app,
-                index=selector.index,
-            )
-        elif key == "app":
-            selector = ControlSelector(
-                role=selector.role,
-                name=selector.name,
-                name_contains=selector.name_contains,
-                app=val,
-                index=selector.index,
-            )
+    else:
+        selector = ControlSelector(role=role_match.group(0))
+        
+    for bracket in _BRACKET_ATTRS.finditer(rest):
+        for attr in _ATTR.finditer(bracket.group(1)):
+            selector = _apply_attr(selector, attr.group("key"), attr.group("op"), attr.group("val"))
     return selector

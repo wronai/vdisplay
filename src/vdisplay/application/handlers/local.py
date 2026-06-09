@@ -149,6 +149,81 @@ def _release(cmd: CommandRequest) -> dict[str, Any]:
     )
 
 
+def _diagnose_control(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+
+    return control.diagnose_control(display=cmd.display)
+
+
+def _controls_list(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+
+    return control.controls_list(
+        display=cmd.display,
+        window_id=cmd.control_window_id,
+        app=cmd.control_app,
+        backend=cmd.control_backend,
+        max_depth=cmd.control_max_depth,
+        format=cmd.control_format,
+        session_id=cmd.control_session_id,
+    )
+
+
+def _controls_find(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+    from .control import control_selector_kwargs
+
+    return control.controls_find(
+        display=cmd.display,
+        backend=cmd.control_backend,
+        **control_selector_kwargs(cmd),
+    )
+
+
+def _control_click(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+    from .control import control_selector_kwargs
+
+    return control.control_click(
+        display=cmd.display,
+        backend=cmd.control_backend,
+        verify=cmd.control_verify,
+        screenshot_verify=cmd.control_screenshot_verify,
+        verify_label=cmd.control_verify_label,
+        verify_selector=cmd.control_verify_selector,
+        **control_selector_kwargs(cmd),
+    )
+
+
+def _control_focus(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+    from .control import control_selector_kwargs
+
+    return control.control_focus(
+        display=cmd.display,
+        backend=cmd.control_backend,
+        verify=cmd.control_verify,
+        screenshot_verify=cmd.control_screenshot_verify,
+        **control_selector_kwargs(cmd),
+    )
+
+
+def _control_set_value(cmd: CommandRequest) -> dict[str, Any]:
+    from ..services import control
+    from .control import control_selector_kwargs
+
+    return control.control_set_value(
+        display=cmd.display,
+        backend=cmd.control_backend,
+        verify=cmd.control_verify,
+        screenshot_verify=cmd.control_screenshot_verify,
+        verify_label=cmd.control_verify_label,
+        verify_selector=cmd.control_verify_selector,
+        value=str(cmd.control_value or ""),
+        **control_selector_kwargs(cmd),
+    )
+
+
 _LOCAL_HANDLERS: dict[CommandVerb, LocalHandler] = {
     CommandVerb.HEALTH: _health,
     CommandVerb.INFO: _info,
@@ -163,6 +238,12 @@ _LOCAL_HANDLERS: dict[CommandVerb, LocalHandler] = {
     CommandVerb.MIRROR: _mirror,
     CommandVerb.ADOPT: _adopt,
     CommandVerb.RELEASE: _release,
+    CommandVerb.DIAGNOSE_CONTROL: _diagnose_control,
+    CommandVerb.CONTROLS_LIST: _controls_list,
+    CommandVerb.CONTROLS_FIND: _controls_find,
+    CommandVerb.CONTROL_CLICK: _control_click,
+    CommandVerb.CONTROL_FOCUS: _control_focus,
+    CommandVerb.CONTROL_SET_VALUE: _control_set_value,
 }
 
 

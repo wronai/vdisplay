@@ -16,7 +16,20 @@ _SCHEMAS: dict[str, dict[str, Any]] | None = None
 def all_schemas() -> dict[str, dict[str, Any]]:
     global _SCHEMAS
     if _SCHEMAS is None:
-        names = ["health", "info", "outputs", "screenshot", "mirror", "validate"]
+        names = [
+            "health",
+            "info",
+            "outputs",
+            "screenshot",
+            "mirror",
+            "validate",
+            "controls_list",
+            "controls_find",
+            "control_click",
+            "control_focus",
+            "control_set_value",
+            "diagnose_control",
+        ]
         _SCHEMAS = {n.upper(): _load_schema(n) for n in names}
     return _SCHEMAS
 

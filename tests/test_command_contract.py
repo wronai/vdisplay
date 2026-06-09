@@ -41,6 +41,27 @@ def test_command_result_envelope_failure() -> None:
     assert payload["error"]["message"] == "capture failed"
 
 
+def test_command_request_from_dsl_control_click() -> None:
+    req = CommandRequest.from_dsl(
+        {
+            "verb": "CONTROL_CLICK",
+            "role": "button",
+            "name": "Increment",
+            "app": "vdisplay-gtk-demo",
+            "verify": True,
+            "backend": "atspi",
+        },
+        line="CONTROL_CLICK",
+    )
+    assert req.verb == CommandVerb.CONTROL_CLICK
+    assert req.control_role == "button"
+    assert req.control_name == "Increment"
+    assert req.control_app == "vdisplay-gtk-demo"
+    assert req.control_verify is True
+    assert req.control_backend == "atspi"
+    assert req.action == "control_click"
+
+
 def test_command_result_to_dsl_result() -> None:
     result = CommandResult.success(action="monitors", data={"monitor_count": 0}, command="MONITORS")
     dsl = result.to_dsl_result()

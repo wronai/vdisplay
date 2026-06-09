@@ -1,0 +1,29 @@
+{
+  "$id": "dsl2vdisplay/commands/control_click",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "CONTROL_CLICK" },
+    "display": { "type": "string" },
+    "selector": { "type": "string" },
+    "role": { "type": "string" },
+    "name": { "type": "string" },
+    "app": { "type": "string" },
+    "window_title": { "type": "string" },
+    "window_id": { "type": "string" },
+    "index": { "type": "integer" },
+    "provider_ref": { "type": "string" },
+    "control_backend": { "type": "string" },
+    "verify": { "type": "boolean" },
+    "screenshot_verify": { "type": "boolean" },
+    "verify_label": { "type": "string" },
+    "verify_selector": { "type": "string" },
+    "environment": { "type": "string" },
+    "text": { "type": "string" },
+    "text_contains": { "type": "string" },
+    "terminal_line": { "type": "integer" },
+    "terminal_col": { "type": "integer" },
+    "session_id": { "type": "string" }
+  },
+  "additionalProperties": false
+}

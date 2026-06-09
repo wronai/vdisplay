@@ -20,7 +20,7 @@ Cross-platform virtual display orchestration with virtual and mirror sessions
 ## Metadata
 
 - **name**: `vdisplay`
-- **version**: `0.1.5`
+- **version**: `0.1.6`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -40,7 +40,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: vdisplay;
-  version: 0.1.5;
+  version: 0.1.6;
 }
 
 dependencies {
@@ -48,6 +48,8 @@ dependencies {
   sampler: Pillow>=10.0;
   dev: "pytest>=8.0, Pillow>=10.0, fastapi>=0.110, httpx>=0.27, goal>=2.1.0, costs>=0.1.20, pfix>=0.1.60, dsl2vdisplay, vdisplay-agent, uvicorn>=0.27";
   control: "dsl2vdisplay, nlp2vdisplay";
+  browser: playwright>=1.40;
+  terminal: "pyte>=0.8.1, pexpect>=4.9, wcwidth>=0.2.13";
   agent: "vdisplay-agent, fastapi>=0.110, uvicorn>=0.27";
   img2nl: img2nl[analyze];
 }
@@ -69,7 +71,7 @@ tests {
 }
 
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, GTK_A11Y, QT_ACCESSIBILITY, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
 }
 
 deploy {
@@ -124,7 +126,7 @@ ASSERT_EXIT_CODE 0
 ```yaml
 project:
   name: vdisplay
-  version: 0.1.5
+  version: 0.1.6
   env: local
 ```
 
@@ -178,14 +180,14 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# vdisplay | 163f 14189L | python:154,shell:8,less:1 | 2026-06-09
-# stats: 574 func | 42 cls | 163 mod | CC̄=3.6 | critical:32 | cycles:0
-# alerts[5]: CC capture_all_monitors=21; CC assess_unattended_capture=17; CC handle=17; CC capture_host_png=15; CC describe_screenshot_nl=14
-# hotspots[5]: create_app fan=36; _start_screencast_impl fan=32; capture_host_png fan=25; create_app fan=22; _portal_impl fan=22
+# vdisplay | 207f 19903L | python:197,shell:9,less:1 | 2026-06-09
+# stats: 798 func | 68 cls | 207 mod | CC̄=3.7 | critical:42 | cycles:0
+# alerts[5]: CC _execute_action=28; CC _score=24; CC capture_all_monitors=21; CC dispatch=18; CC _is_verified=18
+# hotspots[5]: _start_screencast_impl fan=32; capture_host_png fan=25; create_app fan=22; _portal_impl fan=22; snapshot_dict fan=21
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[163]:
-  app.doql.less,49
+M[207]:
+  app.doql.less,51
   examples/agent-broker/broker_demo.py,58
   examples/agent-broker/run.sh,27
   examples/ci-agent/agent.py,74
@@ -202,14 +204,15 @@ M[163]:
   examples/run_all_examples.sh,153
   packages/cli2vdisplay/src/cli2vdisplay/cli.py,35
   packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py,5
-  packages/dsl2vdisplay/src/dsl2vdisplay/bus.py,109
+  packages/dsl2vdisplay/src/dsl2vdisplay/bus.py,136
   packages/dsl2vdisplay/src/dsl2vdisplay/cli.py,71
-  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py,161
+  packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py,306
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py,2
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py,121
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py,116
   packages/dsl2vdisplay/src/dsl2vdisplay/result.py,27
-  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py,39
+  packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py,52
+  packages/dsl2vdisplay/tests/test_dsl_control.py,123
   packages/dsl2vdisplay/tests/test_parity.py,15
   packages/mcp2vdisplay/src/mcp2vdisplay/cli.py,24
   packages/mcp2vdisplay/src/mcp2vdisplay/server.py,96
@@ -222,13 +225,22 @@ M[163]:
   packages/vdisplay-agent/src/vdisplay_agent/__init__.py,6
   packages/vdisplay-agent/src/vdisplay_agent/cli.py,44
   packages/vdisplay-agent/src/vdisplay_agent/envelope.py,86
-  packages/vdisplay-agent/src/vdisplay_agent/runtime.py,81
-  packages/vdisplay-agent/src/vdisplay_agent/schemas.py,51
+  packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py,16
+  packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py,25
+  packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py,33
+  packages/vdisplay-agent/src/vdisplay_agent/routes/control.py,89
+  packages/vdisplay-agent/src/vdisplay_agent/routes/health.py,62
+  packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py,48
+  packages/vdisplay-agent/src/vdisplay_agent/routes/session.py,99
+  packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py,42
+  packages/vdisplay-agent/src/vdisplay_agent/runtime.py,99
+  packages/vdisplay-agent/src/vdisplay_agent/schemas.py,65
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py,147
-  packages/vdisplay-agent/src/vdisplay_agent/server.py,224
+  packages/vdisplay-agent/src/vdisplay_agent/server.py,26
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py,6
-  packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py,52
+  packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py,56
   packages/vdisplay-agent/src/vdisplay_agent/services/capture.py,97
+  packages/vdisplay-agent/src/vdisplay_agent/services/control.py,85
   packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py,20
   packages/vdisplay-agent/src/vdisplay_agent/services/relay.py,33
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py,145
@@ -242,15 +254,17 @@ M[163]:
   src/vdisplay/agent_envelope.py,18
   src/vdisplay/api.py,194
   src/vdisplay/application/__init__.py,15
-  src/vdisplay/application/commands.py,184
+  src/vdisplay/application/commands.py,239
   src/vdisplay/application/errors.py,40
   src/vdisplay/application/executor.py,52
   src/vdisplay/application/handlers/__init__.py,7
-  src/vdisplay/application/handlers/agent.py,192
-  src/vdisplay/application/handlers/local.py,174
+  src/vdisplay/application/handlers/agent.py,232
+  src/vdisplay/application/handlers/control.py,39
+  src/vdisplay/application/handlers/local.py,254
   src/vdisplay/application/runtime.py,83
   src/vdisplay/application/services/__init__.py,4
   src/vdisplay/application/services/capture.py,183
+  src/vdisplay/application/services/control.py,303
   src/vdisplay/application/services/discovery.py,237
   src/vdisplay/application/services/img2nl_enrich.py,98
   src/vdisplay/application/services/info.py,52
@@ -279,22 +293,39 @@ M[163]:
   src/vdisplay/capture/providers/x11.py,36
   src/vdisplay/cli.py,33
   src/vdisplay/cli_handlers.py,35
-  src/vdisplay/client.py,308
-  src/vdisplay/commands/__init__.py,43
+  src/vdisplay/client.py,366
+  src/vdisplay/commands/__init__.py,45
   src/vdisplay/commands/agent.py,111
   src/vdisplay/commands/all_cmd.py,47
   src/vdisplay/commands/common.py,36
-  src/vdisplay/commands/diagnose.py,27
+  src/vdisplay/commands/control.py,151
+  src/vdisplay/commands/diagnose.py,37
   src/vdisplay/commands/info.py,17
   src/vdisplay/commands/io.py,8
   src/vdisplay/commands/mirror.py,54
   src/vdisplay/commands/monitors.py,20
   src/vdisplay/commands/nlp.py,24
   src/vdisplay/commands/relay.py,111
-  src/vdisplay/commands/sampler.py,119
+  src/vdisplay/commands/sampler.py,133
   src/vdisplay/commands/screenshot.py,54
   src/vdisplay/commands/virtual.py,82
   src/vdisplay/commands/windows.py,30
+  src/vdisplay/control/__init__.py,21
+  src/vdisplay/control/base.py,42
+  src/vdisplay/control/engine.py,56
+  src/vdisplay/control/models.py,188
+  src/vdisplay/control/policy.py,81
+  src/vdisplay/control/providers/__init__.py,7
+  src/vdisplay/control/providers/atspi.py,216
+  src/vdisplay/control/providers/atspi_impl.py,377
+  src/vdisplay/control/providers/browser_playwright.py,283
+  src/vdisplay/control/providers/terminal.py,143
+  src/vdisplay/control/providers/terminal_screen.py,262
+  src/vdisplay/control/providers/terminal_session.py,223
+  src/vdisplay/control/providers/x11.py,120
+  src/vdisplay/control/screenshot_verify.py,213
+  src/vdisplay/control/selector.py,320
+  src/vdisplay/control/verify.py,427
   src/vdisplay/discovery.py,353
   src/vdisplay/exceptions.py,11
   src/vdisplay/input/__init__.py,4
@@ -312,6 +343,8 @@ M[163]:
   src/vdisplay/windows/rank.py,44
   src/vdisplay/windows/scan.py,111
   tests/conftest.py,87
+  tests/fixtures/gtk_demo_app.py,60
+  tests/fixtures/run_gtk_demo.sh,12
   tests/test_agent.py,44
   tests/test_agent_api_contract.py,32
   tests/test_agent_client.py,119
@@ -325,7 +358,20 @@ M[163]:
   tests/test_capture_xwd.py,53
   tests/test_cli_commands.py,97
   tests/test_client_request.py,43
-  tests/test_command_contract.py,50
+  tests/test_command_contract.py,71
+  tests/test_control_agent.py,32
+  tests/test_control_app_matching.py,49
+  tests/test_control_atspi.py,30
+  tests/test_control_browser.py,127
+  tests/test_control_capabilities.py,84
+  tests/test_control_executor.py,71
+  tests/test_control_gtk_demo.py,127
+  tests/test_control_policy.py,21
+  tests/test_control_screenshot_verify.py,204
+  tests/test_control_selector.py,36
+  tests/test_control_selector_v2.py,86
+  tests/test_control_terminal.py,171
+  tests/test_control_verify.py,205
   tests/test_execution_policy.py,65
   tests/test_host_capture.py,43
   tests/test_host_capture_errors.py,37
@@ -404,8 +450,10 @@ D:
     _main_legacy(argv)
     _main_subcommand(argv)
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:
-    e: split_command,pick_flag,_with_display,_parse_windows,_parse_screenshot,_parse_virtual_start,_parse_launch,_parse_mirror,_parse_adopt,_parse_release,parse_line,to_text
+    e: split_command,normalize_tokens,resolve_verb,pick_flag,_with_display,_parse_windows,_parse_screenshot,_parse_virtual_start,_parse_launch,_parse_mirror,_parse_adopt,_has_flag,_parse_control_common,_parse_controls_list,_parse_controls_find,_parse_control_click,_parse_control_focus,_parse_control_set_value,_parse_diagnose_control,_parse_release,parse_line,_screenshot_to_text,_mirror_to_text,_controls_list_to_text,to_text,_control_to_text
     split_command(line)
+    normalize_tokens(tokens)
+    resolve_verb(tokens)
     pick_flag(tokens;flag)
     _with_display(rest;cmd)
     _parse_windows(rest;cmd)
@@ -414,9 +462,21 @@ D:
     _parse_launch(rest;cmd)
     _parse_mirror(rest;cmd)
     _parse_adopt(rest;cmd)
+    _has_flag(tokens;flag)
+    _parse_control_common(rest;cmd)
+    _parse_controls_list(rest;cmd)
+    _parse_controls_find(rest;cmd)
+    _parse_control_click(rest;cmd)
+    _parse_control_focus(rest;cmd)
+    _parse_control_set_value(rest;cmd)
+    _parse_diagnose_control(rest;cmd)
     _parse_release(rest;cmd)
     parse_line(line)
+    _screenshot_to_text(cmd)
+    _mirror_to_text(cmd)
+    _controls_list_to_text(cmd)
     to_text(cmd)
+    _control_to_text(action;cmd)
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py:
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py:
     e: _ok,_err,handle_screenshot,handle_virtual_start,handle_mirror,handle_adopt,handle_release
@@ -446,6 +506,18 @@ D:
     all_schemas()
     schema_for_verb(verb)
     validate_command_dict(cmd)
+  packages/dsl2vdisplay/tests/test_dsl_control.py:
+    e: test_parse_controls_list_uppercase,test_parse_controls_list_human_readable,test_parse_control_click_with_verify,test_parse_control_click_with_screenshot_verify,test_parse_control_set_value_requires_value_schema,test_parse_controls_find_with_provider_ref,test_command_request_from_dsl_control,test_command_request_provider_ref,test_to_text_roundtrip_control_click,test_dispatch_control_verbs_via_executor
+    test_parse_controls_list_uppercase()
+    test_parse_controls_list_human_readable()
+    test_parse_control_click_with_verify()
+    test_parse_control_click_with_screenshot_verify()
+    test_parse_control_set_value_requires_value_schema()
+    test_parse_controls_find_with_provider_ref()
+    test_command_request_from_dsl_control()
+    test_command_request_provider_ref()
+    test_to_text_roundtrip_control_click()
+    test_dispatch_control_verbs_via_executor(monkeypatch;line;action)
   packages/dsl2vdisplay/tests/test_parity.py:
     e: test_parity_info_text_vs_dict,test_health
     test_parity_info_text_vs_dict()
@@ -491,9 +563,34 @@ D:
     json_error(action;exc)
     strip_ok(payload)
     flatten_envelope(payload)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py:
+    e: register_all_routes
+    register_all_routes(app;broker)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py:
+    e: expected_token,make_check_auth
+    expected_token()
+    make_check_auth(token)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/control.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/health.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/session.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py:
+    e: register_routes
+    register_routes(app;broker;check_auth)
   packages/vdisplay-agent/src/vdisplay_agent/runtime.py:
     e: AgentRuntime
-    AgentRuntime: sessions(0),relay(0),platform_capabilities(0),diagnostics(0),outputs(0),list_windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),start_sampler(1),stop_sampler(0),sampler_status(0),capture_frame(1),adopt_window(1),release_window(1),shutdown(0)  # Privileged runtime: owns session store and broker services.
+    AgentRuntime: sessions(0),relay(0),platform_capabilities(0),diagnostics(0),outputs(0),list_windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),start_sampler(1),stop_sampler(0),sampler_status(0),capture_frame(1),diagnose_control(0),list_controls(1),find_controls(1),invoke_control(1),focus_control(1),set_control_value(1),adopt_window(1),release_window(1),shutdown(0)  # Privileged runtime: owns session store and broker services.
   packages/vdisplay-agent/src/vdisplay_agent/schemas.py:
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
     e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
@@ -520,6 +617,14 @@ D:
     _capture_all_monitors(store;body)
     _region_from_body(body)
     _capture_host(store;body)
+  packages/vdisplay-agent/src/vdisplay_agent/services/control.py:
+    e: diagnose_control,list_controls,find_controls,invoke_control,focus_control,set_control_value
+    diagnose_control()
+    list_controls(body)
+    find_controls(body)
+    invoke_control(body)
+    focus_control(body)
+    set_control_value(body)
   packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py:
     e: list_outputs_payload
     list_outputs_payload()
@@ -600,7 +705,7 @@ D:
     execute(cmd)
   src/vdisplay/application/handlers/__init__.py:
   src/vdisplay/application/handlers/agent.py:
-    e: _strip_ok,_health,_info,_monitors,_windows,_all,_capabilities,_validate,_screenshot,_virtual_start,_mirror,_adopt,_release,execute_agent
+    e: _strip_ok,_health,_info,_monitors,_windows,_all,_capabilities,_validate,_screenshot,_virtual_start,_mirror,_adopt,_release,_diagnose_control,_controls_list,_controls_find,_control_click,_control_focus,_control_set_value,execute_agent
     _strip_ok(payload)
     _health(client;cmd)
     _info(client;_cmd)
@@ -614,9 +719,19 @@ D:
     _mirror(client;cmd)
     _adopt(client;cmd)
     _release(client;cmd)
+    _diagnose_control(client;cmd)
+    _controls_list(client;cmd)
+    _controls_find(client;cmd)
+    _control_click(client;cmd)
+    _control_focus(client;cmd)
+    _control_set_value(client;cmd)
     execute_agent(cmd)
+  src/vdisplay/application/handlers/control.py:
+    e: control_selector_kwargs,control_request_body
+    control_selector_kwargs(cmd)
+    control_request_body(cmd)
   src/vdisplay/application/handlers/local.py:
-    e: _health,_info,_monitors,_windows,_all,_capabilities,_validate,_screenshot,_virtual_start,_mirror,_adopt,_release,execute_local
+    e: _health,_info,_monitors,_windows,_all,_capabilities,_validate,_screenshot,_virtual_start,_mirror,_adopt,_release,_diagnose_control,_controls_list,_controls_find,_control_click,_control_focus,_control_set_value,execute_local
     _health(_cmd)
     _info(_cmd)
     _monitors(cmd)
@@ -629,6 +744,12 @@ D:
     _mirror(cmd)
     _adopt(cmd)
     _release(cmd)
+    _diagnose_control(cmd)
+    _controls_list(cmd)
+    _controls_find(cmd)
+    _control_click(cmd)
+    _control_focus(cmd)
+    _control_set_value(cmd)
     execute_local(cmd)
   src/vdisplay/application/runtime.py:
     e: agent_client_optional,agent_client_required,prefer_agent,resolve_apps_only,get_execution_policy,ExecutionPolicy
@@ -646,6 +767,19 @@ D:
     capture_screenshot_local()
     _capture_via_agent(client)
     capture_screenshot_via_client(client)
+  src/vdisplay/application/services/control.py:
+    e: _selector_from_kwargs,_provider_kwargs,_resolve_target,diagnose_control,controls_list,controls_find,control_click,control_focus,control_set_value,_execute_action,_build_tree
+    _selector_from_kwargs()
+    _provider_kwargs()
+    _resolve_target(provider;snapshot;selector)
+    diagnose_control()
+    controls_list()
+    controls_find()
+    control_click()
+    control_focus()
+    control_set_value()
+    _execute_action()
+    _build_tree(snapshot)
   src/vdisplay/application/services/discovery.py:
     e: _run_discovery,list_monitors,list_monitors_local,list_windows_payload,list_windows_local,list_adopted,list_all,list_all_local,diagnose,diagnose_unattended,_sampler_hint
     _run_discovery(cmd)
@@ -864,8 +998,11 @@ D:
     screenshot_payload()
     dispatch_cli(args)
   src/vdisplay/client.py:
-    e: _route_command,AgentClient
-    AgentClient: __init__(1),_request(2),_send(2),_build_request(2),_http_error_message(1),_raise_on_error(1),_normalize_payload(1),request(1),health(0),capabilities(0),diagnostics(0),outputs(0),windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),sampler_start(0),sampler_stop(0),sampler_status(0),capture_frame(0),capture_png_bytes(0),adopt_window(0),release_window(0)  # HTTP client for the local vdisplay-agent broker.
+    e: _route_outputs_query,_route_windows_query,_route_control_command,_route_command,AgentClient
+    AgentClient: __init__(1),_request(2),_send(2),_build_request(2),_http_error_message(1),_raise_on_error(1),_normalize_payload(1),request(1),health(0),capabilities(0),diagnostics(0),outputs(0),windows(0),start_virtual(0),start_mirror(0),start_relay(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),sampler_start(0),sampler_stop(0),sampler_status(0),diagnose_control(0),list_controls(1),find_controls(1),invoke_control(1),focus_control(1),set_control_value(1),capture_frame(0),capture_png_bytes(0),adopt_window(0),release_window(0)  # HTTP client for the local vdisplay-agent broker.
+    _route_outputs_query(cmd)
+    _route_windows_query(cmd)
+    _route_control_command(verb;body)
     _route_command(cmd)
   src/vdisplay/commands/__init__.py:
     e: register_all
@@ -887,6 +1024,12 @@ D:
     add_all_arg(parser)
     add_window_filter_args(parser)
     include_all_from_args(args)
+  src/vdisplay/commands/control.py:
+    e: register,_add_selector_args,_selector_kwargs,handle
+    register(sub)
+    _add_selector_args(parser)
+    _selector_kwargs(args)
+    handle(args)
   src/vdisplay/commands/diagnose.py:
     e: register,handle
     register(sub)
@@ -916,10 +1059,15 @@ D:
     handle_list_windows(args)
     handle(args)
   src/vdisplay/commands/sampler.py:
-    e: register,_config_from_args,handle
+    e: register,_config_from_args,handle,_handle_stop,_handle_status,_handle_start,_start_agent,_wait_for_sampler
     register(sub)
     _config_from_args(args)
     handle(args)
+    _handle_stop(url)
+    _handle_status(url)
+    _handle_start(args;url)
+    _start_agent(args;url;config)
+    _wait_for_sampler(client;progress;interval_s)
   src/vdisplay/commands/screenshot.py:
     e: register,handle
     register(sub)
@@ -932,6 +1080,138 @@ D:
     e: register,handle
     register(sub)
     handle(args)
+  src/vdisplay/control/__init__.py:
+  src/vdisplay/control/base.py:
+    e: ControlProvider
+    ControlProvider: available(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
+  src/vdisplay/control/engine.py:
+    e: resolve_provider
+    resolve_provider(backend)
+  src/vdisplay/control/models.py:
+    e: EnvironmentKind,ControlRole,ControlActionKind,ControlBounds,ControlAction,ElementCapabilities,ControlNode,ControlSnapshot,ActionResult
+    EnvironmentKind:  # Target automation environment for provider routing.
+    ControlRole:
+    ControlActionKind:
+    ControlBounds: to_dict(0),center(0)
+    ControlAction: to_dict(0)
+    ElementCapabilities: to_dict(0),from_dict(2)  # Backend-agnostic capability flags for a control element.
+    ControlNode: to_dict(0)
+    ControlSnapshot: to_dict(0)
+    ActionResult: to_dict(0)
+  src/vdisplay/control/policy.py:
+    e: _atspi_ready,_xdotool_ready,assess_control_capability,ControlCapabilityContract
+    ControlCapabilityContract: to_dict(0)
+    _atspi_ready()
+    _xdotool_ready()
+    assess_control_capability()
+  src/vdisplay/control/providers/__init__.py:
+  src/vdisplay/control/providers/atspi.py:
+    e: _gi_available,_system_python,_vdisplay_src_path,_run_subprocess,_actions_from_dict,_snapshot_from_dict,AtspiControlProvider
+    AtspiControlProvider: __init__(0),available(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
+    _gi_available()
+    _system_python()
+    _vdisplay_src_path()
+    _run_subprocess(payload)
+    _actions_from_dict(raw_actions)
+    _snapshot_from_dict(data)
+  src/vdisplay/control/providers/atspi_impl.py:
+    e: _atspi,_map_role,_atspi_module,_iface,_node_actions,_text_iface,_node_text_value,_provider_ref,_node_state,_node_capabilities,_node_bounds,_application_matches,snapshot_dict,_resolve_accessible,dispatch
+    _atspi()
+    _map_role(role_name)
+    _atspi_module()
+    _iface(accessible;name)
+    _node_actions(accessible)
+    _text_iface(accessible)
+    _node_text_value(accessible)
+    _provider_ref(accessible;node_id)
+    _node_state(accessible;role_name)
+    _node_capabilities(accessible;actions;role)
+    _node_bounds(accessible)
+    _application_matches(application;app_filter)
+    snapshot_dict()
+    _resolve_accessible(element_id)
+    dispatch(payload)
+  src/vdisplay/control/providers/browser_playwright.py:
+    e: _playwright_available,_role_for_element,_capabilities_for,_actions_for,_bounds_from_box,_node_from_element,_PageLike,_ElementLike,BrowserPlaywrightProvider
+    _PageLike: goto(1),title(0),query_selector_all(1),locator(1)
+    _ElementLike: evaluate(1),bounding_box(0),inner_text(0),get_attribute(1),click(0),fill(1),focus(0)
+    BrowserPlaywrightProvider: __init__(0),available(0),_ensure_page(0),snapshot(0),find(1),_resolve_element(1),invoke(1),focus(1),set_value(2),bounds(1),close(0)
+    _playwright_available()
+    _role_for_element(element)
+    _capabilities_for(role)
+    _actions_for(role)
+    _bounds_from_box(box)
+    _node_from_element(element)
+  src/vdisplay/control/providers/terminal.py:
+    e: _terminal_deps_available,_parse_ref,_find_terminal_nodes,TerminalControlProvider
+    TerminalControlProvider: __init__(0),available(0),_resolve_session_id(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
+    _terminal_deps_available()
+    _parse_ref(element_id)
+    _find_terminal_nodes(nodes;selector)
+  src/vdisplay/control/providers/terminal_screen.py:
+    e: _line_node_id,_cursor_node_id,nodes_from_screen,new_session_id,ScreenLine,ScreenSnapshot,ScreenBuffer
+    ScreenLine: stripped(0)  # One terminal row (1-based line number).
+    ScreenSnapshot: line_at(1)  # Parsed terminal screen state.
+    ScreenBuffer: __init__(0),_init_pyte(0),resize(0),feed(1),_sync_from_pyte(0),_feed_simple(1),set_lines(1),snapshot(0)  # Mutable terminal screen fed by PTY output bytes.
+    _line_node_id(session_id;line_no)
+    _cursor_node_id(session_id)
+    nodes_from_screen(screen)
+    new_session_id()
+  src/vdisplay/control/providers/terminal_session.py:
+    e: default_registry,TerminalSession,TerminalSessionRegistry
+    TerminalSession: write(1),send_enter(0),sent_text(0),close(0),_start_reader(0)  # One controllable terminal session.
+    TerminalSessionRegistry: __init__(0),list_ids(0),get(1),require(1),open_mock(0),open_process(1),open_pexpect(1),close(1),close_all(0)  # In-memory registry of open terminal sessions.
+    default_registry()
+  src/vdisplay/control/providers/x11.py:
+    e: X11ControlProvider
+    X11ControlProvider: __init__(0),available(0),snapshot(0),find(1),_node_for(1),_click_node(1),invoke(1),focus(1),set_value(2),bounds(1)
+  src/vdisplay/control/screenshot_verify.py:
+    e: _region_from_bounds,capture_control_screenshot,_target_region,_maybe_crop_capture,_capture_via_agent,diff_png_bytes,verify_screenshot_pair
+    _region_from_bounds(bounds)
+    capture_control_screenshot()
+    _target_region(target)
+    _maybe_crop_capture(payload;region)
+    _capture_via_agent()
+    diff_png_bytes(before;after)
+    verify_screenshot_pair(before;after)
+  src/vdisplay/control/selector.py:
+    e: _normalize,_role_matches,_app_matches,_window_title_matches,_name_matches,_text_matches,_terminal_line_matches,_terminal_col_matches,_score,find_matches,pick_match,parse_role,_apply_attr,parse_selector,ControlSelector
+    ControlSelector: from_dict(2),to_dict(0),active_fields(0)  # Unified selector for desktop, browser, terminal, and vision 
+    _normalize(value)
+    _role_matches(node;role)
+    _app_matches(node;app)
+    _window_title_matches(node;window_title)
+    _name_matches(node)
+    _text_matches(node)
+    _terminal_line_matches(node;line)
+    _terminal_col_matches(node;col)
+    _score(node;selector)
+    find_matches(nodes;selector)
+    pick_match(nodes;selector)
+    parse_role(value)
+    _apply_attr(selector;key;op;val)
+    parse_selector(expr)
+  src/vdisplay/control/verify.py:
+    e: _node_key,_display_text,_subtree_ids,_scope_root_id,_structural_key,_nodes_by_match_key,diff_snapshots,snapshot_diff,collect_changed_nodes,_label_prefix_changes,_selector_change,_handle_selector_verification,_handle_label_verification,_handle_set_value_verification,_handle_focus_verification,_handle_invoke_verification,_add_diff_nodes,verify_action_result,_is_verified
+    _node_key(node)
+    _display_text(node)
+    _subtree_ids(snapshot;root_id)
+    _scope_root_id(snapshot;target)
+    _structural_key(snapshot;node_id;scope_root_id)
+    _nodes_by_match_key(snapshot;node_ids)
+    diff_snapshots(before;after)
+    snapshot_diff(before;after)
+    collect_changed_nodes(diff)
+    _label_prefix_changes(before;after)
+    _selector_change(before;after;selector)
+    _handle_selector_verification(before;after;verify_selector)
+    _handle_label_verification(before;after;verify_label;scope_root_id)
+    _handle_set_value_verification(after;target;scope_root;expected_value)
+    _handle_focus_verification(diff)
+    _handle_invoke_verification(after;target;diff;has_label_or_selector)
+    _add_diff_nodes(diff)
+    verify_action_result()
+    _is_verified(action;state_diff)
   src/vdisplay/discovery.py:
     e: resolve_host_display,_looks_like_xvfb_only,list_outputs,_attach_output_nl,_list_monitors,_parse_xrandr_query,_merge_output_metadata,list_windows,find_window_suggestions,diagnose_display,_display_hint,list_monitors,window_discovery_meta
     resolve_host_display(preferred)
@@ -1054,6 +1334,9 @@ D:
     _wait_for_url(url)
     live_agent_url()
     agent_client()
+  tests/fixtures/gtk_demo_app.py:
+    e: main
+    main()
   tests/test_agent.py:
     e: test_agent_health,test_agent_capabilities,test_agent_virtual_session_capture
     test_agent_health(agent_client)
@@ -1131,12 +1414,109 @@ D:
     test_route_command_windows_query()
     test_request_delegates_to_http(monkeypatch)
   tests/test_command_contract.py:
-    e: test_command_request_from_dsl_monitors,test_command_request_from_dsl_apps_only,test_command_result_envelope_success,test_command_result_envelope_failure,test_command_result_to_dsl_result
+    e: test_command_request_from_dsl_monitors,test_command_request_from_dsl_apps_only,test_command_result_envelope_success,test_command_result_envelope_failure,test_command_request_from_dsl_control_click,test_command_result_to_dsl_result
     test_command_request_from_dsl_monitors()
     test_command_request_from_dsl_apps_only()
     test_command_result_envelope_success()
     test_command_result_envelope_failure()
+    test_command_request_from_dsl_control_click()
     test_command_result_to_dsl_result()
+  tests/test_control_agent.py:
+    e: test_agent_control_diagnostics,test_agent_controls_list
+    test_agent_control_diagnostics(agent_client;monkeypatch)
+    test_agent_controls_list(agent_client;monkeypatch)
+  tests/test_control_app_matching.py:
+    e: _node,test_app_matches_process_name,test_app_matches_window_title,test_window_title_selector
+    _node(node_id)
+    test_app_matches_process_name()
+    test_app_matches_window_title()
+    test_window_title_selector()
+  tests/test_control_atspi.py:
+    e: _atspi_available,test_atspi_snapshot_lists_nodes,test_controls_list_cli_integration
+    _atspi_available()
+    test_atspi_snapshot_lists_nodes()
+    test_controls_list_cli_integration()
+  tests/test_control_browser.py:
+    e: test_browser_provider_snapshot_and_find,test_browser_provider_actions,test_resolve_browser_backend_with_injected_page,test_resolve_browser_backend_without_playwright,FakeElement,FakeLocator,FakePage
+    FakeElement: __init__(1),evaluate(1),bounding_box(0),inner_text(0),get_attribute(1),click(0),fill(1),focus(0)
+    FakeLocator: __init__(1),count(0),nth(1),first(0)
+    FakePage: __init__(0),goto(1),title(0),query_selector_all(1),locator(1)
+    test_browser_provider_snapshot_and_find()
+    test_browser_provider_actions()
+    test_resolve_browser_backend_with_injected_page()
+    test_resolve_browser_backend_without_playwright(monkeypatch)
+  tests/test_control_capabilities.py:
+    e: test_element_capabilities_roundtrip,test_control_node_serializes_capabilities_and_actions,test_atspi_snapshot_deserializes_actions_and_capabilities
+    test_element_capabilities_roundtrip()
+    test_control_node_serializes_capabilities_and_actions()
+    test_atspi_snapshot_deserializes_actions_and_capabilities(monkeypatch)
+  tests/test_control_executor.py:
+    e: test_executor_control_click_local,test_executor_controls_find_local,test_executor_diagnose_control_local
+    test_executor_control_click_local(monkeypatch)
+    test_executor_controls_find_local(monkeypatch)
+    test_executor_diagnose_control_local(monkeypatch)
+  tests/test_control_gtk_demo.py:
+    e: _atspi_available,_display_available,gtk_demo_process,test_gtk_demo_find_increment_button,test_gtk_demo_list_by_window_title,test_gtk_demo_click_verify_label,test_gtk_demo_set_value_verify
+    _atspi_available()
+    _display_available()
+    gtk_demo_process()
+    test_gtk_demo_find_increment_button(gtk_demo_process)
+    test_gtk_demo_list_by_window_title(gtk_demo_process)
+    test_gtk_demo_click_verify_label(gtk_demo_process)
+    test_gtk_demo_set_value_verify(gtk_demo_process)
+  tests/test_control_policy.py:
+    e: test_assess_control_capability_returns_contract
+    test_assess_control_capability_returns_contract(monkeypatch)
+  tests/test_control_screenshot_verify.py:
+    e: _png,test_diff_png_detects_change,test_diff_png_identical_is_not_verified,test_diff_png_small_change_on_large_frame,test_verify_screenshot_pair_payload,test_capture_via_agent_when_configured,test_capture_control_screenshot_uses_target_region,test_execute_action_screenshot_verify_only,test_execute_action_dual_verify_requires_both
+    _png(color)
+    test_diff_png_detects_change()
+    test_diff_png_identical_is_not_verified()
+    test_diff_png_small_change_on_large_frame()
+    test_verify_screenshot_pair_payload()
+    test_capture_via_agent_when_configured(monkeypatch)
+    test_capture_control_screenshot_uses_target_region()
+    test_execute_action_screenshot_verify_only(monkeypatch)
+    test_execute_action_dual_verify_requires_both(monkeypatch)
+  tests/test_control_selector.py:
+    e: _node,test_parse_selector_button_name,test_find_and_pick_match
+    _node(node_id)
+    test_parse_selector_button_name()
+    test_find_and_pick_match()
+  tests/test_control_selector_v2.py:
+    e: _node,test_selector_roundtrip,test_parse_css_and_xpath,test_parse_window_title_and_text_attrs,test_find_by_accessibility_id_and_text,test_active_fields_per_environment
+    _node(node_id)
+    test_selector_roundtrip()
+    test_parse_css_and_xpath()
+    test_parse_window_title_and_text_attrs()
+    test_find_by_accessibility_id_and_text()
+    test_active_fields_per_environment()
+  tests/test_control_terminal.py:
+    e: _demo_registry,_seed_default_demo,test_terminal_screen_nodes,test_terminal_provider_snapshot_and_find,test_terminal_provider_actions,test_terminal_selector_parse_and_match,test_terminal_service_set_value,test_terminal_service_verify_text_change,test_resolve_provider_terminal_backend,test_resolve_provider_unknown_backend,test_terminal_service_missing_session_raises
+    _demo_registry()
+    _seed_default_demo()
+    test_terminal_screen_nodes()
+    test_terminal_provider_snapshot_and_find()
+    test_terminal_provider_actions()
+    test_terminal_selector_parse_and_match()
+    test_terminal_service_set_value()
+    test_terminal_service_verify_text_change()
+    test_resolve_provider_terminal_backend()
+    test_resolve_provider_unknown_backend()
+    test_terminal_service_missing_session_raises()
+  tests/test_control_verify.py:
+    e: _node,_gtk_demo_snapshots,test_diff_snapshots_detects_label_change,test_verify_click_detects_sibling_label_change,test_verify_click_with_verify_label,test_verify_click_with_verify_selector,test_verify_set_value_checks_expected_text,test_snapshot_diff_alias_matches_diff_snapshots,test_collect_changed_nodes_flattens_diff,test_verify_detects_focus_change_without_value_change,test_verify_fails_when_nothing_changes
+    _node(node_id)
+    _gtk_demo_snapshots()
+    test_diff_snapshots_detects_label_change()
+    test_verify_click_detects_sibling_label_change()
+    test_verify_click_with_verify_label()
+    test_verify_click_with_verify_selector()
+    test_verify_set_value_checks_expected_text()
+    test_snapshot_diff_alias_matches_diff_snapshots()
+    test_collect_changed_nodes_flattens_diff()
+    test_verify_detects_focus_change_without_value_change()
+    test_verify_fails_when_nothing_changes()
   tests/test_execution_policy.py:
     e: test_execution_policy_routes_to_agent_when_url_set,test_execution_policy_routes_local_inside_broker,test_execution_policy_routes_local_without_url,test_execute_health_local,test_execute_monitors_via_agent
     test_execution_policy_routes_to_agent_when_url_set(monkeypatch)
@@ -1265,10 +1645,10 @@ D:
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('vdisplay', '0.1.5', 'python').
+project_metadata('vdisplay', '0.1.6', 'python').
 
 % ── Project Files ────────────────────────────────────────
-project_file('app.doql.less', 49, 'less').
+project_file('app.doql.less', 51, 'less').
 project_file('examples/agent-broker/broker_demo.py', 58, 'python').
 project_file('examples/agent-broker/run.sh', 27, 'shell').
 project_file('examples/ci-agent/agent.py', 74, 'python').
@@ -1285,14 +1665,15 @@ project_file('examples/host-relay/run.sh', 48, 'shell').
 project_file('examples/run_all_examples.sh', 153, 'shell').
 project_file('packages/cli2vdisplay/src/cli2vdisplay/cli.py', 35, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py', 5, 'python').
-project_file('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', 109, 'python').
+project_file('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', 136, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/cli.py', 71, 'python').
-project_file('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 161, 'python').
+project_file('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 306, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/__init__.py', 2, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py', 121, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py', 116, 'python').
 project_file('packages/dsl2vdisplay/src/dsl2vdisplay/result.py', 27, 'python').
-project_file('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', 39, 'python').
+project_file('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', 52, 'python').
+project_file('packages/dsl2vdisplay/tests/test_dsl_control.py', 123, 'python').
 project_file('packages/dsl2vdisplay/tests/test_parity.py', 15, 'python').
 project_file('packages/mcp2vdisplay/src/mcp2vdisplay/cli.py', 24, 'python').
 project_file('packages/mcp2vdisplay/src/mcp2vdisplay/server.py', 96, 'python').
@@ -1305,13 +1686,22 @@ project_file('packages/uri2vdisplay/src/uri2vdisplay/decode.py', 32, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/__init__.py', 6, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/cli.py', 44, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 86, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/runtime.py', 81, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/schemas.py', 51, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py', 16, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 25, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 33, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 89, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/health.py', 62, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py', 48, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 99, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 42, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/runtime.py', 99, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/schemas.py', 65, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', 147, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/server.py', 224, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/server.py', 26, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py', 6, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 52, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 56, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', 97, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 85, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py', 20, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/relay.py', 33, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py', 145, 'python').
@@ -1325,15 +1715,17 @@ project_file('src/vdisplay/agent_dispatch.py', 31, 'python').
 project_file('src/vdisplay/agent_envelope.py', 18, 'python').
 project_file('src/vdisplay/api.py', 194, 'python').
 project_file('src/vdisplay/application/__init__.py', 15, 'python').
-project_file('src/vdisplay/application/commands.py', 184, 'python').
+project_file('src/vdisplay/application/commands.py', 239, 'python').
 project_file('src/vdisplay/application/errors.py', 40, 'python').
 project_file('src/vdisplay/application/executor.py', 52, 'python').
 project_file('src/vdisplay/application/handlers/__init__.py', 7, 'python').
-project_file('src/vdisplay/application/handlers/agent.py', 192, 'python').
-project_file('src/vdisplay/application/handlers/local.py', 174, 'python').
+project_file('src/vdisplay/application/handlers/agent.py', 232, 'python').
+project_file('src/vdisplay/application/handlers/control.py', 39, 'python').
+project_file('src/vdisplay/application/handlers/local.py', 254, 'python').
 project_file('src/vdisplay/application/runtime.py', 83, 'python').
 project_file('src/vdisplay/application/services/__init__.py', 4, 'python').
 project_file('src/vdisplay/application/services/capture.py', 183, 'python').
+project_file('src/vdisplay/application/services/control.py', 303, 'python').
 project_file('src/vdisplay/application/services/discovery.py', 237, 'python').
 project_file('src/vdisplay/application/services/img2nl_enrich.py', 98, 'python').
 project_file('src/vdisplay/application/services/info.py', 52, 'python').
@@ -1362,22 +1754,39 @@ project_file('src/vdisplay/capture/providers/mss.py', 61, 'python').
 project_file('src/vdisplay/capture/providers/x11.py', 36, 'python').
 project_file('src/vdisplay/cli.py', 33, 'python').
 project_file('src/vdisplay/cli_handlers.py', 35, 'python').
-project_file('src/vdisplay/client.py', 308, 'python').
-project_file('src/vdisplay/commands/__init__.py', 43, 'python').
+project_file('src/vdisplay/client.py', 366, 'python').
+project_file('src/vdisplay/commands/__init__.py', 45, 'python').
 project_file('src/vdisplay/commands/agent.py', 111, 'python').
 project_file('src/vdisplay/commands/all_cmd.py', 47, 'python').
 project_file('src/vdisplay/commands/common.py', 36, 'python').
-project_file('src/vdisplay/commands/diagnose.py', 27, 'python').
+project_file('src/vdisplay/commands/control.py', 151, 'python').
+project_file('src/vdisplay/commands/diagnose.py', 37, 'python').
 project_file('src/vdisplay/commands/info.py', 17, 'python').
 project_file('src/vdisplay/commands/io.py', 8, 'python').
 project_file('src/vdisplay/commands/mirror.py', 54, 'python').
 project_file('src/vdisplay/commands/monitors.py', 20, 'python').
 project_file('src/vdisplay/commands/nlp.py', 24, 'python').
 project_file('src/vdisplay/commands/relay.py', 111, 'python').
-project_file('src/vdisplay/commands/sampler.py', 119, 'python').
+project_file('src/vdisplay/commands/sampler.py', 133, 'python').
 project_file('src/vdisplay/commands/screenshot.py', 54, 'python').
 project_file('src/vdisplay/commands/virtual.py', 82, 'python').
 project_file('src/vdisplay/commands/windows.py', 30, 'python').
+project_file('src/vdisplay/control/__init__.py', 21, 'python').
+project_file('src/vdisplay/control/base.py', 42, 'python').
+project_file('src/vdisplay/control/engine.py', 56, 'python').
+project_file('src/vdisplay/control/models.py', 188, 'python').
+project_file('src/vdisplay/control/policy.py', 81, 'python').
+project_file('src/vdisplay/control/providers/__init__.py', 7, 'python').
+project_file('src/vdisplay/control/providers/atspi.py', 216, 'python').
+project_file('src/vdisplay/control/providers/atspi_impl.py', 377, 'python').
+project_file('src/vdisplay/control/providers/browser_playwright.py', 283, 'python').
+project_file('src/vdisplay/control/providers/terminal.py', 143, 'python').
+project_file('src/vdisplay/control/providers/terminal_screen.py', 262, 'python').
+project_file('src/vdisplay/control/providers/terminal_session.py', 223, 'python').
+project_file('src/vdisplay/control/providers/x11.py', 120, 'python').
+project_file('src/vdisplay/control/screenshot_verify.py', 213, 'python').
+project_file('src/vdisplay/control/selector.py', 320, 'python').
+project_file('src/vdisplay/control/verify.py', 427, 'python').
 project_file('src/vdisplay/discovery.py', 353, 'python').
 project_file('src/vdisplay/exceptions.py', 11, 'python').
 project_file('src/vdisplay/input/__init__.py', 4, 'python').
@@ -1395,6 +1804,8 @@ project_file('src/vdisplay/windows/query.py', 210, 'python').
 project_file('src/vdisplay/windows/rank.py', 44, 'python').
 project_file('src/vdisplay/windows/scan.py', 111, 'python').
 project_file('tests/conftest.py', 87, 'python').
+project_file('tests/fixtures/gtk_demo_app.py', 60, 'python').
+project_file('tests/fixtures/run_gtk_demo.sh', 12, 'shell').
 project_file('tests/test_agent.py', 44, 'python').
 project_file('tests/test_agent_api_contract.py', 32, 'python').
 project_file('tests/test_agent_client.py', 119, 'python').
@@ -1408,7 +1819,20 @@ project_file('tests/test_capture_providers.py', 67, 'python').
 project_file('tests/test_capture_xwd.py', 53, 'python').
 project_file('tests/test_cli_commands.py', 97, 'python').
 project_file('tests/test_client_request.py', 43, 'python').
-project_file('tests/test_command_contract.py', 50, 'python').
+project_file('tests/test_command_contract.py', 71, 'python').
+project_file('tests/test_control_agent.py', 32, 'python').
+project_file('tests/test_control_app_matching.py', 49, 'python').
+project_file('tests/test_control_atspi.py', 30, 'python').
+project_file('tests/test_control_browser.py', 127, 'python').
+project_file('tests/test_control_capabilities.py', 84, 'python').
+project_file('tests/test_control_executor.py', 71, 'python').
+project_file('tests/test_control_gtk_demo.py', 127, 'python').
+project_file('tests/test_control_policy.py', 21, 'python').
+project_file('tests/test_control_screenshot_verify.py', 204, 'python').
+project_file('tests/test_control_selector.py', 36, 'python').
+project_file('tests/test_control_selector_v2.py', 86, 'python').
+project_file('tests/test_control_terminal.py', 171, 'python').
+project_file('tests/test_control_verify.py', 205, 'python').
 project_file('tests/test_execution_policy.py', 65, 'python').
 project_file('tests/test_host_capture.py', 43, 'python').
 project_file('tests/test_host_capture_errors.py', 37, 'python').
@@ -1458,13 +1882,15 @@ python_function('examples/host-relay/relay_demo.py', '_capture_phase', 1, 1, 5).
 python_function('examples/host-relay/relay_demo.py', 'main', 0, 11, 17).
 python_function('packages/cli2vdisplay/src/cli2vdisplay/cli.py', 'main', 1, 7, 10).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', '_dispatch_legacy', 1, 3, 9).
-python_function('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', 'dispatch', 1, 13, 18).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', 'dispatch', 1, 14, 18).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', '_dispatch_fallback', 1, 4, 6).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/bus.py', 'execute_dsl_line', 1, 1, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/cli.py', 'main', 1, 4, 3).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/cli.py', '_main_legacy', 1, 10, 11).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/cli.py', '_main_subcommand', 1, 9, 13).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'split_command', 1, 4, 3).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'normalize_tokens', 1, 3, 4).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'resolve_verb', 1, 4, 5).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'pick_flag', 2, 3, 2).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_with_display', 2, 2, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_windows', 2, 3, 2).
@@ -1473,9 +1899,21 @@ python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_vir
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_launch', 2, 5, 4).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_mirror', 2, 5, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_adopt', 2, 6, 1).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_has_flag', 2, 1, 0).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_control_common', 2, 7, 6).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_controls_list', 2, 3, 3).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_controls_find', 2, 1, 1).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_control_click', 2, 1, 1).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_control_focus', 2, 1, 1).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_control_set_value', 2, 2, 2).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_diagnose_control', 2, 1, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_parse_release', 2, 5, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'parse_line', 1, 3, 4).
-python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'to_text', 1, 7, 5).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_screenshot_to_text', 1, 2, 3).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_mirror_to_text', 1, 2, 3).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_controls_list_to_text', 1, 3, 3).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', 'to_text', 1, 2, 4).
+python_function('packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py', '_control_to_text', 2, 5, 5).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py', '_ok', 3, 1, 2).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py', '_err', 4, 2, 1).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/handlers/command.py', 'handle_screenshot', 1, 2, 6).
@@ -1495,6 +1933,16 @@ python_function('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', '_l
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', 'all_schemas', 0, 3, 2).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', 'schema_for_verb', 1, 1, 3).
 python_function('packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py', 'validate_command_dict', 1, 3, 5).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_controls_list_uppercase', 0, 7, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_controls_list_human_readable', 0, 6, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_control_click_with_verify', 0, 8, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_control_click_with_screenshot_verify', 0, 5, 3).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_control_set_value_requires_value_schema', 0, 6, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_parse_controls_find_with_provider_ref', 0, 5, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_command_request_from_dsl_control', 0, 8, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_command_request_provider_ref', 0, 3, 2).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_to_text_roundtrip_control_click', 0, 5, 3).
+python_function('packages/dsl2vdisplay/tests/test_dsl_control.py', 'test_dispatch_control_verbs_via_executor', 3, 4, 5).
 python_function('packages/dsl2vdisplay/tests/test_parity.py', 'test_parity_info_text_vs_dict', 0, 3, 1).
 python_function('packages/dsl2vdisplay/tests/test_parity.py', 'test_health', 0, 3, 1).
 python_function('packages/mcp2vdisplay/src/mcp2vdisplay/cli.py', 'main', 0, 2, 6).
@@ -1517,6 +1965,15 @@ python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'json_
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'json_error', 2, 5, 7).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'strip_ok', 1, 1, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'flatten_envelope', 1, 6, 2).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py', 'register_all_routes', 2, 2, 3).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 'expected_token', 0, 2, 2).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 'make_check_auth', 1, 1, 4).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 'register_routes', 3, 1, 6).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 'register_routes', 3, 1, 11).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/health.py', 'register_routes', 3, 1, 10).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py', 'register_routes', 3, 1, 11).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 'register_routes', 3, 1, 17).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 'register_routes', 3, 1, 7).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_pid_alive', 1, 3, 1).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_parse_ss_pids', 1, 2, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_pids_from_ss', 1, 3, 2).
@@ -1525,14 +1982,20 @@ python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', 'fin
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_probe_is_vdisplay_agent', 2, 6, 6).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', 'stop_pids', 1, 13, 7).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', 'ensure_broker_port_free', 2, 4, 5).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/server.py', 'create_app', 1, 3, 36).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 'platform_capabilities', 0, 5, 9).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/server.py', 'create_app', 1, 2, 5).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 'platform_capabilities', 0, 5, 11).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 'diagnostics', 1, 1, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', 'capture_frame', 2, 3, 5).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', '_capture_session', 3, 3, 11).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', '_capture_all_monitors', 2, 2, 5).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', '_region_from_body', 1, 8, 5).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', '_capture_host', 2, 7, 10).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'diagnose_control', 0, 1, 1).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'list_controls', 1, 4, 4).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'find_controls', 1, 2, 3).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'invoke_control', 1, 2, 4).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'focus_control', 1, 2, 4).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 'set_control_value', 1, 3, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py', 'list_outputs_payload', 0, 2, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/relay.py', 'adopt_window', 2, 6, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/relay.py', 'release_window', 2, 5, 4).
@@ -1585,7 +2048,15 @@ python_function('src/vdisplay/application/handlers/agent.py', '_virtual_start', 
 python_function('src/vdisplay/application/handlers/agent.py', '_mirror', 2, 6, 8).
 python_function('src/vdisplay/application/handlers/agent.py', '_adopt', 2, 2, 2).
 python_function('src/vdisplay/application/handlers/agent.py', '_release', 2, 1, 2).
+python_function('src/vdisplay/application/handlers/agent.py', '_diagnose_control', 2, 1, 2).
+python_function('src/vdisplay/application/handlers/agent.py', '_controls_list', 2, 1, 3).
+python_function('src/vdisplay/application/handlers/agent.py', '_controls_find', 2, 1, 3).
+python_function('src/vdisplay/application/handlers/agent.py', '_control_click', 2, 1, 3).
+python_function('src/vdisplay/application/handlers/agent.py', '_control_focus', 2, 1, 3).
+python_function('src/vdisplay/application/handlers/agent.py', '_control_set_value', 2, 1, 3).
 python_function('src/vdisplay/application/handlers/agent.py', 'execute_agent', 1, 2, 4).
+python_function('src/vdisplay/application/handlers/control.py', 'control_selector_kwargs', 1, 1, 0).
+python_function('src/vdisplay/application/handlers/control.py', 'control_request_body', 1, 3, 3).
 python_function('src/vdisplay/application/handlers/local.py', '_health', 1, 1, 0).
 python_function('src/vdisplay/application/handlers/local.py', '_info', 1, 1, 1).
 python_function('src/vdisplay/application/handlers/local.py', '_monitors', 1, 1, 1).
@@ -1598,6 +2069,12 @@ python_function('src/vdisplay/application/handlers/local.py', '_virtual_start', 
 python_function('src/vdisplay/application/handlers/local.py', '_mirror', 1, 2, 1).
 python_function('src/vdisplay/application/handlers/local.py', '_adopt', 1, 2, 1).
 python_function('src/vdisplay/application/handlers/local.py', '_release', 1, 1, 1).
+python_function('src/vdisplay/application/handlers/local.py', '_diagnose_control', 1, 1, 1).
+python_function('src/vdisplay/application/handlers/local.py', '_controls_list', 1, 1, 1).
+python_function('src/vdisplay/application/handlers/local.py', '_controls_find', 1, 1, 2).
+python_function('src/vdisplay/application/handlers/local.py', '_control_click', 1, 1, 2).
+python_function('src/vdisplay/application/handlers/local.py', '_control_focus', 1, 1, 2).
+python_function('src/vdisplay/application/handlers/local.py', '_control_set_value', 1, 2, 3).
 python_function('src/vdisplay/application/handlers/local.py', 'execute_local', 1, 2, 3).
 python_function('src/vdisplay/application/runtime.py', 'agent_client_optional', 0, 2, 2).
 python_function('src/vdisplay/application/runtime.py', 'agent_client_required', 0, 2, 3).
@@ -1609,6 +2086,17 @@ python_function('src/vdisplay/application/services/capture.py', 'capture_screens
 python_function('src/vdisplay/application/services/capture.py', 'capture_screenshot_local', 0, 7, 9).
 python_function('src/vdisplay/application/services/capture.py', '_capture_via_agent', 1, 9, 7).
 python_function('src/vdisplay/application/services/capture.py', 'capture_screenshot_via_client', 1, 1, 1).
+python_function('src/vdisplay/application/services/control.py', '_selector_from_kwargs', 0, 8, 6).
+python_function('src/vdisplay/application/services/control.py', '_provider_kwargs', 0, 2, 0).
+python_function('src/vdisplay/application/services/control.py', '_resolve_target', 3, 4, 6).
+python_function('src/vdisplay/application/services/control.py', 'diagnose_control', 0, 1, 2).
+python_function('src/vdisplay/application/services/control.py', 'controls_list', 0, 2, 4).
+python_function('src/vdisplay/application/services/control.py', 'controls_find', 0, 8, 10).
+python_function('src/vdisplay/application/services/control.py', 'control_click', 0, 1, 1).
+python_function('src/vdisplay/application/services/control.py', 'control_focus', 0, 1, 1).
+python_function('src/vdisplay/application/services/control.py', 'control_set_value', 0, 1, 1).
+python_function('src/vdisplay/application/services/control.py', '_execute_action', 0, 28, 16).
+python_function('src/vdisplay/application/services/control.py', '_build_tree', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', '_run_discovery', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', 'list_monitors', 1, 1, 2).
 python_function('src/vdisplay/application/services/discovery.py', 'list_monitors_local', 1, 2, 4).
@@ -1753,7 +2241,10 @@ python_function('src/vdisplay/cli_handlers.py', 'windows_payload', 0, 1, 1).
 python_function('src/vdisplay/cli_handlers.py', 'all_payload', 0, 1, 1).
 python_function('src/vdisplay/cli_handlers.py', 'screenshot_payload', 0, 1, 2).
 python_function('src/vdisplay/cli_handlers.py', 'dispatch_cli', 1, 1, 2).
-python_function('src/vdisplay/client.py', '_route_command', 1, 14, 6).
+python_function('src/vdisplay/client.py', '_route_outputs_query', 1, 4, 2).
+python_function('src/vdisplay/client.py', '_route_windows_query', 1, 6, 4).
+python_function('src/vdisplay/client.py', '_route_control_command', 2, 5, 0).
+python_function('src/vdisplay/client.py', '_route_command', 1, 9, 5).
 python_function('src/vdisplay/commands/__init__.py', 'register_all', 1, 2, 1).
 python_function('src/vdisplay/commands/agent.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/agent.py', '_agent_client', 0, 2, 3).
@@ -1766,8 +2257,12 @@ python_function('src/vdisplay/commands/common.py', 'add_display_arg', 1, 1, 1).
 python_function('src/vdisplay/commands/common.py', 'add_all_arg', 1, 1, 1).
 python_function('src/vdisplay/commands/common.py', 'add_window_filter_args', 1, 1, 2).
 python_function('src/vdisplay/commands/common.py', 'include_all_from_args', 1, 2, 2).
+python_function('src/vdisplay/commands/control.py', 'register', 1, 1, 6).
+python_function('src/vdisplay/commands/control.py', '_add_selector_args', 1, 1, 1).
+python_function('src/vdisplay/commands/control.py', '_selector_kwargs', 1, 1, 1).
+python_function('src/vdisplay/commands/control.py', 'handle', 1, 6, 8).
 python_function('src/vdisplay/commands/diagnose.py', 'register', 1, 1, 4).
-python_function('src/vdisplay/commands/diagnose.py', 'handle', 1, 2, 3).
+python_function('src/vdisplay/commands/diagnose.py', 'handle', 1, 3, 4).
 python_function('src/vdisplay/commands/info.py', 'register', 1, 1, 2).
 python_function('src/vdisplay/commands/info.py', 'handle', 1, 1, 2).
 python_function('src/vdisplay/commands/io.py', 'print_json', 1, 1, 2).
@@ -1782,13 +2277,97 @@ python_function('src/vdisplay/commands/relay.py', 'handle_list_windows', 1, 1, 2
 python_function('src/vdisplay/commands/relay.py', 'handle', 1, 5, 6).
 python_function('src/vdisplay/commands/sampler.py', 'register', 1, 1, 5).
 python_function('src/vdisplay/commands/sampler.py', '_config_from_args', 1, 1, 1).
-python_function('src/vdisplay/commands/sampler.py', 'handle', 1, 17, 15).
+python_function('src/vdisplay/commands/sampler.py', 'handle', 1, 3, 4).
+python_function('src/vdisplay/commands/sampler.py', '_handle_stop', 1, 2, 4).
+python_function('src/vdisplay/commands/sampler.py', '_handle_status', 1, 2, 3).
+python_function('src/vdisplay/commands/sampler.py', '_handle_start', 2, 4, 6).
+python_function('src/vdisplay/commands/sampler.py', '_start_agent', 3, 2, 4).
+python_function('src/vdisplay/commands/sampler.py', '_wait_for_sampler', 3, 9, 8).
 python_function('src/vdisplay/commands/screenshot.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/screenshot.py', 'handle', 1, 1, 2).
 python_function('src/vdisplay/commands/virtual.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/virtual.py', 'handle', 1, 6, 7).
 python_function('src/vdisplay/commands/windows.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/windows.py', 'handle', 1, 1, 3).
+python_function('src/vdisplay/control/engine.py', 'resolve_provider', 1, 13, 8).
+python_function('src/vdisplay/control/policy.py', '_atspi_ready', 0, 2, 3).
+python_function('src/vdisplay/control/policy.py', '_xdotool_ready', 0, 2, 1).
+python_function('src/vdisplay/control/policy.py', 'assess_control_capability', 0, 9, 6).
+python_function('src/vdisplay/control/providers/atspi.py', '_gi_available', 0, 2, 1).
+python_function('src/vdisplay/control/providers/atspi.py', '_system_python', 0, 4, 3).
+python_function('src/vdisplay/control/providers/atspi.py', '_vdisplay_src_path', 0, 3, 3).
+python_function('src/vdisplay/control/providers/atspi.py', '_run_subprocess', 1, 8, 10).
+python_function('src/vdisplay/control/providers/atspi.py', '_actions_from_dict', 1, 4, 4).
+python_function('src/vdisplay/control/providers/atspi.py', '_snapshot_from_dict', 1, 8, 10).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_atspi', 0, 1, 1).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_map_role', 1, 2, 3).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_atspi_module', 0, 1, 1).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_iface', 2, 5, 2).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_node_actions', 1, 8, 10).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_text_iface', 1, 3, 2).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_node_text_value', 1, 4, 6).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_provider_ref', 2, 3, 3).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_node_state', 2, 5, 4).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_node_capabilities', 3, 5, 6).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_node_bounds', 1, 6, 4).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_application_matches', 2, 4, 5).
+python_function('src/vdisplay/control/providers/atspi_impl.py', 'snapshot_dict', 0, 5, 21).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_resolve_accessible', 1, 5, 9).
+python_function('src/vdisplay/control/providers/atspi_impl.py', 'dispatch', 1, 18, 19).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_playwright_available', 0, 2, 0).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_role_for_element', 1, 7, 4).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_capabilities_for', 1, 5, 1).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_actions_for', 1, 3, 1).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_bounds_from_box', 1, 2, 3).
+python_function('src/vdisplay/control/providers/browser_playwright.py', '_node_from_element', 1, 11, 11).
+python_function('src/vdisplay/control/providers/terminal.py', '_terminal_deps_available', 0, 1, 0).
+python_function('src/vdisplay/control/providers/terminal.py', '_parse_ref', 1, 8, 3).
+python_function('src/vdisplay/control/providers/terminal.py', '_find_terminal_nodes', 2, 15, 4).
+python_function('src/vdisplay/control/providers/terminal_screen.py', '_line_node_id', 2, 1, 0).
+python_function('src/vdisplay/control/providers/terminal_screen.py', '_cursor_node_id', 1, 1, 0).
+python_function('src/vdisplay/control/providers/terminal_screen.py', 'nodes_from_screen', 1, 4, 10).
+python_function('src/vdisplay/control/providers/terminal_screen.py', 'new_session_id', 0, 1, 1).
+python_function('src/vdisplay/control/providers/terminal_session.py', 'default_registry', 0, 1, 0).
+python_function('src/vdisplay/control/screenshot_verify.py', '_region_from_bounds', 1, 1, 1).
+python_function('src/vdisplay/control/screenshot_verify.py', 'capture_control_screenshot', 0, 3, 6).
+python_function('src/vdisplay/control/screenshot_verify.py', '_target_region', 1, 5, 1).
+python_function('src/vdisplay/control/screenshot_verify.py', '_maybe_crop_capture', 2, 7, 4).
+python_function('src/vdisplay/control/screenshot_verify.py', '_capture_via_agent', 0, 6, 8).
+python_function('src/vdisplay/control/screenshot_verify.py', 'diff_png_bytes', 2, 13, 9).
+python_function('src/vdisplay/control/screenshot_verify.py', 'verify_screenshot_pair', 2, 1, 2).
+python_function('src/vdisplay/control/selector.py', '_normalize', 1, 2, 2).
+python_function('src/vdisplay/control/selector.py', '_role_matches', 2, 3, 1).
+python_function('src/vdisplay/control/selector.py', '_app_matches', 2, 4, 1).
+python_function('src/vdisplay/control/selector.py', '_window_title_matches', 2, 5, 1).
+python_function('src/vdisplay/control/selector.py', '_name_matches', 1, 5, 1).
+python_function('src/vdisplay/control/selector.py', '_text_matches', 1, 8, 1).
+python_function('src/vdisplay/control/selector.py', '_terminal_line_matches', 2, 3, 2).
+python_function('src/vdisplay/control/selector.py', '_terminal_col_matches', 2, 3, 2).
+python_function('src/vdisplay/control/selector.py', '_score', 2, 24, 4).
+python_function('src/vdisplay/control/selector.py', 'find_matches', 2, 13, 12).
+python_function('src/vdisplay/control/selector.py', 'pick_match', 2, 3, 3).
+python_function('src/vdisplay/control/selector.py', 'parse_role', 1, 2, 2).
+python_function('src/vdisplay/control/selector.py', '_apply_attr', 4, 16, 2).
+python_function('src/vdisplay/control/selector.py', 'parse_selector', 1, 16, 9).
+python_function('src/vdisplay/control/verify.py', '_node_key', 1, 2, 2).
+python_function('src/vdisplay/control/verify.py', '_display_text', 1, 5, 0).
+python_function('src/vdisplay/control/verify.py', '_subtree_ids', 2, 4, 4).
+python_function('src/vdisplay/control/verify.py', '_scope_root_id', 2, 3, 0).
+python_function('src/vdisplay/control/verify.py', '_structural_key', 3, 6, 4).
+python_function('src/vdisplay/control/verify.py', '_nodes_by_match_key', 2, 5, 3).
+python_function('src/vdisplay/control/verify.py', 'diff_snapshots', 2, 13, 7).
+python_function('src/vdisplay/control/verify.py', 'snapshot_diff', 2, 1, 1).
+python_function('src/vdisplay/control/verify.py', 'collect_changed_nodes', 1, 8, 2).
+python_function('src/vdisplay/control/verify.py', '_label_prefix_changes', 2, 9, 8).
+python_function('src/vdisplay/control/verify.py', '_selector_change', 3, 4, 2).
+python_function('src/vdisplay/control/verify.py', '_handle_selector_verification', 3, 4, 3).
+python_function('src/vdisplay/control/verify.py', '_handle_label_verification', 4, 3, 1).
+python_function('src/vdisplay/control/verify.py', '_handle_set_value_verification', 4, 7, 4).
+python_function('src/vdisplay/control/verify.py', '_handle_focus_verification', 1, 2, 1).
+python_function('src/vdisplay/control/verify.py', '_handle_invoke_verification', 4, 8, 3).
+python_function('src/vdisplay/control/verify.py', '_add_diff_nodes', 1, 3, 1).
+python_function('src/vdisplay/control/verify.py', 'verify_action_result', 0, 8, 12).
+python_function('src/vdisplay/control/verify.py', '_is_verified', 2, 18, 2).
 python_function('src/vdisplay/discovery.py', 'resolve_host_display', 1, 9, 5).
 python_function('src/vdisplay/discovery.py', '_looks_like_xvfb_only', 1, 4, 4).
 python_function('src/vdisplay/discovery.py', 'list_outputs', 1, 8, 15).
@@ -1874,6 +2453,7 @@ python_function('tests/conftest.py', '_reset_portal_screencast_state', 0, 1, 3).
 python_function('tests/conftest.py', '_wait_for_url', 1, 4, 4).
 python_function('tests/conftest.py', 'live_agent_url', 0, 1, 14).
 python_function('tests/conftest.py', 'agent_client', 0, 1, 4).
+python_function('tests/fixtures/gtk_demo_app.py', 'main', 0, 2, 20).
 python_function('tests/test_agent.py', 'test_agent_health', 1, 5, 2).
 python_function('tests/test_agent.py', 'test_agent_capabilities', 1, 4, 2).
 python_function('tests/test_agent.py', 'test_agent_virtual_session_capture', 2, 7, 7).
@@ -1927,7 +2507,75 @@ python_function('tests/test_command_contract.py', 'test_command_request_from_dsl
 python_function('tests/test_command_contract.py', 'test_command_request_from_dsl_apps_only', 0, 3, 1).
 python_function('tests/test_command_contract.py', 'test_command_result_envelope_success', 0, 5, 2).
 python_function('tests/test_command_contract.py', 'test_command_result_envelope_failure', 0, 4, 3).
+python_function('tests/test_command_contract.py', 'test_command_request_from_dsl_control_click', 0, 8, 1).
 python_function('tests/test_command_contract.py', 'test_command_result_to_dsl_result', 0, 4, 2).
+python_function('tests/test_control_agent.py', 'test_agent_control_diagnostics', 2, 3, 3).
+python_function('tests/test_control_agent.py', 'test_agent_controls_list', 2, 3, 3).
+python_function('tests/test_control_app_matching.py', '_node', 1, 1, 1).
+python_function('tests/test_control_app_matching.py', 'test_app_matches_process_name', 0, 2, 4).
+python_function('tests/test_control_app_matching.py', 'test_app_matches_window_title', 0, 2, 4).
+python_function('tests/test_control_app_matching.py', 'test_window_title_selector', 0, 3, 3).
+python_function('tests/test_control_atspi.py', '_atspi_available', 0, 1, 2).
+python_function('tests/test_control_atspi.py', 'test_atspi_snapshot_lists_nodes', 0, 4, 5).
+python_function('tests/test_control_atspi.py', 'test_controls_list_cli_integration', 0, 3, 3).
+python_function('tests/test_control_browser.py', 'test_browser_provider_snapshot_and_find', 0, 6, 6).
+python_function('tests/test_control_browser.py', 'test_browser_provider_actions', 0, 7, 7).
+python_function('tests/test_control_browser.py', 'test_resolve_browser_backend_with_injected_page', 0, 2, 3).
+python_function('tests/test_control_browser.py', 'test_resolve_browser_backend_without_playwright', 1, 3, 2).
+python_function('tests/test_control_capabilities.py', 'test_element_capabilities_roundtrip', 0, 2, 3).
+python_function('tests/test_control_capabilities.py', 'test_control_node_serializes_capabilities_and_actions', 0, 5, 5).
+python_function('tests/test_control_capabilities.py', 'test_atspi_snapshot_deserializes_actions_and_capabilities', 1, 6, 1).
+python_function('tests/test_control_executor.py', 'test_executor_control_click_local', 1, 4, 3).
+python_function('tests/test_control_executor.py', 'test_executor_controls_find_local', 1, 4, 3).
+python_function('tests/test_control_executor.py', 'test_executor_diagnose_control_local', 1, 4, 3).
+python_function('tests/test_control_gtk_demo.py', '_atspi_available', 0, 1, 2).
+python_function('tests/test_control_gtk_demo.py', '_display_available', 0, 1, 2).
+python_function('tests/test_control_gtk_demo.py', 'gtk_demo_process', 0, 5, 12).
+python_function('tests/test_control_gtk_demo.py', 'test_gtk_demo_find_increment_button', 1, 4, 4).
+python_function('tests/test_control_gtk_demo.py', 'test_gtk_demo_list_by_window_title', 1, 5, 6).
+python_function('tests/test_control_gtk_demo.py', 'test_gtk_demo_click_verify_label', 1, 6, 6).
+python_function('tests/test_control_gtk_demo.py', 'test_gtk_demo_set_value_verify', 1, 5, 6).
+python_function('tests/test_control_policy.py', 'test_assess_control_capability_returns_contract', 1, 4, 2).
+python_function('tests/test_control_screenshot_verify.py', '_png', 1, 1, 4).
+python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_detects_change', 0, 3, 2).
+python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_identical_is_not_verified', 0, 3, 2).
+python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_small_change_on_large_frame', 0, 2, 8).
+python_function('tests/test_control_screenshot_verify.py', 'test_verify_screenshot_pair_payload', 0, 3, 2).
+python_function('tests/test_control_screenshot_verify.py', 'test_capture_via_agent_when_configured', 1, 4, 5).
+python_function('tests/test_control_screenshot_verify.py', 'test_capture_control_screenshot_uses_target_region', 0, 4, 4).
+python_function('tests/test_control_screenshot_verify.py', 'test_execute_action_screenshot_verify_only', 1, 5, 8).
+python_function('tests/test_control_screenshot_verify.py', 'test_execute_action_dual_verify_requires_both', 1, 4, 7).
+python_function('tests/test_control_selector.py', '_node', 1, 1, 2).
+python_function('tests/test_control_selector.py', 'test_parse_selector_button_name', 0, 3, 1).
+python_function('tests/test_control_selector.py', 'test_find_and_pick_match', 0, 4, 4).
+python_function('tests/test_control_selector_v2.py', '_node', 1, 1, 2).
+python_function('tests/test_control_selector_v2.py', 'test_selector_roundtrip', 0, 6, 3).
+python_function('tests/test_control_selector_v2.py', 'test_parse_css_and_xpath', 0, 5, 1).
+python_function('tests/test_control_selector_v2.py', 'test_parse_window_title_and_text_attrs', 0, 4, 1).
+python_function('tests/test_control_selector_v2.py', 'test_find_by_accessibility_id_and_text', 0, 3, 3).
+python_function('tests/test_control_selector_v2.py', 'test_active_fields_per_environment', 0, 4, 2).
+python_function('tests/test_control_terminal.py', '_demo_registry', 0, 1, 2).
+python_function('tests/test_control_terminal.py', '_seed_default_demo', 0, 1, 3).
+python_function('tests/test_control_terminal.py', 'test_terminal_screen_nodes', 0, 7, 7).
+python_function('tests/test_control_terminal.py', 'test_terminal_provider_snapshot_and_find', 0, 6, 8).
+python_function('tests/test_control_terminal.py', 'test_terminal_provider_actions', 0, 5, 7).
+python_function('tests/test_control_terminal.py', 'test_terminal_selector_parse_and_match', 0, 6, 5).
+python_function('tests/test_control_terminal.py', 'test_terminal_service_set_value', 0, 4, 6).
+python_function('tests/test_control_terminal.py', 'test_terminal_service_verify_text_change', 0, 3, 4).
+python_function('tests/test_control_terminal.py', 'test_resolve_provider_terminal_backend', 0, 2, 4).
+python_function('tests/test_control_terminal.py', 'test_resolve_provider_unknown_backend', 0, 4, 4).
+python_function('tests/test_control_terminal.py', 'test_terminal_service_missing_session_raises', 0, 2, 4).
+python_function('tests/test_control_verify.py', '_node', 1, 3, 2).
+python_function('tests/test_control_verify.py', '_gtk_demo_snapshots', 0, 1, 2).
+python_function('tests/test_control_verify.py', 'test_diff_snapshots_detects_label_change', 0, 5, 3).
+python_function('tests/test_control_verify.py', 'test_verify_click_detects_sibling_label_change', 0, 3, 2).
+python_function('tests/test_control_verify.py', 'test_verify_click_with_verify_label', 0, 4, 2).
+python_function('tests/test_control_verify.py', 'test_verify_click_with_verify_selector', 0, 3, 2).
+python_function('tests/test_control_verify.py', 'test_verify_set_value_checks_expected_text', 0, 3, 3).
+python_function('tests/test_control_verify.py', 'test_snapshot_diff_alias_matches_diff_snapshots', 0, 2, 3).
+python_function('tests/test_control_verify.py', 'test_collect_changed_nodes_flattens_diff', 0, 4, 4).
+python_function('tests/test_control_verify.py', 'test_verify_detects_focus_change_without_value_change', 0, 3, 3).
+python_function('tests/test_control_verify.py', 'test_verify_fails_when_nothing_changes', 0, 3, 2).
 python_function('tests/test_execution_policy.py', 'test_execution_policy_routes_to_agent_when_url_set', 1, 2, 5).
 python_function('tests/test_execution_policy.py', 'test_execution_policy_routes_local_inside_broker', 1, 2, 4).
 python_function('tests/test_execution_policy.py', 'test_execution_policy_routes_local_without_url', 1, 2, 4).
@@ -2029,6 +2677,12 @@ python_method('AgentRuntime', 'start_sampler', 1, 1, 1).
 python_method('AgentRuntime', 'stop_sampler', 0, 1, 1).
 python_method('AgentRuntime', 'sampler_status', 0, 1, 1).
 python_method('AgentRuntime', 'capture_frame', 1, 1, 1).
+python_method('AgentRuntime', 'diagnose_control', 0, 1, 1).
+python_method('AgentRuntime', 'list_controls', 1, 1, 1).
+python_method('AgentRuntime', 'find_controls', 1, 1, 1).
+python_method('AgentRuntime', 'invoke_control', 1, 1, 1).
+python_method('AgentRuntime', 'focus_control', 1, 1, 1).
+python_method('AgentRuntime', 'set_control_value', 1, 1, 1).
 python_method('AgentRuntime', 'adopt_window', 1, 1, 1).
 python_method('AgentRuntime', 'release_window', 1, 1, 1).
 python_method('AgentRuntime', 'shutdown', 0, 1, 1).
@@ -2072,8 +2726,8 @@ python_method('WindowRelaySession', 'info', 0, 1, 2).
 python_method('WindowRelaySession', 'capabilities', 0, 1, 2).
 python_class('src/vdisplay/application/commands.py', 'CommandVerb').
 python_class('src/vdisplay/application/commands.py', 'CommandRequest').
-python_method('CommandRequest', 'action', 0, 2, 1).
-python_method('CommandRequest', 'from_dsl', 2, 4, 8).
+python_method('CommandRequest', 'action', 0, 3, 1).
+python_method('CommandRequest', 'from_dsl', 2, 10, 8).
 python_class('src/vdisplay/application/commands.py', 'CommandResult').
 python_method('CommandResult', 'to_dict', 0, 3, 1).
 python_method('CommandResult', 'to_dsl_result', 0, 4, 2).
@@ -2204,10 +2858,131 @@ python_method('AgentClient', 'stop_session', 1, 1, 1).
 python_method('AgentClient', 'sampler_start', 0, 1, 1).
 python_method('AgentClient', 'sampler_stop', 0, 1, 1).
 python_method('AgentClient', 'sampler_status', 0, 1, 1).
+python_method('AgentClient', 'diagnose_control', 0, 2, 1).
+python_method('AgentClient', 'list_controls', 1, 2, 1).
+python_method('AgentClient', 'find_controls', 1, 1, 1).
+python_method('AgentClient', 'invoke_control', 1, 1, 1).
+python_method('AgentClient', 'focus_control', 1, 1, 1).
+python_method('AgentClient', 'set_control_value', 1, 1, 1).
 python_method('AgentClient', 'capture_frame', 0, 2, 1).
 python_method('AgentClient', 'capture_png_bytes', 0, 2, 6).
 python_method('AgentClient', 'adopt_window', 0, 1, 1).
 python_method('AgentClient', 'release_window', 0, 1, 1).
+python_class('src/vdisplay/control/base.py', 'ControlProvider').
+python_method('ControlProvider', 'available', 0, 1, 0).
+python_method('ControlProvider', 'snapshot', 0, 1, 0).
+python_method('ControlProvider', 'find', 1, 1, 0).
+python_method('ControlProvider', 'invoke', 1, 1, 0).
+python_method('ControlProvider', 'focus', 1, 1, 0).
+python_method('ControlProvider', 'set_value', 2, 1, 0).
+python_method('ControlProvider', 'bounds', 1, 1, 0).
+python_class('src/vdisplay/control/models.py', 'EnvironmentKind').
+python_class('src/vdisplay/control/models.py', 'ControlRole').
+python_class('src/vdisplay/control/models.py', 'ControlActionKind').
+python_class('src/vdisplay/control/models.py', 'ControlBounds').
+python_method('ControlBounds', 'to_dict', 0, 1, 0).
+python_method('ControlBounds', 'center', 0, 1, 0).
+python_class('src/vdisplay/control/models.py', 'ControlAction').
+python_method('ControlAction', 'to_dict', 0, 1, 0).
+python_class('src/vdisplay/control/models.py', 'ElementCapabilities').
+python_method('ElementCapabilities', 'to_dict', 0, 1, 0).
+python_method('ElementCapabilities', 'from_dict', 2, 2, 3).
+python_class('src/vdisplay/control/models.py', 'ControlNode').
+python_method('ControlNode', 'to_dict', 0, 1, 2).
+python_class('src/vdisplay/control/models.py', 'ControlSnapshot').
+python_method('ControlSnapshot', 'to_dict', 0, 1, 4).
+python_class('src/vdisplay/control/models.py', 'ActionResult').
+python_method('ActionResult', 'to_dict', 0, 1, 1).
+python_class('src/vdisplay/control/policy.py', 'ControlCapabilityContract').
+python_method('ControlCapabilityContract', 'to_dict', 0, 1, 1).
+python_class('src/vdisplay/control/providers/atspi.py', 'AtspiControlProvider').
+python_method('AtspiControlProvider', '__init__', 0, 1, 1).
+python_method('AtspiControlProvider', 'available', 0, 6, 5).
+python_method('AtspiControlProvider', 'snapshot', 0, 2, 3).
+python_method('AtspiControlProvider', 'find', 1, 2, 2).
+python_method('AtspiControlProvider', 'invoke', 1, 2, 2).
+python_method('AtspiControlProvider', 'focus', 1, 2, 2).
+python_method('AtspiControlProvider', 'set_value', 2, 2, 2).
+python_method('AtspiControlProvider', 'bounds', 1, 3, 2).
+python_class('src/vdisplay/control/providers/browser_playwright.py', '_PageLike').
+python_method('_PageLike', 'goto', 1, 1, 0).
+python_method('_PageLike', 'title', 0, 1, 0).
+python_method('_PageLike', 'query_selector_all', 1, 1, 0).
+python_method('_PageLike', 'locator', 1, 1, 0).
+python_class('src/vdisplay/control/providers/browser_playwright.py', '_ElementLike').
+python_method('_ElementLike', 'evaluate', 1, 1, 0).
+python_method('_ElementLike', 'bounding_box', 0, 1, 0).
+python_method('_ElementLike', 'inner_text', 0, 1, 0).
+python_method('_ElementLike', 'get_attribute', 1, 1, 0).
+python_method('_ElementLike', 'click', 0, 1, 0).
+python_method('_ElementLike', 'fill', 1, 1, 0).
+python_method('_ElementLike', 'focus', 0, 1, 0).
+python_class('src/vdisplay/control/providers/browser_playwright.py', 'BrowserPlaywrightProvider').
+python_method('BrowserPlaywrightProvider', '__init__', 0, 1, 0).
+python_method('BrowserPlaywrightProvider', 'available', 0, 2, 1).
+python_method('BrowserPlaywrightProvider', '_ensure_page', 0, 7, 7).
+python_method('BrowserPlaywrightProvider', 'snapshot', 0, 5, 7).
+python_method('BrowserPlaywrightProvider', 'find', 1, 8, 11).
+python_method('BrowserPlaywrightProvider', '_resolve_element', 1, 5, 10).
+python_method('BrowserPlaywrightProvider', 'invoke', 1, 1, 2).
+python_method('BrowserPlaywrightProvider', 'focus', 1, 1, 2).
+python_method('BrowserPlaywrightProvider', 'set_value', 2, 1, 2).
+python_method('BrowserPlaywrightProvider', 'bounds', 1, 1, 3).
+python_method('BrowserPlaywrightProvider', 'close', 0, 3, 2).
+python_class('src/vdisplay/control/providers/terminal.py', 'TerminalControlProvider').
+python_method('TerminalControlProvider', '__init__', 0, 2, 1).
+python_method('TerminalControlProvider', 'available', 0, 1, 1).
+python_method('TerminalControlProvider', '_resolve_session_id', 0, 5, 2).
+python_method('TerminalControlProvider', 'snapshot', 0, 1, 4).
+python_method('TerminalControlProvider', 'find', 1, 5, 3).
+python_method('TerminalControlProvider', 'invoke', 1, 2, 4).
+python_method('TerminalControlProvider', 'focus', 1, 4, 6).
+python_method('TerminalControlProvider', 'set_value', 2, 2, 4).
+python_method('TerminalControlProvider', 'bounds', 1, 3, 2).
+python_class('src/vdisplay/control/providers/terminal_screen.py', 'ScreenLine').
+python_method('ScreenLine', 'stripped', 0, 1, 1).
+python_class('src/vdisplay/control/providers/terminal_screen.py', 'ScreenSnapshot').
+python_method('ScreenSnapshot', 'line_at', 1, 3, 0).
+python_class('src/vdisplay/control/providers/terminal_screen.py', 'ScreenBuffer').
+python_method('ScreenBuffer', '__init__', 0, 2, 3).
+python_method('ScreenBuffer', '_init_pyte', 0, 2, 2).
+python_method('ScreenBuffer', 'resize', 0, 5, 4).
+python_method('ScreenBuffer', 'feed', 1, 5, 6).
+python_method('ScreenBuffer', '_sync_from_pyte', 0, 4, 4).
+python_method('ScreenBuffer', '_feed_simple', 1, 7, 4).
+python_method('ScreenBuffer', 'set_lines', 1, 3, 5).
+python_method('ScreenBuffer', 'snapshot', 0, 5, 6).
+python_class('src/vdisplay/control/providers/terminal_session.py', 'TerminalSession').
+python_method('TerminalSession', 'write', 1, 7, 7).
+python_method('TerminalSession', 'send_enter', 0, 1, 1).
+python_method('TerminalSession', 'sent_text', 0, 1, 1).
+python_method('TerminalSession', 'close', 0, 2, 2).
+python_method('TerminalSession', '_start_reader', 0, 3, 4).
+python_class('src/vdisplay/control/providers/terminal_session.py', 'TerminalSessionRegistry').
+python_method('TerminalSessionRegistry', '__init__', 0, 1, 0).
+python_method('TerminalSessionRegistry', 'list_ids', 0, 1, 1).
+python_method('TerminalSessionRegistry', 'get', 1, 1, 1).
+python_method('TerminalSessionRegistry', 'require', 1, 2, 2).
+python_method('TerminalSessionRegistry', 'open_mock', 0, 5, 4).
+python_method('TerminalSessionRegistry', 'open_process', 1, 4, 6).
+python_method('TerminalSessionRegistry', 'open_pexpect', 1, 5, 14).
+python_method('TerminalSessionRegistry', 'close', 1, 2, 2).
+python_method('TerminalSessionRegistry', 'close_all', 0, 2, 2).
+python_class('src/vdisplay/control/providers/x11.py', 'X11ControlProvider').
+python_method('X11ControlProvider', '__init__', 0, 2, 3).
+python_method('X11ControlProvider', 'available', 0, 2, 2).
+python_method('X11ControlProvider', 'snapshot', 0, 13, 9).
+python_method('X11ControlProvider', 'find', 1, 2, 2).
+python_method('X11ControlProvider', '_node_for', 1, 3, 1).
+python_method('X11ControlProvider', '_click_node', 1, 2, 3).
+python_method('X11ControlProvider', 'invoke', 1, 1, 2).
+python_method('X11ControlProvider', 'focus', 1, 2, 4).
+python_method('X11ControlProvider', 'set_value', 2, 1, 2).
+python_method('X11ControlProvider', 'bounds', 1, 1, 1).
+python_class('src/vdisplay/control/selector.py', 'ControlSelector').
+python_method('ControlSelector', 'from_dict', 2, 6, 7).
+python_method('ControlSelector', 'to_dict', 0, 6, 3).
+python_method('ControlSelector', 'active_fields', 0, 19, 4).
 python_class('src/vdisplay/exceptions.py', 'VDisplayError').
 python_class('src/vdisplay/exceptions.py', 'BackendNotAvailableError').
 python_class('src/vdisplay/exceptions.py', 'CapabilityError').
@@ -2225,6 +3000,26 @@ python_method('_StubProvider', '__init__', 1, 1, 0).
 python_method('_StubProvider', 'available', 0, 1, 0).
 python_method('_StubProvider', 'capture_full', 0, 1, 0).
 python_method('_StubProvider', 'capture_region', 1, 1, 0).
+python_class('tests/test_control_browser.py', 'FakeElement').
+python_method('FakeElement', '__init__', 1, 1, 0).
+python_method('FakeElement', 'evaluate', 1, 1, 1).
+python_method('FakeElement', 'bounding_box', 0, 1, 1).
+python_method('FakeElement', 'inner_text', 0, 1, 1).
+python_method('FakeElement', 'get_attribute', 1, 1, 1).
+python_method('FakeElement', 'click', 0, 1, 0).
+python_method('FakeElement', 'fill', 1, 1, 0).
+python_method('FakeElement', 'focus', 0, 1, 0).
+python_class('tests/test_control_browser.py', 'FakeLocator').
+python_method('FakeLocator', '__init__', 1, 1, 0).
+python_method('FakeLocator', 'count', 0, 1, 1).
+python_method('FakeLocator', 'nth', 1, 1, 0).
+python_method('FakeLocator', 'first', 0, 1, 0).
+python_class('tests/test_control_browser.py', 'FakePage').
+python_method('FakePage', '__init__', 0, 1, 1).
+python_method('FakePage', 'goto', 1, 1, 0).
+python_method('FakePage', 'title', 0, 1, 0).
+python_method('FakePage', 'query_selector_all', 1, 1, 1).
+python_method('FakePage', 'locator', 1, 3, 1).
 python_class('tests/test_mirror_primary.py', '_FakeResult').
 python_method('_FakeResult', '__init__', 2, 1, 0).
 
@@ -2254,44 +3049,56 @@ sumd_interface('cli', '').
 
 ## Call Graph
 
-*397 nodes · 494 edges · 84 modules · CC̄=3.2*
+*417 nodes · 500 edges · 90 modules · CC̄=3.3*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
 | `_start_screencast_impl` *(in src.vdisplay.capture.portal_screencast)* | 9 | 1 | 71 | **72** |
-| `capture_host_png` *(in src.vdisplay.capture.host)* | 15 ⚠ | 2 | 44 | **46** |
+| `capture_host_png` *(in src.vdisplay.capture.host)* | 15 ⚠ | 3 | 44 | **47** |
 | `create_app` *(in packages.rest2vdisplay.src.rest2vdisplay.app)* | 2 | 3 | 38 | **41** |
-| `dispatch` *(in packages.dsl2vdisplay.src.dsl2vdisplay.bus)* | 13 ⚠ | 9 | 27 | **36** |
+| `dispatch` *(in packages.dsl2vdisplay.src.dsl2vdisplay.bus)* | 14 ⚠ | 13 | 27 | **40** |
+| `pick_flag` *(in packages.dsl2vdisplay.src.dsl2vdisplay.grammar)* | 3 | 38 | 2 | **40** |
+| `register_routes` *(in packages.vdisplay-agent.src.vdisplay_agent.routes.control)* | 1 | 0 | 37 | **37** |
+| `parse_selector` *(in src.vdisplay.control.selector)* | 16 ⚠ | 2 | 34 | **36** |
 | `list_outputs` *(in src.vdisplay.discovery)* | 8 | 9 | 27 | **36** |
-| `main` *(in examples.agent-broker.broker_demo)* | 9 | 0 | 35 | **35** |
-| `run_command` *(in src.vdisplay.utils)* | 2 | 29 | 4 | **33** |
-| `main` *(in examples.host-relay.relay_demo)* | 11 ⚠ | 0 | 33 | **33** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.23s
-# nodes: 397 | edges: 494 | modules: 84
-# CC̄=3.2
+# generated in 0.22s
+# nodes: 417 | edges: 500 | modules: 90
+# CC̄=3.3
 
 HUBS[20]:
   src.vdisplay.capture.portal_screencast._start_screencast_impl
     CC=9  in:1  out:71  total:72
   src.vdisplay.capture.host.capture_host_png
-    CC=15  in:2  out:44  total:46
+    CC=15  in:3  out:44  total:47
   packages.rest2vdisplay.src.rest2vdisplay.app.create_app
     CC=2  in:3  out:38  total:41
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-    CC=13  in:9  out:27  total:36
+    CC=14  in:13  out:27  total:40
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+    CC=3  in:38  out:2  total:40
+  packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
+    CC=1  in:0  out:37  total:37
+  src.vdisplay.control.selector.parse_selector
+    CC=16  in:2  out:34  total:36
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  src.vdisplay.utils.run_command
-    CC=2  in:29  out:4  total:33
+  src.vdisplay.control.providers.atspi._snapshot_from_dict
+    CC=8  in:2  out:33  total:35
+  src.vdisplay.control.providers.atspi_impl.dispatch
+    CC=18  in:0  out:34  total:34
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
+  src.vdisplay.cli_handlers.print_json
+    CC=1  in:32  out:1  total:33
+  src.vdisplay.utils.run_command
+    CC=2  in:29  out:4  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
   examples.host-mirror.mirror_demo.main
@@ -2300,22 +3107,10 @@ HUBS[20]:
     CC=17  in:0  out:30  total:30
   src.vdisplay.capture.portal._portal_impl
     CC=4  in:1  out:28  total:29
-  src.vdisplay.cli_handlers.print_json
-    CC=1  in:26  out:1  total:27
-  src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
-    CC=12  in:0  out:27  total:27
-  src.vdisplay.application.services.sampler_loop.SamplerLoop._run
-    CC=17  in:0  out:26  total:26
-  src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start
-    CC=19  in:0  out:26  total:26
-  src.vdisplay.capture.host.resolve_window_region
-    CC=10  in:1  out:24  total:25
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._config_from_body
-    CC=12  in:1  out:24  total:25
-  src.vdisplay.capture.host.capture_all_monitors
-    CC=21  in:2  out:23  total:25
-  src.vdisplay.discovery.resolve_host_display
-    CC=9  in:19  out:6  total:25
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:28  total:28
+  src.vdisplay.control.providers.x11.X11ControlProvider.snapshot
+    CC=13  in:0  out:28  total:28
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -2345,23 +3140,23 @@ MODULES:
     main  CC=7  out:16
   packages.dsl2vdisplay.src.dsl2vdisplay.bus  [3 funcs]
     _dispatch_legacy  CC=3  out:13
-    dispatch  CC=13  out:27
+    dispatch  CC=14  out:27
     execute_dsl_line  CC=1  out:1
   packages.dsl2vdisplay.src.dsl2vdisplay.cli  [3 funcs]
     _main_legacy  CC=10  out:17
     _main_subcommand  CC=9  out:19
     main  CC=4  out:3
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar  [11 funcs]
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar  [23 funcs]
+    _control_to_text  CC=5  out:7
+    _has_flag  CC=1  out:0
     _parse_adopt  CC=6  out:5
-    _parse_launch  CC=5  out:7
-    _parse_mirror  CC=5  out:4
-    _parse_release  CC=5  out:4
-    _parse_screenshot  CC=5  out:6
-    _parse_virtual_start  CC=4  out:5
-    _parse_windows  CC=3  out:2
-    _with_display  CC=2  out:1
-    parse_line  CC=3  out:4
-    pick_flag  CC=3  out:2
+    _parse_control_click  CC=1  out:1
+    _parse_control_common  CC=15  out:17
+    _parse_control_focus  CC=1  out:1
+    _parse_control_set_value  CC=2  out:2
+    _parse_controls_find  CC=1  out:1
+    _parse_controls_list  CC=3  out:4
+    _parse_diagnose_control  CC=1  out:1
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command  [7 funcs]
     _err  CC=2  out:1
     _ok  CC=1  out:2
@@ -2400,8 +3195,21 @@ MODULES:
     json_from_runtime  CC=1  out:2
     json_success  CC=1  out:2
     success  CC=2  out:1
-  packages.vdisplay-agent.src.vdisplay_agent.runtime  [1 funcs]
-    list_windows  CC=1  out:1
+  packages.vdisplay-agent.src.vdisplay_agent.routes  [1 funcs]
+    register_all_routes  CC=2  out:3
+  packages.vdisplay-agent.src.vdisplay_agent.routes.auth  [2 funcs]
+    expected_token  CC=2  out:2
+    make_check_auth  CC=1  out:5
+  packages.vdisplay-agent.src.vdisplay_agent.routes.capture  [1 funcs]
+    register_routes  CC=1  out:6
+  packages.vdisplay-agent.src.vdisplay_agent.routes.control  [1 funcs]
+    register_routes  CC=1  out:37
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health  [1 funcs]
+    register_routes  CC=1  out:28
+  packages.vdisplay-agent.src.vdisplay_agent.routes.sampler  [1 funcs]
+    register_routes  CC=1  out:18
+  packages.vdisplay-agent.src.vdisplay_agent.routes.windows  [1 funcs]
+    register_routes  CC=1  out:12
   packages.vdisplay-agent.src.vdisplay_agent.serve_port  [8 funcs]
     _parse_ss_pids  CC=2  out:4
     _pid_alive  CC=3  out:1
@@ -2411,9 +3219,11 @@ MODULES:
     ensure_broker_port_free  CC=4  out:5
     find_listener_pids  CC=4  out:4
     stop_pids  CC=13  out:10
+  packages.vdisplay-agent.src.vdisplay_agent.server  [1 funcs]
+    create_app  CC=2  out:5
   packages.vdisplay-agent.src.vdisplay_agent.services.capabilities  [2 funcs]
     diagnostics  CC=1  out:4
-    platform_capabilities  CC=5  out:11
+    platform_capabilities  CC=5  out:13
   packages.vdisplay-agent.src.vdisplay_agent.services.capture  [5 funcs]
     _capture_all_monitors  CC=2  out:8
     _capture_host  CC=7  out:16
@@ -2454,11 +3264,10 @@ MODULES:
     dispatch_via_agent  CC=1  out:4
   src.vdisplay.agent_envelope  [1 funcs]
     flatten_agent_envelope  CC=6  out:3
-  src.vdisplay.api  [8 funcs]
+  src.vdisplay.api  [7 funcs]
     create  CC=6  out:8
     create  CC=4  out:6
     create  CC=4  out:6
-    list_adopted  CC=1  out:1
     _default_mirror_backend  CC=2  out:1
     _default_relay_backend  CC=2  out:1
     _default_virtual_backend  CC=2  out:1
@@ -2468,62 +3277,24 @@ MODULES:
   src.vdisplay.application.executor  [2 funcs]
     _maybe_enrich_screenshot  CC=3  out:2
     execute  CC=6  out:11
-  src.vdisplay.application.handlers.agent  [7 funcs]
-    _all  CC=3  out:12
-    _capabilities  CC=1  out:2
-    _monitors  CC=1  out:2
-    _strip_ok  CC=1  out:2
-    _validate  CC=4  out:9
-    _windows  CC=1  out:2
+  src.vdisplay.application.handlers.agent  [1 funcs]
     execute_agent  CC=2  out:4
+  src.vdisplay.application.handlers.control  [1 funcs]
+    control_request_body  CC=3  out:3
   src.vdisplay.application.handlers.local  [1 funcs]
     execute_local  CC=2  out:3
-  src.vdisplay.application.runtime  [7 funcs]
+  src.vdisplay.application.runtime  [6 funcs]
     meta_for  CC=2  out:1
     route  CC=6  out:4
     agent_client_optional  CC=2  out:2
     agent_client_required  CC=2  out:3
     get_execution_policy  CC=1  out:0
     prefer_agent  CC=1  out:1
-    resolve_apps_only  CC=3  out:0
-  src.vdisplay.application.services.capture  [5 funcs]
-    _capture_via_agent  CC=9  out:13
+  src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
-    capture_screenshot_local  CC=7  out:9
-    capture_screenshot_via_client  CC=1  out:1
-    resolve_screenshot_routing  CC=7  out:1
-  src.vdisplay.application.services.discovery  [11 funcs]
-    _run_discovery  CC=3  out:2
-    _sampler_hint  CC=3  out:0
-    diagnose  CC=2  out:2
-    diagnose_unattended  CC=2  out:7
-    list_adopted  CC=1  out:4
-    list_all  CC=4  out:2
-    list_all_local  CC=1  out:4
-    list_monitors  CC=1  out:2
-    list_monitors_local  CC=2  out:4
-    list_windows_local  CC=2  out:6
-  src.vdisplay.application.services.img2nl_enrich  [5 funcs]
-    _image_path  CC=3  out:2
-    describe_screenshot_image  CC=9  out:9
-    enrich_screenshot_payload  CC=9  out:11
-    img2nl_enabled  CC=1  out:3
-    img2nl_locale  CC=2  out:2
-  src.vdisplay.application.services.info  [1 funcs]
-    platform_info  CC=6  out:17
   src.vdisplay.application.services.sampler  [2 funcs]
     run_sampler  CC=5  out:18
     start_sampler_via_agent  CC=1  out:1
-  src.vdisplay.application.services.sampler_loop  [6 funcs]
-    _run  CC=17  out:26
-    start  CC=2  out:10
-    frame_extension  CC=1  out:0
-    resolve_capture_mode  CC=5  out:1
-    transcode_frame  CC=5  out:8
-    validate_sampler_config  CC=7  out:6
-  src.vdisplay.application.services.session  [2 funcs]
-    mirror_screenshot  CC=2  out:4
-    relay_screenshot  CC=4  out:10
   src.vdisplay.backends.linux_x11_mirror  [14 funcs]
     __init__  CC=1  out:4
     screenshot_bytes  CC=2  out:3
@@ -2619,11 +3390,14 @@ MODULES:
     main  CC=2  out:4
   src.vdisplay.cli_handlers  [1 funcs]
     print_json  CC=1  out:1
-  src.vdisplay.client  [4 funcs]
+  src.vdisplay.client  [7 funcs]
     __init__  CC=2  out:2
     _normalize_payload  CC=1  out:1
     request  CC=3  out:8
-    _route_command  CC=14  out:8
+    _route_command  CC=9  out:5
+    _route_control_command  CC=5  out:0
+    _route_outputs_query  CC=4  out:3
+    _route_windows_query  CC=6  out:4
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
   src.vdisplay.commands.agent  [2 funcs]
@@ -2640,8 +3414,8 @@ MODULES:
     add_window_filter_args  CC=1  out:7
     include_all_from_args  CC=2  out:3
   src.vdisplay.commands.diagnose  [2 funcs]
-    handle  CC=2  out:4
-    register  CC=1  out:4
+    handle  CC=3  out:6
+    register  CC=1  out:5
   src.vdisplay.commands.info  [1 funcs]
     handle  CC=1  out:2
   src.vdisplay.commands.mirror  [1 funcs]
@@ -2666,7 +3440,71 @@ MODULES:
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
-  src.vdisplay.discovery  [13 funcs]
+  src.vdisplay.control.policy  [3 funcs]
+    _atspi_ready  CC=2  out:3
+    _xdotool_ready  CC=2  out:1
+    assess_control_capability  CC=9  out:14
+  src.vdisplay.control.providers.atspi  [12 funcs]
+    __init__  CC=1  out:1
+    available  CC=6  out:10
+    find  CC=2  out:2
+    focus  CC=2  out:2
+    invoke  CC=2  out:2
+    set_value  CC=2  out:2
+    snapshot  CC=2  out:4
+    _gi_available  CC=2  out:1
+    _run_subprocess  CC=8  out:15
+    _snapshot_from_dict  CC=8  out:33
+  src.vdisplay.control.providers.atspi_impl  [13 funcs]
+    _atspi  CC=1  out:1
+    _atspi_module  CC=1  out:1
+    _iface  CC=5  out:3
+    _map_role  CC=2  out:3
+    _node_actions  CC=8  out:11
+    _node_bounds  CC=6  out:7
+    _node_capabilities  CC=5  out:11
+    _node_state  CC=5  out:4
+    _node_text_value  CC=4  out:6
+    _resolve_accessible  CC=5  out:9
+  src.vdisplay.control.providers.browser_playwright  [9 funcs]
+    available  CC=2  out:1
+    bounds  CC=1  out:3
+    find  CC=8  out:11
+    snapshot  CC=5  out:7
+    _actions_for  CC=3  out:4
+    _bounds_from_box  CC=2  out:9
+    _node_from_element  CC=11  out:16
+    _playwright_available  CC=2  out:0
+    _role_for_element  CC=7  out:6
+  src.vdisplay.control.providers.x11  [4 funcs]
+    __init__  CC=2  out:3
+    available  CC=2  out:2
+    find  CC=2  out:2
+    snapshot  CC=13  out:28
+  src.vdisplay.control.screenshot_verify  [7 funcs]
+    _capture_via_agent  CC=6  out:8
+    _maybe_crop_capture  CC=7  out:4
+    _region_from_bounds  CC=1  out:2
+    _target_region  CC=5  out:1
+    capture_control_screenshot  CC=3  out:7
+    diff_png_bytes  CC=13  out:15
+    verify_screenshot_pair  CC=1  out:4
+  src.vdisplay.control.selector  [3 funcs]
+    find_matches  CC=13  out:13
+    parse_selector  CC=16  out:34
+    pick_match  CC=3  out:3
+  src.vdisplay.control.verify  [17 funcs]
+    _display_text  CC=5  out:0
+    _handle_invoke_verification  CC=8  out:3
+    _handle_label_verification  CC=3  out:1
+    _handle_selector_verification  CC=4  out:3
+    _handle_set_value_verification  CC=7  out:5
+    _is_verified  CC=18  out:17
+    _label_prefix_changes  CC=9  out:13
+    _node_key  CC=2  out:2
+    _nodes_by_match_key  CC=5  out:3
+    _scope_root_id  CC=3  out:0
+  src.vdisplay.discovery  [12 funcs]
     _attach_output_nl  CC=2  out:3
     _display_hint  CC=3  out:2
     _list_monitors  CC=6  out:10
@@ -2677,11 +3515,6 @@ MODULES:
     find_window_suggestions  CC=2  out:2
     list_monitors  CC=1  out:1
     list_outputs  CC=8  out:27
-  src.vdisplay.input.linux_xdotool  [4 funcs]
-    click  CC=1  out:4
-    hotkey  CC=1  out:3
-    move  CC=1  out:5
-    type_text  CC=1  out:3
   src.vdisplay.nl  [8 funcs]
     _user_visible_app_labels  CC=9  out:9
     assign_windows_to_monitors  CC=3  out:6
@@ -2708,44 +3541,12 @@ MODULES:
     require_command  CC=2  out:2
     run_command  CC=2  out:4
     run_command_bytes  CC=1  out:1
-  src.vdisplay.windows.filter  [12 funcs]
-    filter_windows  CC=14  out:6
-    is_companion_frame  CC=9  out:11
-    is_internal_window  CC=13  out:6
-    is_junk_title  CC=6  out:2
-    is_trivial_internal  CC=5  out:0
-    is_visible_app  CC=9  out:1
-    looks_like_internal_class  CC=3  out:2
-    looks_like_internal_name  CC=3  out:2
-    matches_app  CC=7  out:6
-    matches_class  CC=5  out:4
-  src.vdisplay.windows.normalize  [7 funcs]
-    derive_app_label  CC=14  out:4
-    derive_role  CC=10  out:3
-    normalize_atom_list  CC=3  out:6
-    parse_wm_class  CC=7  out:9
-    process_info  CC=6  out:10
-    resolve_window_pid  CC=3  out:8
-    usable_title  CC=3  out:3
-  src.vdisplay.windows.query  [6 funcs]
+  src.vdisplay.windows.query  [5 funcs]
     find_companion_frames  CC=8  out:10
     find_windows  CC=6  out:5
     inspect_window  CC=9  out:21
     list_windows_enriched  CC=2  out:5
     pick_best_window  CC=8  out:3
-    scan_windows  CC=4  out:4
-  src.vdisplay.windows.rank  [3 funcs]
-    dedupe_app_windows  CC=5  out:9
-    pick_best_from_group  CC=9  out:7
-    pick_largest  CC=1  out:1
-  src.vdisplay.windows.scan  [7 funcs]
-    decode_xprop_value  CC=6  out:6
-    format_window_id  CC=3  out:3
-    root_window_id  CC=3  out:6
-    search_window_ids  CC=4  out:6
-    window_geometry  CC=4  out:8
-    xdotool  CC=1  out:1
-    xprop  CC=5  out:11
 
 EDGES:
   packages.mcp2vdisplay.src.mcp2vdisplay.cli.main → packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server
@@ -2762,6 +3563,7 @@ EDGES:
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.resolve_verb → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.normalize_tokens
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
@@ -2770,8 +3572,21 @@ EDGES:
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._has_flag
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_list → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_list → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_find → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_click → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_focus → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_set_value → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_set_value → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_diagnose_control → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line → packages.dsl2vdisplay.src.dsl2vdisplay.grammar.resolve_verb
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.to_text → packages.dsl2vdisplay.src.dsl2vdisplay.grammar._control_to_text
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
@@ -2784,20 +3599,6 @@ EDGES:
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt → src.vdisplay.discovery.resolve_host_display
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release → src.vdisplay.discovery.resolve_host_display
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors
-  packages.cli2vdisplay.src.cli2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  packages.uri2vdisplay.src.uri2vdisplay.cli.main → packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl
-  packages.uri2vdisplay.src.uri2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-  packages.rest2vdisplay.src.rest2vdisplay.app.create_app → src.vdisplay.agent_config.resolve_agent_url
-  packages.vdisplay-agent.src.vdisplay_agent.cli.main → packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_ss → packages.vdisplay-agent.src.vdisplay_agent.serve_port._parse_ss_pids
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.find_listener_pids → packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_ss
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.find_listener_pids → packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_lsof
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.stop_pids → packages.vdisplay-agent.src.vdisplay_agent.serve_port._pid_alive
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.ensure_broker_port_free → packages.vdisplay-agent.src.vdisplay_agent.serve_port.find_listener_pids
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.ensure_broker_port_free → packages.vdisplay-agent.src.vdisplay_agent.serve_port._probe_is_vdisplay_agent
 ```
 
 ## Test Contracts

@@ -46,6 +46,9 @@ class AgentRuntime:
     def start_relay(self, **kwargs: Any) -> dict[str, Any]:
         return sessions.start_relay(self.store, **kwargs)
 
+    def start_terminal(self, **kwargs: Any) -> dict[str, Any]:
+        return sessions.start_terminal(self.store, **kwargs)
+
     def start_screencast(self, **kwargs: Any) -> dict[str, Any]:
         return sessions.start_screencast(self.store, **kwargs)
 

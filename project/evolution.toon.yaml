@@ -1,4 +1,4 @@
-# code2llm/evolution | 666 func | 104f | 2026-06-09
+# code2llm/evolution | 817 func | 119f | 2026-06-09
 # generated in 0.00s
 
 NEXT[10] (ranked by impact):
@@ -14,33 +14,33 @@ NEXT[10] (ranked by impact):
       WHY: CC=21 exceeds 15
       EFFORT: ~1h  IMPACT: 420
 
-  [4] !  SPLIT-FUNC      capture_host_png  CC=15  fan=26
+  [4] !! SPLIT-FUNC      _execute_action  CC=26  fan=16
+      WHY: CC=26 exceeds 15
+      EFFORT: ~1h  IMPACT: 416
+
+  [5] !  SPLIT-FUNC      capture_host_png  CC=15  fan=26
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 390
 
-  [5] !  SPLIT-FUNC      SamplerLoop._run  CC=17  fan=22
+  [6] !  SPLIT-FUNC      SamplerLoop._run  CC=17  fan=22
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 374
 
-  [6] !  SPLIT-FUNC      dispatch  CC=20  fan=18
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 360
+  [7] !  SPLIT-FUNC      dispatch  CC=18  fan=19
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 342
 
-  [7] !  SPLIT-FUNC      handle  CC=17  fan=17
+  [8] !  SPLIT-FUNC      handle  CC=17  fan=17
       WHY: CC=17 exceeds 15
       EFFORT: ~1h  IMPACT: 289
 
-  [8] !  SPLIT-FUNC      PortalScreenCastSession.start  CC=19  fan=13
+  [9] !  SPLIT-FUNC      PortalScreenCastSession.start  CC=19  fan=13
       WHY: CC=19 exceeds 15
       EFFORT: ~1h  IMPACT: 247
 
-  [9] !  SPLIT-FUNC      assess_unattended_capture  CC=17  fan=12
-      WHY: CC=17 exceeds 15
-      EFFORT: ~1h  IMPACT: 204
-
-  [10] !! SPLIT           planfile.yaml
-      WHY: 1319L, 0 classes, max CC=0
-      EFFORT: ~4h  IMPACT: 0
+  [10] !  SPLIT-FUNC      parse_selector  CC=16  fan=14
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 224
 
 
 RISKS[3]:
@@ -49,10 +49,10 @@ RISKS[3]:
   ⚠ Splitting src/vdisplay/capture/host.py may break 10 import paths
 
 METRICS-TARGET:
-  CC̄:          3.2 → ≤2.2
-  max-CC:      21 → ≤10
+  CC̄:          3.3 → ≤2.3
+  max-CC:      26 → ≤13
   god-modules: 4 → 0
-  high-CC(≥15): 7 → ≤3
+  high-CC(≥15): 16 → ≤8
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.2 → now CC̄=3.2
+  prev CC̄=3.3 → now CC̄=3.3

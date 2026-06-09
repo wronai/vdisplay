@@ -191,79 +191,18 @@ class SamplerLoop:
         out_dir.mkdir(parents=True, exist_ok=True)
         last_hash: str | None = None
         index = 0
-        ext = frame_extension(self.config.format)
         consecutive_errors = 0
 
         while not self._stop.is_set():
             if self.config.max_frames is not None and index >= self.config.max_frames:
                 break
             try:
-                png_path = out_dir / f"frame-{index:06d}.png"
-                meta = self._capture_fn(
-                    output=str(png_path),
-                    display=self.config.display,
-                    source=self.config.source,
-                    mode=self.state.capture_mode,
-                    vd_display=self.config.vd_display,
-                    width=self.config.width,
-                    height=self.config.height,
-                )
-                saved = transcode_frame(png_path, self.config.format)
-                if saved != png_path:
-                    meta["path"] = str(saved.resolve())
-                    meta["bytes"] = saved.stat().st_size
-
-                frame_hash = hashlib.sha256(saved.read_bytes()).hexdigest()[:16]
-                meta["frame_index"] = index
-                meta["captured_at"] = time.time()
-                meta["frame_hash"] = frame_hash
-                meta["format"] = self.config.format
-
-                if self.config.dedupe and frame_hash == last_hash:
-                    saved.unlink(missing_ok=True)
-                    with self._lock:
-                        self.state.frames_skipped_dedupe += 1
-                else:
-                    last_hash = frame_hash
-                    with self._lock:
-                        self.state.frames_saved += 1
-                        self.state.last_frame_at = meta["captured_at"]
-                        self.state.last_error = None
-                        self.state.recent_frames.append(
-                            {
-                                "frame_index": index,
-                                "path": meta.get("path"),
-                                "bytes": meta.get("bytes"),
-                                "method": meta.get("method"),
-                                "format": self.config.format,
-                            }
-                        )
-                        if len(self.state.recent_frames) > 20:
-                            self.state.recent_frames = self.state.recent_frames[-20:]
-                    index += 1
+                last_hash, index = self._capture_frame_iteration(out_dir, index, last_hash)
                 consecutive_errors = 0
             except Exception as exc:
-                err = str(exc)
-                with self._lock:
-                    self.state.last_error = err
-
-                recovered = False
-                if self._recover_fn is not None and is_screencast_recoverable_error(err):
-                    with self._lock:
-                        self.state.recovery_attempts += 1
-                    recovered = self._recover_fn()
-                    if recovered:
-                        consecutive_errors = 0
-                        with self._lock:
-                            self.state.last_error = None
-                            self.state.requires_reconsent = False
-                    else:
-                        with self._lock:
-                            self.state.requires_reconsent = True
-
-                if recovered:
+                if self._handle_capture_error(str(exc)):
+                    consecutive_errors = 0
                     continue
-
                 consecutive_errors += 1
                 if consecutive_errors >= 3:
                     break
@@ -275,3 +214,65 @@ class SamplerLoop:
 
         with self._lock:
             self.state.running = False
+
+    def _capture_frame_iteration(self, out_dir: Path, index: int, last_hash: str | None) -> tuple[str | None, int]:
+        png_path = out_dir / f"frame-{index:06d}.png"
+        meta = self._capture_fn(
+            output=str(png_path),
+            display=self.config.display,
+            source=self.config.source,
+            mode=self.state.capture_mode,
+            vd_display=self.config.vd_display,
+            width=self.config.width,
+            height=self.config.height,
+        )
+        saved = transcode_frame(png_path, self.config.format)
+        if saved != png_path:
+            meta["path"] = str(saved.resolve())
+            meta["bytes"] = saved.stat().st_size
+
+        frame_hash = hashlib.sha256(saved.read_bytes()).hexdigest()[:16]
+        meta["frame_index"] = index
+        meta["captured_at"] = time.time()
+        meta["frame_hash"] = frame_hash
+        meta["format"] = self.config.format
+
+        if self.config.dedupe and frame_hash == last_hash:
+            saved.unlink(missing_ok=True)
+            with self._lock:
+                self.state.frames_skipped_dedupe += 1
+            return last_hash, index
+
+        with self._lock:
+            self.state.frames_saved += 1
+            self.state.last_frame_at = meta["captured_at"]
+            self.state.last_error = None
+            self.state.recent_frames.append(
+                {
+                    "frame_index": index,
+                    "path": meta.get("path"),
+                    "bytes": meta.get("bytes"),
+                    "method": meta.get("method"),
+                    "format": self.config.format,
+                }
+            )
+            if len(self.state.recent_frames) > 20:
+                self.state.recent_frames = self.state.recent_frames[-20:]
+        return frame_hash, index + 1
+
+    def _handle_capture_error(self, err: str) -> bool:
+        with self._lock:
+            self.state.last_error = err
+
+        if self._recover_fn is not None and is_screencast_recoverable_error(err):
+            with self._lock:
+                self.state.recovery_attempts += 1
+            recovered = self._recover_fn()
+            with self._lock:
+                if recovered:
+                    self.state.last_error = None
+                    self.state.requires_reconsent = False
+                else:
+                    self.state.requires_reconsent = True
+            return recovered
+        return False

@@ -26,6 +26,12 @@ class CommandVerb(StrEnum):
     MIRROR = "MIRROR"
     ADOPT = "ADOPT"
     RELEASE = "RELEASE"
+    CONTROLS_LIST = "CONTROLS_LIST"
+    CONTROLS_FIND = "CONTROLS_FIND"
+    CONTROL_CLICK = "CONTROL_CLICK"
+    CONTROL_FOCUS = "CONTROL_FOCUS"
+    CONTROL_SET_VALUE = "CONTROL_SET_VALUE"
+    DIAGNOSE_CONTROL = "DIAGNOSE_CONTROL"
 
 
 QUERY_VERBS = frozenset(
@@ -38,6 +44,9 @@ QUERY_VERBS = frozenset(
         CommandVerb.ALL,
         CommandVerb.CAPABILITIES,
         CommandVerb.VALIDATE,
+        CommandVerb.CONTROLS_LIST,
+        CommandVerb.CONTROLS_FIND,
+        CommandVerb.DIAGNOSE_CONTROL,
     }
 )
 
@@ -50,8 +59,20 @@ COMMAND_VERBS = frozenset(
         CommandVerb.MIRROR,
         CommandVerb.ADOPT,
         CommandVerb.RELEASE,
+        CommandVerb.CONTROL_CLICK,
+        CommandVerb.CONTROL_FOCUS,
+        CommandVerb.CONTROL_SET_VALUE,
     }
 )
+
+_CONTROL_ACTIONS = {
+    CommandVerb.CONTROLS_LIST: "controls_list",
+    CommandVerb.CONTROLS_FIND: "controls_find",
+    CommandVerb.CONTROL_CLICK: "control_click",
+    CommandVerb.CONTROL_FOCUS: "control_focus",
+    CommandVerb.CONTROL_SET_VALUE: "control_set_value",
+    CommandVerb.DIAGNOSE_CONTROL: "diagnose_control",
+}
 
 
 @dataclass
@@ -80,12 +101,36 @@ class CommandRequest:
     backend: str = "xvfb"
     monitor: int | None = None
     local_only: bool = False
+    control_selector: str | None = None
+    control_provider_ref: str | None = None
+    control_name: str | None = None
+    control_role: str | None = None
+    control_app: str | None = None
+    control_window_id: str | None = None
+    control_window_title: str | None = None
+    control_value: str | None = None
+    control_verify: bool = False
+    control_screenshot_verify: bool = False
+    control_verify_label: str | None = None
+    control_verify_selector: str | None = None
+    control_backend: str = "auto"
+    control_index: int = 0
+    control_max_depth: int = 8
+    control_format: str = "flat"
+    control_environment: str | None = None
+    control_text: str | None = None
+    control_text_contains: str | None = None
+    control_terminal_line: int | None = None
+    control_terminal_col: int | None = None
+    control_session_id: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     @property
     def action(self) -> str:
         if self.verb == CommandVerb.OUTPUTS:
             return "outputs"
+        if self.verb in _CONTROL_ACTIONS:
+            return _CONTROL_ACTIONS[self.verb]
         return self.verb.value.lower()
 
     @classmethod
@@ -114,6 +159,28 @@ class CommandRequest:
             target=cmd.get("target"),
             vd_display=str(cmd.get("display", ":99")),
             backend=str(cmd.get("backend", "xvfb")),
+            control_selector=cmd.get("selector"),
+            control_provider_ref=cmd.get("provider_ref") or cmd.get("id"),
+            control_name=cmd.get("name"),
+            control_role=cmd.get("role"),
+            control_app=cmd.get("app"),
+            control_window_id=cmd.get("window_id"),
+            control_window_title=cmd.get("window_title"),
+            control_value=cmd.get("value"),
+            control_verify=bool(cmd.get("verify", False)),
+            control_screenshot_verify=bool(cmd.get("screenshot_verify", False)),
+            control_verify_label=cmd.get("verify_label"),
+            control_verify_selector=cmd.get("verify_selector"),
+            control_backend=str(cmd.get("control_backend") or cmd.get("backend") or "auto"),
+            control_index=int(cmd.get("index") or 0),
+            control_max_depth=int(cmd.get("max_depth") or 8),
+            control_format=str(cmd.get("format") or "flat"),
+            control_environment=cmd.get("environment"),
+            control_text=cmd.get("text"),
+            control_text_contains=cmd.get("text_contains"),
+            control_terminal_line=int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
+            control_terminal_col=int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
+            control_session_id=cmd.get("session_id"),
             extra={k: v for k, v in cmd.items() if k not in {"verb"}},
         )
 

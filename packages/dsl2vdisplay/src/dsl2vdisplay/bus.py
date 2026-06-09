@@ -6,8 +6,31 @@ from dsl2vdisplay.grammar import parse_line, split_command, to_text
 from dsl2vdisplay.result import DslResult
 from dsl2vdisplay.schema_registry import validate_command_dict
 
-QUERY_VERBS = frozenset({"HEALTH", "INFO", "OUTPUTS", "MONITORS", "WINDOWS", "ALL", "CAPABILITIES", "VALIDATE"})
-COMMAND_VERBS = frozenset({"SCREENSHOT", "VIRTUAL_START", "VIRTUAL_STOP", "LAUNCH", "MIRROR", "ADOPT", "RELEASE"})
+QUERY_VERBS = frozenset({
+    "HEALTH",
+    "INFO",
+    "OUTPUTS",
+    "MONITORS",
+    "WINDOWS",
+    "ALL",
+    "CAPABILITIES",
+    "VALIDATE",
+    "CONTROLS_LIST",
+    "CONTROLS_FIND",
+    "DIAGNOSE_CONTROL",
+})
+COMMAND_VERBS = frozenset({
+    "SCREENSHOT",
+    "VIRTUAL_START",
+    "VIRTUAL_STOP",
+    "LAUNCH",
+    "MIRROR",
+    "ADOPT",
+    "RELEASE",
+    "CONTROL_CLICK",
+    "CONTROL_FOCUS",
+    "CONTROL_SET_VALUE",
+})
 LEGACY_COMMAND_VERBS = frozenset({"VIRTUAL_STOP", "LAUNCH"})
 
 
@@ -50,7 +73,11 @@ def dispatch(envelope: str | dict[str, Any] | bytes) -> DslResult:
     if verb in LEGACY_COMMAND_VERBS:
         return _dispatch_legacy(cmd, line=line)
 
-    if verb in COMMAND_VERBS:
+    if verb in COMMAND_VERBS or verb in {
+        "CONTROLS_LIST",
+        "CONTROLS_FIND",
+        "DIAGNOSE_CONTROL",
+    }:
         errors = validate_command_dict(cmd)
         if errors:
             return DslResult(ok=False, command=line, action=verb.lower(), error="; ".join(errors))

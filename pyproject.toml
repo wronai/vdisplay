@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.6"
+version = "0.1.7"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -33,6 +33,14 @@ dev = [
 control = [
     "dsl2vdisplay",
     "nlp2vdisplay",
+]
+browser = [
+    "playwright>=1.40",
+]
+terminal = [
+    "pyte>=0.8.1",
+    "pexpect>=4.9",
+    "wcwidth>=0.2.13",
 ]
 agent = [
     "vdisplay-agent",

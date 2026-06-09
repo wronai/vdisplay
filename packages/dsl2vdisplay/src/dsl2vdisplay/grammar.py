@@ -15,6 +15,40 @@ def split_command(line: str) -> list[str]:
         return line.split()
 
 
+_MULTI_WORD_VERBS: dict[tuple[str, str], str] = {
+    ("CONTROLS", "LIST"): "CONTROLS_LIST",
+    ("CONTROLS", "FIND"): "CONTROLS_FIND",
+    ("CONTROL", "CLICK"): "CONTROL_CLICK",
+    ("CONTROL", "FOCUS"): "CONTROL_FOCUS",
+    ("CONTROL", "SET_VALUE"): "CONTROL_SET_VALUE",
+    ("CONTROL", "SETVALUE"): "CONTROL_SET_VALUE",
+    ("DIAGNOSE", "CONTROL"): "DIAGNOSE_CONTROL",
+}
+
+
+def normalize_tokens(tokens: list[str]) -> list[str]:
+    normalized: list[str] = []
+    for token in tokens:
+        if token.startswith("--"):
+            normalized.append(token[2:].replace("-", "_").upper())
+        else:
+            normalized.append(token)
+    return normalized
+
+
+def resolve_verb(tokens: list[str]) -> tuple[str, list[str]]:
+    tokens = normalize_tokens(tokens)
+    if not tokens:
+        return "", []
+    first = tokens[0].upper()
+    if len(tokens) >= 2:
+        second = tokens[1].upper().replace("-", "_")
+        mapped = _MULTI_WORD_VERBS.get((first, second))
+        if mapped:
+            return mapped, tokens[2:]
+    return first, tokens[1:]
+
+
 def pick_flag(tokens: list[str], flag: str) -> str | None:
     if flag in tokens:
         idx = tokens.index(flag)
@@ -99,6 +133,82 @@ def _parse_adopt(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
     return cmd
 
 
+def _has_flag(tokens: list[str], flag: str) -> bool:
+    return flag in tokens
+
+
+def _parse_control_common(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    _with_display(rest, cmd)
+    
+    string_flags = {
+        "SELECTOR": "selector",
+        "ROLE": "role",
+        "NAME": "name",
+        "APP": "app",
+        "WINDOW_TITLE": "window_title",
+        "WINDOW_ID": "window_id",
+        "BACKEND": "control_backend",
+        "VERIFY_LABEL": "verify_label",
+        "VERIFY_SELECTOR": "verify_selector",
+        "PROVIDER_REF": "provider_ref",
+        "ENVIRONMENT": "environment",
+        "TEXT": "text",
+        "TEXT_CONTAINS": "text_contains",
+        "SESSION_ID": "session_id",
+    }
+
+    for flag, key in string_flags.items():
+        if val := pick_flag(rest, flag):
+            cmd[key] = val
+
+    if i := pick_flag(rest, "INDEX"):
+        cmd["index"] = int(i)
+    if line_no := pick_flag(rest, "TERMINAL_LINE"):
+        cmd["terminal_line"] = int(line_no)
+    if col_no := pick_flag(rest, "TERMINAL_COL"):
+        cmd["terminal_col"] = int(col_no)
+        
+    for flag, key in [("VERIFY", "verify"), ("SCREENSHOT_VERIFY", "screenshot_verify")]:
+        if _has_flag(rest, flag):
+            cmd[key] = True
+
+    if ref := pick_flag(rest, "ID"):
+        cmd.setdefault("provider_ref", ref)
+    return cmd
+
+
+def _parse_controls_list(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    _parse_control_common(rest, cmd)
+    if d := pick_flag(rest, "MAX_DEPTH"):
+        cmd["max_depth"] = int(d)
+    if f := pick_flag(rest, "FORMAT"):
+        cmd["format"] = f
+    return cmd
+
+
+def _parse_controls_find(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    return _parse_control_common(rest, cmd)
+
+
+def _parse_control_click(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    return _parse_control_common(rest, cmd)
+
+
+def _parse_control_focus(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    return _parse_control_common(rest, cmd)
+
+
+def _parse_control_set_value(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    _parse_control_common(rest, cmd)
+    if v := pick_flag(rest, "VALUE"):
+        cmd["value"] = v
+    return cmd
+
+
+def _parse_diagnose_control(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
+    return _with_display(rest, cmd)
+
+
 def _parse_release(rest: list[str], cmd: dict[str, Any]) -> dict[str, Any]:
     if t := pick_flag(rest, "TITLE"):
         cmd["title"] = t
@@ -127,6 +237,12 @@ _VERB_PARSERS: dict[str, Callable[[list[str], dict[str, Any]], dict[str, Any]]] 
     "MIRROR": _parse_mirror,
     "ADOPT": _parse_adopt,
     "RELEASE": _parse_release,
+    "CONTROLS_LIST": _parse_controls_list,
+    "CONTROLS_FIND": _parse_controls_find,
+    "CONTROL_CLICK": _parse_control_click,
+    "CONTROL_FOCUS": _parse_control_focus,
+    "CONTROL_SET_VALUE": _parse_control_set_value,
+    "DIAGNOSE_CONTROL": _parse_diagnose_control,
 }
 
 
@@ -134,27 +250,81 @@ def parse_line(line: str) -> dict[str, Any] | None:
     tokens = split_command(line)
     if not tokens:
         return None
-    verb = tokens[0].upper()
+    verb, rest = resolve_verb(tokens)
     parser = _VERB_PARSERS.get(verb)
     if parser is None:
         return {"verb": verb}
-    return parser(tokens[1:], {"verb": verb})
+    return parser(rest, {"verb": verb})
+
+
+def _screenshot_to_text(cmd: dict[str, Any]) -> str:
+    parts = ["SCREENSHOT", f"OUT {cmd.get('out', 'screen.png')}"]
+    if d := cmd.get("display"):
+        parts.append(f"DISPLAY {d}")
+    return " ".join(parts)
+
+
+def _mirror_to_text(cmd: dict[str, Any]) -> str:
+    parts = ["MIRROR", f"SOURCE {cmd.get('source', 'primary')}"]
+    if t := cmd.get("target"):
+        parts.append(f"TARGET {t}")
+    return " ".join(parts)
+
+
+def _controls_list_to_text(cmd: dict[str, Any]) -> str:
+    parts = ["controls", "list"]
+    if a := cmd.get("app"):
+        parts.extend(["--app", f'"{a}"'])
+    if b := cmd.get("control_backend"):
+        parts.extend(["--backend", b])
+    return " ".join(parts)
+
+
+_TEXT_FORMATTERS: dict[str, Callable[[dict[str, Any]], str]] = {
+    "INFO": lambda c: "INFO",
+    "OUTPUTS": lambda c: f"OUTPUTS DISPLAY {c.get('display', ':0')}",
+    "SCREENSHOT": _screenshot_to_text,
+    "MIRROR": _mirror_to_text,
+    "CONTROLS_LIST": _controls_list_to_text,
+    "CONTROLS_FIND": lambda c: _control_to_text("find", c),
+    "CONTROL_CLICK": lambda c: _control_to_text("click", c),
+    "CONTROL_FOCUS": lambda c: _control_to_text("focus", c),
+    "CONTROL_SET_VALUE": lambda c: _control_to_text("set-value", c),
+    "DIAGNOSE_CONTROL": lambda c: "diagnose control",
+}
 
 
 def to_text(cmd: dict[str, Any]) -> str:
     verb = str(cmd.get("verb", "")).upper()
-    if verb == "INFO":
-        return "INFO"
-    if verb == "OUTPUTS":
-        return f"OUTPUTS DISPLAY {cmd.get('display', ':0')}"
-    if verb == "SCREENSHOT":
-        parts = ["SCREENSHOT", f"OUT {cmd.get('out', 'screen.png')}"]
-        if d := cmd.get("display"):
-            parts.append(f"DISPLAY {d}")
-        return " ".join(parts)
-    if verb == "MIRROR":
-        parts = ["MIRROR", f"SOURCE {cmd.get('source', 'primary')}"]
-        if t := cmd.get("target"):
-            parts.append(f"TARGET {t}")
-        return " ".join(parts)
+    if formatter := _TEXT_FORMATTERS.get(verb):
+        return formatter(cmd)
     return verb
+
+
+def _control_to_text(action: str, cmd: dict[str, Any]) -> str:
+    parts = ["control", action]
+    for key, flag in (
+        ("selector", "--selector"),
+        ("role", "--role"),
+        ("name", "--name"),
+        ("app", "--app"),
+        ("window_title", "--window-title"),
+        ("provider_ref", "--provider-ref"),
+        ("value", "--value"),
+        ("control_backend", "--backend"),
+        ("environment", "--environment"),
+        ("text", "--text"),
+        ("text_contains", "--text-contains"),
+        ("session_id", "--session-id"),
+    ):
+        if value := cmd.get(key):
+            parts.extend([flag, f'"{value}"' if " " in str(value) else str(value)])
+    if line_no := cmd.get("terminal_line"):
+        parts.extend(["--terminal-line", str(line_no)])
+    if col_no := cmd.get("terminal_col"):
+        parts.extend(["--terminal-col", str(col_no)])
+    if cmd.get("verify"):
+        parts.append("--verify")
+    if cmd.get("screenshot_verify"):
+        parts.append("--screenshot-verify")
+    return " ".join(parts)

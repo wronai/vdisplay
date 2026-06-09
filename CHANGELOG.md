@@ -175,6 +175,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.7] - 2026-06-09
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/fixtures/run_gtk_demo.sh
+- Update tests/test_agent_terminal_session.py
+- Update tests/test_command_contract.py
+- Update tests/test_control_app_matching.py
+- Update tests/test_control_atspi.py
+- Update tests/test_control_browser.py
+- Update tests/test_control_capabilities.py
+- Update tests/test_control_executor.py
+- Update tests/test_control_gtk_demo.py
+- Update tests/test_control_screenshot_verify.py
+- ... and 4 more files
+
+### Other
+- Update .code2llm_cache/atspi_1781032229377102546_8329.pkl
+- Update .code2llm_cache/atspi_impl_1781031995339782158_12296.pkl
+- Update .code2llm_cache/control_1781031644489545337_9454.pkl
+- Update .code2llm_cache/control_1781031648783985734_6562.pkl
+- Update .code2llm_cache/control_1781032010807402038_2857.pkl
+- Update .code2llm_cache/control_click.schema_1781032137548181202_989.pkl
+- Update .code2llm_cache/control_focus.schema_1781032138301188705_989.pkl
+- Update .code2llm_cache/control_set_value.schema_1781032139169197355_1041.pkl
+- Update .code2llm_cache/controls_find.schema_1781032139684202488_817.pkl
+- Update .code2llm_cache/controls_list.schema_1781032140121206843_504.pkl
+- ... and 64 more files
+
 ## [0.1.6] - 2026-06-09
 
 ### Docs
