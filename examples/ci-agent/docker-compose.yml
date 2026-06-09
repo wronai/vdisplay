@@ -1,0 +1,14 @@
+services:
+  ci-agent:
+    build:
+      context: ../..
+      dockerfile: examples/ci-agent/Dockerfile
+    volumes:
+      - ./output:/output
+    environment:
+      VD_OUTPUT_DIR: /output
+      VD_FRAMES: "3"
+      VD_WIDTH: "1920"
+      VD_HEIGHT: "1080"
+      VD_DISPLAY: ":99"
+      VD_LAUNCH: "xclock -geometry 200x200+50+50"

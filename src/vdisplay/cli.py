@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 
 from .api import MirrorSession, VirtualDisplaySession, WindowRelaySession, platform_summary
-from .exceptions import VDisplayError
+from .discovery import diagnose_display, list_outputs, list_windows
+from .exceptions import BackendNotAvailableError, VDisplayError
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -54,16 +56,37 @@ def build_parser() -> argparse.ArgumentParser:
     radopt = relay_sub.add_parser("adopt-window", help="Move window off-screen or to target output")
     radopt.add_argument("--title")
     radopt.add_argument("--window-id")
+    radopt.add_argument("--class", dest="wm_class", help="Match WM_CLASS / instance")
+    radopt.add_argument("--pid", type=int, help="Match process ID")
+    radopt.add_argument("--app", help="Match app_label / process_name")
     radopt.add_argument("--target", default="offscreen")
     radopt.add_argument("--display", default=None)
 
     rrelease = relay_sub.add_parser("release-window", help="Restore adopted window")
     rrelease.add_argument("--title")
     rrelease.add_argument("--window-id")
+    rrelease.add_argument("--app")
     rrelease.add_argument("--display", default=None)
 
     rlist = relay_sub.add_parser("list", help="List adopted windows")
     rlist.add_argument("--display", default=None)
+
+    rwindows = relay_sub.add_parser("list-windows", help="List visible windows on the display")
+    rwindows.add_argument("--display", default=None)
+    rwindows.add_argument("--all", action="store_true", help="Include internal/helper windows")
+    rwindows.add_argument("--apps-only", action="store_true", default=True, help="Hide internal windows (default)")
+    rwindows.add_argument("--no-apps-only", action="store_false", dest="apps_only")
+    rwindows.add_argument("--min-width", type=int, default=0)
+    rwindows.add_argument("--min-height", type=int, default=0)
+    rwindows.add_argument("--class", dest="wm_class")
+    rwindows.add_argument("--pid", type=int)
+    rwindows.add_argument("--app")
+
+    outputs = sub.add_parser("outputs", help="List X11 outputs (xrandr)")
+    outputs.add_argument("--display", default=None)
+
+    diagnose = sub.add_parser("diagnose", help="Diagnose DISPLAY and monitor visibility")
+    diagnose.add_argument("--display", default=None)
 
     sub.add_parser("info", help="Show platform capabilities")
     return parser
@@ -80,14 +103,34 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.kind == "info":
             session = VirtualDisplaySession.create(backend="xvfb")
+            payload: dict = {
+                "platform": platform_summary(),
+                "virtual_capabilities": session.capabilities(),
+                "mirror_capabilities": MirrorSession.create().capabilities(),
+                "relay_capabilities": WindowRelaySession.create().capabilities(),
+            }
+            try:
+                payload["outputs"] = list_outputs()
+            except VDisplayError:
+                payload["outputs"] = []
+            _print_json(payload)
+            return 0
+
+        if args.kind == "outputs":
+            from .discovery import resolve_host_display
+
+            resolved = resolve_host_display(args.display)
             _print_json(
                 {
-                    "platform": platform_summary(),
-                    "virtual_capabilities": session.capabilities(),
-                    "mirror_capabilities": MirrorSession.create().capabilities(),
-                    "relay_capabilities": WindowRelaySession.create().capabilities(),
+                    "requested_display": args.display or os.environ.get("DISPLAY"),
+                    "resolved_display": resolved,
+                    "outputs": list_outputs(resolved),
                 }
             )
+            return 0
+
+        if args.kind == "diagnose":
+            _print_json(diagnose_display(args.display))
             return 0
 
         if args.kind == "virtual":
@@ -136,6 +179,27 @@ def main(argv: list[str] | None = None) -> int:
                     session.stop()
                 return 0
 
+        if args.kind == "relay" and args.action == "list-windows":
+            from .discovery import resolve_host_display
+
+            resolved = resolve_host_display(args.display)
+            _print_json(
+                {
+                    "display": resolved,
+                    "windows": list_windows(
+                        resolved,
+                        only_visible=True,
+                        apps_only=args.apps_only and not args.all,
+                        min_width=args.min_width,
+                        min_height=args.min_height,
+                        match_class=args.wm_class,
+                        match_pid=args.pid,
+                        match_app=args.app,
+                    ),
+                }
+            )
+            return 0
+
         if args.kind == "relay":
             session = WindowRelaySession.create(display=args.display)
             session.start()
@@ -144,6 +208,9 @@ def main(argv: list[str] | None = None) -> int:
                     wid = session.adopt_window(
                         match_title=args.title,
                         window_id=args.window_id,
+                        match_class=args.wm_class,
+                        match_pid=args.pid,
+                        match_app=args.app,
                         target=args.target,
                     )
                     _print_json({"window_id": wid, "adopted": session.list_adopted()})
@@ -161,7 +228,7 @@ def main(argv: list[str] | None = None) -> int:
             finally:
                 session.stop()
 
-    except VDisplayError as exc:
+    except (VDisplayError, BackendNotAvailableError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 1
 

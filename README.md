@@ -3,21 +3,44 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.1-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.15-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-1.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.2-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$0.30-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-2.0h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $0.1500 (1 commits)
-- 👤 **Human dev:** ~$100 (1.0h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $0.3046 (1 commits)
+- 👤 **Human dev:** ~$200 (2.0h @ $100/h, 30min dedup)
 
 Generated on 2026-06-09 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
 ---
 
-
-
 Cross-platform **virtual display orchestration API** for Python.
 
 One unified API, multiple OS backends with different capabilities.
+
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [docs/index.md](docs/index.md) | Documentation hub |
+| [docs/installation.md](docs/installation.md) | System and Python setup |
+| [docs/docker-guide.md](docs/docker-guide.md) | Running in Docker |
+| [docs/examples.md](docs/examples.md) | All usage examples |
+| [docs/troubleshooting.md](docs/troubleshooting.md) | Common errors and fixes |
+| [packages/README.md](packages/README.md) | Control layer DSL / MCP / REST |
+
+### Docker examples
+
+| Example | Mode | Host X11 |
+|---------|------|----------|
+| [examples/headless-virtual](examples/headless-virtual/) | virtual | No |
+| [examples/ci-agent](examples/ci-agent/) | virtual | No |
+| [examples/dev-workspace](examples/dev-workspace/) | dev | No |
+| [examples/host-mirror](examples/host-mirror/) | mirror | Yes |
+| [examples/host-relay](examples/host-relay/) | relay | Yes |
+
+```bash
+cd examples/headless-virtual && docker compose up --build
+```
 
 ## Modes
 
@@ -36,7 +59,7 @@ One unified API, multiple OS backends with different capabilities.
 - `Pillow` (optional) — faster PNG encoding; pure-Python PNG fallback included
 
 ```bash
-sudo apt install xvfb x11-utils xdotool
+sudo apt install xvfb x11-apps x11-utils xdotool
 pip install "vdisplay[pillow]"
 ```
 
@@ -73,9 +96,15 @@ r.stop()
 
 ```bash
 vdisplay info
-vdisplay virtual start --width 1920 --height 1080 --display :99
+vdisplay outputs                              # list monitors (xrandr)
+vdisplay relay list-windows                   # list window titles
+
 vdisplay virtual screenshot -o screen.png --display :99
+
+# mirror needs two outputs — check names first
 vdisplay mirror start --source primary --target HDMI-1 -o mirror.png
+
+# relay needs an open window — check title first
 vdisplay relay adopt-window --title Firefox
 vdisplay relay release-window --title Firefox
 ```

@@ -1,38 +1,76 @@
-# vdisplay | 21f 1915L | yaml:1,toml:1,shell:2,python:17 | 2026-06-09
-# generated in 0.00s
-# stats: 104 func | 0 cls | 21 mod | CC̄=2.2 | critical:0 | cycles:0
-# alerts[4]: fan-out main=19; fan-out build_parser=16; fan-out _output_origin=13; fan-out _resolve_output=10
-# hotspots[5]: main fan=19; build_parser fan=16; _output_origin fan=13; _resolve_output fan=10; LinuxX11RelayBackend.adopt_window fan=9
+# vdisplay | 23f 1465L | python:20,shell:2,less:1 | 2026-06-09
+# stats: 38 func | 16 cls | 23 mod | CC̄=3.4 | critical:3 | cycles:0
+# alerts[5]: CC main=14; CC _decode_pixels=12; CC _output_origin=11; CC _resolve_output=9; CC _output_mode=7
+# hotspots[5]: main fan=16; _output_origin fan=12; _resolve_output fan=9; test_virtual_display_screenshot fan=9; _rgb_to_png_minimal fan=7
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[21]:
-  goal.yaml,511
+M[23]:
+  app.doql.less,36
   project.sh,59
-  pyproject.toml,61
-  src/vdisplay/__init__.py,12
-  src/vdisplay/api.py,178
-  src/vdisplay/backends/__init__.py,1
-  src/vdisplay/backends/base.py,58
-  src/vdisplay/backends/linux_x11_mirror.py,173
-  src/vdisplay/backends/linux_x11_relay.py,250
-  src/vdisplay/backends/linux_xvfb.py,98
-  src/vdisplay/backends/mirror_stub.py,34
-  src/vdisplay/capture/__init__.py,3
-  src/vdisplay/capture/base.py,9
-  src/vdisplay/capture/linux_xwd.py,164
-  src/vdisplay/cli.py,173
-  src/vdisplay/exceptions.py,10
-  src/vdisplay/input/__init__.py,3
-  src/vdisplay/input/linux_xdotool.py,45
-  src/vdisplay/models.py,26
-  src/vdisplay/utils.py,46
-  tree.sh,1
+  src/vdisplay/__init__.py,13
+  src/vdisplay/api.py,179
+  src/vdisplay/backends/__init__.py,2
+  src/vdisplay/backends/base.py,59
+  src/vdisplay/backends/linux_x11_mirror.py,174
+  src/vdisplay/backends/linux_x11_relay.py,228
+  src/vdisplay/backends/linux_xvfb.py,99
+  src/vdisplay/backends/mirror_stub.py,35
+  src/vdisplay/capture/__init__.py,4
+  src/vdisplay/capture/base.py,10
+  src/vdisplay/capture/linux_xwd.py,165
+  src/vdisplay/cli.py,174
+  src/vdisplay/exceptions.py,11
+  src/vdisplay/input/__init__.py,4
+  src/vdisplay/input/linux_xdotool.py,46
+  src/vdisplay/models.py,27
+  src/vdisplay/utils.py,47
+  tests/test_capture_xwd.py,46
+  tests/test_import.py,23
+  tests/test_linux_xvfb_integration.py,22
+  tree.sh,2
 D:
-  src/vdisplay/cli.py:
-    e: build_parser,_print_json,main
-    build_parser()
-    _print_json(payload)
-    main(argv)
+  src/vdisplay/__init__.py:
+  src/vdisplay/api.py:
+    e: _default_virtual_backend,_default_mirror_backend,_default_relay_backend,platform_summary,VirtualDisplaySession,MirrorSession,WindowRelaySession
+    VirtualDisplaySession: __init__(1),create(5),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),info(0),capabilities(0)
+    MirrorSession: __init__(1),create(5),start(0),stop(0),screenshot_bytes(0),save_screenshot(1),info(0),capabilities(0)
+    WindowRelaySession: __init__(1),create(3),start(0),stop(0),adopt_window(0),release_window(0),list_adopted(0),info(0),capabilities(0)
+    _default_virtual_backend()
+    _default_mirror_backend()
+    _default_relay_backend()
+    platform_summary()
+  src/vdisplay/backends/__init__.py:
+  src/vdisplay/backends/base.py:
+    e: BaseBackend
+    BaseBackend: __init__(0),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),as_dict(0)
+  src/vdisplay/backends/linux_x11_mirror.py:
+    e: _list_connected_outputs,_resolve_output,_primary_output,_output_mode,LinuxX11MirrorBackend
+    LinuxX11MirrorBackend: __init__(3),capabilities(0),info(0),start(0),stop(0),screenshot_bytes(0)
+    _list_connected_outputs(display)
+    _resolve_output(name;outputs)
+    _primary_output(outputs)
+    _output_mode(display;output)
+  src/vdisplay/backends/linux_x11_relay.py:
+    e: _find_window_id,_window_geometry,_window_title,_offscreen_coordinates,_screen_geometry,_output_origin,WindowState,LinuxX11RelayBackend
+    WindowState:
+    LinuxX11RelayBackend: __init__(2),capabilities(0),info(0),start(0),adopt_window(0),release_window(0),list_adopted(0)  # Move windows between monitors/outputs within the same X11 se
+    _find_window_id(display;match_title)
+    _window_geometry(display;window_id)
+    _window_title(display;window_id)
+    _offscreen_coordinates(display)
+    _screen_geometry(display)
+    _output_origin(display;target)
+  src/vdisplay/backends/linux_xvfb.py:
+    e: _wait_for_display,LinuxXvfbBackend
+    LinuxXvfbBackend: __init__(3),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),adopt_window(0),release_window(0)
+    _wait_for_display(display;timeout)
+  src/vdisplay/backends/mirror_stub.py:
+    e: MirrorStubBackend
+    MirrorStubBackend: __init__(2),capabilities(0),info(0),screenshot_bytes(0)
+  src/vdisplay/capture/__init__.py:
+  src/vdisplay/capture/base.py:
+    e: CaptureBackend
+    CaptureBackend: screenshot_png(0)
   src/vdisplay/capture/linux_xwd.py:
     e: capture_display_png,xwd_bytes_to_png,_xwd_dimensions,_xwd_to_rgb_bytes,_parse_xwd_header,_read_xwd_header,_header_fields,_decode_pixels,_rgb_to_png,_rgb_to_png_minimal
     capture_display_png(display)
@@ -45,68 +83,39 @@ D:
     _decode_pixels(header;pixels)
     _rgb_to_png(rgb;width;height)
     _rgb_to_png_minimal(rgb;width;height)
-  src/vdisplay/backends/linux_x11_relay.py:
-    e: WindowState,LinuxX11RelayBackend,_find_window_id,_window_geometry,_window_title,_offscreen_coordinates,_screen_geometry,_output_origin,_debug_windows
-    WindowState:
-    LinuxX11RelayBackend(BaseBackend): __init__(2),capabilities(0),info(0),start(0),adopt_window(0),release_window(0),list_adopted(0)  # Move windows between monitors/outputs within the same X11 se...
-    _find_window_id(display;match_title)
-    _window_geometry(display;window_id)
-    _window_title(display;window_id)
-    _offscreen_coordinates(display)
-    _screen_geometry(display)
-    _output_origin(display;target)
-    _debug_windows(display)
-  src/vdisplay/backends/linux_x11_mirror.py:
-    e: LinuxX11MirrorBackend,_list_connected_outputs,_resolve_output,_primary_output,_output_mode
-    LinuxX11MirrorBackend(BaseBackend): __init__(3),capabilities(0),info(0),start(0),stop(0),screenshot_bytes(0)
-    _list_connected_outputs(display)
-    _resolve_output(name;outputs)
-    _primary_output(outputs)
-    _output_mode(display;output)
-  src/vdisplay/api.py:
-    e: VirtualDisplaySession,MirrorSession,WindowRelaySession,_default_virtual_backend,_default_mirror_backend,_default_relay_backend,platform_summary
-    VirtualDisplaySession: __init__(1),create(4),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),info(0),capabilities(0)
-    MirrorSession: __init__(1),create(4),start(0),stop(0),screenshot_bytes(0),save_screenshot(1),info(0),capabilities(0)
-    WindowRelaySession: __init__(1),create(2),start(0),stop(0),adopt_window(0),release_window(0),list_adopted(0),info(0),capabilities(0)
-    _default_virtual_backend()
-    _default_mirror_backend()
-    _default_relay_backend()
-    platform_summary()
-  src/vdisplay/backends/linux_xvfb.py:
-    e: LinuxXvfbBackend,_wait_for_display
-    LinuxXvfbBackend(BaseBackend): __init__(3),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),adopt_window(0),release_window(0)
-    _wait_for_display(display;timeout)
+  src/vdisplay/cli.py:
+    e: build_parser,_print_json,main
+    build_parser()
+    _print_json(payload)
+    main(argv)
+  src/vdisplay/exceptions.py:
+    e: VDisplayError,BackendNotAvailableError,CapabilityError
+    VDisplayError:
+    BackendNotAvailableError:
+    CapabilityError:
+  src/vdisplay/input/__init__.py:
+  src/vdisplay/input/linux_xdotool.py:
+    e: LinuxXdotoolInput
+    LinuxXdotoolInput: __init__(1),_env(0),move(2),click(1),type_text(1),hotkey(0)
+  src/vdisplay/models.py:
+    e: Capabilities,SessionInfo
+    Capabilities:
+    SessionInfo:
   src/vdisplay/utils.py:
     e: require_command,run_command,run_command_bytes
     require_command(name)
     run_command(args)
     run_command_bytes(args)
-  src/vdisplay/input/linux_xdotool.py:
-    e: LinuxXdotoolInput
-    LinuxXdotoolInput: __init__(1),_env(0),move(2),click(1),type_text(1),hotkey(0)
-  src/vdisplay/backends/base.py:
-    e: BaseBackend
-    BaseBackend: __init__(0),capabilities(0),info(0),start(0),stop(0),launch(1),screenshot_bytes(0),save_screenshot(1),adopt_window(0),release_window(0),as_dict(0)
-  src/vdisplay/backends/mirror_stub.py:
-    e: MirrorStubBackend
-    MirrorStubBackend(BaseBackend): __init__(2),capabilities(0),info(0),screenshot_bytes(0)
-  src/vdisplay/capture/base.py:
-    e: CaptureBackend
-    CaptureBackend(ABC): screenshot_png(0)
-  goal.yaml:
-  pyproject.toml:
-  tree.sh:
-  project.sh:
-  src/vdisplay/exceptions.py:
-    e: VDisplayError,BackendNotAvailableError,CapabilityError
-    VDisplayError(Exception):
-    BackendNotAvailableError(VDisplayError):
-    CapabilityError(VDisplayError):
-  src/vdisplay/__init__.py:
-  src/vdisplay/models.py:
-    e: Capabilities,SessionInfo
-    Capabilities:
-    SessionInfo:
-  src/vdisplay/backends/__init__.py:
-  src/vdisplay/capture/__init__.py:
-  src/vdisplay/input/__init__.py:
+  tests/test_capture_xwd.py:
+    e: _make_xwd,test_xwd_to_png_red_pixel,test_xwd_to_png_2x1
+    _make_xwd(width;height;pixels)
+    test_xwd_to_png_red_pixel()
+    test_xwd_to_png_2x1()
+  tests/test_import.py:
+    e: test_imports,test_platform_summary,test_capabilities
+    test_imports()
+    test_platform_summary()
+    test_capabilities()
+  tests/test_linux_xvfb_integration.py:
+    e: test_virtual_display_screenshot
+    test_virtual_display_screenshot(tmp_path)

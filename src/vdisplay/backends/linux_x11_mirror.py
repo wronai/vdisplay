@@ -8,6 +8,7 @@ from ..capture.linux_xwd import capture_display_png
 from ..exceptions import BackendNotAvailableError, CapabilityError
 from ..input.linux_xdotool import LinuxXdotoolInput
 from ..models import Capabilities, SessionInfo
+from ..discovery import resolve_host_display
 from ..utils import run_command
 from .base import BaseBackend
 
@@ -24,7 +25,7 @@ class LinuxX11MirrorBackend(BaseBackend):
         super().__init__()
         self.source = source
         self.target = target
-        self.display = display or os.environ.get("DISPLAY", ":0")
+        self.display = resolve_host_display(display)
         self._previous_target_mode: str | None = None
         self._resolved_source: str | None = None
         self._resolved_target: str | None = None
@@ -64,7 +65,10 @@ class LinuxX11MirrorBackend(BaseBackend):
             candidates = [o for o in outputs if o != source]
             if not candidates:
                 raise BackendNotAvailableError(
-                    "Mirror requires at least two connected outputs; specify --target explicitly"
+                    "Mirror requires at least two connected outputs "
+                    f"(found: {', '.join(outputs)}). "
+                    "Run: vdisplay outputs. "
+                    "With one monitor use: vdisplay virtual screenshot"
                 )
             target = candidates[0]
         else:
@@ -145,7 +149,17 @@ def _resolve_output(name: str, outputs: list[str]) -> str:
     for output in outputs:
         if output.lower() == normalized:
             return output
-    raise BackendNotAvailableError(f"Unknown output '{name}'. Connected: {', '.join(outputs)}")
+
+    hint = (
+        f"Unknown output '{name}'. Connected: {', '.join(outputs)}. "
+        "Run: vdisplay outputs"
+    )
+    if len(outputs) < 2:
+        hint += (
+            ". Mirror needs at least two outputs; with one monitor use "
+            "vdisplay virtual screenshot instead"
+        )
+    raise BackendNotAvailableError(hint)
 
 
 def _primary_output(outputs: list[str]) -> str | None:

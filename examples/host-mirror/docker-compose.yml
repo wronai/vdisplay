@@ -1,0 +1,16 @@
+services:
+  mirror:
+    build:
+      context: ../..
+      dockerfile: examples/host-mirror/Dockerfile
+    network_mode: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY:-${HOME}/.Xauthority}:/root/.Xauthority:ro
+      - ./output:/output
+    environment:
+      DISPLAY: ${HOST_DISPLAY:-${DISPLAY:-:0}}
+      XAUTHORITY: /root/.Xauthority
+      VD_OUTPUT_DIR: /output
+      VD_SOURCE: ${VD_SOURCE:-primary}
+      VD_TARGET: ${VD_TARGET:-}

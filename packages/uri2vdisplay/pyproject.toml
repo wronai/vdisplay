@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uri2vdisplay"
+version = "0.1.0"
+description = "vdisplay:// URI → DSL → dispatch"
+requires-python = ">=3.10"
+dependencies = ["dsl2vdisplay>=0.1.0"]
+
+[project.scripts]
+uri2vdisplay = "uri2vdisplay.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

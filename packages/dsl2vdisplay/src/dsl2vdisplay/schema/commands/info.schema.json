@@ -1,0 +1,10 @@
+{
+  "$id": "dsl2vdisplay/commands/info",
+  "type": "object",
+  "required": ["verb"],
+  "properties": {
+    "verb": { "const": "INFO" },
+    "display": { "type": "string" }
+  },
+  "additionalProperties": false
+}

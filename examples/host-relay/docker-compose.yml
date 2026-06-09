@@ -1,0 +1,14 @@
+services:
+  relay:
+    build:
+      context: ../..
+      dockerfile: examples/host-relay/Dockerfile
+    network_mode: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ${XAUTHORITY:-${HOME}/.Xauthority}:/root/.Xauthority:ro
+    environment:
+      DISPLAY: ${HOST_DISPLAY:-${DISPLAY:-:0}}
+      XAUTHORITY: /root/.Xauthority
+      WINDOW_TITLE: ${WINDOW_TITLE:-xterm}
+      VD_TARGET: offscreen

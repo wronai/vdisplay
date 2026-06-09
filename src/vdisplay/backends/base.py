@@ -42,6 +42,9 @@ class BaseBackend:
         *,
         match_title: str | None = None,
         window_id: str | None = None,
+        match_class: str | None = None,
+        match_pid: int | None = None,
+        match_app: str | None = None,
         target: str = "offscreen",
     ) -> str:
         raise CapabilityError(f"Backend {self.name} does not support adopt_window()")

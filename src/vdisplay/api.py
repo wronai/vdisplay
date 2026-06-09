@@ -142,11 +142,17 @@ class WindowRelaySession:
         *,
         match_title: str | None = None,
         window_id: str | None = None,
+        match_class: str | None = None,
+        match_pid: int | None = None,
+        match_app: str | None = None,
         target: str = "offscreen",
     ) -> str:
         return self.backend.adopt_window(
             match_title=match_title,
             window_id=window_id,
+            match_class=match_class,
+            match_pid=match_pid,
+            match_app=match_app,
             target=target,
         )
 

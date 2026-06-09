@@ -1,0 +1,539 @@
+name: Code Quality Improvement
+project_name: ''
+project_type: prefactoring
+domain: dev-tools
+goal: Improve code quality using prefact
+goals:
+- Fix all prefact-detected issues
+- Improve code maintainability
+- Ensure consistent code style
+quality_gates:
+- metric: Prefact Issues
+  threshold: '0'
+sprints:
+- id: sprint-1
+  name: Code Quality Improvements
+  duration: 2 weeks
+  objectives:
+  - Fix code quality issues
+  task_patterns:
+  - id: ticket-61cea448
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/__init__.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-edabd604
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/backends/base.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/backends/base.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-77784cbb
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/backends/base.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/base.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-db877e99
+    name: Fix relative-imports issues
+    description: Resolve 12 relative-imports issues in src/vdisplay/backends/linux_x11_mirror.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/vdisplay/backends/linux_x11_mirror.py
+    rule_id: relative-imports
+    count: 12
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-22d13f13
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in src/vdisplay/backends/linux_x11_mirror.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_x11_mirror.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a3b0115a
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/backends/linux_x11_mirror.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_x11_mirror.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-52cc5c46
+    name: Fix relative-imports issues
+    description: Resolve 10 relative-imports issues in src/vdisplay/api.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/api.py
+    rule_id: relative-imports
+    count: 10
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-860ccbe9
+    name: Fix smart-return-type issues
+    description: Resolve 4 smart-return-type issues in src/vdisplay/api.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/api.py
+    rule_id: smart-return-type
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-de0a1e6b
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/api.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/api.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-73e45fbc
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in src/vdisplay/api.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/api.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-bf277a45
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/vdisplay/capture/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/capture/__init__.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1f2f39da
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/backends/mirror_stub.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/backends/mirror_stub.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7daf56aa
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/backends/mirror_stub.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/mirror_stub.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-cadb17a5
+    name: Fix relative-imports issues
+    description: Resolve 8 relative-imports issues in src/vdisplay/backends/linux_xvfb.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/backends/linux_xvfb.py
+    rule_id: relative-imports
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7833339a
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in src/vdisplay/backends/linux_xvfb.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_xvfb.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-aaccb586
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/backends/linux_xvfb.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_xvfb.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d528e9a9
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in src/vdisplay/backends/linux_xvfb.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_xvfb.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-e1994a6f
+    name: Fix relative-imports issues
+    description: Resolve 8 relative-imports issues in src/vdisplay/backends/linux_x11_relay.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/backends/linux_x11_relay.py
+    rule_id: relative-imports
+    count: 8
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0322dd34
+    name: Fix string-concat issues
+    description: Resolve 2 string-concat issues in src/vdisplay/backends/linux_x11_relay.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_x11_relay.py
+    rule_id: string-concat
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-18b56f73
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/backends/linux_x11_relay.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/backends/linux_x11_relay.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-79e0042c
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/capture/base.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/capture/base.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-665506df
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/capture/linux_xwd.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/capture/linux_xwd.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-35330002
+    name: Fix string-concat issues
+    description: Resolve 15 string-concat issues in src/vdisplay/capture/linux_xwd.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/vdisplay/capture/linux_xwd.py
+    rule_id: string-concat
+    count: 15
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d9f64d60
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/capture/linux_xwd.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/capture/linux_xwd.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2876fec2
+    name: Fix magic-numbers issues
+    description: Resolve 14 magic-numbers issues in src/vdisplay/capture/linux_xwd.py
+    task_type: prefactor
+    priority: high
+    estimate: 3d
+    files:
+    - src/vdisplay/capture/linux_xwd.py
+    rule_id: magic-numbers
+    count: 14
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-eaa65446
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in src/vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - src/vdisplay/cli.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c0cc5f21
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/cli.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a3429ea5
+    name: Fix magic-numbers issues
+    description: Resolve 6 magic-numbers issues in src/vdisplay/cli.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - src/vdisplay/cli.py
+    rule_id: magic-numbers
+    count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-7711c565
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in src/vdisplay/cli.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/cli.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-26a6bac4
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/vdisplay/input/__init__.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/input/__init__.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-ccf44daa
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in src/vdisplay/input/linux_xdotool.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/input/linux_xdotool.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-044f7af5
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/input/linux_xdotool.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/input/linux_xdotool.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9b933356
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/models.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/models.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-0e175631
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in src/vdisplay/utils.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/utils.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-f126120c
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in src/vdisplay/utils.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - src/vdisplay/utils.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-73ef63f9
+    name: Fix smart-return-type issues
+    description: Resolve 2 smart-return-type issues in tests/test_capture_xwd.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_capture_xwd.py
+    rule_id: smart-return-type
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-3f8287b2
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in tests/test_capture_xwd.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_capture_xwd.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-949b60cc
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in tests/test_capture_xwd.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - tests/test_capture_xwd.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-b75e4e01
+    name: Fix smart-return-type issues
+    description: Resolve 3 smart-return-type issues in tests/test_import.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_import.py
+    rule_id: smart-return-type
+    count: 3
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-c92056bf
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in tests/test_linux_xvfb_integration.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - tests/test_linux_xvfb_integration.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced

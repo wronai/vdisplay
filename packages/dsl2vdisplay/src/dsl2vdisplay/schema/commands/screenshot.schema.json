@@ -1,0 +1,13 @@
+{
+  "$id": "dsl2vdisplay/commands/screenshot",
+  "type": "object",
+  "required": ["verb", "out"],
+  "properties": {
+    "verb": { "const": "SCREENSHOT" },
+    "out": { "type": "string" },
+    "display": { "type": "string", "default": ":99" },
+    "width": { "type": "integer", "default": 1920 },
+    "height": { "type": "integer", "default": 1080 }
+  },
+  "additionalProperties": false
+}

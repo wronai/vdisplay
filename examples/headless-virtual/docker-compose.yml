@@ -1,0 +1,12 @@
+services:
+  virtual:
+    build:
+      context: ../..
+      dockerfile: examples/headless-virtual/Dockerfile
+    volumes:
+      - ./output:/output
+    environment:
+      VD_OUTPUT_DIR: /output
+      VD_WIDTH: "1280"
+      VD_HEIGHT: "720"
+      VD_DISPLAY: ":99"

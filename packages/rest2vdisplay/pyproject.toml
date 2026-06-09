@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rest2vdisplay"
+version = "0.1.0"
+description = "REST API for vdisplay DSL"
+requires-python = ">=3.10"
+dependencies = ["dsl2vdisplay>=0.1.0"]
+
+[project.optional-dependencies]
+rest = ["fastapi>=0.110", "uvicorn>=0.27"]
+
+[project.scripts]
+rest2vdisplay = "rest2vdisplay.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
