@@ -26,8 +26,14 @@ def control_selector_kwargs(cmd: CommandRequest) -> dict[str, Any]:
     }
 
 
+def control_service_kwargs(cmd: CommandRequest) -> dict[str, Any]:
+    payload = control_selector_kwargs(cmd)
+    payload.update({key: value for key, value in cmd.extra.items() if value is not None})
+    return payload
+
+
 def control_request_body(cmd: CommandRequest) -> dict[str, Any]:
-    body = control_selector_kwargs(cmd)
+    body = control_service_kwargs(cmd)
     body.update(
         {
             "display": cmd.display,

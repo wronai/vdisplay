@@ -198,19 +198,29 @@ def _controls_list(cmd: CommandRequest) -> dict[str, Any]:
 
 def _controls_find(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import control
-    from .control import control_selector_kwargs
+    from .control import control_service_kwargs
 
+    kwargs = control_service_kwargs(cmd)
+    preview = bool(kwargs.pop("preview", False))
+    preview_output = kwargs.pop("preview_output", None)
+    preview_debug = bool(kwargs.pop("preview_debug", False))
+    kwargs.pop("backend", None)
     return control.controls_find(
         display=cmd.display,
         backend=cmd.control_backend,
-        **control_selector_kwargs(cmd),
+        preview=preview,
+        preview_output=preview_output,
+        preview_debug=preview_debug,
+        **kwargs,
     )
 
 
 def _control_click(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import control
-    from .control import control_selector_kwargs
+    from .control import control_service_kwargs
 
+    kwargs = control_service_kwargs(cmd)
+    kwargs.pop("backend", None)
     return control.control_click(
         display=cmd.display,
         backend=cmd.control_backend,
@@ -218,27 +228,31 @@ def _control_click(cmd: CommandRequest) -> dict[str, Any]:
         screenshot_verify=cmd.control_screenshot_verify,
         verify_label=cmd.control_verify_label,
         verify_selector=cmd.control_verify_selector,
-        **control_selector_kwargs(cmd),
+        **kwargs,
     )
 
 
 def _control_focus(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import control
-    from .control import control_selector_kwargs
+    from .control import control_service_kwargs
 
+    kwargs = control_service_kwargs(cmd)
+    kwargs.pop("backend", None)
     return control.control_focus(
         display=cmd.display,
         backend=cmd.control_backend,
         verify=cmd.control_verify,
         screenshot_verify=cmd.control_screenshot_verify,
-        **control_selector_kwargs(cmd),
+        **kwargs,
     )
 
 
 def _control_set_value(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import control
-    from .control import control_selector_kwargs
+    from .control import control_service_kwargs
 
+    kwargs = control_service_kwargs(cmd)
+    kwargs.pop("backend", None)
     return control.control_set_value(
         display=cmd.display,
         backend=cmd.control_backend,
@@ -247,7 +261,7 @@ def _control_set_value(cmd: CommandRequest) -> dict[str, Any]:
         verify_label=cmd.control_verify_label,
         verify_selector=cmd.control_verify_selector,
         value=str(cmd.control_value or ""),
-        **control_selector_kwargs(cmd),
+        **kwargs,
     )
 
 

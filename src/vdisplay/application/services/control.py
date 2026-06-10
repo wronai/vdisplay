@@ -25,6 +25,19 @@ from ...control.gui_map import (
 from ...exceptions import VDisplayError
 
 
+def _resolve_verify_mode(
+    *,
+    action: str,
+    verify: bool,
+    value: str | None,
+    routing_mode: str,
+) -> str:
+    """Vision set-value must verify pasted/typed text, not anchor visibility."""
+    if action == "set_value" and verify and value:
+        return "ocr_contains"
+    return routing_mode
+
+
 def _apply_selector_overrides(selector: ControlSelector, **kwargs: Any) -> ControlSelector:
     overrides = {key: value for key, value in kwargs.items() if key != "selector"}
     updates: dict[str, Any] = {}
@@ -398,6 +411,7 @@ def _attach_vision_preview(
     if preview_output:
         overlay = base64.b64decode(preview_payload["preview_png_base64"])
         preview_payload["preview_path"] = write_preview_png(overlay, preview_output)
+        payload.setdefault("artifacts", {})["preview"] = preview_payload["preview_path"]
     payload["preview"] = preview_payload
     return payload
 
@@ -518,26 +532,27 @@ def control_set_value(
 
 
 def _perform_action(provider, action, target, value):
+    if action == "set_value" and value is None:
+        raise VDisplayError("set_value requires value")
+
+    map_dispatch = {
+        "invoke": ("invoke_map_node", "invoke"),
+        "focus": ("focus_map_node", "focus"),
+        "set_value": ("set_value_map_node", "set_value"),
+    }
     if (target.state or {}).get("map"):
-        if action == "invoke":
-            if hasattr(provider, "invoke_map_node"):
-                return provider.invoke_map_node(target)
-        if action == "focus":
-            if hasattr(provider, "focus_map_node"):
-                return provider.focus_map_node(target)
-        if action == "set_value":
-            if value is None:
-                raise VDisplayError("set_value requires value")
-            if hasattr(provider, "set_value_map_node"):
-                return provider.set_value_map_node(target, value)
-    if action == "invoke":
-        return provider.invoke(target.id)
-    if action == "focus":
-        return provider.focus(target.id)
-    if action == "set_value":
-        if value is None:
-            raise VDisplayError("set_value requires value")
-        return provider.set_value(target.id, value)
+        map_method, fallback_method = map_dispatch.get(action, (None, None))
+        if map_method and hasattr(provider, map_method):
+            method = getattr(provider, map_method)
+            return method(target) if action != "set_value" else method(target, value)
+
+    standard_dispatch = {
+        "invoke": lambda: provider.invoke(target.id),
+        "focus": lambda: provider.focus(target.id),
+        "set_value": lambda: provider.set_value(target.id, value),
+    }
+    if action in standard_dispatch:
+        return standard_dispatch[action]()
     raise VDisplayError(f"unsupported control action: {action}")
 
 def _capture_before_state(
@@ -593,8 +608,21 @@ def _build_action_payload(
     }
     if screenshot_result is not None:
         payload["screenshot_diff"] = screenshot_result
+        artifact_paths: dict[str, str] = {}
+        for side in ("before", "after", "diff"):
+            block = screenshot_result.get(side)
+            if isinstance(block, dict) and block.get("path"):
+                artifact_paths[side] = str(block["path"])
+        if artifact_paths:
+            payload.setdefault("artifacts", {}).update(artifact_paths)
     if verify:
         payload["a11y_verified"] = a11y_verified
+    if verify and verification.verified is False:
+        payload["ok"] = False
+        if action == "set_value":
+            payload.setdefault("reason", "text_not_applied")
+        else:
+            payload.setdefault("reason", "verify_failed")
     return payload
 
 
@@ -655,6 +683,13 @@ def _execute_action(
 
     result = _perform_action(provider, action, target, value)
 
+    effective_verify_mode = _resolve_verify_mode(
+        action=action,
+        verify=verify,
+        value=value,
+        routing_mode=routing.verify_mode,
+    )
+
     verification = VerifierPipeline().verify_after_action(
         VerifyContext(
             action_provider=provider,
@@ -672,12 +707,12 @@ def _execute_action(
             before_capture_meta=screenshot_capture_meta,
             verify_semantic=verify,
             verify_screenshot=screenshot_verify,
-            verify_mode=routing.verify_mode or "semantic",
+            verify_mode=effective_verify_mode,
             verify_provider=routing.verify_provider,
             spec=verify_spec_from_flags(
                 verify_semantic=verify,
                 verify_screenshot=screenshot_verify,
-                verify_mode=routing.verify_mode or "semantic",
+                verify_mode=effective_verify_mode,
                 verify_label=verify_label,
                 expected_text=value,
             ),

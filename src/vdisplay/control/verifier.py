@@ -108,6 +108,17 @@ def _region_for_verify(ctx: VerifyContext, spec: VerifySpec) -> tuple[int, int, 
         bounds = ctx.map_element.action_bounds.to_control_bounds()
         if bounds.width > 0 and bounds.height > 0:
             region = _region_from_bounds(bounds)
+    if (
+        region is None
+        and ctx.action == "set_value"
+        and ctx.target is not None
+        and ctx.target.bounds is not None
+        and ctx.target.bounds.width > 0
+    ):
+        from .action_bounds import action_bounds_for_vision
+
+        bounds = action_bounds_for_vision(ctx.target.bounds)
+        region = _region_from_bounds(bounds, padding=4)
     return region
 
 

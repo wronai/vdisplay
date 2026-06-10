@@ -55,7 +55,7 @@ def test_control_click_does_not_duplicate_backend(monkeypatch) -> None:
         seen.update(kwargs)
         return {"ok": True}
 
-    monkeypatch.setattr("vdisplay.commands.control.control_svc.control_click", fake_click)
+    monkeypatch.setattr("vdisplay.application.services.control.control_click", fake_click)
 
     import io
     import sys
@@ -90,7 +90,7 @@ def test_control_list_invokes_service_with_session_id(monkeypatch) -> None:
         seen.update(kwargs)
         return {"ok": True, "nodes": {}}
 
-    monkeypatch.setattr("vdisplay.commands.control.control_svc.controls_list", fake_list)
+    monkeypatch.setattr("vdisplay.application.services.control.controls_list", fake_list)
 
     import io
     import sys

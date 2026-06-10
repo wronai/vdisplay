@@ -128,9 +128,28 @@ def _browser_fields_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> dict[str
 
 
 @dataclass
+class ArtifactRef:
+    kind: str
+    path: str
+    label: str | None = None
+    role: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {"kind": self.kind, "path": self.path}
+        if self.label is not None:
+            payload["label"] = self.label
+        if self.role is not None:
+            payload["role"] = self.role
+        return payload
+
+
+@dataclass
 class CommandRequest:
     verb: CommandVerb
     line: str = ""
+    request_source: str = "cli"
+    session_id: str | None = None
+    request_id: str | None = None
     display: str | None = None
     apps_only: bool = False
     include_all: bool = True
@@ -208,6 +227,7 @@ class CommandRequest:
         return cls(
             verb=verb,
             line=line,
+            request_source=str(cmd.get("request_source") or "dsl"),
             display=cmd.get("display"),
             apps_only=apps_only,
             include_all=not apps_only,
@@ -245,6 +265,8 @@ class CommandRequest:
             control_terminal_line=int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
             control_terminal_col=int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
             control_session_id=_control_session_id_from_dsl(cmd, verb),
+            session_id=cmd.get("audit_session_id"),
+            request_id=cmd.get("request_id"),
             terminal_rows=int(cmd.get("rows") or 24),
             terminal_cols=int(cmd.get("cols") or 80),
             extra={k: v for k, v in cmd.items() if k not in {"verb"}},
@@ -261,6 +283,10 @@ class CommandResult:
     error: ApplicationError | None = None
     meta: dict[str, Any] = field(default_factory=dict)
     command: str = ""
+    artifacts: list[ArtifactRef] = field(default_factory=list)
+    diagnostics: dict[str, Any] = field(default_factory=dict)
+    session_id: str | None = None
+    request_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         payload: dict[str, Any] = {
@@ -268,9 +294,15 @@ class CommandResult:
             "action": self.action,
             "data": self.data,
             "meta": self.meta,
+            "artifacts": [artifact.to_dict() for artifact in self.artifacts],
+            "diagnostics": self.diagnostics,
         }
         if self.command:
             payload["command"] = self.command
+        if self.session_id:
+            payload["session_id"] = self.session_id
+        if self.request_id:
+            payload["request_id"] = self.request_id
         if self.error is not None:
             payload["error"] = self.error.to_dict()
         return payload
@@ -295,8 +327,18 @@ class CommandResult:
         data: dict[str, Any],
         command: str = "",
         meta: dict[str, Any] | None = None,
+        artifacts: list[ArtifactRef] | None = None,
+        diagnostics: dict[str, Any] | None = None,
     ) -> CommandResult:
-        return cls(ok=True, action=action, data=data, command=command, meta=meta or {})
+        return cls(
+            ok=True,
+            action=action,
+            data=data,
+            command=command,
+            meta=meta or {},
+            artifacts=artifacts or [],
+            diagnostics=diagnostics or {},
+        )
 
     @classmethod
     def failure(
@@ -307,6 +349,8 @@ class CommandResult:
         data: dict[str, Any] | None = None,
         command: str = "",
         meta: dict[str, Any] | None = None,
+        artifacts: list[ArtifactRef] | None = None,
+        diagnostics: dict[str, Any] | None = None,
     ) -> CommandResult:
         return cls(
             ok=False,
@@ -315,4 +359,6 @@ class CommandResult:
             error=error,
             command=command,
             meta=meta or {},
+            artifacts=artifacts or [],
+            diagnostics=diagnostics or {},
         )

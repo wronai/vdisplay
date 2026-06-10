@@ -52,13 +52,17 @@ Guide: [guides/vision-fallback.md](../guides/vision-fallback.md)
 |----------|---------|
 | `LLM_MODEL` | General text LLM for agents — **not** used for vision verify |
 
-## Session recorder (planned — see [session-report.md](../guides/session-report.md))
+## Session recorder
 
 | Variable | Purpose |
 |----------|---------|
-| `VDISPLAY_SESSION_LOG_DIR` | Write session report to this directory |
-| `VDISPLAY_SESSION_NAME` | Slug when auto-creating session dir |
-| `VDISPLAY_SESSION` | `1` — auto-create `./sessions/{timestamp}_{slug}/` |
-| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in generated README (phase 2) |
+| `VDISPLAY_SESSION` | `1` — auto-create `.vdisplay/<timestamp>__.../` per process |
+| `VDISPLAY_SESSION_DIR` | Explicit session directory (overrides auto path) |
+| `VDISPLAY_SESSION_ID` | Slug suffix for auto-created session dir |
+
+CLI equivalents: `vdisplay --session --session-id pycharm-chat monitors` (root `--session-id` is the **audit** slug; control `--session-id` is terminal/browser session).
+| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in README (phase 2) |
+
+See [session-report.md](../guides/session-report.md).
 
 See also: [vision-only-wayland.md](../vision-only-wayland.md) · [troubleshooting.md](../troubleshooting.md)

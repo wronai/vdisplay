@@ -1,7 +1,21 @@
 # Session report (recorder)
 
-> **Status:** RFC / PR design — not implemented yet.  
+> **Status:** MVP implemented — hook in `application.executor`.  
 > **Goal:** one directory per run with human `README.md` + machine `session.json`, fed from `application.executor` so CLI, DSL, REST, and MCP share the same audit trail.
+
+## Enable
+
+```bash
+export VDISPLAY_SESSION=1
+# optional slug:
+export VDISPLAY_SESSION_ID=pycharm-chat
+# or explicit directory:
+export VDISPLAY_SESSION_DIR=.vdisplay/my-run
+# or via CLI:
+vdisplay --session --session-id pycharm-chat monitors
+```
+
+Every `execute(CommandRequest)` then writes under `.vdisplay/<timestamp>__.../` (or your explicit dir).
 
 ## Problem
 
@@ -12,24 +26,19 @@ A **session recorder** collects every command step, routing decision, verify out
 ## Layout
 
 ```text
-sessions/
-  2026-06-10_1039_pycharm-chat/
+.vdisplay/
+  2026-06-10T10-57-12Z__local__cli/
     README.md              # human report (regenerated)
     session.json           # machine index (updated each step)
+    env.json
     steps/
-      001-command.dsl.txt
-      001-result.json
-      001-before.png
-      001-preview.png
-      002-command.dsl.txt
-      002-result.json
-      002-before.png
-      002-after.png
-      002-diff.png
-    artifacts/
-      map.json             # optional session-level copies
-      app.vql.json
-      layout.svg
+      0001/
+        request.json
+        result.json
+        command.dsl.txt
+        preview.png
+      0002/
+        ...
 ```
 
 ### Naming rules

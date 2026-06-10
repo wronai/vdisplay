@@ -464,7 +464,7 @@ class VisionStubProvider(ControlProvider):
             from ....input.resolve import resolve_pointer_input
 
             _inp, method = resolve_pointer_input(display=self.display)
-            time.sleep(0.2)
+            time.sleep(0.35)
             _can_type = getattr(_inp, "can_type", None)
             if _can_type is None or _can_type():
                 _inp.type_text(value)
@@ -597,7 +597,7 @@ class VisionStubProvider(ControlProvider):
             from ....input.resolve import resolve_pointer_input
 
             _inp, method = resolve_pointer_input(display=self.display)
-            time.sleep(0.2)
+            time.sleep(0.35)
             _can_type = getattr(_inp, "can_type", None)
             if _can_type is None or _can_type():
                 _inp.type_text(value)
@@ -634,6 +634,7 @@ class VisionStubProvider(ControlProvider):
         """Copy value to clipboard and send Ctrl+V via the input backend."""
         import shutil
         import subprocess
+        import time
 
         # Prefer wl-copy on Wayland, xclip on X11
         if shutil.which("wl-copy"):
@@ -654,7 +655,15 @@ class VisionStubProvider(ControlProvider):
         else:
             return False, "no clipboard utility (wl-copy or xclip)"
         try:
-            _inp.hotkey("ctrl+v")
+            try:
+                _inp.hotkey("ctrl", "a")
+            except TypeError:
+                _inp.hotkey("ctrl+a")
+            time.sleep(0.08)
+            try:
+                _inp.hotkey("ctrl", "v")
+            except TypeError:
+                _inp.hotkey("ctrl+v")
             return True, "pasted"
         except Exception as exc:
             return False, f"paste hotkey failed: {exc}"
