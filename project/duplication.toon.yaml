@@ -1,12 +1,12 @@
-# redup/duplication | 32 groups | 174f 22149L | 2026-06-09
+# redup/duplication | 33 groups | 175f 22645L | 2026-06-09
 
 SUMMARY:
-  files_scanned: 174
-  total_lines:   22149
-  dup_groups:    32
-  dup_fragments: 77
-  saved_lines:   348
-  scan_ms:       4266
+  files_scanned: 175
+  total_lines:   22645
+  dup_groups:    33
+  dup_fragments: 79
+  saved_lines:   352
+  scan_ms:       5644
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.5%)
@@ -17,10 +17,10 @@ HOTSPOTS[7] (files with most duplication):
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py  dup=30L  groups=2  frags=4  (0.1%)
   src/vdisplay/control/registry.py  dup=24L  groups=2  frags=6  (0.1%)
 
-DUPLICATES[32] (ranked by impact):
+DUPLICATES[33] (ranked by impact):
   [495f9e314f963c00] ! STRU  _score_uia_provider  L=35 N=2 saved=35 sim=1.00
-      src/vdisplay/control/scoring.py:311-345  (_score_uia_provider)
-      src/vdisplay/control/scoring.py:348-382  (_score_ax_provider)
+      src/vdisplay/control/scoring.py:322-356  (_score_uia_provider)
+      src/vdisplay/control/scoring.py:359-393  (_score_ax_provider)
   [443c93126a62d7a9] ! EXAC  _load_common  L=11 N=4 saved=33 sim=1.00
       examples/ci-agent/agent.py:15-25  (_load_common)
       examples/headless-virtual/run_virtual.py:13-23  (_load_common)
@@ -95,11 +95,11 @@ DUPLICATES[32] (ranked by impact):
       src/vdisplay/control/scoring.py:107-113  (_atspi_ready)
       src/vdisplay/control/scoring.py:177-183  (_terminal_ready)
   [93f796dd58175244]   STRU  _terminal_line_matches  L=7 N=2 saved=7 sim=1.00
-      src/vdisplay/control/selector.py:158-164  (_terminal_line_matches)
-      src/vdisplay/control/selector.py:167-173  (_terminal_col_matches)
+      src/vdisplay/control/selector.py:171-177  (_terminal_line_matches)
+      src/vdisplay/control/selector.py:180-186  (_terminal_col_matches)
   [1d15d7ed86dd4da6]   EXAC  find  L=6 N=2 saved=6 sim=1.00
       src/vdisplay/control/providers/atspi.py:206-211  (find)
-      src/vdisplay/control/providers/x11.py:79-84  (find)
+      src/vdisplay/control/providers/x11.py:92-97  (find)
   [ab50b6c9821c38ed]   EXAC  bounds  L=6 N=2 saved=6 sim=1.00
       src/vdisplay/control/providers/ax.py:161-166  (bounds)
       src/vdisplay/control/providers/uia.py:161-166  (bounds)
@@ -115,12 +115,15 @@ DUPLICATES[32] (ranked by impact):
   [256755d12aec5824]   STRU  create_ax_backend  L=4 N=2 saved=4 sim=1.00
       src/vdisplay/control/providers/ax_impl.py:252-255  (create_ax_backend)
       src/vdisplay/control/providers/uia_impl.py:265-268  (create_uia_backend)
+  [bd065add6cf51e32]   STRU  _vertical_overlap  L=4 N=2 saved=4 sim=1.00
+      src/vdisplay/control/vision_ocr.py:145-148  (_vertical_overlap)
+      src/vdisplay/control/vision_ocr.py:151-154  (_horizontal_overlap)
   [cbe2ba609e614f7d]   EXAC  close_all  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/control/providers/browser_session.py:237-239  (close_all)
       src/vdisplay/control/providers/terminal_session.py:218-220  (close_all)
   [7e769be7bd62da72]   EXAC  bounds  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/control/providers/vision/provider.py:212-214  (bounds)
-      src/vdisplay/control/providers/x11.py:117-119  (bounds)
+      src/vdisplay/control/providers/vision/provider.py:351-353  (bounds)
+      src/vdisplay/control/providers/x11.py:130-132  (bounds)
   [2d7b9210c1b65241]   STRU  img2nl_enabled  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/application/services/img2nl_enrich.py:10-12  (img2nl_enabled)
       src/vdisplay/control/browser_session_store.py:34-36  (detached_sessions_enabled)
@@ -128,7 +131,7 @@ DUPLICATES[32] (ranked by impact):
       src/vdisplay/windows/filter.py:8-10  (looks_like_internal_class)
       src/vdisplay/windows/filter.py:13-15  (looks_like_internal_name)
 
-REFACTOR[32] (ranked by priority):
+REFACTOR[33] (ranked by priority):
   [1] ○ extract_function   → src/vdisplay/control/utils/_score_uia_provider.py
       WHY: 2 occurrences of 35-line block across 1 files — saves 35 lines
       FILES: src/vdisplay/control/scoring.py
@@ -213,16 +216,19 @@ REFACTOR[32] (ranked by priority):
   [28] ○ extract_function   → src/vdisplay/control/providers/utils/create_ax_backend.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [29] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
+  [29] ○ extract_function   → src/vdisplay/control/utils/_vertical_overlap.py
+      WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
+      FILES: src/vdisplay/control/vision_ocr.py
+  [30] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/browser_session.py, src/vdisplay/control/providers/terminal_session.py
-  [30] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [31] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/vision/provider.py, src/vdisplay/control/providers/x11.py
-  [31] ○ extract_function   → src/vdisplay/utils/img2nl_enabled.py
+  [32] ○ extract_function   → src/vdisplay/utils/img2nl_enabled.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/application/services/img2nl_enrich.py, src/vdisplay/control/browser_session_store.py
-  [32] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
+  [33] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/vdisplay/windows/filter.py
 
@@ -248,7 +254,7 @@ QUICK_WINS[24] (low risk, high savings — do first):
   [10] extract_function   saved=12L  → src/vdisplay/control/utils/to_dict.py
       FILES: contracts.py
 
-EFFORT_ESTIMATE (total ≈ 12.2h):
+EFFORT_ESTIMATE (total ≈ 12.3h):
   hard   _score_uia_provider                 saved=35L  ~105min
   medium _load_common                        saved=33L  ~66min
   medium local_windows_payload               saved=23L  ~46min
@@ -259,8 +265,8 @@ EFFORT_ESTIMATE (total ≈ 12.2h):
   medium _controls_list                      saved=16L  ~32min
   easy   _uia_ready                          saved=14L  ~28min
   easy   to_dict                             saved=12L  ~24min
-  ... +22 more (~284min)
+  ... +23 more (~292min)
 
 METRICS-TARGET:
-  dup_groups:  32 → 0
-  saved_lines: 348 lines recoverable
+  dup_groups:  33 → 0
+  saved_lines: 352 lines recoverable

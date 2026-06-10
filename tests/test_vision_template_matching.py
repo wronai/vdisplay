@@ -65,6 +65,16 @@ def test_vision_find_template_returns_bounds(monkeypatch: pytest.MonkeyPatch, tm
 
 
 @pytest.mark.skipif(not template_available()[0], reason="opencv not installed")
+def test_template_match_threshold_tuning() -> None:
+    screen = _screen_with_template_at(35, 45)
+    low = match_template(screen, _template_png(), threshold=0.5)
+    high = match_template(screen, _template_png(), threshold=0.99)
+    assert len(low) >= len(high)
+    assert high
+    assert high[0].bounds.x == 35
+
+
+@pytest.mark.skipif(not template_available()[0], reason="opencv not installed")
 def test_vision_invoke_clicks_template_center(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
     screen = _screen_with_template_at(30, 40)
     template_path = tmp_path / "btn.png"

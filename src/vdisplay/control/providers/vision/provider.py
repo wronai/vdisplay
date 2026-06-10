@@ -10,13 +10,19 @@ from ...base import ControlProvider
 from ...models import ControlBounds, ControlNode, ControlRole, ControlSnapshot
 from ...screenshot_verify import capture_control_screenshot
 from ...selector import ControlSelector
-from ...vision_ocr import OcrTextBox, anchor_spatial_find, ocr_available, ocr_find_selector
+from ...vision_ocr import (
+    OcrTextBox,
+    anchor_spatial_find,
+    ocr_anchor_combined_find,
+    ocr_available,
+    ocr_find_selector,
+)
 from ...vision_template import (
     TemplateMatch,
     load_template_png,
     match_template,
-    template_anchor_find,
     template_available,
+    template_find_selector,
 )
 
 CaptureFn = Callable[..., tuple[bytes, dict[str, Any]]]
@@ -133,85 +139,94 @@ class VisionStubProvider(ControlProvider):
             },
         )
 
+    @staticmethod
+    def _selector_wants_ocr(selector: ControlSelector) -> bool:
+        return bool(
+            selector.text
+            or selector.text_contains
+            or selector.name
+            or selector.name_contains
+            or (selector.vision_anchor and not selector.vision_anchor_rel)
+        )
+
     def _find_nodes(self, selector: ControlSelector) -> list[ControlNode]:
-        if selector.vision_template and not template_available()[0]:
-            if selector.vision_anchor and not ocr_available()[0]:
+        """Priority cascade: OCR → template → anchor → stub."""
+        # Fast path: pure stub anchor when OCR/template are unavailable
+        if selector.vision_anchor and not selector.vision_anchor_rel and not selector.vision_template:
+            if not ocr_available()[0]:
                 return self._stub_anchor_node(selector.vision_anchor)
-            return []
 
-        if selector.vision_anchor_rel:
-            return self._find_anchor_nodes(selector)
+        png: bytes | None = None
+        capture_meta: dict[str, Any] = {}
 
-        if selector.vision_template:
-            return self._find_template_nodes(selector)
+        if self._selector_wants_ocr(selector) and ocr_available()[0]:
+            png, capture_meta = self._capture_png()
+            nodes = self._ocr_nodes_from_png(selector, png, capture_meta)
+            if nodes:
+                return nodes
 
-        return self._find_ocr_nodes(selector)
+        if selector.vision_template and template_available()[0]:
+            if png is None:
+                png, capture_meta = self._capture_png()
+            nodes = self._template_nodes_from_png(selector, png, capture_meta)
+            if nodes:
+                return nodes
 
-    def _find_template_nodes(self, selector: ControlSelector) -> list[ControlNode]:
-        png, capture_meta = self._capture_png()
-        template_png = load_template_png(selector.vision_template or "")
-        matches = match_template(png, template_png)
-        if not matches:
-            return []
+        if selector.vision_anchor_rel and selector.vision_anchor:
+            if png is None:
+                png, capture_meta = self._capture_png()
+            nodes = self._anchor_nodes_from_png(selector, png, capture_meta)
+            if nodes:
+                return nodes
+
+        if selector.vision_anchor and not ocr_available()[0] and not selector.vision_template:
+            return self._stub_anchor_node(selector.vision_anchor)
+        return []
+
+    def _template_nodes_from_png(
+        self,
+        selector: ControlSelector,
+        png: bytes,
+        capture_meta: dict[str, Any],
+    ) -> list[ControlNode]:
+        matches = template_find_selector(png, selector)
         return [
             self._node_from_template(item, index=index, selector=selector, capture_meta=capture_meta)
             for index, item in enumerate(matches)
         ]
 
-    def _find_anchor_nodes(self, selector: ControlSelector) -> list[ControlNode]:
-        png, capture_meta = self._capture_png()
-        nodes: list[ControlNode] = []
-
-        if selector.vision_template and template_available()[0]:
-            if not ocr_available()[0] or not selector.vision_anchor:
-                return []
-            all_boxes, _matched = ocr_find_selector(png, ControlSelector(vision_anchor=selector.vision_anchor))
-            self._last_ocr_boxes = all_boxes
-            anchors, _spatial = anchor_spatial_find(
-                all_boxes,
-                anchor_text=selector.vision_anchor,
-                rel=selector.vision_anchor_rel or "near",
-                target_text=selector.vision_target,
-            )
-            if not anchors:
-                return []
-            template_png = load_template_png(selector.vision_template)
-            matches = template_anchor_find(
-                png,
-                anchor_bounds=anchors[0].bounds,
-                rel=selector.vision_anchor_rel or "near",
-                template_png=template_png,
-            )
-            return [
-                self._node_from_template(item, index=index, selector=selector, capture_meta=capture_meta)
-                for index, item in enumerate(matches)
-            ]
-
+    def _anchor_nodes_from_png(
+        self,
+        selector: ControlSelector,
+        png: bytes,
+        capture_meta: dict[str, Any],
+    ) -> list[ControlNode]:
         if not ocr_available()[0]:
-            if selector.vision_anchor:
-                return self._stub_anchor_node(selector.vision_anchor)
             return []
 
-        all_boxes, _matched = ocr_find_selector(png, ControlSelector(vision_anchor=selector.vision_anchor or ""))
-        self._last_ocr_boxes = all_boxes
-        _anchors, spatial = anchor_spatial_find(
-            all_boxes,
+        combined = ocr_anchor_combined_find(
+            png,
+            template_path=selector.vision_template,
             anchor_text=selector.vision_anchor or "",
-            rel=selector.vision_anchor_rel or "near",
+            relation=selector.vision_anchor_rel or "near",
             target_text=selector.vision_target or selector.text or selector.text_contains,
         )
-        for index, box in enumerate(spatial):
-            nodes.append(self._node_from_anchor(box, index=index, selector=selector, capture_meta=capture_meta))
+        nodes: list[ControlNode] = []
+        for index, item in enumerate(combined):
+            if isinstance(item, TemplateMatch):
+                nodes.append(
+                    self._node_from_template(item, index=index, selector=selector, capture_meta=capture_meta)
+                )
+            elif isinstance(item, OcrTextBox):
+                nodes.append(self._node_from_anchor(item, index=index, selector=selector, capture_meta=capture_meta))
         return nodes
 
-    def _find_ocr_nodes(self, selector: ControlSelector) -> list[ControlNode]:
-        ready, reason = ocr_available()
-        if not ready:
-            if selector.vision_anchor:
-                return self._stub_anchor_node(selector.vision_anchor)
-            return []
-
-        png, capture_meta = self._capture_png()
+    def _ocr_nodes_from_png(
+        self,
+        selector: ControlSelector,
+        png: bytes,
+        capture_meta: dict[str, Any],
+    ) -> list[ControlNode]:
         all_boxes, matched = ocr_find_selector(png, selector)
         self._last_ocr_boxes = all_boxes
         if not matched:

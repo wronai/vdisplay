@@ -58,6 +58,8 @@ def add_control_selector_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--terminal-line", type=int, help="1-based terminal line number")
     parser.add_argument("--terminal-col", type=int, help="1-based terminal column number")
     parser.add_argument("--session-id", help="Terminal or browser session id")
+    parser.add_argument("--dom-css", help="CSS selector for browser/DOM control")
+    parser.add_argument("--dom-xpath", help="XPath selector for browser/DOM control")
     parser.add_argument("--vision-anchor", help="Vision OCR anchor text")
     parser.add_argument("--vision-template", help="Vision template PNG path or base64")
     parser.add_argument(
@@ -84,6 +86,8 @@ def control_selector_kwargs_from_args(args: argparse.Namespace) -> dict:
         "terminal_line": getattr(args, "terminal_line", None),
         "terminal_col": getattr(args, "terminal_col", None),
         "session_id": getattr(args, "session_id", None),
+        "dom_css": getattr(args, "dom_css", None),
+        "dom_xpath": getattr(args, "dom_xpath", None),
         "vision_anchor": getattr(args, "vision_anchor", None),
         "vision_template": getattr(args, "vision_template", None),
         "vision_anchor_rel": getattr(args, "vision_anchor_rel", None),

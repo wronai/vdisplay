@@ -175,6 +175,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.11] - 2026-06-10
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/test_vision_anchor_matching.py
+- Update tests/test_vision_template_matching.py
+
+### Other
+- Update project/duplication.toon.yaml
+- Update project/planfile-tickets.yaml
+
 ## [0.1.10] - 2026-06-09
 
 ### Docs

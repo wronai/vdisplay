@@ -219,3 +219,67 @@ def anchor_spatial_find(
 
     spatial.sort(key=lambda item: item.confidence, reverse=True)
     return anchors, spatial
+
+
+def anchor_based_find(
+    boxes: list[OcrTextBox],
+    *,
+    anchor_text: str,
+    relation: str,
+    target_text: str | None = None,
+    fuzzy: bool = True,
+) -> tuple[list[OcrTextBox], list[OcrTextBox]]:
+    """Alias for bounds-based anchor find (PR-22 spec name)."""
+    return anchor_spatial_find(
+        boxes,
+        anchor_text=anchor_text,
+        rel=relation,
+        target_text=target_text,
+        fuzzy=fuzzy,
+    )
+
+
+def ocr_anchor_combined_find(
+    png: bytes,
+    *,
+    template_path: str | None,
+    anchor_text: str,
+    relation: str,
+    target_text: str | None = None,
+    template_threshold: float = 0.85,
+    min_confidence: float = 30.0,
+    fuzzy: bool = True,
+) -> list[Any]:
+    """Combine OCR anchor resolution with optional template matching near the anchor."""
+    from .vision_template import load_template_png, match_template_bounds, template_anchor_find
+
+    all_boxes = ocr_png(png, min_confidence=min_confidence)
+    anchors, spatial = anchor_spatial_find(
+        all_boxes,
+        anchor_text=anchor_text,
+        rel=relation,
+        target_text=target_text,
+        fuzzy=fuzzy,
+    )
+    if not anchors:
+        return []
+
+    if template_path:
+        template_matches = template_anchor_find(
+            png,
+            anchor_bounds=anchors[0].bounds,
+            rel=relation,
+            template_png=load_template_png(template_path),
+            threshold=template_threshold,
+        )
+        if not template_matches:
+            template_matches = match_template_bounds(
+                png,
+                template_path,
+                anchors[0].bounds,
+                relation,
+                threshold=template_threshold,
+            )
+        return template_matches
+
+    return spatial

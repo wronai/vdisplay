@@ -9,6 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from .models import ControlBounds
+from .selector import ControlSelector
+from .vision_ocr import anchor_spatial_relation
 
 
 @dataclass(frozen=True)
@@ -30,7 +32,7 @@ def template_available() -> tuple[bool, str]:
         import cv2  # noqa: F401
         import numpy  # noqa: F401
     except ImportError:
-        return False, "opencv-python-headless not installed (optional: pip install opencv-python-headless)"
+        return False, "opencv not installed (optional: pip install opencv-python or opencv-python-headless)"
     return True, "opencv template matching available"
 
 
@@ -172,6 +174,43 @@ def _search_region_for_relation(
     width = max(1, min(width, screen_width - x))
     height = max(1, min(height, screen_height - y))
     return ControlBounds(x=x, y=y, width=width, height=height)
+
+
+def template_find_selector(
+    png: bytes,
+    selector: ControlSelector,
+    *,
+    threshold: float = 0.85,
+) -> list[TemplateMatch]:
+    """Find template matches for a selector's ``vision_template`` field."""
+    if not selector.vision_template:
+        return []
+    template_png = load_template_png(selector.vision_template)
+    return match_template(png, template_png, threshold=threshold)
+
+
+def match_template_bounds(
+    png: bytes,
+    template_path: str,
+    anchor_box: ControlBounds,
+    relation: str,
+    *,
+    threshold: float = 0.85,
+    max_distance: int = 100,
+) -> list[TemplateMatch]:
+    """Match template on screen and keep hits that satisfy a spatial anchor relation."""
+    template_png = load_template_png(template_path)
+    matches = match_template(png, template_png, threshold=threshold)
+    filtered: list[TemplateMatch] = []
+    for item in matches:
+        if anchor_spatial_relation(
+            item.bounds,
+            anchor_box,
+            relation,
+            near_threshold=max_distance,
+        ):
+            filtered.append(item)
+    return filtered
 
 
 def template_anchor_find(

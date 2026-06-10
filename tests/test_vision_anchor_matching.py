@@ -7,7 +7,13 @@ import pytest
 from vdisplay.control.models import ControlBounds
 from vdisplay.control.providers.vision import VisionStubProvider
 from vdisplay.control.selector import ControlSelector
-from vdisplay.control.vision_ocr import OcrTextBox, anchor_spatial_find, anchor_spatial_relation
+from vdisplay.control.vision_ocr import (
+    OcrTextBox,
+    anchor_based_find,
+    anchor_spatial_find,
+    anchor_spatial_relation,
+    ocr_anchor_combined_find,
+)
 
 
 def _boxes() -> list[OcrTextBox]:
@@ -58,11 +64,54 @@ def test_anchor_spatial_find_below_target() -> None:
     assert spatial[0].text == "Cancel"
 
 
-def test_vision_find_anchor_spatial_integration(monkeypatch: pytest.MonkeyPatch) -> None:
-    boxes = _boxes()
+def test_anchor_based_find_alias() -> None:
+    anchors, spatial = anchor_based_find(
+        _boxes(),
+        anchor_text="Email",
+        relation="right_of",
+        target_text="Submit",
+    )
+    assert len(anchors) == 1
+    assert spatial[0].text == "Submit"
+
+
+def test_anchor_fallback_when_ocr_misses(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         "vdisplay.control.providers.vision.provider.ocr_find_selector",
-        lambda *_a, **_k: (boxes, boxes),
+        lambda *_a, **_k: ([], []),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.provider.ocr_available",
+        lambda: (True, "tesseract ok"),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.provider.template_available",
+        lambda: (False, "no opencv"),
+    )
+    monkeypatch.setattr(
+        VisionStubProvider,
+        "_capture_png",
+        lambda self, **kwargs: (b"png", {}),
+    )
+    provider = VisionStubProvider()
+    assert provider.find(ControlSelector(vision_anchor="Missing")) == []
+
+
+def test_vision_find_anchor_spatial_integration(monkeypatch: pytest.MonkeyPatch) -> None:
+    boxes = _boxes()
+
+    def _combined(_png: bytes, **kwargs: object) -> list[OcrTextBox]:
+        _anchors, spatial = anchor_spatial_find(
+            boxes,
+            anchor_text=str(kwargs.get("anchor_text") or ""),
+            rel=str(kwargs.get("relation") or "near"),
+            target_text=kwargs.get("target_text"),  # type: ignore[arg-type]
+        )
+        return spatial
+
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.provider.ocr_anchor_combined_find",
+        _combined,
     )
     monkeypatch.setattr(
         "vdisplay.control.providers.vision.provider.ocr_available",
@@ -85,3 +134,19 @@ def test_vision_find_anchor_spatial_integration(monkeypatch: pytest.MonkeyPatch)
     assert len(nodes) == 1
     assert nodes[0].name == "Submit"
     assert nodes[0].state.get("anchor_rel") == "right_of"
+
+
+def test_ocr_anchor_combined_find_without_template(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "vdisplay.control.vision_ocr.ocr_png",
+        lambda *_a, **_k: _boxes(),
+    )
+    matches = ocr_anchor_combined_find(
+        b"png",
+        template_path=None,
+        anchor_text="Email",
+        relation="below",
+        target_text="Cancel",
+    )
+    assert len(matches) == 1
+    assert matches[0].text == "Cancel"
