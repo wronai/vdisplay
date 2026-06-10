@@ -66,7 +66,24 @@ class LinuxYdotoolInput:
 
     @staticmethod
     def can_paste() -> bool:
-        return LinuxYdotoolInput.can_type()
+        if shutil.which("ydotool") is None:
+            return False
+        # ydotoold may be able to inject hotkeys (Ctrl+V) even when GNOME
+        # ignores ordinary keystrokes from uinput.
+        for sock in ("/tmp/.ydotool_socket", os.path.expanduser("~/.ydotool_socket")):
+            if os.path.exists(sock):
+                return True
+        try:
+            import subprocess
+
+            subprocess.run(
+                ["pgrep", "-x", "ydotoold"],
+                capture_output=True,
+                check=True,
+            )
+            return True
+        except Exception:
+            return False
 
     def move(self, x: int, y: int) -> None:
         require_command("ydotool")
