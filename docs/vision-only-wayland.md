@@ -57,4 +57,17 @@ vdisplay map refresh --map maps/chat.json --scope pycharm.ai_chat
 
 ## img2nl / VQL (cold path)
 
-Screenshot enrichment via `VDISPLAY_IMG2NL=1` adds NL metadata to VQL programs. See [img2nl VQL integration](https://github.com/wronai/img2nl/blob/main/docs/vql-integration.md).
+Screenshot enrichment via `VDISPLAY_IMG2NL=1` adds NL metadata to VQL programs. Optional image LLM (`VDISPLAY_VISION_LLM_*`) is a **cold path** for diagnosis, region description, and verify fallback — not the control hot path.
+
+```bash
+# Keep orchestration on a text model:
+LLM_MODEL=openrouter/qwen/qwen3-coder-next
+
+# Vision LLM (separate from LLM_MODEL):
+VDISPLAY_VISION_LLM=openrouter/google/gemini-3.1-flash-image-preview
+VDISPLAY_VISION_LLM_ENABLED=1
+VDISPLAY_VISION_LLM_MODE=fallback   # off | fallback | enrich | both
+OPENROUTER_API_KEY=sk-or-v1-...
+```
+
+See [img2nl VQL integration](https://github.com/wronai/img2nl/blob/main/docs/vql-integration.md).
