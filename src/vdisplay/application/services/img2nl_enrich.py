@@ -75,10 +75,25 @@ def describe_screenshot_image(
     return payload
 
 
-def enrich_screenshot_payload(payload: dict[str, Any]) -> dict[str, Any]:
-    if not img2nl_enabled():
-        return payload
+def _maybe_vision_llm_enrich(image_path: str | Path) -> dict[str, Any] | None:
+    from ...control.vision_llm import summarize_region, vision_llm_enrich_enabled
 
+    if not vision_llm_enrich_enabled():
+        return None
+
+    path = Path(image_path).expanduser()
+    if not path.is_file():
+        return None
+
+    try:
+        png = path.read_bytes()
+    except OSError as exc:
+        return {"ok": False, "error": str(exc), "method": "vision_llm"}
+
+    return summarize_region(png)
+
+
+def enrich_screenshot_payload(payload: dict[str, Any]) -> dict[str, Any]:
     image_path = _image_path(payload)
     if image_path is None and isinstance(payload.get("captures"), list):
         enriched = dict(payload)
@@ -91,12 +106,19 @@ def enrich_screenshot_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if image_path is None:
         return payload
 
-    analysis = describe_screenshot_image(image_path)
-    if not analysis:
-        return payload
-
     enriched = dict(payload)
-    enriched["img2nl"] = analysis
-    if analysis.get("ok"):
-        enriched["nl"] = analysis.get("text", "")
+
+    if img2nl_enabled():
+        analysis = describe_screenshot_image(image_path)
+        if analysis:
+            enriched["img2nl"] = analysis
+            if analysis.get("ok"):
+                enriched["nl"] = analysis.get("text", "")
+
+    vision_llm = _maybe_vision_llm_enrich(image_path)
+    if vision_llm:
+        enriched["vision_llm"] = vision_llm
+        if vision_llm.get("ok") and not enriched.get("nl"):
+            enriched["nl"] = vision_llm.get("text", "")
+
     return enriched
