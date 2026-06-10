@@ -9,6 +9,9 @@ from typing import Any
 
 from .selector import ControlSelector
 
+_REASON_DESKTOP_CONTEXT = "desktop selector context"
+_REASON_NON_DESKTOP_CONTEXT = "non-desktop selector context"
+
 
 @dataclass(frozen=True)
 class ProviderScore:
@@ -311,10 +314,10 @@ def _score_atspi_provider(
 
     if context["desktop"] and not context["terminal"] and not context["browser"]:
         score += 30
-        reasons.append("desktop selector context")
+        reasons.append(_REASON_DESKTOP_CONTEXT)
     if context["terminal"] or context["browser"]:
         score -= 40
-        reasons.append("non-desktop selector context")
+        reasons.append(_REASON_NON_DESKTOP_CONTEXT)
 
     return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, False
 
@@ -348,10 +351,10 @@ def _score_uia_provider(
 
     if context["desktop"] and not context["terminal"] and not context["browser"]:
         score += 30
-        reasons.append("desktop selector context")
+        reasons.append(_REASON_DESKTOP_CONTEXT)
     if context["terminal"] or context["browser"]:
         score -= 40
-        reasons.append("non-desktop selector context")
+        reasons.append(_REASON_NON_DESKTOP_CONTEXT)
 
     return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, False
 
@@ -385,10 +388,10 @@ def _score_ax_provider(
 
     if context["desktop"] and not context["terminal"] and not context["browser"]:
         score += 30
-        reasons.append("desktop selector context")
+        reasons.append(_REASON_DESKTOP_CONTEXT)
     if context["terminal"] or context["browser"]:
         score -= 40
-        reasons.append("non-desktop selector context")
+        reasons.append(_REASON_NON_DESKTOP_CONTEXT)
 
     return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, False
 
@@ -456,6 +459,14 @@ def _score_browser_provider(
         eligible = False
         missing.append(ready_reason)
 
+    score += _browser_context_score(context, reasons)
+    eligible, missing = _browser_session_check(context, session_id, eligible, missing, reasons)
+
+    return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, supports_visual_verify
+
+
+def _browser_context_score(context: dict[str, Any], reasons: list[str]) -> float:
+    score = 0.0
     if context["browser"]:
         score += 200
         reasons.append("browser/DOM selector context")
@@ -466,18 +477,27 @@ def _score_browser_provider(
     if context["terminal"]:
         score -= 60
         reasons.append("terminal context deprioritizes browser")
+    return score
 
-    if context["session_id"] or context["browser"]:
-        session_ok, session_reason = _browser_session_ready(session_id if context["session_id"] else None)
-        if session_ok:
-            reasons.append(session_reason)
-            if context["session_id"]:
-                score += 40
-        elif context["session_id"] or context["browser"]:
-            eligible = False
-            missing.append(session_reason)
 
-    return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, supports_visual_verify
+def _browser_session_check(
+    context: dict[str, Any],
+    session_id: str | None,
+    eligible: bool,
+    missing: list[str],
+    reasons: list[str],
+) -> tuple[bool, list[str]]:
+    if not context["session_id"] and not context["browser"]:
+        return eligible, missing
+    session_ok, session_reason = _browser_session_ready(session_id if context["session_id"] else None)
+    if session_ok:
+        reasons.append(session_reason)
+        if context["session_id"]:
+            reasons.append("active browser session bonus")
+    else:
+        eligible = False
+        missing.append(session_reason)
+    return eligible, missing
 
 
 def _x11_linux_eligibility(

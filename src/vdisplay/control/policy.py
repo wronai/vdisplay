@@ -208,11 +208,7 @@ def assess_control_capability(*, display: str | None = None) -> ControlCapabilit
     host_constraints = host_environment_constraints(host)
     host_constraints.extend(platform.security_constraints)
 
-    for env_var in ("GTK_A11Y", "QT_ACCESSIBILITY"):
-        val = os.environ.get(env_var, "")
-        if val:
-            reasons.append(f"{env_var}={val}")
-
+    _append_accessibility_env_vars(reasons)
     resolve_host_display(display or os.environ.get("DISPLAY"))
 
     pointer_fallback = _pointer_fallback_for_host(
@@ -223,12 +219,13 @@ def assess_control_capability(*, display: str | None = None) -> ControlCapabilit
     )
 
     desktop_a11y = atspi_ok or uia_ok or ax_ok
+    any_invoke = desktop_a11y or pointer_fallback or terminal_ok or browser_ok
     return ControlCapabilityContract(
         supports_semantic_control=semantic_ok,
         supports_unattended_control=desktop_a11y,
-        supports_invoke=desktop_a11y or pointer_fallback or terminal_ok or browser_ok,
-        supports_set_value=desktop_a11y or pointer_fallback or terminal_ok or browser_ok,
-        supports_focus=desktop_a11y or pointer_fallback or terminal_ok or browser_ok,
+        supports_invoke=any_invoke,
+        supports_set_value=any_invoke,
+        supports_focus=any_invoke,
         requires_accessibility_enablement=not desktop_a11y,
         fallback_to_pointer_injection=pointer_fallback,
         backends=backends,
@@ -236,3 +233,10 @@ def assess_control_capability(*, display: str | None = None) -> ControlCapabilit
         reasons=reasons,
         host_constraints=host_constraints,
     )
+
+
+def _append_accessibility_env_vars(reasons: list[str]) -> None:
+    for env_var in ("GTK_A11Y", "QT_ACCESSIBILITY"):
+        val = os.environ.get(env_var, "")
+        if val:
+            reasons.append(f"{env_var}={val}")

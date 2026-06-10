@@ -1,8 +1,8 @@
-# vdisplay | 1433 func | 174f | 30706L | python | 2026-06-10
+# vdisplay | 1483 func | 178f | 34143L | python | 2026-06-10
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.5  critical=101 (limit:10)  dup=1  cycles=0
+  CC̄=3.5  critical=98 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     _start_screencast_impl = 37 (limit:10)
@@ -16,23 +16,23 @@ ALERTS[20]:
   !!  high_fan_out     main = 19 (limit:10)
   !!  high_fan_out     main = 19 (limit:10)
 
-MODULES[245] (top by size):
+MODULES[250] (top by size):
+  M[maps/pycharm-chat.json] 2503L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/control/scoring.py] 781L C:2 F:38 CC↑12 D:6 (python)
+  M[src/vdisplay/control/scoring.py] 801L C:2 F:40 CC↑12 D:6 (python)
   M[src/vdisplay/capture/portal_screencast.py] 779L C:1 F:34 CC↑11 D:6 (python)
-  M[src/vdisplay/application/services/control.py] 706L C:0 F:21 CC↑14 D:0 (python)
-  M[src/vdisplay/control/providers/vision/provider.py] 667L C:1 F:31 CC↑17 D:0 (python)
-  M[src/vdisplay/control/verifier.py] 556L C:3 F:24 CC↑13 D:1 (python)
+  M[src/vdisplay/application/services/control.py] 743L C:0 F:22 CC↑14 D:0 (python)
+  M[src/vdisplay/control/providers/vision/provider.py] 704L C:1 F:37 CC↑11 D:0 (python)
+  M[src/vdisplay/control/verifier.py] 567L C:3 F:24 CC↑13 D:1 (python)
   M[src/vdisplay/capture/host.py] 555L C:0 F:15 CC↑14 D:6 (python)
   M[src/vdisplay/control/gui_map.py] 516L C:6 F:31 CC↑13 D:6 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/control/gui_map_diff.py] 500L C:3 F:18 CC↑14 D:1 (python)
+  M[src/vdisplay/control/verify.py] 498L C:0 F:21 CC↑12 D:1 (python)
+  M[src/vdisplay/application/session_recorder.py] 496L C:3 F:25 CC↑13 D:1 (python)
   M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
-  M[src/vdisplay/control/verify.py] 475L C:0 F:20 CC↑13 D:1 (python)
   M[src/vdisplay/control/descriptors.py] 464L C:5 F:11 CC↑14 D:9 (python)
-  M[src/vdisplay/client.py] 415L C:1 F:40 CC↑11 D:0 (python)
-  M[src/vdisplay/control/providers/atspi_impl.py] 407L C:0 F:19 CC↑8 D:1 (python)
-  LANGS: python:192/json:19/toml:11/shell:7/other:5/yml:5/yaml:5/txt:1
+  LANGS: python:196/json:20/toml:11/shell:7/other:5/yml:5/yaml:5/txt:1
 
 HOTSPOTS[10]:
   ★ _start_screencast_impl fan=37  // Orchestrates 37 calls
@@ -44,11 +44,11 @@ When VDISPLAY_AGENT_URL is set (or --agent-url), DSL
   ★ register_routes fan=22  // Orchestrates 22 calls
 
 REFACTOR[15]:
-  [1] H/H Split god module src/vdisplay/control/providers/vision/provider.py (667L, 1 classes)
-  [2] H/H Split god module src/vdisplay/application/services/control.py (706L, 0 classes)
-  [3] H/H Split god module src/vdisplay/capture/host.py (555L, 0 classes)
-  [4] H/H Split god module src/vdisplay/control/gui_map_diff.py (500L, 3 classes)
-  [5] H/H Split god module src/vdisplay/control/gui_map.py (516L, 6 classes)
+  [1] H/H Split god module src/vdisplay/application/services/control.py (743L, 0 classes)
+  [2] H/H Split god module src/vdisplay/capture/host.py (555L, 0 classes)
+  [3] H/H Split god module src/vdisplay/control/gui_map_diff.py (500L, 3 classes)
+  [4] H/H Split god module src/vdisplay/control/gui_map.py (516L, 6 classes)
+  [5] H/H Split god module src/vdisplay/control/verifier.py (567L, 3 classes)
 
 EVOLUTION:
-  2026-06-10 CC̄=3.5 crit=101 30706L // Automated analysis
+  2026-06-10 CC̄=3.5 crit=98 34143L // Automated analysis

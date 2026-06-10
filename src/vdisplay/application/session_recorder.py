@@ -13,7 +13,7 @@ from contextvars import ContextVar
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .commands import ArtifactRef, CommandRequest, CommandResult, CommandVerb
 
@@ -323,6 +323,16 @@ def _artifacts_from_data(data: dict[str, Any]) -> list[ArtifactRef]:
             return
         found.append(ArtifactRef(kind=kind, path=str(candidate), label=label))
 
+    _collect_top_level_artifacts(data, add)
+    _collect_block_artifacts(data, add)
+    _collect_routing_artifacts(data, add)
+    return found
+
+
+def _collect_top_level_artifacts(
+    data: dict[str, Any],
+    add: Callable[..., None],
+) -> None:
     for key in ("path", "preview_path", "output"):
         add("screenshot" if key == "path" else key.removesuffix("_path"), data.get(key), label=key)
 
@@ -335,26 +345,35 @@ def _artifacts_from_data(data: dict[str, Any]) -> list[ArtifactRef]:
         for kind, path in artifacts_block.items():
             add(str(kind), path if isinstance(path, str) else None, label=str(kind))
 
+
+def _collect_block_artifacts(
+    data: dict[str, Any],
+    add: Callable[..., None],
+) -> None:
     for block_key, kind in (
         ("screenshot_diff", "diff"),
         ("verification", "verify"),
     ):
         block = data.get(block_key)
-        if isinstance(block, dict):
-            capture = block.get("capture") or {}
-            if isinstance(capture, dict):
-                add(kind, capture.get("path"), label=block_key)
-            for side in ("before", "after"):
-                side_capture = block.get(side)
-                if isinstance(side_capture, dict):
-                    add(side, side_capture.get("path"), label=side)
+        if not isinstance(block, dict):
+            continue
+        capture = block.get("capture") or {}
+        if isinstance(capture, dict):
+            add(kind, capture.get("path"), label=block_key)
+        for side in ("before", "after"):
+            side_capture = block.get(side)
+            if isinstance(side_capture, dict):
+                add(side, side_capture.get("path"), label=side)
 
+
+def _collect_routing_artifacts(
+    data: dict[str, Any],
+    add: Callable[..., None],
+) -> None:
     routing = data.get("routing")
     if isinstance(routing, dict):
         for key in _ARTIFACT_PATH_KEYS:
             add("json", routing.get(key), label=f"routing.{key}")
-
-    return found
 
 
 def copy_artifact(step_dir: Path, artifact: ArtifactRef) -> str | None:

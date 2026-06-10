@@ -104,33 +104,7 @@ class VisionStubProvider(ControlProvider):
         if not self._preview_debug_enabled:
             self._last_find_debug = None
             return
-        rejected: list[PreviewMatch] = []
-        if rejected_boxes:
-            for index, box in enumerate(rejected_boxes[:20]):
-                rejected.append(
-                    PreviewMatch(
-                        index=index,
-                        bounds=box.bounds,
-                        label=box.text[:48],
-                        confidence=box.confidence,
-                        kind="ocr",
-                        rejected=True,
-                    )
-                )
-        if rejected_nodes:
-            for index, node in enumerate(rejected_nodes[:20]):
-                if node.bounds is None:
-                    continue
-                rejected.append(
-                    PreviewMatch(
-                        index=index,
-                        bounds=node.bounds,
-                        label=(node.name or node.id or "rejected")[:48],
-                        confidence=float(node.state.get("confidence") or 0.0),
-                        kind="vision",
-                        rejected=True,
-                    )
-                )
+        rejected = self._build_rejected_preview(rejected_boxes, rejected_nodes)
         capture_meta = self._last_capture[1] if self._last_capture else {}
         self._last_find_debug = VisionPreviewDebug(
             selector=selector,
@@ -140,6 +114,38 @@ class VisionStubProvider(ControlProvider):
             rejected=rejected,
             capture_meta=dict(capture_meta),
         )
+
+    def _build_rejected_preview(
+        self,
+        rejected_boxes: list[OcrTextBox] | None,
+        rejected_nodes: list[ControlNode] | None,
+    ) -> list[PreviewMatch]:
+        rejected: list[PreviewMatch] = []
+        for index, box in enumerate((rejected_boxes or [])[:20]):
+            rejected.append(
+                PreviewMatch(
+                    index=index,
+                    bounds=box.bounds,
+                    label=box.text[:48],
+                    confidence=box.confidence,
+                    kind="ocr",
+                    rejected=True,
+                )
+            )
+        for index, node in enumerate((rejected_nodes or [])[:20]):
+            if node.bounds is None:
+                continue
+            rejected.append(
+                PreviewMatch(
+                    index=index,
+                    bounds=node.bounds,
+                    label=(node.name or node.id or "rejected")[:48],
+                    confidence=float(node.state.get("confidence") or 0.0),
+                    kind="vision",
+                    rejected=True,
+                )
+            )
+        return rejected
 
     def _node_from_ocr(self, box: OcrTextBox, *, index: int, anchor: str, capture_meta: dict[str, Any]) -> ControlNode:
         node_id = f"vision:ocr:{index}:{anchor}"
@@ -224,34 +230,56 @@ class VisionStubProvider(ControlProvider):
 
     def _find_nodes(self, selector: ControlSelector) -> list[ControlNode]:
         """Priority cascade: OCR → template → anchor → stub."""
-        # Fast path: pure stub anchor when OCR/template are unavailable
+        stub = self._maybe_stub_fast_path(selector)
+        if stub is not None:
+            return stub
+
+        nodes = self._try_ocr_nodes(selector)
+        if nodes:
+            return nodes
+
+        nodes = self._try_template_nodes(selector)
+        if nodes:
+            return nodes
+
+        nodes = self._try_anchor_nodes(selector)
+        if nodes:
+            return nodes
+
+        return self._maybe_stub_fallback(selector) or []
+
+    def _try_ocr_nodes(self, selector: ControlSelector) -> list[ControlNode] | None:
+        if not self._selector_wants_ocr(selector) or not ocr_available()[0]:
+            return None
+        png, capture_meta = self._capture_png()
+        nodes = self._ocr_nodes_from_png(selector, png, capture_meta)
+        return nodes if nodes else None
+
+    def _try_template_nodes(self, selector: ControlSelector) -> list[ControlNode] | None:
+        if not selector.vision_template or not template_available()[0]:
+            return None
+        png, capture_meta = self._ensure_png(None, {})
+        nodes = self._template_nodes_from_png(selector, png, capture_meta)
+        return nodes if nodes else None
+
+    def _try_anchor_nodes(self, selector: ControlSelector) -> list[ControlNode] | None:
+        if not selector.vision_anchor_rel or not selector.vision_anchor:
+            return None
+        png, capture_meta = self._ensure_png(None, {})
+        nodes = self._anchor_nodes_from_png(selector, png, capture_meta)
+        return nodes if nodes else None
+
+    def _maybe_stub_fast_path(self, selector: ControlSelector) -> list[ControlNode] | None:
+        """Return a stub node when OCR/template are unavailable and only an anchor is given."""
         if selector.vision_anchor and not selector.vision_anchor_rel and not selector.vision_template and not ocr_available()[0]:
             return self._stub_anchor_node(selector.vision_anchor)
+        return None
 
-        png: bytes | None = None
-        capture_meta: dict[str, Any] = {}
-
-        if self._selector_wants_ocr(selector) and ocr_available()[0]:
-            png, capture_meta = self._capture_png()
-            nodes = self._ocr_nodes_from_png(selector, png, capture_meta)
-            if nodes:
-                return nodes
-
-        if selector.vision_template and template_available()[0]:
-            png, capture_meta = self._ensure_png(png, capture_meta)
-            nodes = self._template_nodes_from_png(selector, png, capture_meta)
-            if nodes:
-                return nodes
-
-        if selector.vision_anchor_rel and selector.vision_anchor:
-            png, capture_meta = self._ensure_png(png, capture_meta)
-            nodes = self._anchor_nodes_from_png(selector, png, capture_meta)
-            if nodes:
-                return nodes
-
+    def _maybe_stub_fallback(self, selector: ControlSelector) -> list[ControlNode] | None:
+        """Return a stub node when no visual match and OCR is unavailable."""
         if selector.vision_anchor and not ocr_available()[0] and not selector.vision_template:
             return self._stub_anchor_node(selector.vision_anchor)
-        return []
+        return None
 
     def _ensure_png(self, png: bytes | None, capture_meta: dict[str, Any]) -> tuple[bytes, dict[str, Any]]:
         """Return cached PNG or capture a fresh one."""
@@ -639,7 +667,7 @@ class VisionStubProvider(ControlProvider):
         # Prefer wl-copy on Wayland, xclip on X11
         if shutil.which("wl-copy"):
             try:
-                subprocess.run(["wl-copy"], input=value.encode(), check=True, timeout=5)
+                subprocess.run(["wl-copy"], input=value.encode(), check=True, timeout=15)
             except Exception as exc:
                 return False, f"wl-copy failed: {exc}"
         elif shutil.which("xclip"):

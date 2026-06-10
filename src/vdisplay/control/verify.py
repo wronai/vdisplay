@@ -10,6 +10,59 @@ from .selector import ControlSelector, find_matches, parse_selector, pick_match
 _STATE_KEYS = ("focused", "expanded", "checked", "enabled", "visible")
 
 
+def _node_changes(
+    before_node: ControlNode,
+    after_node: ControlNode,
+) -> tuple[
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+    list[dict[str, Any]],
+]:
+    text_value_changes: list[dict[str, Any]] = []
+    name_changes: list[dict[str, Any]] = []
+    state_changes: list[dict[str, Any]] = []
+    focus_changes: list[dict[str, Any]] = []
+
+    before_text = _display_text(before_node)
+    after_text = _display_text(after_node)
+    if before_text != after_text:
+        text_value_changes.append(
+            {
+                "role": before_node.role.value,
+                "name": before_node.name,
+                "before": before_text,
+                "after": after_text,
+            }
+        )
+    if before_node.name != after_node.name:
+        name_changes.append(
+            {
+                "role": before_node.role.value,
+                "before": before_node.name,
+                "after": after_node.name,
+            }
+        )
+    for state_key in _STATE_KEYS:
+        before_val = before_node.state.get(state_key)
+        after_val = after_node.state.get(state_key)
+        if before_val is None and after_val is None:
+            continue
+        if before_val != after_val:
+            change = {
+                "role": before_node.role.value,
+                "name": before_node.name,
+                "state": state_key,
+                "before": before_val,
+                "after": after_val,
+            }
+            state_changes.append(change)
+            if state_key == "focused":
+                focus_changes.append(change)
+
+    return text_value_changes, name_changes, state_changes, focus_changes
+
+
 def _node_key(node: ControlNode) -> tuple[str, str]:
     return (node.role.value, (node.name or "").strip().lower())
 
@@ -107,41 +160,11 @@ def diff_snapshots(
         if after_node is None:
             removed.append({"role": before_node.role.value, "name": before_node.name})
             continue
-        before_text = _display_text(before_node)
-        after_text = _display_text(after_node)
-        if before_text != after_text:
-            text_value_changes.append(
-                {
-                    "role": before_node.role.value,
-                    "name": before_node.name,
-                    "before": before_text,
-                    "after": after_text,
-                }
-            )
-        if before_node.name != after_node.name:
-            name_changes.append(
-                {
-                    "role": before_node.role.value,
-                    "before": before_node.name,
-                    "after": after_node.name,
-                }
-            )
-        for state_key in _STATE_KEYS:
-            before_val = before_node.state.get(state_key)
-            after_val = after_node.state.get(state_key)
-            if before_val is None and after_val is None:
-                continue
-            if before_val != after_val:
-                change = {
-                    "role": before_node.role.value,
-                    "name": before_node.name,
-                    "state": state_key,
-                    "before": before_val,
-                    "after": after_val,
-                }
-                state_changes.append(change)
-                if state_key == "focused":
-                    focus_changes.append(change)
+        tvc, nc, sc, fc = _node_changes(before_node, after_node)
+        text_value_changes.extend(tvc)
+        name_changes.extend(nc)
+        state_changes.extend(sc)
+        focus_changes.extend(fc)
 
     for key, after_node in after_keyed.items():
         if key not in before_keyed:

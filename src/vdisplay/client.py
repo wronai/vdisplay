@@ -83,37 +83,44 @@ def _route_browser_open(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] |
     return "POST", "/session/browser/open", body
 
 
+_STATIC_ROUTES: dict[CommandVerb, Callable[[CommandRequest], tuple[str, str, dict[str, Any] | None]]] = {
+    CommandVerb.HEALTH: lambda _c: ("GET", "/health", None),
+    CommandVerb.CAPABILITIES: lambda _c: ("GET", "/capabilities", None),
+    CommandVerb.VIRTUAL_START: lambda c: (
+        "POST",
+        "/session/virtual/start",
+        {"width": c.width, "height": c.height, "display": c.vd_display},
+    ),
+    CommandVerb.DIAGNOSE_CONTROL: lambda c: (
+        "GET",
+        f"/diagnostics/control{('?display=' + c.display) if c.display else ''}",
+        None,
+    ),
+}
+
+_CONTROL_VERBS = {
+    CommandVerb.CONTROLS_LIST,
+    CommandVerb.CONTROLS_FIND,
+    CommandVerb.CONTROL_CLICK,
+    CommandVerb.CONTROL_FOCUS,
+    CommandVerb.CONTROL_SET_VALUE,
+}
+
+
 def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
     """Map CommandRequest to broker HTTP (method, path, body)."""
     verb = cmd.verb
-    if verb == CommandVerb.HEALTH:
-        return "GET", "/health", None
-    if verb == CommandVerb.CAPABILITIES:
-        return "GET", "/capabilities", None
+    if verb in _STATIC_ROUTES:
+        return _STATIC_ROUTES[verb](cmd)
     if verb in {CommandVerb.MONITORS, CommandVerb.OUTPUTS}:
         return _route_outputs_query(cmd)
     if verb == CommandVerb.WINDOWS:
         return _route_windows_query(cmd)
-    if verb == CommandVerb.VIRTUAL_START:
-        return (
-            "POST",
-            "/session/virtual/start",
-            {"width": cmd.width, "height": cmd.height, "display": cmd.vd_display},
-        )
     if verb == CommandVerb.TERMINAL_OPEN:
         return _route_terminal_open(cmd)
     if verb == CommandVerb.BROWSER_OPEN:
         return _route_browser_open(cmd)
-    if verb == CommandVerb.DIAGNOSE_CONTROL:
-        suffix = f"?display={cmd.display}" if cmd.display else ""
-        return "GET", f"/diagnostics/control{suffix}", None
-    if verb in {
-        CommandVerb.CONTROLS_LIST,
-        CommandVerb.CONTROLS_FIND,
-        CommandVerb.CONTROL_CLICK,
-        CommandVerb.CONTROL_FOCUS,
-        CommandVerb.CONTROL_SET_VALUE,
-    }:
+    if verb in _CONTROL_VERBS:
         from .application.handlers.control import control_request_body
 
         body = control_request_body(cmd)

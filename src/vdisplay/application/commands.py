@@ -95,6 +95,32 @@ def _control_session_id_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> str 
     return cmd.get("session_id")
 
 
+def _control_fields_from_dsl(cmd: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "control_selector": cmd.get("selector"),
+        "control_provider_ref": cmd.get("provider_ref") or cmd.get("id"),
+        "control_name": cmd.get("name"),
+        "control_role": cmd.get("role"),
+        "control_app": cmd.get("app"),
+        "control_window_id": cmd.get("window_id"),
+        "control_window_title": cmd.get("window_title"),
+        "control_value": cmd.get("value"),
+        "control_verify": bool(cmd.get("verify", False)),
+        "control_screenshot_verify": bool(cmd.get("screenshot_verify", False)),
+        "control_verify_label": cmd.get("verify_label"),
+        "control_verify_selector": cmd.get("verify_selector"),
+        "control_backend": str(cmd.get("control_backend") or cmd.get("backend") or "auto"),
+        "control_index": int(cmd.get("index") or 0),
+        "control_max_depth": int(cmd.get("max_depth") or 8),
+        "control_format": str(cmd.get("format") or "flat"),
+        "control_environment": cmd.get("environment"),
+        "control_text": cmd.get("text"),
+        "control_text_contains": cmd.get("text_contains"),
+        "control_terminal_line": int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
+        "control_terminal_col": int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
+    }
+
+
 def _terminal_fields_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> dict[str, Any]:
     if verb != CommandVerb.TERMINAL_OPEN:
         return {
@@ -243,33 +269,13 @@ class CommandRequest:
             target=cmd.get("target"),
             vd_display=str(cmd.get("display", ":99")),
             backend=str(cmd.get("backend", "xvfb")),
-            control_selector=cmd.get("selector"),
-            control_provider_ref=cmd.get("provider_ref") or cmd.get("id"),
-            control_name=cmd.get("name"),
-            control_role=cmd.get("role"),
-            control_app=cmd.get("app"),
-            control_window_id=cmd.get("window_id"),
-            control_window_title=cmd.get("window_title"),
-            control_value=cmd.get("value"),
-            control_verify=bool(cmd.get("verify", False)),
-            control_screenshot_verify=bool(cmd.get("screenshot_verify", False)),
-            control_verify_label=cmd.get("verify_label"),
-            control_verify_selector=cmd.get("verify_selector"),
-            control_backend=str(cmd.get("control_backend") or cmd.get("backend") or "auto"),
-            control_index=int(cmd.get("index") or 0),
-            control_max_depth=int(cmd.get("max_depth") or 8),
-            control_format=str(cmd.get("format") or "flat"),
-            control_environment=cmd.get("environment"),
-            control_text=cmd.get("text"),
-            control_text_contains=cmd.get("text_contains"),
-            control_terminal_line=int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
-            control_terminal_col=int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
             control_session_id=_control_session_id_from_dsl(cmd, verb),
             session_id=cmd.get("audit_session_id"),
             request_id=cmd.get("request_id"),
             terminal_rows=int(cmd.get("rows") or 24),
             terminal_cols=int(cmd.get("cols") or 80),
             extra={k: v for k, v in cmd.items() if k not in {"verb"}},
+            **_control_fields_from_dsl(cmd),
             **terminal_fields,
             **browser_fields,
         )

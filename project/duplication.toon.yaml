@@ -1,12 +1,12 @@
-# redup/duplication | 42 groups | 191f 26848L | 2026-06-10
+# redup/duplication | 42 groups | 195f 27782L | 2026-06-10
 
 SUMMARY:
-  files_scanned: 191
-  total_lines:   26848
+  files_scanned: 195
+  total_lines:   27782
   dup_groups:    42
   dup_fragments: 98
   saved_lines:   420
-  scan_ms:       4092
+  scan_ms:       2885
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.4%)
@@ -18,9 +18,9 @@ HOTSPOTS[7] (files with most duplication):
   src/vdisplay/client.py  dup=24L  groups=1  frags=2  (0.1%)
 
 DUPLICATES[42] (ranked by impact):
-  [495f9e314f963c00] ! STRU  _score_uia_provider  L=35 N=2 saved=35 sim=1.00
-      src/vdisplay/control/scoring.py:322-356  (_score_uia_provider)
-      src/vdisplay/control/scoring.py:359-393  (_score_ax_provider)
+  [920423ffadef7598] ! STRU  _score_uia_provider  L=35 N=2 saved=35 sim=1.00
+      src/vdisplay/control/scoring.py:325-359  (_score_uia_provider)
+      src/vdisplay/control/scoring.py:362-396  (_score_ax_provider)
   [443c93126a62d7a9] ! EXAC  _load_common  L=11 N=4 saved=33 sim=1.00
       examples/ci-agent/agent.py:15-25  (_load_common)
       examples/headless-virtual/run_virtual.py:13-23  (_load_common)
@@ -52,9 +52,9 @@ DUPLICATES[42] (ranked by impact):
       src/vdisplay/application/handlers/agent.py:199-202  (_control_focus)
       src/vdisplay/application/handlers/agent.py:205-208  (_control_set_value)
   [83f6aff43414a50f]   STRU  _uia_ready  L=7 N=3 saved=14 sim=1.00
-      src/vdisplay/control/scoring.py:116-122  (_uia_ready)
-      src/vdisplay/control/scoring.py:125-131  (_ax_ready)
-      src/vdisplay/control/scoring.py:134-140  (_browser_ready)
+      src/vdisplay/control/scoring.py:119-125  (_uia_ready)
+      src/vdisplay/control/scoring.py:128-134  (_ax_ready)
+      src/vdisplay/control/scoring.py:137-143  (_browser_ready)
   [3930b9c0e70097f2]   EXAC  to_dict  L=4 N=4 saved=12 sim=1.00
       src/vdisplay/control/contracts.py:40-43  (to_dict)
       src/vdisplay/control/contracts.py:55-58  (to_dict)
@@ -102,8 +102,8 @@ DUPLICATES[42] (ranked by impact):
       src/vdisplay/control/providers/ax.py:133-139  (focus)
       src/vdisplay/control/providers/uia.py:133-139  (focus)
   [d7079f3dea9cd702]   STRU  _atspi_ready  L=7 N=2 saved=7 sim=1.00
-      src/vdisplay/control/scoring.py:107-113  (_atspi_ready)
-      src/vdisplay/control/scoring.py:177-183  (_terminal_ready)
+      src/vdisplay/control/scoring.py:110-116  (_atspi_ready)
+      src/vdisplay/control/scoring.py:180-186  (_terminal_ready)
   [93f796dd58175244]   STRU  _terminal_line_matches  L=7 N=2 saved=7 sim=1.00
       src/vdisplay/control/selector.py:183-189  (_terminal_line_matches)
       src/vdisplay/control/selector.py:192-198  (_terminal_col_matches)
@@ -147,7 +147,7 @@ DUPLICATES[42] (ranked by impact):
       src/vdisplay/control/providers/browser_session.py:237-239  (close_all)
       src/vdisplay/control/providers/terminal_session.py:218-220  (close_all)
   [7e769be7bd62da72]   EXAC  bounds  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/control/providers/vision/provider.py:662-664  (bounds)
+      src/vdisplay/control/providers/vision/provider.py:699-701  (bounds)
       src/vdisplay/control/providers/x11.py:130-132  (bounds)
   [2d7b9210c1b65241]   STRU  img2nl_enabled  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/application/services/img2nl_enrich.py:10-12  (img2nl_enabled)
