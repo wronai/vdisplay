@@ -395,6 +395,12 @@ def _handle_focus(payload: dict[str, Any]) -> dict[str, Any]:
 
 def _handle_set_value(payload: dict[str, Any]) -> dict[str, Any]:
     accessible = _resolve_accessible(str(payload["element_id"]))
+    component = _iface(accessible, "component")
+    if component is not None:
+        try:
+            component.grab_focus()
+        except Exception:
+            pass
     value = str(payload.get("value") or "")
     text_iface = _text_iface(accessible)
     if text_iface is not None:

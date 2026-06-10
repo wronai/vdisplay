@@ -47,6 +47,27 @@ Response includes:
 - `application_profile` — inferred class-of-app (`web_spa`, `terminal_pty`, …)
 - `extensions` — platform profile, descriptors, plugins, session kinds
 
+## Verify and actuation
+
+| Action | Default verify (semantic backends) | Vision backend |
+|--------|-----------------------------------|----------------|
+| `click` / `invoke` | State diff, label change, focus | `anchor_visible` or screenshot hybrid |
+| `set-value` | `text_value.after == value` (AT-SPI / terminal / browser DOM) | `ocr_contains` on typed text |
+
+After every actuation, vdisplay waits `VDISPLAY_CONTROL_SETTLE_MS` (default **150 ms**) before the verify snapshot when `--verify` or `--screenshot-verify` is set. Increase on slow UIs (e.g. `export VDISPLAY_CONTROL_SETTLE_MS=400`).
+
+**Pointer click → type sequence (vision / x11):**
+
+1. Move + click at `action_bounds` center (or map `click_point`)  
+2. Wait `VDISPLAY_CONTROL_POINTER_SETTLE_MS` (default **50 ms**) for compositor focus  
+3. Wait `VDISPLAY_CONTROL_FOCUS_MS` (default **350 ms**) before keystrokes  
+4. `type_text` if backend supports it (`xdotool`, ydotool with `VDISPLAY_ALLOW_YDOTOOL_TYPING=1`)  
+5. Clipboard paste fallback (`wl-copy` / `xclip` + Ctrl+V via ydotool)
+
+**AT-SPI set-value:** grabs focus before `Text.set_text_contents` / `Value.set_current_value`.
+
+Session steps record routing, verify mode, confidence, and artifact paths when `--session` is enabled — [session-report.md](guides/session-report.md).
+
 ## Plugin registration (PR-12)
 
 Register adapters at runtime without modifying core:

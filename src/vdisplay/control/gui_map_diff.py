@@ -424,7 +424,7 @@ def _append_new_elements(
 ) -> None:
     if not diff.new_ocr_labels:
         return
-    from .gui_map import _slug
+    from .gui_map_build import _slug
 
     used = set(pack.elements.keys())
     region_key = scope_id or (next(iter(pack.regions)) if pack.regions else None)

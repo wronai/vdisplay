@@ -1,9 +1,24 @@
 # Session report (recorder)
 
-> **Status:** MVP implemented — hook in `application.executor`.  
+> **Status:** Implemented — hook in `application.executor` (PR #1).  
 > **Goal:** one directory per run with human `README.md` + machine `session.json`, fed from `application.executor` so CLI, DSL, REST, and MCP share the same audit trail.
 
-## Enable
+## Quick start
+
+```bash
+export VDISPLAY_SESSION=1
+export VDISPLAY_SESSION_ID=my-run   # optional slug in folder name
+
+vdisplay --session --session-id my-run control list --backend auto
+vdisplay --session control set-value --role input --value hello --verify
+
+ls .vdisplay/*__my-run/
+cat .vdisplay/*__my-run/README.md
+```
+
+Every `execute(CommandRequest)` writes under `.vdisplay/<timestamp>__<slug>/` (or `VDISPLAY_SESSION_DIR`).
+
+## Enable (reference)
 
 ```bash
 export VDISPLAY_SESSION=1

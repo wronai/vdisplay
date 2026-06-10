@@ -28,10 +28,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `_execute_map_action` no longer hardcodes `verify_mode=semantic` for vision-only maps
 - Verifier primary path for `ocr_contains` with region-scoped OCR and hyphen-token matching
 
+### Refactored (cognitive complexity reduction)
+- `control/providers/vision/provider.py`:
+  - `_find_nodes` — extracted `_try_ocr_nodes`, `_try_template_nodes`, `_try_anchor_nodes`, `_maybe_stub_fast_path`, `_maybe_stub_fallback`
+  - `_record_find_debug` — extracted `_build_rejected_preview`
+  - `wl-copy` timeout increased from 5s to 15s to fix intermittent paste fallback failures on Wayland
+- `application/services/control.py`:
+  - `_perform_action` — simplified dispatch via `_dispatch_action` helper with explicit action→method mapping
+- `client.py`:
+  - `_route_command` — extracted static route table `_STATIC_ROUTES`; grouped control verbs into `_CONTROL_VERBS`
+- `control/scoring.py`:
+  - `_score_browser_provider` — extracted `_browser_context_score` and `_browser_session_check`
+  - Replaced duplicated string literals with module constants `_REASON_DESKTOP_CONTEXT` / `_REASON_NON_DESKTOP_CONTEXT`
+- `control/verify.py`:
+  - `diff_snapshots` — extracted `_node_changes` helper
+- `commands/agent.py`:
+  - `handle` — split into `_handle_serve`, `_handle_browser_open`, `_handle_screencast`
+- `control/providers/x11.py`:
+  - `snapshot` — extracted `_snapshot_hint` and `_window_to_snapshot`
+- `application/commands.py`:
+  - `from_dsl` — extracted `_control_fields_from_dsl` to isolate 25-field control mapping
+- `application/session_recorder.py`:
+  - `_artifacts_from_data` — split into `_collect_top_level_artifacts`, `_collect_block_artifacts`, `_collect_routing_artifacts`
+- `control/policy.py`:
+  - `assess_control_capability` — extracted `_append_accessibility_env_vars`; deduplicated `any_invoke` expression
+
+### Changed (gui_map module split)
+- Split `control/gui_map.py` (516L, god module) into:
+  - `control/gui_map.py` — data classes (`GuiMapBounds`, `GuiMapPoint`, `GuiMapIdentity`, `GuiMapElement`, `GuiMapRegion`, `GuiMapPack`) + persistence (`load_gui_map`, `save_gui_map`)
+  - `control/gui_map_build.py` — build functions (`build_gui_map_from_ocr`, `element_from_ocr_box`, `tile_fingerprint`, `crop_png_bounds`, `parse_crop_bounds`)
+  - `control/gui_map_resolve.py` — resolution functions (`resolve_map_element`, `resolve_map_region`, `map_element_to_node`, `verify_hints_from_map_element`, `resolve_map_verify_mode`)
+- All public API remains available through re-exports in `control/gui_map.py` for backward compatibility
+
 ### Added (vision LLM cold path)
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.16] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/architecture.md
+- Update docs/control-plane.md
+- Update docs/guides/session-report.md
+- Update docs/index.md
+- Update docs/reference/cli.md
+- Update docs/reference/env.md
+- ... and 1 more files
+
+### Test
+- Update tests/test_control_settle.py
+- Update tests/test_control_timing.py
+- Update tests/test_control_x11.py
+
+### Other
+- Update app.doql.less
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- Update project/flow.png
+- ... and 4 more files
 
 ## [0.1.15] - 2026-06-10
 

@@ -59,10 +59,20 @@ Guide: [guides/vision-fallback.md](../guides/vision-fallback.md)
 | `VDISPLAY_SESSION` | `1` — auto-create `.vdisplay/<timestamp>__.../` per process |
 | `VDISPLAY_SESSION_DIR` | Explicit session directory (overrides auto path) |
 | `VDISPLAY_SESSION_ID` | Slug suffix for auto-created session dir |
+| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in README (future) |
 
-CLI equivalents: `vdisplay --session --session-id pycharm-chat monitors` (root `--session-id` is the **audit** slug; control `--session-id` is terminal/browser session).
-| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in README (phase 2) |
+CLI: `vdisplay --session [--session-id SLUG] …` — root audit slug. Control `--session-id` is the **terminal/browser** session id (different field).
 
-See [session-report.md](../guides/session-report.md).
+See [session-report.md](../guides/session-report.md) and [RFC 002](rfc/002-cqrs-es-control-feedback.md).
+
+## Control actuation (Wayland / verify)
+
+| Variable | Purpose |
+|----------|---------|
+| `VDISPLAY_CONTROL_SETTLE_MS` | Pause after click/type before verify snapshot (default `150`) |
+| `VDISPLAY_CONTROL_FOCUS_MS` | Pause after click-to-focus before keystrokes (default `350`) |
+| `VDISPLAY_CONTROL_POINTER_SETTLE_MS` | Pause after pointer click before typing (default `50`) |
+| `VDISPLAY_ALLOW_YDOTOOL_TYPING` | `1` — allow ydotool keystrokes on Wayland (default off on GNOME) |
+| `YDOTOOL_SOCKET` | ydotoold socket path |
 
 See also: [vision-only-wayland.md](../vision-only-wayland.md) · [troubleshooting.md](../troubleshooting.md)

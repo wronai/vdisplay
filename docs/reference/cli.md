@@ -44,6 +44,15 @@ Screenshot options: `--source`, `--monitor`, `--display`, `--prefer-mirror`
 
 Common flags: `--backend auto|atspi|browser|terminal|vision|x11`, `--verify`, `--screenshot-verify`, `--map`, `--target`, `--scope`
 
+Session audit: `--session`, `--session-id` (root flags — see [session-report.md](../guides/session-report.md))
+
+## Session recording
+
+```bash
+vdisplay --session --session-id demo control click --role button --name OK --verify
+# → .vdisplay/<ts>__demo/README.md with routing + verify per step
+```
+
 ## Map (GUI Map Pack)
 
 | Command | Description |

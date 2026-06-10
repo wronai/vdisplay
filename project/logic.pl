@@ -81,7 +81,7 @@ project_file('src/vdisplay/agent_envelope.py', 18, 'python').
 project_file('src/vdisplay/api.py', 194, 'python').
 project_file('src/vdisplay/application/__init__.py', 15, 'python').
 project_file('src/vdisplay/application/artifacts.py', 103, 'python').
-project_file('src/vdisplay/application/commands.py', 365, 'python').
+project_file('src/vdisplay/application/commands.py', 371, 'python').
 project_file('src/vdisplay/application/errors.py', 40, 'python').
 project_file('src/vdisplay/application/executor.py', 68, 'python').
 project_file('src/vdisplay/application/handlers/__init__.py', 7, 'python').
@@ -91,7 +91,7 @@ project_file('src/vdisplay/application/handlers/local.py', 292, 'python').
 project_file('src/vdisplay/application/runtime.py', 87, 'python').
 project_file('src/vdisplay/application/services/__init__.py', 4, 'python').
 project_file('src/vdisplay/application/services/capture.py', 183, 'python').
-project_file('src/vdisplay/application/services/control.py', 744, 'python').
+project_file('src/vdisplay/application/services/control.py', 764, 'python').
 project_file('src/vdisplay/application/services/discovery.py', 240, 'python').
 project_file('src/vdisplay/application/services/img2nl_enrich.py', 125, 'python').
 project_file('src/vdisplay/application/services/info.py', 52, 'python').
@@ -100,7 +100,7 @@ project_file('src/vdisplay/application/services/sampler.py', 110, 'python').
 project_file('src/vdisplay/application/services/sampler_loop.py', 281, 'python').
 project_file('src/vdisplay/application/services/session.py', 327, 'python').
 project_file('src/vdisplay/application/session_context.py', 33, 'python').
-project_file('src/vdisplay/application/session_recorder.py', 478, 'python').
+project_file('src/vdisplay/application/session_recorder.py', 501, 'python').
 project_file('src/vdisplay/backends/__init__.py', 2, 'python').
 project_file('src/vdisplay/backends/base.py', 65, 'python').
 project_file('src/vdisplay/backends/linux_x11_mirror.py', 260, 'python').
@@ -125,7 +125,7 @@ project_file('src/vdisplay/cli.py', 37, 'python').
 project_file('src/vdisplay/cli_handlers.py', 35, 'python').
 project_file('src/vdisplay/client.py', 423, 'python').
 project_file('src/vdisplay/commands/__init__.py', 47, 'python').
-project_file('src/vdisplay/commands/agent.py', 144, 'python').
+project_file('src/vdisplay/commands/agent.py', 156, 'python').
 project_file('src/vdisplay/commands/all_cmd.py', 47, 'python').
 project_file('src/vdisplay/commands/common.py', 138, 'python').
 project_file('src/vdisplay/commands/control.py', 160, 'python').
@@ -156,11 +156,11 @@ project_file('src/vdisplay/control/gui_map_diff.py', 501, 'python').
 project_file('src/vdisplay/control/gui_map_export.py', 180, 'python').
 project_file('src/vdisplay/control/models.py', 188, 'python').
 project_file('src/vdisplay/control/plugins.py', 164, 'python').
-project_file('src/vdisplay/control/policy.py', 239, 'python').
+project_file('src/vdisplay/control/policy.py', 243, 'python').
 project_file('src/vdisplay/control/profile_inference.py', 272, 'python').
 project_file('src/vdisplay/control/providers/__init__.py', 19, 'python').
 project_file('src/vdisplay/control/providers/atspi.py', 241, 'python').
-project_file('src/vdisplay/control/providers/atspi_impl.py', 408, 'python').
+project_file('src/vdisplay/control/providers/atspi_impl.py', 414, 'python').
 project_file('src/vdisplay/control/providers/ax.py', 170, 'python').
 project_file('src/vdisplay/control/providers/ax_impl.py', 270, 'python').
 project_file('src/vdisplay/control/providers/browser_playwright.py', 340, 'python').
@@ -171,12 +171,12 @@ project_file('src/vdisplay/control/providers/terminal_session.py', 228, 'python'
 project_file('src/vdisplay/control/providers/uia.py', 170, 'python').
 project_file('src/vdisplay/control/providers/uia_impl.py', 300, 'python').
 project_file('src/vdisplay/control/providers/vision/__init__.py', 4, 'python').
-project_file('src/vdisplay/control/providers/vision/provider.py', 683, 'python').
-project_file('src/vdisplay/control/providers/x11.py', 133, 'python').
+project_file('src/vdisplay/control/providers/vision/provider.py', 706, 'python').
+project_file('src/vdisplay/control/providers/x11.py', 141, 'python').
 project_file('src/vdisplay/control/registry.py', 118, 'python').
 project_file('src/vdisplay/control/router.py', 272, 'python').
 project_file('src/vdisplay/control/routing_semantics.py', 159, 'python').
-project_file('src/vdisplay/control/scoring.py', 799, 'python').
+project_file('src/vdisplay/control/scoring.py', 802, 'python').
 project_file('src/vdisplay/control/screenshot_verify.py', 266, 'python').
 project_file('src/vdisplay/control/selector.py', 348, 'python').
 project_file('src/vdisplay/control/session.py', 217, 'python').
@@ -254,6 +254,7 @@ project_file('tests/test_control_screenshot_verify.py', 227, 'python').
 project_file('tests/test_control_selector.py', 36, 'python').
 project_file('tests/test_control_selector_v2.py', 88, 'python').
 project_file('tests/test_control_set_value_verify.py', 153, 'python').
+project_file('tests/test_control_settle.py', 46, 'python').
 project_file('tests/test_control_terminal.py', 184, 'python').
 project_file('tests/test_control_verifier_hybrid.py', 200, 'python').
 project_file('tests/test_control_verify.py', 265, 'python').
@@ -531,6 +532,7 @@ python_function('src/vdisplay/application/artifacts.py', 'artifacts_from_control
 python_function('src/vdisplay/application/artifacts.py', 'build_artifacts', 2, 3, 2).
 python_function('src/vdisplay/application/commands.py', '_resolve_browser_engine_from_dsl', 1, 5, 6).
 python_function('src/vdisplay/application/commands.py', '_control_session_id_from_dsl', 2, 2, 1).
+python_function('src/vdisplay/application/commands.py', '_control_fields_from_dsl', 1, 9, 4).
 python_function('src/vdisplay/application/commands.py', '_terminal_fields_from_dsl', 2, 2, 1).
 python_function('src/vdisplay/application/commands.py', '_browser_fields_from_dsl', 2, 2, 3).
 python_function('src/vdisplay/application/errors.py', 'error_from_exception', 1, 4, 3).
@@ -594,6 +596,7 @@ python_function('src/vdisplay/application/services/capture.py', 'capture_screens
 python_function('src/vdisplay/application/services/capture.py', '_capture_via_agent', 1, 9, 7).
 python_function('src/vdisplay/application/services/capture.py', 'capture_screenshot_via_client', 1, 1, 1).
 python_function('src/vdisplay/application/services/control.py', '_resolve_verify_mode', 0, 5, 0).
+python_function('src/vdisplay/application/services/control.py', '_control_settle_seconds', 0, 4, 3).
 python_function('src/vdisplay/application/services/control.py', '_apply_selector_overrides', 1, 9, 4).
 python_function('src/vdisplay/application/services/control.py', '_selector_from_kwargs', 0, 10, 9).
 python_function('src/vdisplay/application/services/control.py', '_provider_kwargs', 0, 2, 0).
@@ -601,7 +604,7 @@ python_function('src/vdisplay/application/services/control.py', '_resolve_target
 python_function('src/vdisplay/application/services/control.py', '_load_map_pack', 1, 2, 1).
 python_function('src/vdisplay/application/services/control.py', '_resolve_map_target', 2, 1, 2).
 python_function('src/vdisplay/application/services/control.py', '_map_find_payload', 2, 5, 7).
-python_function('src/vdisplay/application/services/control.py', '_execute_map_action', 0, 9, 15).
+python_function('src/vdisplay/application/services/control.py', '_execute_map_action', 0, 10, 17).
 python_function('src/vdisplay/application/services/control.py', 'list_control_plugins', 0, 1, 2).
 python_function('src/vdisplay/application/services/control.py', 'diagnose_control', 0, 14, 12).
 python_function('src/vdisplay/application/services/control.py', 'controls_list', 0, 4, 5).
@@ -613,7 +616,7 @@ python_function('src/vdisplay/application/services/control.py', 'control_set_val
 python_function('src/vdisplay/application/services/control.py', '_perform_action', 4, 9, 8).
 python_function('src/vdisplay/application/services/control.py', '_capture_before_state', 0, 4, 1).
 python_function('src/vdisplay/application/services/control.py', '_build_action_payload', 0, 13, 6).
-python_function('src/vdisplay/application/services/control.py', '_execute_action', 0, 7, 17).
+python_function('src/vdisplay/application/services/control.py', '_execute_action', 0, 8, 19).
 python_function('src/vdisplay/application/services/control.py', '_build_tree', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', '_run_discovery', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', 'list_monitors', 1, 1, 2).
@@ -674,7 +677,10 @@ python_function('src/vdisplay/application/session_recorder.py', 'record_executio
 python_function('src/vdisplay/application/session_recorder.py', 'request_to_dict', 1, 1, 2).
 python_function('src/vdisplay/application/session_recorder.py', 'result_to_dict', 1, 2, 2).
 python_function('src/vdisplay/application/session_recorder.py', 'collect_artifacts', 1, 6, 4).
-python_function('src/vdisplay/application/session_recorder.py', '_artifacts_from_data', 1, 15, 10).
+python_function('src/vdisplay/application/session_recorder.py', '_artifacts_from_data', 1, 1, 9).
+python_function('src/vdisplay/application/session_recorder.py', '_collect_top_level_artifacts', 2, 7, 6).
+python_function('src/vdisplay/application/session_recorder.py', '_collect_block_artifacts', 2, 7, 3).
+python_function('src/vdisplay/application/session_recorder.py', '_collect_routing_artifacts', 2, 3, 3).
 python_function('src/vdisplay/application/session_recorder.py', 'copy_artifact', 2, 6, 8).
 python_function('src/vdisplay/application/session_recorder.py', 'extract_diagnostics', 1, 5, 4).
 python_function('src/vdisplay/application/session_recorder.py', '_build_summary', 1, 6, 7).
@@ -807,7 +813,10 @@ python_function('src/vdisplay/client.py', '_route_command', 1, 7, 7).
 python_function('src/vdisplay/commands/__init__.py', 'register_all', 1, 2, 1).
 python_function('src/vdisplay/commands/agent.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/agent.py', '_agent_client', 0, 2, 3).
-python_function('src/vdisplay/commands/agent.py', 'handle', 1, 15, 18).
+python_function('src/vdisplay/commands/agent.py', 'handle', 1, 5, 7).
+python_function('src/vdisplay/commands/agent.py', '_handle_serve', 1, 5, 9).
+python_function('src/vdisplay/commands/agent.py', '_handle_browser_open', 1, 3, 5).
+python_function('src/vdisplay/commands/agent.py', '_handle_screencast', 1, 5, 6).
 python_function('src/vdisplay/commands/all_cmd.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/all_cmd.py', 'handle', 1, 1, 3).
 python_function('src/vdisplay/commands/all_cmd.py', 'register_outputs', 1, 1, 4).
@@ -948,7 +957,8 @@ python_function('src/vdisplay/control/policy.py', '_evaluate_platform_backends',
 python_function('src/vdisplay/control/policy.py', '_evaluate_pointer_fallback', 1, 6, 2).
 python_function('src/vdisplay/control/policy.py', '_evaluate_readiness', 0, 7, 11).
 python_function('src/vdisplay/control/policy.py', '_pointer_fallback_for_host', 0, 6, 2).
-python_function('src/vdisplay/control/policy.py', 'assess_control_capability', 0, 15, 9).
+python_function('src/vdisplay/control/policy.py', 'assess_control_capability', 0, 7, 9).
+python_function('src/vdisplay/control/policy.py', '_append_accessibility_env_vars', 1, 3, 2).
 python_function('src/vdisplay/control/profile_inference.py', 'profile_for', 1, 3, 2).
 python_function('src/vdisplay/control/profile_inference.py', '_score_vision_only_surface', 1, 8, 1).
 python_function('src/vdisplay/control/profile_inference.py', '_score_browser_engine', 1, 8, 4).
@@ -983,7 +993,7 @@ python_function('src/vdisplay/control/providers/atspi_impl.py', 'dispatch', 1, 6
 python_function('src/vdisplay/control/providers/atspi_impl.py', '_handle_available', 0, 2, 3).
 python_function('src/vdisplay/control/providers/atspi_impl.py', '_handle_invoke', 1, 6, 11).
 python_function('src/vdisplay/control/providers/atspi_impl.py', '_handle_focus', 1, 3, 5).
-python_function('src/vdisplay/control/providers/atspi_impl.py', '_handle_set_value', 1, 5, 9).
+python_function('src/vdisplay/control/providers/atspi_impl.py', '_handle_set_value', 1, 7, 10).
 python_function('src/vdisplay/control/providers/ax_impl.py', 'ax_deps_available', 0, 3, 0).
 python_function('src/vdisplay/control/providers/ax_impl.py', '_role_from_ax', 1, 4, 2).
 python_function('src/vdisplay/control/providers/ax_impl.py', '_ax_bounds', 1, 5, 3).
@@ -1022,6 +1032,8 @@ python_function('src/vdisplay/control/providers/uia_impl.py', '_record_from_uia_
 python_function('src/vdisplay/control/providers/uia_impl.py', '_passes_uia_filters', 1, 7, 2).
 python_function('src/vdisplay/control/providers/uia_impl.py', 'filter_records', 2, 3, 1).
 python_function('src/vdisplay/control/providers/uia_impl.py', 'create_uia_backend', 1, 2, 1).
+python_function('src/vdisplay/control/providers/x11.py', '_snapshot_hint', 2, 3, 2).
+python_function('src/vdisplay/control/providers/x11.py', '_window_to_snapshot', 1, 9, 15).
 python_function('src/vdisplay/control/registry.py', '_build_atspi', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_uia', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_ax', 0, 1, 1).
@@ -1477,6 +1489,10 @@ python_function('tests/test_control_selector_v2.py', 'test_active_fields_per_env
 python_function('tests/test_control_set_value_verify.py', 'test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision', 0, 4, 1).
 python_function('tests/test_control_set_value_verify.py', 'test_build_action_payload_fails_ok_when_verify_false', 0, 4, 6).
 python_function('tests/test_control_set_value_verify.py', 'test_control_set_value_verify_mode_ocr_contains', 1, 4, 9).
+python_function('tests/test_control_settle.py', 'test_control_settle_seconds_zero_without_verify', 0, 2, 1).
+python_function('tests/test_control_settle.py', 'test_control_settle_seconds_default_with_verify', 1, 2, 2).
+python_function('tests/test_control_settle.py', 'test_control_settle_seconds_from_env', 1, 2, 2).
+python_function('tests/test_control_settle.py', 'test_terminal_set_value_verify_respects_settle', 1, 3, 7).
 python_function('tests/test_control_terminal.py', '_demo_registry', 0, 1, 2).
 python_function('tests/test_control_terminal.py', '_seed_default_demo', 0, 1, 3).
 python_function('tests/test_control_terminal.py', 'test_terminal_screen_nodes', 0, 7, 7).
@@ -1863,7 +1879,7 @@ python_class('src/vdisplay/application/commands.py', 'ArtifactRef').
 python_method('ArtifactRef', 'to_dict', 0, 6, 0).
 python_class('src/vdisplay/application/commands.py', 'CommandRequest').
 python_method('CommandRequest', 'action', 0, 3, 1).
-python_method('CommandRequest', 'from_dsl', 2, 15, 11).
+python_method('CommandRequest', 'from_dsl', 2, 7, 12).
 python_class('src/vdisplay/application/commands.py', 'CommandResult').
 python_method('CommandResult', 'to_dict', 0, 6, 1).
 python_method('CommandResult', 'to_dsl_result', 0, 4, 2).
@@ -2272,7 +2288,12 @@ python_method('VisionStubProvider', '_node_from_ocr', 1, 1, 1).
 python_method('VisionStubProvider', '_node_from_template', 1, 5, 1).
 python_method('VisionStubProvider', '_node_from_anchor', 1, 2, 1).
 python_method('VisionStubProvider', '_selector_wants_ocr', 1, 6, 1).
-python_method('VisionStubProvider', '_find_nodes', 1, 17, 9).
+python_method('VisionStubProvider', '_find_nodes', 1, 6, 5).
+python_method('VisionStubProvider', '_try_ocr_nodes', 1, 4, 4).
+python_method('VisionStubProvider', '_try_template_nodes', 1, 4, 3).
+python_method('VisionStubProvider', '_try_anchor_nodes', 1, 4, 2).
+python_method('VisionStubProvider', '_maybe_stub_fast_path', 1, 5, 2).
+python_method('VisionStubProvider', '_maybe_stub_fallback', 1, 4, 2).
 python_method('VisionStubProvider', '_ensure_png', 2, 2, 1).
 python_method('VisionStubProvider', '_template_nodes_from_png', 3, 4, 10).
 python_method('VisionStubProvider', '_anchor_nodes_from_png', 3, 10, 11).
@@ -2285,7 +2306,7 @@ python_method('VisionStubProvider', '_click_node', 1, 7, 4).
 python_method('VisionStubProvider', 'invoke_map_node', 1, 1, 1).
 python_method('VisionStubProvider', 'focus_map_node', 1, 1, 1).
 python_method('VisionStubProvider', 'set_value_map_node', 2, 9, 10).
-python_method('VisionStubProvider', '_pointer_click_at', 1, 6, 6).
+python_method('VisionStubProvider', '_pointer_click_at', 1, 6, 7).
 python_method('VisionStubProvider', 'invoke', 1, 8, 5).
 python_method('VisionStubProvider', 'focus', 1, 1, 1).
 python_method('VisionStubProvider', 'set_value', 2, 11, 11).
@@ -2294,14 +2315,7 @@ python_method('VisionStubProvider', 'bounds', 1, 1, 1).
 python_class('src/vdisplay/control/providers/x11.py', 'X11ControlProvider').
 python_method('X11ControlProvider', '__init__', 0, 2, 3).
 python_method('X11ControlProvider', 'available', 0, 2, 2).
-python_method('X11ControlProvider', 'snapshot', 0, 15, 10).
-python_method('X11ControlProvider', 'find', 1, 2, 2).
-python_method('X11ControlProvider', '_node_for', 1, 3, 1).
-python_method('X11ControlProvider', '_click_node', 1, 2, 3).
-python_method('X11ControlProvider', 'invoke', 1, 1, 2).
-python_method('X11ControlProvider', 'focus', 1, 2, 4).
-python_method('X11ControlProvider', 'set_value', 2, 1, 2).
-python_method('X11ControlProvider', 'bounds', 1, 1, 1).
+python_method('X11ControlProvider', 'snapshot', 0, 5, 7).
 python_class('src/vdisplay/control/registry.py', 'ProviderRegistry').
 python_method('ProviderRegistry', '__init__', 0, 1, 0).
 python_method('ProviderRegistry', 'register', 2, 2, 1).

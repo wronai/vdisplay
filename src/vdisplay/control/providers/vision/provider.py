@@ -27,6 +27,7 @@ from ...vision_template import (
     template_find_selector,
 )
 from ...action_bounds import action_bounds_for_vision
+from ...timing import control_focus_type_seconds, control_pointer_settle_seconds
 from ...vision_disambiguate import disambiguation_meta, resolve_vision_matches
 from ...vision_preview import PreviewMatch, VisionPreviewDebug
 
@@ -492,7 +493,9 @@ class VisionStubProvider(ControlProvider):
             from ....input.resolve import resolve_pointer_input
 
             _inp, method = resolve_pointer_input(display=self.display)
-            time.sleep(0.35)
+            focus_s = control_focus_type_seconds()
+            if focus_s:
+                time.sleep(focus_s)
             _can_type = getattr(_inp, "can_type", None)
             if _can_type is None or _can_type():
                 _inp.type_text(value)
@@ -549,6 +552,9 @@ class VisionStubProvider(ControlProvider):
             local_cx, local_cy = click_bounds.center
         if self._pointer_click is not None:
             self._pointer_click(local_cx, local_cy)
+            settle_s = control_pointer_settle_seconds()
+            if settle_s:
+                time.sleep(settle_s)
             return {"ok": True, "method": "injected-pointer", "x": local_cx, "y": local_cy}
         try:
             from ....input.coords import global_pointer_coords
@@ -563,6 +569,9 @@ class VisionStubProvider(ControlProvider):
             inp, method = resolve_pointer_input(display=self.display)
             inp.move(gx, gy)
             inp.click(1)
+            settle_s = control_pointer_settle_seconds()
+            if settle_s:
+                time.sleep(settle_s)
             return {
                 "ok": True,
                 "method": method,
@@ -625,7 +634,9 @@ class VisionStubProvider(ControlProvider):
             from ....input.resolve import resolve_pointer_input
 
             _inp, method = resolve_pointer_input(display=self.display)
-            time.sleep(0.35)
+            focus_s = control_focus_type_seconds()
+            if focus_s:
+                time.sleep(focus_s)
             _can_type = getattr(_inp, "can_type", None)
             if _can_type is None or _can_type():
                 _inp.type_text(value)

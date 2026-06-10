@@ -401,8 +401,12 @@ def extract_diagnostics(result: CommandResult) -> dict[str, Any]:
     if isinstance(routing, dict):
         diagnostics["routing"] = {
             "selected_provider": routing.get("selected_provider"),
+            "requested_backend": routing.get("requested_backend"),
+            "verify_provider": routing.get("verify_provider"),
             "verify_mode": routing.get("verify_mode"),
+            "application_profile": routing.get("application_profile"),
             "why_selected": routing.get("why_selected"),
+            "why_not_selected": routing.get("why_not_selected"),
         }
     for key in ("verified", "verify_mode", "verify_confidence", "verify_reasons", "method", "reason"):
         if key in data:

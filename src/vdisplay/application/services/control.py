@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import base64
+import os
+import time
 from typing import Any
 
 from ...control.base import ControlProvider
@@ -37,6 +39,17 @@ def _resolve_verify_mode(
     if action == "set_value" and verify and value and selected_provider == "vision":
         return "ocr_contains"
     return routing_mode
+
+
+def _control_settle_seconds(*, verify: bool, screenshot_verify: bool) -> float:
+    """Pause after actuation so verify snapshots see settled UI (ms via env)."""
+    if not verify and not screenshot_verify:
+        return 0.0
+    raw = os.environ.get("VDISPLAY_CONTROL_SETTLE_MS", "150")
+    try:
+        return max(0.0, int(raw)) / 1000.0
+    except ValueError:
+        return 0.15
 
 
 def _apply_selector_overrides(selector: ControlSelector, **kwargs: Any) -> ControlSelector:
@@ -215,6 +228,9 @@ def _execute_map_action(
         capture_fn=capture_fn,
     )
     result = _perform_action(provider, action, target, value)
+    settle_s = _control_settle_seconds(verify=verify, screenshot_verify=effective_screenshot_verify)
+    if settle_s:
+        time.sleep(settle_s)
     selector = ControlSelector(
         backend="vision",
         vision_anchor=element.identity.anchor_text,
@@ -683,6 +699,10 @@ def _execute_action(
     )
 
     result = _perform_action(provider, action, target, value)
+
+    settle_s = _control_settle_seconds(verify=verify, screenshot_verify=screenshot_verify)
+    if settle_s:
+        time.sleep(settle_s)
 
     effective_verify_mode = _resolve_verify_mode(
         action=action,

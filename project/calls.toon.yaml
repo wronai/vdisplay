@@ -1,6 +1,6 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.23s
-# nodes: 458 | edges: 500 | modules: 112
+# generated in 0.24s
+# nodes: 465 | edges: 500 | modules: 114
 # CC̄=3.5
 
 HUBS[20]:
@@ -22,28 +22,28 @@ HUBS[20]:
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
-  src.vdisplay.discovery.resolve_host_display
-    CC=11  in:26  out:7  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
-  src.vdisplay.commands.agent.handle
-    CC=15  in:0  out:32  total:32
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:33  total:33
+  src.vdisplay.discovery.resolve_host_display
+    CC=11  in:26  out:7  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  examples.host-mirror.mirror_demo.main
-    CC=7  in:0  out:31  total:31
-  src.vdisplay.control.descriptors.detect_platform_profile
-    CC=14  in:8  out:23  total:31
   examples.control-plane.control_demo.run_browser_demo
     CC=6  in:1  out:30  total:31
   src.vdisplay.commands.map.handle
     CC=7  in:0  out:31  total:31
+  examples.host-mirror.mirror_demo.main
+    CC=7  in:0  out:31  total:31
+  src.vdisplay.control.descriptors.detect_platform_profile
+    CC=14  in:8  out:23  total:31
   src.vdisplay.agent_config.resolve_agent_url
     CC=6  in:24  out:5  total:29
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+    CC=5  in:21  out:8  total:29
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -234,17 +234,20 @@ MODULES:
     _utcnow  CC=1  out:1
     default_task_db_path  CC=3  out:9
     task_to_dict  CC=4  out:5
-  src.vdisplay.agent_config  [7 funcs]
+  src.vdisplay.agent_config  [8 funcs]
     _default_agent_base  CC=3  out:4
     _probe_agent_url  CC=3  out:3
     _probe_default_agent  CC=3  out:3
     agent_auto_enabled  CC=1  out:3
     reset_agent_probe_cache  CC=1  out:0
+    resolve_agent_token  CC=3  out:2
     resolve_agent_url  CC=6  out:5
     use_agent  CC=2  out:4
   src.vdisplay.agent_dispatch  [2 funcs]
     agent_client  CC=2  out:3
     dispatch_via_agent  CC=1  out:4
+  src.vdisplay.agent_envelope  [1 funcs]
+    flatten_agent_envelope  CC=6  out:3
   src.vdisplay.api  [8 funcs]
     create  CC=6  out:8
     create  CC=4  out:6
@@ -258,6 +261,8 @@ MODULES:
     error_from_exception  CC=4  out:11
   src.vdisplay.application.executor  [1 funcs]
     execute  CC=6  out:18
+  src.vdisplay.application.handlers.control  [1 funcs]
+    control_request_body  CC=3  out:3
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
   src.vdisplay.application.services.sampler  [2 funcs]
@@ -320,11 +325,18 @@ MODULES:
     main  CC=2  out:5
   src.vdisplay.cli_handlers  [1 funcs]
     print_json  CC=1  out:1
+  src.vdisplay.client  [9 funcs]
+    __init__  CC=2  out:2
+    _normalize_payload  CC=1  out:1
+    request  CC=3  out:8
+    _route_browser_open  CC=4  out:0
+    _route_command  CC=7  out:7
+    _route_control_command  CC=5  out:0
+    _route_outputs_query  CC=4  out:3
+    _route_terminal_open  CC=4  out:0
+    _route_windows_query  CC=6  out:4
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
-  src.vdisplay.commands.agent  [2 funcs]
-    _agent_client  CC=2  out:3
-    handle  CC=15  out:32
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
@@ -387,9 +399,6 @@ MODULES:
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
-  src.vdisplay.control.action_bounds  [2 funcs]
-    action_bounds_for_vision  CC=2  out:4
-    click_point_for_vision  CC=1  out:1
   src.vdisplay.control.base  [3 funcs]
     capabilities  CC=2  out:2
     session_kind  CC=2  out:1
@@ -399,18 +408,8 @@ MODULES:
     engine_profile_id  CC=2  out:3
     normalize_browser_engine  CC=3  out:6
     resolve_session_browser_engine  CC=3  out:4
-  src.vdisplay.control.browser_session_store  [8 funcs]
-    _chromium_executable  CC=2  out:4
-    find_free_port  CC=1  out:4
-    launch_detached_chromium  CC=7  out:17
-    load_meta  CC=5  out:14
-    meta_path  CC=1  out:0
-    profile_dir  CC=1  out:0
-    remove_meta  CC=2  out:3
-    save_meta  CC=1  out:5
-  src.vdisplay.control.contracts  [2 funcs]
-    control_route_request_from_command  CC=4  out:27
-    provider_score_from_dataclass  CC=4  out:4
+  src.vdisplay.control.browser_session_store  [1 funcs]
+    session_available  CC=3  out:3
   src.vdisplay.control.descriptors  [5 funcs]
     all_provider_descriptors  CC=1  out:2
     all_selector_extensions  CC=1  out:0
@@ -421,28 +420,8 @@ MODULES:
     resolve_provider  CC=1  out:1
     resolve_provider_routing  CC=2  out:2
     resolve_route  CC=2  out:2
-  src.vdisplay.control.gui_map  [11 funcs]
-    _boxes_in_scope_for_build  CC=4  out:2
-    _prepare_ocr_boxes_for_build  CC=13  out:11
-    _slug  CC=2  out:4
-    _translate_ocr_boxes  CC=4  out:3
-    build_gui_map_from_ocr  CC=7  out:11
-    crop_png_bounds  CC=3  out:10
-    element_from_ocr_box  CC=9  out:11
-    resolve_map_region  CC=2  out:2
+  src.vdisplay.control.gui_map  [1 funcs]
     save_gui_map  CC=1  out:4
-    scoped_capture_region  CC=2  out:1
-  src.vdisplay.control.gui_map_diff  [15 funcs]
-    _append_new_elements  CC=14  out:13
-    _box_to_bounds  CC=1  out:1
-    _boxes_in_scope  CC=5  out:2
-    _center  CC=1  out:2
-    _classify_element_drift  CC=6  out:14
-    _distance  CC=1  out:3
-    _labels_match  CC=5  out:2
-    _new_ocr_labels  CC=7  out:4
-    _normalize_label  CC=1  out:4
-    _refresh_known_elements  CC=5  out:6
   src.vdisplay.control.gui_map_export  [1 funcs]
     write_map_artifacts  CC=4  out:14
   src.vdisplay.control.plugins  [10 funcs]
@@ -458,32 +437,40 @@ MODULES:
     unregister_control_provider  CC=4  out:6
   src.vdisplay.control.policy  [1 funcs]
     assess_control_capability  CC=7  out:9
-  src.vdisplay.control.profile_inference  [1 funcs]
+  src.vdisplay.control.profile_inference  [3 funcs]
+    infer_application_profile  CC=6  out:10
     profile_for  CC=3  out:2
+    profile_provider_boost  CC=6  out:4
+  src.vdisplay.control.providers.ax_impl  [1 funcs]
+    ax_deps_available  CC=3  out:0
+  src.vdisplay.control.providers.browser_playwright  [1 funcs]
+    _playwright_available  CC=3  out:1
   src.vdisplay.control.providers.browser_session  [1 funcs]
     open  CC=14  out:21
   src.vdisplay.control.providers.terminal_session  [1 funcs]
     default_registry  CC=1  out:0
+  src.vdisplay.control.providers.uia_impl  [1 funcs]
+    uia_deps_available  CC=3  out:0
   src.vdisplay.control.registry  [4 funcs]
     build  CC=3  out:6
     get_descriptor  CC=2  out:2
     register  CC=2  out:1
     default_provider_registry  CC=1  out:1
-  src.vdisplay.control.router  [8 funcs]
-    __init__  CC=2  out:1
-    _build_decision  CC=7  out:9
-    evaluate  CC=2  out:5
-    route  CC=4  out:5
-    route_command  CC=1  out:2
-    _eligible_for_profile  CC=8  out:2
-    _select_winner  CC=9  out:9
+  src.vdisplay.control.router  [1 funcs]
     default_router  CC=2  out:1
   src.vdisplay.control.routing_semantics  [1 funcs]
     build_routing_semantics  CC=1  out:8
-  src.vdisplay.control.scoring  [3 funcs]
-    normalize_backend  CC=4  out:3
-    rank_providers  CC=8  out:12
-    select_verify_provider  CC=9  out:2
+  src.vdisplay.control.scoring  [37 funcs]
+    _all_provider_names  CC=3  out:4
+    _apply_routing_boosts  CC=7  out:6
+    _atspi_ready  CC=2  out:3
+    _ax_ready  CC=2  out:2
+    _base_score  CC=2  out:1
+    _browser_context_score  CC=4  out:4
+    _browser_ready  CC=2  out:2
+    _browser_session_check  CC=6  out:4
+    _browser_session_ready  CC=5  out:5
+    _is_browser_context  CC=3  out:1
   src.vdisplay.control.screenshot_verify  [10 funcs]
     _capture_via_agent  CC=6  out:9
     _maybe_crop_capture  CC=7  out:4
@@ -527,8 +514,9 @@ MODULES:
     preview_available  CC=2  out:0
     preview_matches_from_nodes  CC=7  out:5
     render_match_overlay  CC=10  out:25
-  src.vdisplay.control.vision_template  [1 funcs]
+  src.vdisplay.control.vision_template  [2 funcs]
     template_anchor_find  CC=2  out:11
+    template_available  CC=2  out:0
   src.vdisplay.discovery  [13 funcs]
     _attach_output_nl  CC=2  out:3
     _display_hint  CC=3  out:2

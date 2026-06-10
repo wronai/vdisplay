@@ -1,17 +1,12 @@
-# code2llm | 250f 34143L | python:196,json:20,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
-# generated in 0.07s
-# CC̅=3.5 | critical:2/1483 | dups:0 | cycles:0
+# code2llm | 253f 34318L | python:199,json:20,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
+# generated in 0.08s
+# CC̅=3.5 | critical:0/1497 | dups:0 | cycles:0
 
-HEALTH[3]:
-  🔴 GOD   src/vdisplay/control/gui_map.py = 516L, 6 classes, 31m, max CC=13
-  🟡 CC    handle CC=15 (limit:15)
-  🟡 CC    snapshot CC=15 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[2]:
-  1. split src/vdisplay/control/gui_map.py  (god module)
-  2. split 2 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[679]:
+PIPELINES[680]:
   [1] Src [main]: main → create_server
       PURITY: 100% pure
   [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url
@@ -117,18 +112,17 @@ LAYERS:
   src/                            CC̄=3.7    ←in:0  →out:0
   │ !! scoring                    801L  2C   40m  CC=12     ←6
   │ !! portal_screencast          779L  1C   34m  CC=11     ←6
-  │ !! control                    743L  0C   22m  CC=14     ←0
-  │ !! provider                   704L  1C   37m  CC=11     ←0
+  │ !! control                    763L  0C   23m  CC=14     ←0
+  │ !! provider                   715L  1C   37m  CC=12     ←0
   │ !! verifier                   567L  3C   24m  CC=13     ←1
   │ !! host                       555L  0C   15m  CC=14     ←6
-  │ !! gui_map                    516L  6C   31m  CC=13     ←6
   │ !! gui_map_diff               500L  3C   18m  CC=14     ←1
+  │ !! session_recorder           500L  3C   25m  CC=13     ←1
   │ verify                     498L  0C   21m  CC=12     ←1
-  │ session_recorder           496L  3C   25m  CC=13     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ descriptors                464L  5C   11m  CC=14     ←9
   │ client                     422L  1C   40m  CC=7      ←0
-  │ atspi_impl                 407L  0C   19m  CC=8      ←1
+  │ atspi_impl                 413L  0C   19m  CC=8      ←1
   │ commands                   370L  4C   11m  CC=9      ←0
   │ discovery                  363L  0C   14m  CC=11     ←21
   │ selector                   347L  1C   18m  CC=14     ←9
@@ -148,6 +142,8 @@ LAYERS:
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
   │ vision_template            258L  1C   10m  CC=11     ←4
   │ browser_session            246L  2C   13m  CC=14     ←3
+  │ gui_map                    245L  6C   16m  CC=9      ←3
+  │ gui_map_build              243L  0C   11m  CC=9      ←3
   │ policy                     242L  1C    8m  CC=7      ←2
   │ agent                      241L  0C   22m  CC=6      ←1
   │ atspi                      240L  1C   15m  CC=8      ←0
@@ -174,18 +170,19 @@ LAYERS:
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
   │ routing_semantics          158L  1C    8m  CC=7      ←4
+  │ agent                      155L  0C    6m  CC=5      ←0
+  │ x11                        150L  1C   13m  CC=9      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
-  │ !! agent                      143L  0C    3m  CC=15     ←0
   │ policy                     140L  1C    4m  CC=11     ←2
   │ common                     137L  0C    9m  CC=2      ←9
   │ sampler                    132L  0C    8m  CC=9      ←0
-  │ !! x11                        132L  1C   10m  CC=15     ←0
   │ img2nl_enrich              124L  0C    6m  CC=12     ←0
   │ registry                   117L  1C   14m  CC=3      ←2
   │ linux_ydotool              114L  1C    9m  CC=8      ←0
   │ relay                      110L  0C    3m  CC=5      ←0
   │ scan                       110L  0C    7m  CC=6      ←2
   │ sampler                    109L  1C    3m  CC=5      ←1
+  │ gui_map_resolve            109L  0C    9m  CC=6      ←2
   │ normalize                  103L  0C    7m  CC=14     ←1
   │ artifacts                  102L  0C    5m  CC=13     ←1
   │ engine                      99L  0C    6m  CC=11     ←4
@@ -229,6 +226,7 @@ LAYERS:
   │ models                      26L  2C    0m  CC=0.0    ←0
   │ action_bounds               24L  0C    2m  CC=2      ←3
   │ nlp                         23L  0C    2m  CC=2      ←0
+  │ timing                      23L  0C    2m  CC=2      ←2
   │ base                        22L  2C    3m  CC=1      ←0
   │ monitors                    19L  0C    2m  CC=1      ←0
   │ constants                   19L  0C    0m  CC=0.0    ←0
@@ -400,8 +398,8 @@ COUPLING:
   HUB: examples.common/ (fan-in=10)
   HUB: src.vdisplay/ (fan-in=53)
   HUB: packages.dsl2vdisplay/ (fan-in=15)
-  SMELL: src.vdisplay/ fan-out=12 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
+  SMELL: src.vdisplay/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

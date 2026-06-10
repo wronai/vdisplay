@@ -77,6 +77,16 @@ VerifierPipeline
 
 See [control-plane.md](control-plane.md) and [RFC 001](rfc/001-extensibility-model.md).
 
+## Session audit trail
+
+When `VDISPLAY_SESSION=1` or `--session`, every `executor.execute()` appends a step under `.vdisplay/<session>/`:
+
+- `steps/NNNN/request.json`, `result.json`, copied artifacts
+- `README.md` timeline with routing + verify summary
+- `session.json` machine index
+
+Guide: [guides/session-report.md](guides/session-report.md) · Roadmap: [RFC 002](rfc/002-cqrs-es-control-feedback.md).
+
 ## Agent persistence
 
 Long-running broker work (sampler, screencast, sessions) is recorded in SQLite (`agent-tasks.db`). Startup marks orphan `running` tasks as `stale`. See [agent-broker.md — Tasks](agent-broker.md#tasks-durable-broker-work).

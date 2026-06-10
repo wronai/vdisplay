@@ -1,16 +1,16 @@
 # System Architecture Analysis
-<!-- generated in 0.01s -->
+<!-- generated in 0.00s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 196, json: 20, toml: 11, shell: 7, yaml: 5
+- **Languages**: python: 199, json: 20, toml: 11, shell: 7, yaml: 5
 - **Analysis Mode**: static
-- **Total Functions**: 1483
+- **Total Functions**: 1497
 - **Total Classes**: 132
-- **Modules**: 250
-- **Entry Points**: 778
+- **Modules**: 253
+- **Entry Points**: 779
 
 ## Architecture by Module
 
@@ -43,11 +43,6 @@
 - **Functions**: 32
 - **Classes**: 3
 - **File**: `api.py`
-
-### src.vdisplay.control.gui_map
-- **Functions**: 31
-- **Classes**: 6
-- **File**: `gui_map.py`
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30
@@ -84,12 +79,16 @@
 - **File**: `verifier.py`
 
 ### src.vdisplay.application.services.control
-- **Functions**: 22
+- **Functions**: 23
 - **File**: `control.py`
 
 ### src.vdisplay.application.handlers.agent
 - **Functions**: 22
 - **File**: `agent.py`
+
+### src.vdisplay.control.verify
+- **Functions**: 21
+- **File**: `verify.py`
 
 ### src.vdisplay.capture.linux_xwd
 - **Functions**: 21
@@ -99,13 +98,14 @@
 - **Functions**: 21
 - **File**: `local.py`
 
-### src.vdisplay.control.verify
-- **Functions**: 21
-- **File**: `verify.py`
-
 ### src.vdisplay.control.providers.atspi_impl
 - **Functions**: 19
 - **File**: `atspi_impl.py`
+
+### src.vdisplay.control.selector
+- **Functions**: 18
+- **Classes**: 1
+- **File**: `selector.py`
 
 ## Key Entry Points
 
@@ -144,9 +144,6 @@ Main execution flows into the system:
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
 
-### src.vdisplay.commands.agent.handle
-- **Calls**: VDisplayError, print, uvicorn.run, src.vdisplay.cli_handlers.print_json, src.vdisplay.agent_config.resolve_agent_url, src.vdisplay.commands.agent._agent_client, VDisplayError, os.environ.get
-
 ### src.vdisplay.control.selector.ControlSelector.from_dict
 - **Calls**: dict, extra.update, cls, cls.__dataclass_fields__.values, payload.get, payload.get, payload.get, payload.get
 
@@ -155,9 +152,6 @@ Main execution flows into the system:
 
 ### src.vdisplay.commands.map.handle
 - **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
-
-### src.vdisplay.control.providers.x11.X11ControlProvider.snapshot
-- **Calls**: src.vdisplay.windows.query.find_windows, src.vdisplay.windows.query.pick_best_window, ControlBounds, ControlNode, ControlSnapshot, src.vdisplay.discovery.window_discovery_meta, VDisplayError, meta.get
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes
 - **Calls**: app.get, app.get, app.post, app.post, Query, Query, Header, check_auth
@@ -200,6 +194,12 @@ Main execution flows into the system:
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes
 - **Calls**: app.post, app.post, app.get, Header, check_auth, Header, check_auth, Header
+
+### examples.headless-virtual.run_virtual.main
+- **Calls**: Path, output_dir.mkdir, int, int, os.environ.get, VirtualDisplaySession.create, session.start, os.environ.get
+
+### src.vdisplay.control.models.ElementCapabilities.from_dict
+- **Calls**: cls, cls, bool, bool, bool, bool, bool, bool
 
 ## Process Flows
 
@@ -244,33 +244,19 @@ main [examples.agent-broker.broker_demo]
 create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
 ```
 
-### Flow 7: handle
-```
-handle [src.vdisplay.commands.agent]
-  └─ →> print_json
-  └─ →> resolve_agent_url
-      └─> _probe_default_agent
-          └─> _probe_agent_url
-          └─> _default_agent_base
-```
-
-### Flow 8: from_dict
+### Flow 7: from_dict
 ```
 from_dict [src.vdisplay.control.selector.ControlSelector]
 ```
 
-### Flow 9: snapshot
+### Flow 8: handle
 ```
-snapshot [src.vdisplay.control.providers.x11.X11ControlProvider]
-  └─ →> find_windows
-      └─> list_windows_enriched
-          └─> scan_windows
-          └─ →> require_command
-  └─ →> pick_best_window
-      └─ →> pick_largest
+handle [src.vdisplay.commands.map]
+  └─ →> print_json
+  └─ →> print_json
 ```
 
-### Flow 10: adopt_window
+### Flow 9: adopt_window
 ```
 adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
   └─ →> _window_geometry
@@ -281,6 +267,11 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
       └─> list_windows_enriched
           └─> scan_windows
           └─ →> require_command
+```
+
+### Flow 10: collect_elements
+```
+collect_elements [src.vdisplay.control.providers.ax_impl.PyobjcAxBackend]
 ```
 
 ## Key Classes
@@ -318,6 +309,11 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
 - **Methods**: 11
 - **Key Methods**: src.vdisplay.backends.base.BaseBackend.__init__, src.vdisplay.backends.base.BaseBackend.capabilities, src.vdisplay.backends.base.BaseBackend.info, src.vdisplay.backends.base.BaseBackend.start, src.vdisplay.backends.base.BaseBackend.stop, src.vdisplay.backends.base.BaseBackend.launch, src.vdisplay.backends.base.BaseBackend.screenshot_bytes, src.vdisplay.backends.base.BaseBackend.save_screenshot, src.vdisplay.backends.base.BaseBackend.adopt_window, src.vdisplay.backends.base.BaseBackend.release_window
 
+### src.vdisplay.control.providers.x11.X11ControlProvider
+- **Methods**: 11
+- **Key Methods**: src.vdisplay.control.providers.x11.X11ControlProvider.__init__, src.vdisplay.control.providers.x11.X11ControlProvider.available, src.vdisplay.control.providers.x11.X11ControlProvider.snapshot, src.vdisplay.control.providers.x11.X11ControlProvider.find, src.vdisplay.control.providers.x11.X11ControlProvider._node_for, src.vdisplay.control.providers.x11.X11ControlProvider._click_at, src.vdisplay.control.providers.x11.X11ControlProvider._click_node, src.vdisplay.control.providers.x11.X11ControlProvider.invoke, src.vdisplay.control.providers.x11.X11ControlProvider.focus, src.vdisplay.control.providers.x11.X11ControlProvider.set_value
+- **Inherits**: ControlProvider
+
 ### src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend
 - **Methods**: 10
 - **Key Methods**: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.__init__, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.capabilities, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.info, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.stop, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.launch, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.adopt_window, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.release_window, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
@@ -332,11 +328,6 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
 > Windows desktop semantic control via UI Automation.
 - **Methods**: 10
 - **Key Methods**: src.vdisplay.control.providers.uia.UiaControlProvider.__init__, src.vdisplay.control.providers.uia.UiaControlProvider.available, src.vdisplay.control.providers.uia.UiaControlProvider._records_to_nodes, src.vdisplay.control.providers.uia.UiaControlProvider.snapshot, src.vdisplay.control.providers.uia.UiaControlProvider.find, src.vdisplay.control.providers.uia.UiaControlProvider._record_for, src.vdisplay.control.providers.uia.UiaControlProvider.invoke, src.vdisplay.control.providers.uia.UiaControlProvider.focus, src.vdisplay.control.providers.uia.UiaControlProvider.set_value, src.vdisplay.control.providers.uia.UiaControlProvider.bounds
-- **Inherits**: ControlProvider
-
-### src.vdisplay.control.providers.x11.X11ControlProvider
-- **Methods**: 10
-- **Key Methods**: src.vdisplay.control.providers.x11.X11ControlProvider.__init__, src.vdisplay.control.providers.x11.X11ControlProvider.available, src.vdisplay.control.providers.x11.X11ControlProvider.snapshot, src.vdisplay.control.providers.x11.X11ControlProvider.find, src.vdisplay.control.providers.x11.X11ControlProvider._node_for, src.vdisplay.control.providers.x11.X11ControlProvider._click_node, src.vdisplay.control.providers.x11.X11ControlProvider.invoke, src.vdisplay.control.providers.x11.X11ControlProvider.focus, src.vdisplay.control.providers.x11.X11ControlProvider.set_value, src.vdisplay.control.providers.x11.X11ControlProvider.bounds
 - **Inherits**: ControlProvider
 
 ### src.vdisplay.control.providers.ax.AxControlProvider
@@ -485,14 +476,12 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.application.artifacts.artifacts_from_control` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
-- `src.vdisplay.commands.agent.handle` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `src.vdisplay.application.session_recorder.render_readme` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.commands.map.handle` - 31 calls
 - `src.vdisplay.control.vision_template.match_template` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
-- `src.vdisplay.control.providers.x11.X11ControlProvider.snapshot` - 30 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
@@ -506,12 +495,14 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.control.providers.atspi_impl.snapshot_dict` - 26 calls
 - `src.vdisplay.control.vision_preview.render_match_overlay` - 25 calls
 - `src.vdisplay.commands.common.control_selector_kwargs_from_args` - 24 calls
-- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.capture.host.resolve_window_region` - 24 calls
+- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.control.descriptors.detect_platform_profile` - 23 calls
 - `examples.common.validate_artifacts.validate_image_and_meta` - 22 calls
 - `src.vdisplay.commands.sampler.register` - 22 calls
 - `src.vdisplay.commands.virtual.register` - 22 calls
+- `src.vdisplay.application.session_recorder.SessionRecorder.record` - 22 calls
+- `examples.control-plane.control_demo.show_active_controls` - 21 calls
 
 ## System Interactions
 
@@ -544,11 +535,11 @@ graph TD
     main --> mkdir
     create_server --> FastMCP
     create_server --> tool
-    handle --> VDisplayError
-    handle --> print
-    handle --> run
-    handle --> print_json
-    handle --> resolve_agent_url
+    from_dict --> dict
+    from_dict --> update
+    from_dict --> cls
+    from_dict --> values
+    from_dict --> get
 ```
 
 ## Reverse Engineering Guidelines

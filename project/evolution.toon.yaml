@@ -1,24 +1,16 @@
-# code2llm/evolution | 1421 func | 159f | 2026-06-10
+# code2llm/evolution | 1435 func | 162f | 2026-06-10
 # generated in 0.01s
 
-NEXT[5] (ranked by impact):
+NEXT[3] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/control/scoring.py
       WHY: 801L, 2 classes, max CC=12
       EFFORT: ~4h  IMPACT: 9612
 
-  [2] !  SPLIT-FUNC      handle  CC=15  fan=19
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 285
-
-  [3] !  SPLIT-FUNC      X11ControlProvider.snapshot  CC=15  fan=12
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 180
-
-  [4] !! SPLIT           maps/pycharm-chat.json
+  [2] !! SPLIT           maps/pycharm-chat.json
       WHY: 2503L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [5] !! SPLIT           planfile.yaml
+  [3] !! SPLIT           planfile.yaml
       WHY: 1319L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
@@ -30,9 +22,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          3.6 → ≤2.5
-  max-CC:      15 → ≤7
+  max-CC:      14 → ≤7
   god-modules: 11 → 0
-  high-CC(≥15): 2 → ≤1
+  high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
