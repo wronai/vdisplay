@@ -483,7 +483,10 @@ def _start_screencast_impl(
                 },
             )
         except Exception as exc:
-            fail(f"SelectSources failed: {exc}")
+            if "Sources already selected" in str(exc):
+                on_select(0, {})
+            else:
+                fail(f"SelectSources failed: {exc}")
 
     DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()

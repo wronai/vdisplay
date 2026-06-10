@@ -111,6 +111,7 @@ class SessionDocument:
     env: dict[str, str] = field(default_factory=dict)
     steps: list[StepRecord] = field(default_factory=list)
     summary: dict[str, Any] = field(default_factory=dict)
+    maps: list[dict[str, Any]] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -148,6 +149,7 @@ class SessionRecorder:
                 env=dict(payload.get("env") or {}),
                 steps=steps,
                 summary=dict(payload.get("summary") or {}),
+                maps=list(payload.get("maps") or []),
             )
             self._step_index = len(steps)
             return doc
@@ -192,6 +194,10 @@ class SessionRecorder:
         )
         if cmd.line:
             (step_dir / "command.dsl.txt").write_text(cmd.line.strip() + "\n", encoding="utf-8")
+        else:
+            dsl_text = command_request_to_dsl_text(cmd)
+            if dsl_text:
+                (step_dir / "command.dsl.txt").write_text(dsl_text.strip() + "\n", encoding="utf-8")
 
         artifacts = collect_artifacts(result)
         copied: list[dict[str, Any]] = []
@@ -201,6 +207,24 @@ class SessionRecorder:
                 copied.append({**artifact.to_dict(), "session_path": copied_path})
 
         diagnostics = extract_diagnostics(result)
+        (step_dir / "diagnostics.json").write_text(
+            json.dumps(diagnostics, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+        map_entries = archive_map_artifacts(self.root, cmd, result, diagnostics)
+        for entry in map_entries:
+            copied.append(entry)
+            session_path = entry.get("session_path")
+            if not session_path:
+                continue
+            if not any(item.get("session_path") == session_path for item in self._document.maps):
+                self._document.maps.append(
+                    {
+                        "kind": entry.get("kind"),
+                        "session_path": session_path,
+                        "source": entry.get("source"),
+                    }
+                )
         step = StepRecord(
             index=self._step_index,
             step_id=step_id,
@@ -224,7 +248,63 @@ class SessionRecorder:
         self._document.updated_at = step.timestamp
         self._document.summary = _build_summary(self._document.steps)
         self.flush()
+        self._emit_step_events(step, cmd, result, diagnostics)
         return step
+
+    def _emit_step_events(
+        self,
+        step: StepRecord,
+        cmd: CommandRequest,
+        result: CommandResult,
+        diagnostics: dict[str, Any],
+    ) -> None:
+        from .event_store import append_events, event_store_enabled
+        from .events import control_events_from_diagnostics, map_events_from_diagnostics, session_started, step_recorded
+
+        if not event_store_enabled():
+            return
+
+        events = []
+        if step.index == 1:
+            events.append(
+                session_started(
+                    session_id=self._document.session_id,
+                    source=cmd.request_source,
+                    route=step.route,
+                    env=dict(self._document.env),
+                )
+            )
+        events.append(
+            step_recorded(
+                session_id=self._document.session_id,
+                request_id=step.request_id,
+                step_id=step.step_id,
+                route=step.route,
+                verb=step.verb,
+                ok=step.ok,
+                duration_ms=step.duration_ms,
+                request_path=step.request_path,
+                result_path=step.result_path,
+                diagnostics=diagnostics,
+            )
+        )
+        events.extend(
+            control_events_from_diagnostics(
+                session_id=self._document.session_id,
+                request_id=step.request_id,
+                verb=step.verb,
+                diagnostics=diagnostics,
+                ok=step.ok,
+            )
+        )
+        events.extend(
+            map_events_from_diagnostics(
+                session_id=self._document.session_id,
+                request_id=step.request_id,
+                diagnostics=diagnostics,
+            )
+        )
+        append_events(self.root, events)
 
     def flush(self) -> None:
         (self.root / "session.json").write_text(
@@ -393,9 +473,126 @@ def copy_artifact(step_dir: Path, artifact: ArtifactRef) -> str | None:
 
 
 def extract_diagnostics(result: CommandResult) -> dict[str, Any]:
-    if result.diagnostics:
-        return dict(result.diagnostics)
-    data = result.data
+    diagnostics: dict[str, Any] = dict(result.diagnostics or {})
+    data = result.data or {}
+    embedded = data.get("diagnostics")
+    if isinstance(embedded, dict):
+        diagnostics = _merge_diagnostics(embedded, diagnostics)
+
+    control: dict[str, Any] = {}
+    if isinstance(diagnostics.get("control"), dict):
+        control = dict(diagnostics["control"])
+
+    if isinstance(data.get("control"), dict):
+        control = _merge_diagnostics({"control": control}, {"control": data["control"]}).get("control", control)
+
+    legacy = _legacy_control_diagnostics(data)
+    if legacy.get("routing"):
+        control.setdefault("routing", legacy["routing"])
+    if legacy.get("verify"):
+        control["verify"] = _merge_diagnostics(
+            control.get("verify") if isinstance(control.get("verify"), dict) else {},
+            legacy["verify"],
+        )
+
+    synthesized = _synthesize_control_block(data)
+    if synthesized:
+        control = _merge_diagnostics({"control": control}, {"control": synthesized}).get("control", control)
+
+    if control:
+        diagnostics["control"] = control
+        if isinstance(control.get("routing"), dict):
+            diagnostics.setdefault("routing", control["routing"])
+        if isinstance(control.get("verify"), dict):
+            diagnostics.setdefault("verify", control["verify"])
+
+    return diagnostics
+
+
+def _synthesize_control_block(data: dict[str, Any]) -> dict[str, Any]:
+    """Build diagnostics.control from flat handler payloads (mocks, legacy paths)."""
+    block: dict[str, Any] = {}
+
+    action = data.get("action")
+    if isinstance(action, str) and action:
+        block["action"] = action
+
+    for key in ("action_id", "phase", "attempt", "target", "selector"):
+        if key in data and data[key] is not None:
+            block[key] = data[key]
+
+    if data.get("map_path") or data.get("map_target"):
+        block["map"] = {
+            "path": data.get("map_path"),
+            "target": data.get("map_target"),
+        }
+
+    routing = data.get("routing")
+    if isinstance(routing, dict):
+        block["routing"] = routing
+
+    control_probe = data.get("control")
+    if isinstance(control_probe, dict) and control_probe.get("backend"):
+        block.setdefault("routing", {})
+        if isinstance(block["routing"], dict):
+            block["routing"].setdefault("selected_provider", control_probe["backend"])
+
+    verification = data.get("verification")
+    if isinstance(verification, dict):
+        block["verify"] = _verification_to_verify_block(verification)
+    else:
+        verify: dict[str, Any] = {}
+        for key in ("verified", "verify_mode", "verify_confidence", "verify_reasons"):
+            if key in data:
+                verify[key] = data[key]
+        if verify:
+            block["verify"] = verify
+
+    actuation = {
+        key: data[key]
+        for key in ("method", "reason", "backend", "x", "y", "local_x", "local_y", "value", "element_id")
+        if key in data
+    }
+    if "ok" in data and (
+        actuation
+        or (isinstance(action, str) and action in {"invoke", "click", "focus", "set_value", "press"})
+    ):
+        actuation["ok"] = data["ok"]
+    if actuation:
+        block["actuation"] = actuation
+
+    for key in ("retry", "recovery_failed", "lifecycle"):
+        if isinstance(data.get(key), dict):
+            block[key] = data[key]
+
+    return block
+
+
+def _verification_to_verify_block(verification: dict[str, Any]) -> dict[str, Any]:
+    block = dict(verification)
+    phases: list[dict[str, Any]] = []
+    for phase_name in ("semantic", "visual", "ocr", "vision_llm", "layout", "session"):
+        phase_payload = verification.get(phase_name)
+        if isinstance(phase_payload, dict):
+            phases.append({"phase": phase_name, "payload": phase_payload})
+    if phases:
+        block["phases"] = phases
+    return block
+
+
+def _merge_diagnostics(primary: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(primary)
+    for key, value in overlay.items():
+        if key not in merged:
+            merged[key] = value
+        elif isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = {**merged[key], **value}
+        else:
+            merged[key] = value
+    return merged
+
+
+def _legacy_control_diagnostics(data: dict[str, Any]) -> dict[str, Any]:
     diagnostics: dict[str, Any] = {}
     routing = data.get("routing")
     if isinstance(routing, dict):
@@ -408,10 +605,262 @@ def extract_diagnostics(result: CommandResult) -> dict[str, Any]:
             "why_selected": routing.get("why_selected"),
             "why_not_selected": routing.get("why_not_selected"),
         }
+    verify: dict[str, Any] = {}
     for key in ("verified", "verify_mode", "verify_confidence", "verify_reasons", "method", "reason"):
         if key in data:
-            diagnostics.setdefault("verify", {})[key] = data[key]
+            verify[key] = data[key]
+    if verify:
+        diagnostics["verify"] = verify
     return diagnostics
+
+
+def command_request_to_dsl_text(cmd: CommandRequest) -> str | None:
+    try:
+        from dsl2vdisplay.grammar import to_text
+    except ImportError:
+        return None
+    payload = request_to_dict(cmd, request_id=cmd.request_id or "")
+    payload.pop("request_id", None)
+    text = to_text(payload).strip()
+    return text or None
+
+
+def resolve_map_path(
+    cmd: CommandRequest,
+    result: CommandResult,
+    diagnostics: dict[str, Any],
+) -> Path | None:
+    control = diagnostics.get("control") or {}
+    map_block = control.get("map") if isinstance(control.get("map"), dict) else {}
+    candidates = (
+        result.data.get("map_path"),
+        map_block.get("path"),
+        (cmd.extra or {}).get("map_path"),
+    )
+    for raw in candidates:
+        if not raw:
+            continue
+        path = Path(str(raw)).expanduser()
+        if path.is_file():
+            return path
+    return None
+
+
+def archive_map_artifacts(
+    session_root: Path,
+    cmd: CommandRequest,
+    result: CommandResult,
+    diagnostics: dict[str, Any],
+) -> list[dict[str, Any]]:
+    map_path = resolve_map_path(cmd, result, diagnostics)
+    if map_path is None:
+        return []
+
+    maps_dir = session_root / "maps"
+    maps_dir.mkdir(parents=True, exist_ok=True)
+    stem = _slugify(map_path.stem)
+    dest_json = maps_dir / f"{stem}.json"
+    shutil.copy2(map_path, dest_json)
+
+    dest_md = maps_dir / f"{stem}.md"
+    try:
+        from ..control.gui_map import load_gui_map
+        from ..control.gui_map_export import write_map_artifacts
+
+        pack = load_gui_map(map_path)
+        write_map_artifacts(pack, json_path=dest_json, md_path=dest_md, title=stem)
+    except Exception:
+        sibling_md = map_path.with_suffix(".md")
+        if sibling_md.is_file():
+            shutil.copy2(sibling_md, dest_md)
+
+    dest_svg = maps_dir / f"{stem}.svg"
+    sibling_svg = map_path.with_suffix(".svg")
+    if sibling_svg.is_file():
+        shutil.copy2(sibling_svg, dest_svg)
+
+    entries: list[dict[str, Any]] = []
+    for suffix, kind in ((".json", "map"), (".md", "map-md"), (".svg", "map-svg")):
+        path = maps_dir / f"{stem}{suffix}"
+        if not path.is_file():
+            continue
+        entries.append(
+            {
+                "kind": kind,
+                "path": str(path),
+                "session_path": path.relative_to(session_root).as_posix(),
+                "source": str(map_path),
+            }
+        )
+    if entries:
+        try:
+            from ..application.gui_map_events import record_gui_map_built
+            from ..control.gui_map import load_gui_map
+
+            pack = load_gui_map(dest_json)
+            record_gui_map_built(
+                map_path=str(dest_json),
+                element_count=len(pack.elements),
+                region_count=len(pack.regions),
+                scope_ids=list(pack.regions.keys()),
+            )
+        except Exception:
+            pass
+    return entries
+
+
+def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
+    """Re-extract diagnostics from stored step results and refresh session artifacts."""
+    from .commands import CommandResult
+    from .event_store import read_events
+    from .events import DomainEvent, control_events_from_diagnostics, map_events_from_diagnostics
+    from .projections import refresh_projections
+
+    session_dir = session_dir.expanduser()
+    if not session_dir.is_absolute():
+        session_dir = Path.cwd() / session_dir
+    if not (session_dir / "session.json").is_file():
+        raise FileNotFoundError(f"not a session directory: {session_dir}")
+
+    doc = load_session_document(session_dir)
+    diagnostics_by_request: dict[str, dict[str, Any]] = {}
+    updated_steps = 0
+
+    for step in doc.steps:
+        result_path = session_dir / step.result_path
+        if not result_path.is_file():
+            continue
+        payload = json.loads(result_path.read_text(encoding="utf-8"))
+        result = CommandResult(
+            ok=bool(payload.get("ok")),
+            action=str(payload.get("action") or ""),
+            data=dict(payload.get("data") or {}),
+            command=str(payload.get("command") or ""),
+            diagnostics=dict(payload.get("diagnostics") or {}),
+        )
+        diagnostics = extract_diagnostics(result)
+        if diagnostics != step.diagnostics:
+            updated_steps += 1
+        step.diagnostics = diagnostics
+        diagnostics_by_request[step.request_id] = diagnostics
+        diag_path = session_dir / "steps" / step.step_id / "diagnostics.json"
+        diag_path.parent.mkdir(parents=True, exist_ok=True)
+        diag_path.write_text(
+            json.dumps(diagnostics, indent=2, ensure_ascii=False) + "\n",
+            encoding="utf-8",
+        )
+
+    doc.summary = _build_summary(doc.steps)
+    (session_dir / "session.json").write_text(
+        json.dumps(doc.to_dict(), indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+    (session_dir / "README.md").write_text(render_readme(doc), encoding="utf-8")
+
+    added_control_events = 0
+    added_map_events = 0
+    index_path = session_dir / "index.jsonl"
+    if index_path.is_file():
+        events = read_events(session_dir)
+        patched: list[DomainEvent] = []
+        for event in events:
+            if event.event_type.startswith("Control") or event.event_type.startswith("GuiMap"):
+                continue
+            if event.request_id in diagnostics_by_request and event.event_type in {
+                "StepRecorded",
+                "CommandCompleted",
+            }:
+                body = dict(event.body)
+                body["diagnostics"] = diagnostics_by_request[event.request_id]
+                event = DomainEvent(
+                    event_id=event.event_id,
+                    event_type=event.event_type,
+                    occurred_at_ms=event.occurred_at_ms,
+                    session_id=event.session_id,
+                    request_id=event.request_id,
+                    aggregate=event.aggregate,
+                    body=body,
+                )
+            patched.append(event)
+            if event.event_type == "StepRecorded" and event.request_id:
+                step = next((item for item in doc.steps if item.request_id == event.request_id), None)
+                if step is None:
+                    continue
+                diagnostics = diagnostics_by_request.get(step.request_id, {})
+                control_events = control_events_from_diagnostics(
+                    session_id=doc.session_id,
+                    request_id=step.request_id,
+                    verb=step.verb,
+                    diagnostics=diagnostics,
+                    ok=step.ok,
+                )
+                patched.extend(control_events)
+                added_control_events += len(control_events)
+                map_events = map_events_from_diagnostics(
+                    session_id=doc.session_id,
+                    request_id=step.request_id,
+                    diagnostics=diagnostics,
+                )
+                patched.extend(map_events)
+                added_map_events += len(map_events)
+
+        index_path.write_text(
+            "\n".join(json.dumps(event.to_dict(), ensure_ascii=False) for event in patched) + "\n",
+            encoding="utf-8",
+        )
+
+    refresh_projections(session_dir)
+    return {
+        "session_id": doc.session_id,
+        "session_dir": str(session_dir),
+        "updated_steps": updated_steps,
+        "added_control_events": added_control_events,
+        "added_map_events": added_map_events,
+        "backends_used": doc.summary.get("backends_used", []),
+    }
+
+
+def discover_session_dirs(*, root: Path | None = None) -> list[Path]:
+    base = root or (Path.cwd() / ".vdisplay")
+    if not base.is_dir():
+        return []
+    sessions = [path for path in base.iterdir() if path.is_dir() and (path / "session.json").is_file()]
+    return sorted(sessions, key=lambda path: path.stat().st_mtime, reverse=True)
+
+
+def load_session_document(session_dir: Path) -> SessionDocument:
+    payload = json.loads((session_dir / "session.json").read_text(encoding="utf-8"))
+    steps = [StepRecord(**item) for item in payload.get("steps", [])]
+    return SessionDocument(
+        version=int(payload.get("version", 1)),
+        session_id=str(payload.get("session_id") or session_dir.name),
+        started_at=str(payload.get("started_at") or ""),
+        updated_at=str(payload.get("updated_at") or ""),
+        source=str(payload.get("source") or "cli"),
+        route_default=str(payload.get("route_default") or "local"),
+        host=str(payload.get("host") or ""),
+        cwd=str(payload.get("cwd") or ""),
+        pid=int(payload.get("pid") or 0),
+        env=dict(payload.get("env") or {}),
+        steps=steps,
+        summary=dict(payload.get("summary") or {}),
+        maps=list(payload.get("maps") or []),
+    )
+
+
+def export_session_zip(session_dir: Path, output: Path) -> Path:
+    import zipfile
+
+    output = output.expanduser()
+    if output.suffix != ".zip":
+        output = output.with_suffix(".zip")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        prefix = session_dir.name
+        for path in sorted(session_dir.rglob("*")):
+            if path.is_file():
+                archive.write(path, arcname=f"{prefix}/{path.relative_to(session_dir).as_posix()}")
+    return output
 
 
 def _build_summary(steps: list[StepRecord]) -> dict[str, Any]:
@@ -419,7 +868,8 @@ def _build_summary(steps: list[StepRecord]) -> dict[str, Any]:
     failed = len(steps) - ok_steps
     backends: set[str] = set()
     for step in steps:
-        provider = (step.diagnostics.get("routing") or {}).get("selected_provider")
+        routing = step.diagnostics.get("routing") or (step.diagnostics.get("control") or {}).get("routing") or {}
+        provider = routing.get("selected_provider")
         if provider:
             backends.add(str(provider))
     return {
@@ -472,22 +922,42 @@ def render_readme(doc: SessionDocument) -> str:
         )
         if step.command_line:
             lines.append(f"- **Command:** `{step.command_line}`")
-        routing = step.diagnostics.get("routing") or {}
+        routing = step.diagnostics.get("routing") or (step.diagnostics.get("control") or {}).get("routing") or {}
         if routing.get("selected_provider"):
             lines.append(f"- **Backend:** `{routing.get('selected_provider')}`")
         if routing.get("why_selected"):
             lines.append(f"- **Routing:** {'; '.join(str(x) for x in routing.get('why_selected', [])[:3])}")
-        verify = step.diagnostics.get("verify") or {}
+        control = step.diagnostics.get("control") or {}
+        map_ctx = control.get("map")
+        if isinstance(map_ctx, dict) and (map_ctx.get("path") or map_ctx.get("target")):
+            lines.append(
+                f"- **Map:** `{map_ctx.get('path')}` → target `{map_ctx.get('target')}`"
+            )
+        verify = step.diagnostics.get("verify") or control.get("verify") or {}
         if verify:
             lines.append(
-                f"- **Verify:** mode `{verify.get('verify_mode', '-')}` · "
+                f"- **Verify:** mode `{verify.get('verify_mode') or verify.get('mode', '-')}` · "
                 f"verified `{verify.get('verified', '-')}`"
             )
+            if verify.get("confidence") is not None:
+                lines.append(f"- **Confidence:** `{verify.get('confidence')}`")
+            phases = verify.get("phases") or []
+            if phases:
+                lines.append(f"- **Verify phases:** {len(phases)}")
+        if control.get("action_id"):
+            lines.append(
+                f"- **Lifecycle:** phase `{control.get('phase', '-')}` · "
+                f"attempt `{control.get('attempt', 1)}` · id `{control.get('action_id')}`"
+            )
+        recovery = control.get("recovery_failed")
+        if isinstance(recovery, dict) and recovery.get("reason"):
+            lines.append(f"- **Recovery failed:** `{recovery.get('reason')}`")
         lines.extend(
             [
                 "- **Files:**",
                 f"  - [{step.request_path}]({step.request_path})",
                 f"  - [{step.result_path}]({step.result_path})",
+                f"  - [diagnostics.json](steps/{step.step_id}/diagnostics.json)",
             ]
         )
         for artifact in step.artifacts:
@@ -495,6 +965,19 @@ def render_readme(doc: SessionDocument) -> str:
             if rel:
                 kind = artifact.get("kind", "artifact")
                 lines.append(f"  - [{kind}]({rel})")
+        lines.append("")
+
+    if doc.maps:
+        lines.extend(["## Maps", ""])
+        for item in doc.maps:
+            rel = item.get("session_path")
+            kind = item.get("kind", "map")
+            source = item.get("source")
+            if rel:
+                line = f"- [{kind}]({rel})"
+                if source:
+                    line += f" (from `{source}`)"
+                lines.append(line)
         lines.append("")
 
     return "\n".join(lines)

@@ -35,6 +35,7 @@ System deps (Linux): [installation.md](installation.md)
 | CI / headless Docker / tests | **In-process** — no agent URL |
 | Wayland screenshots | **Broker + screencast** — portal consent once, then capture |
 | Control on native Wayland apps (PyCharm, canvas) | **Broker + vision/map** — see [guides/wayland-control.md](guides/wayland-control.md) |
+| Understand what works **today** + gaps (PyCharm prompt, koru) | [guides/desktop-control-today.md](guides/desktop-control-today.md) |
 
 ### Broker (recommended on desktop)
 
@@ -75,6 +76,7 @@ vdisplay diagnose control                 # control backends + routing
 
 | I want to… | Go to |
 |------------|-------|
+| See desktop control status, gaps, koru integration | [guides/desktop-control-today.md](guides/desktop-control-today.md) |
 | Automate PyCharm / canvas on Wayland | [guides/wayland-control.md](guides/wayland-control.md) |
 | Build persistent click targets (GUI map) | [guides/gui-map-pack.md](guides/gui-map-pack.md) |
 | OCR verify + vision LLM fallback | [guides/vision-fallback.md](guides/vision-fallback.md) |

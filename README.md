@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.16-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$9.65-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-10.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.17-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$10.02-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-10.7h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $9.6473 (20 commits)
-- 👤 **Human dev:** ~$1046 (10.5h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $10.0154 (21 commits)
+- 👤 **Human dev:** ~$1072 (10.7h @ $100/h, 30min dedup)
 
 Generated on 2026-06-10 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -44,10 +44,11 @@ vdisplay windows --apps-only
 
 | Guides | Reference |
 |--------|-----------|
-| [Wayland control](docs/guides/wayland-control.md) | [Environment vars](docs/reference/env.md) |
-| [GUI Map Pack](docs/guides/gui-map-pack.md) | [CLI index](docs/reference/cli.md) |
-| [Vision fallback](docs/guides/vision-fallback.md) | [API / SDK](docs/reference/api.md) |
-| [Agent broker](docs/guides/agent-broker.md) | [DSL](docs/reference/dsl.md) · [REST](docs/reference/rest.md) · [MCP](docs/reference/mcp.md) |
+| [Desktop control today](docs/guides/desktop-control-today.md) | [Environment vars](docs/reference/env.md) |
+| [Wayland control](docs/guides/wayland-control.md) | [CLI index](docs/reference/cli.md) |
+| [GUI Map Pack](docs/guides/gui-map-pack.md) | [API / SDK](docs/reference/api.md) |
+| [Vision fallback](docs/guides/vision-fallback.md) | [DSL](docs/reference/dsl.md) · [REST](docs/reference/rest.md) · [MCP](docs/reference/mcp.md) |
+| [Agent broker](docs/guides/agent-broker.md) | |
 | [Browser](docs/guides/browser-control.md) · [Terminal](docs/guides/terminal-control.md) | |
 
 | Architecture | Other |
@@ -96,6 +97,27 @@ vdisplay control click --backend vision --map maps/chat.json --target chat
 ```
 
 CLI index: [docs/reference/cli.md](docs/reference/cli.md)
+
+## IDE & Desktop App Control
+
+Launch applications and prompt IDEs from the command line.
+
+**Application Launcher:**
+```bash
+vdisplay app list
+vdisplay app show pycharm
+vdisplay app open pycharm
+vdisplay app open pycharm --variant default-xwayland
+```
+
+**End-to-end IDE Prompting:**
+```bash
+vdisplay ide list
+vdisplay ide prompt --ide pycharm --text "Explain this stack trace"
+vdisplay ide prompt --ide pycharm --open --map maps/pycharm-chat.json --submit
+```
+
+See [Desktop control today](docs/guides/desktop-control-today.md) for implementation details and limitations.
 
 ## Output objects (`nl`)
 

@@ -7,6 +7,7 @@ import os
 import time
 from typing import Any
 
+from ...control.action_state import ControlActionPhase, ControlActionState, phase_from_payload
 from ...control.base import ControlProvider
 from ...control.engine import resolve_provider, resolve_provider_routing
 from ...control.models import ControlNode
@@ -24,6 +25,14 @@ from ...control.gui_map import (
     resolve_map_region,
     verify_hints_from_map_element,
 )
+from ...control.retry_policy import (
+    RetryPolicy,
+    apply_retry_decision,
+    attach_retry_metadata,
+    next_action,
+    retry_enabled,
+)
+from ...control.verify_policy import aggregate_confidence, required_phases_from_context
 from ...exceptions import VDisplayError
 
 
@@ -593,6 +602,102 @@ def _capture_before_state(
     return None, None
 
 
+def _build_control_diagnostics(
+    *,
+    action: str,
+    selector: Any,
+    target: Any,
+    verify: bool,
+    screenshot_verify: bool,
+    result: dict[str, Any],
+    routing: Any,
+    verification: Any,
+    state: ControlActionState | None = None,
+) -> dict[str, Any]:
+    routing_dict = routing.to_dict() if hasattr(routing, "to_dict") else dict(routing or {})
+    verification_dict = verification.to_dict() if hasattr(verification, "to_dict") else dict(verification or {})
+    selector_dict = selector.to_dict() if hasattr(selector, "to_dict") else dict(getattr(selector, "__dict__", {}) or {})
+    target_dict = target.to_dict() if hasattr(target, "to_dict") else dict(target or {})
+
+    actuation = {
+        key: result[key]
+        for key in (
+            "ok",
+            "method",
+            "reason",
+            "x",
+            "y",
+            "local_x",
+            "local_y",
+            "backend",
+            "value",
+            "element_id",
+        )
+        if key in result
+    }
+
+    map_block: dict[str, Any] | None = None
+    map_path = result.get("map_path")
+    map_target = result.get("map_target")
+    if map_path or map_target:
+        map_block = {"path": map_path, "target": map_target}
+    else:
+        extra = selector_dict.get("extra") or {}
+        if extra.get("map_path") or extra.get("map_target"):
+            map_block = {"path": extra.get("map_path"), "target": extra.get("map_target")}
+
+    verify_phases: list[dict[str, Any]] = []
+    for phase_name in ("semantic", "visual", "ocr", "vision_llm", "layout", "session"):
+        phase_payload = verification_dict.get(phase_name)
+        if phase_payload:
+            verify_phases.append({"phase": phase_name, "payload": phase_payload})
+
+    lifecycle = state.to_dict() if isinstance(state, ControlActionState) else None
+    required = required_phases_from_context(
+        action=action,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        verify_mode=str(verification_dict.get("mode") or routing_dict.get("verify_mode") or "semantic"),
+        selector=selector if hasattr(selector, "to_dict") else None,
+        map_element=result.get("map_element"),
+    )
+    confidence = verification_dict.get("confidence")
+    if confidence is None:
+        confidence = aggregate_confidence(verification_dict)
+
+    control_block: dict[str, Any] = {
+        "action": action,
+        "selector": selector_dict,
+        "target": target_dict,
+        "map": map_block,
+        "routing": routing_dict,
+        "actuation": actuation,
+        "verify": {
+            "requested": verify,
+            "screenshot_verify": screenshot_verify,
+            "mode": verification_dict.get("mode"),
+            "verified": verification_dict.get("verified"),
+            "confidence": confidence,
+            "reasons": list(verification_dict.get("reasons") or []),
+            "phases": verify_phases,
+            "required_phases": required,
+        },
+    }
+    if lifecycle:
+        control_block.update(
+            {
+                "action_id": lifecycle["action_id"],
+                "phase": lifecycle["phase"],
+                "attempt": lifecycle["attempt"],
+                "lifecycle": lifecycle,
+            }
+        )
+        if lifecycle.get("retry"):
+            control_block["retry"] = lifecycle["retry"]
+
+    return {"control": control_block}
+
+
 def _build_action_payload(
     *,
     action: str,
@@ -603,6 +708,7 @@ def _build_action_payload(
     result: dict[str, Any],
     routing: Any,
     verification: Any,
+    state: ControlActionState | None = None,
 ) -> dict[str, Any]:
     state_diff = (verification.semantic or {}).get("state_diff") or {}
     screenshot_result = verification.visual
@@ -640,10 +746,25 @@ def _build_action_payload(
             payload.setdefault("reason", "text_not_applied")
         else:
             payload.setdefault("reason", "verify_failed")
+    payload["diagnostics"] = _build_control_diagnostics(
+        action=action,
+        selector=selector,
+        target=target,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        result=payload,
+        routing=routing,
+        verification=verification,
+        state=state,
+    )
+    if state is not None:
+        payload["action_id"] = state.action_id
+        payload["attempt"] = state.attempt
+        payload["phase"] = state.phase.value
     return payload
 
 
-def _execute_action(
+def _execute_action_once(
     *,
     action: str,
     display: str | None,
@@ -654,6 +775,7 @@ def _execute_action(
     verify_label: str | None = None,
     verify_selector: str | None = None,
     capture_fn: Any | None = None,
+    state: ControlActionState | None = None,
     **selector_kwargs: Any,
 ) -> dict[str, Any]:
     map_path = selector_kwargs.get("map_path")
@@ -750,7 +872,102 @@ def _execute_action(
         result=result,
         routing=routing,
         verification=verification,
+        state=state,
     )
+
+
+def _execute_action(
+    *,
+    action: str,
+    display: str | None,
+    backend: str,
+    verify: bool,
+    screenshot_verify: bool = False,
+    value: str | None = None,
+    verify_label: str | None = None,
+    verify_selector: str | None = None,
+    capture_fn: Any | None = None,
+    **selector_kwargs: Any,
+) -> dict[str, Any]:
+    if not retry_enabled(verify=verify, screenshot_verify=screenshot_verify):
+        return _execute_action_once(
+            action=action,
+            display=display,
+            backend=backend,
+            verify=verify,
+            screenshot_verify=screenshot_verify,
+            value=value,
+            verify_label=verify_label,
+            verify_selector=verify_selector,
+            capture_fn=capture_fn,
+            **selector_kwargs,
+        )
+
+    policy = RetryPolicy.from_env()
+    state = ControlActionState.new(action)
+    current_backend = backend
+    current_screenshot_verify = screenshot_verify
+    kwargs = dict(selector_kwargs)
+    last_payload: dict[str, Any] | None = None
+
+    for attempt in range(1, policy.max_attempts + 1):
+        state = state.advance(ControlActionPhase.PLANNED, attempt=attempt)
+        last_payload = _execute_action_once(
+            action=action,
+            display=display,
+            backend=current_backend,
+            verify=verify,
+            screenshot_verify=current_screenshot_verify,
+            value=value,
+            verify_label=verify_label,
+            verify_selector=verify_selector,
+            capture_fn=capture_fn,
+            state=state,
+            **kwargs,
+        )
+        phase = ControlActionPhase.VERIFIED if last_payload.get("ok") else phase_from_payload(last_payload)
+        verify_block = (last_payload.get("diagnostics") or {}).get("control", {}).get("verify", {})
+        state = state.advance(phase, verify=verify_block if isinstance(verify_block, dict) else {})
+
+        if last_payload.get("ok"):
+            return last_payload
+
+        decision = next_action(state, last_payload, policy=policy)
+        if not decision.should_retry:
+            state = state.advance(ControlActionPhase.RECOVERY_FAILED, retry={"reason": decision.reason})
+            control = (last_payload.get("diagnostics") or {}).get("control") or {}
+            last_payload.setdefault("diagnostics", {})["control"] = {
+                **control,
+                "phase": state.phase.value,
+                "recovery_failed": decision.to_dict(),
+            }
+            last_payload["phase"] = state.phase.value
+            return last_payload
+
+        state = attach_retry_metadata(state, decision)
+        current_backend, kwargs, current_screenshot_verify = apply_retry_decision(
+            decision,
+            backend=current_backend,
+            selector_kwargs=kwargs,
+            screenshot_verify=current_screenshot_verify,
+        )
+        if policy.delay_ms:
+            time.sleep(policy.delay_ms / 1000.0)
+
+    if last_payload is None:
+        raise VDisplayError("control action produced no result")
+    state = state.advance(
+        ControlActionPhase.RECOVERY_FAILED,
+        retry={"reason": "max_attempts_exhausted", "attempts": policy.max_attempts},
+    )
+    control = (last_payload.get("diagnostics") or {}).get("control") or {}
+    last_payload.setdefault("diagnostics", {})["control"] = {
+        **control,
+        "phase": state.phase.value,
+        "recovery_failed": {"reason": "max_attempts_exhausted", "attempts": policy.max_attempts},
+    }
+    last_payload["phase"] = state.phase.value
+    return last_payload
 
 
 def _build_tree(snapshot) -> list[dict[str, Any]]:

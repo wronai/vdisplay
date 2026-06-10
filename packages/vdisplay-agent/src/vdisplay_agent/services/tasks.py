@@ -70,15 +70,24 @@ def register_session_task(
     broker_id: str,
     record: SessionRecord,
 ) -> str:
+    import os
+
     kind = parse_session_kind(record.kind).value
     task_id = record.session_id
+    config: dict[str, Any] = {"session_kind": str(kind)}
+    audit_dir = os.environ.get("VDISPLAY_SESSION_DIR", "").strip()
+    if audit_dir:
+        config["audit_session_dir"] = audit_dir
+    audit_id = os.environ.get("VDISPLAY_SESSION_ID", "").strip()
+    if audit_id:
+        config["audit_session_id"] = audit_id
     existing = task_store.get_task(task_id)
     if existing is not None:
         task_store.update_task(
             task_id,
             status=TaskStatus.RUNNING,
             heartbeat=True,
-            config={"session_kind": str(kind)},
+            config=config,
         )
         return task_id
     task_store.create_task(
@@ -86,7 +95,7 @@ def register_session_task(
         kind=str(kind),
         broker_id=broker_id,
         status=TaskStatus.RUNNING,
-        config={"session_kind": str(kind)},
+        config=config,
         session_id=record.session_id,
     )
     return task_id

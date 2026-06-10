@@ -1,0 +1,20 @@
+syntax = "proto3";
+package vdisplay.v1;
+
+import "vdisplay/v1/common.proto";
+
+message CommandEnvelope {
+  TraceContext trace = 1;
+  string verb = 2;
+  string command_line = 3;
+  StringMap args = 4;
+  bytes payload_json = 5;
+  string schema_version = 6;
+}
+
+message QueryEnvelope {
+  TraceContext trace = 1;
+  string verb = 2;
+  StringMap filters = 3;
+  bytes payload_json = 4;
+}

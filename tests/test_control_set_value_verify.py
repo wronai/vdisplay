@@ -150,3 +150,61 @@ def test_control_set_value_verify_mode_ocr_contains(
     assert captured["verify_mode"] == "ocr_contains"
     assert payload["ok"] is False
     assert payload["reason"] == "text_not_applied"
+
+
+def test_verifier_pipeline_ocr_contains_no_before_png(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.control.verifier import VerifierPipeline, VerifyContext, VerifySpec
+    from vdisplay.control.vision_ocr import OcrTextBox
+    from vdisplay.control.models import ControlBounds, ControlNode, ControlRole
+
+    from PIL import Image
+    import io
+    image = Image.new("RGB", (100, 30), color=(255, 255, 255))
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    valid_png = buf.getvalue()
+
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_available", lambda: (True, "ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.vision_ocr.ocr_png",
+        lambda _png: [OcrTextBox("hello", ControlBounds(0, 0, 50, 20), 0.95)],
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.verifier.capture_control_screenshot",
+        lambda **kwargs: (valid_png, {}),
+    )
+
+    spec = VerifySpec(
+        mode="ocr_contains",
+        expected_text="hello",
+        min_confidence=0.8,
+    )
+
+    ctx = VerifyContext(
+        action_provider=type("FP", (), {"name": "vision"})(),
+        before_snapshot=ControlSnapshot(backend="vision", window_id=None, app_label=None, nodes={}, root_ids=[]),
+        target=ControlNode(
+            id="node:1",
+            backend="vision",
+            role=ControlRole.UNKNOWN,
+            name="input",
+            bounds=ControlBounds(0, 0, 100, 30),
+        ),
+        action="set_value",
+        selector=ControlSelector(text_contains="hello"),
+        display=":99",
+        value="hello",
+        verify_semantic=True,
+        verify_screenshot=False,
+        verify_mode="ocr_contains",
+        before_png=None,
+        before_capture_meta=None,
+        spec=spec,
+    )
+
+    pipeline = VerifierPipeline()
+    result = pipeline.verify_after_action(ctx)
+    assert result.verified is True
+    assert result.mode == "ocr_contains"
+    assert "ocr text matched" in result.reasons
+

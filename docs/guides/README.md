@@ -4,6 +4,7 @@ Short decision docs: one question per page. For stable API/CLI/env lists see [re
 
 | Guide | Answers |
 |-------|---------|
+| [desktop-control-today.md](desktop-control-today.md) | Current desktop control capabilities, gaps, PyCharm + koru |
 | [agent-broker.md](agent-broker.md) | When to run broker vs in-process; screencast order |
 | [wayland-control.md](wayland-control.md) | Native Wayland apps, PyCharm, screencast, ydotool |
 | [gui-map-pack.md](gui-map-pack.md) | Build/diff/refresh map; scoped OCR; map-target clicks |

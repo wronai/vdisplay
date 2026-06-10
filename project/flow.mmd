@@ -24,10 +24,11 @@ flowchart TD
         packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_controls_list["_parse_controls_list"]
         packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_controls_find["_parse_controls_find"]
         packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_control_click["_parse_control_click"]
-        ...["+719 more"]
+        ...["+800 more"]
     end
 
     subgraph Exporters
+        src__vdisplay__commands__session__handle_export["handle_export"]
     end
 
     class packages__mcp2vdisplay__src__mcp2vdisplay__cli__main,packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server,packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server,packages__dsl2vdisplay__src__dsl2vdisplay__cli__main,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_windows,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_screenshot,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_virtual_start,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_launch entry

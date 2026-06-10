@@ -11,6 +11,7 @@ from ...client import AgentClient
 from ...exceptions import VDisplayError
 from ..commands import CommandRequest, CommandVerb
 from ..runtime import agent_client_required
+from ..session_context import bind_audit_command
 
 AgentHandler = Callable[[AgentClient, CommandRequest], dict[str, Any]]
 
@@ -238,4 +239,5 @@ def execute_agent(cmd: CommandRequest) -> dict[str, Any]:
     handler = _AGENT_HANDLERS.get(cmd.verb)
     if handler is None:
         raise VDisplayError(f"unknown verb: {cmd.verb.value}")
-    return handler(client, cmd)
+    with bind_audit_command(cmd):
+        return handler(client, cmd)

@@ -2,16 +2,17 @@
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import Callable
 from typing import Any
 
-from fastapi import FastAPI, Header
+from fastapi import Depends, FastAPI, Header
 from fastapi.responses import JSONResponse
 
 from .. import schemas as S
-from ..envelope import json_error, json_from_runtime
 from ..runtime import AgentRuntime
+from ._audit_execute import execute_audited_service
+from ..audit_context import AuditContext
+from ._audit_headers import read_audit_headers
 
 
 def register_routes(
@@ -23,10 +24,12 @@ def register_routes(
     async def capture_frame(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.capture_frame, body)
-            return json_from_runtime(S.ACTION_CAPTURE_FRAME, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CAPTURE_FRAME, exc)
+        return await execute_audited_service(
+            S.ACTION_CAPTURE_FRAME,
+            body,
+            audit=audit,
+            fallback=broker.capture_frame,
+        )

@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "app_id": "vscode",
+  "label": "VS Code chat (template)",
+  "description": "Copilot/chat panel map template for vision fallback when plugin socket is unavailable.",
+  "suggested_targets": {
+    "chat": "chat-focus",
+    "message": "chat-input",
+    "send": "chat-send"
+  },
+  "build_example": "vdisplay map build --monitor DP-1 --crop-bounds x,y,w,h -o maps/vscode-chat.json",
+  "prompt_example": "vdisplay ide prompt --ide vscode --map maps/vscode-chat.json --text \"Review this diff\""
+}

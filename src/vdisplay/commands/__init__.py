@@ -8,16 +8,20 @@ from collections.abc import Callable
 from . import (
     agent,
     all_cmd,
+    app,
     control,
     diagnose,
+    ide,
     info,
     map as map_cmd,
     mirror,
     monitors,
     nlp,
+    observe,
     relay,
     sampler,
     screenshot,
+    session,
     virtual,
     windows,
 )
@@ -31,13 +35,17 @@ _COMMAND_MODULES: list[Callable[[argparse._SubParsersAction], None]] = [
     mirror.register,
     relay.register,
     control.register,
+    app.register,
+    ide.register,
     map_cmd.register,
     diagnose.register,
     sampler.register,
     screenshot.register,
+    observe.register,
     nlp.register,
     agent.register,
     info.register,
+    session.register,
 ]
 
 

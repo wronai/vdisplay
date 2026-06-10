@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "app_id": "cursor",
+  "label": "Cursor chat (template)",
+  "description": "Cursor Glass chat is not exposed to AT-SPI on native Wayland. Prefer koru autopilot plugin; use map+vision as fallback.",
+  "suggested_targets": {
+    "chat": "chat-focus",
+    "message": "chat-input",
+    "send": "chat-send"
+  },
+  "build_example": "vdisplay map build --monitor DP-1 --crop-bounds x,y,w,h -o maps/cursor-chat.json",
+  "prompt_example": "vdisplay ide prompt --ide cursor --map maps/cursor-chat.json --text \"Summarize this file\""
+}

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import io
+import json
 import re
 import shutil
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from .models import ControlBounds
@@ -38,7 +40,55 @@ def ocr_available() -> tuple[bool, str]:
 
 
 def ocr_png(png: bytes, *, min_confidence: float = 30.0) -> list[OcrTextBox]:
-    """Run Tesseract OCR and return text boxes with pixel bounds."""
+    """Run OCR and return text boxes with pixel bounds."""
+    import os
+
+    cached_boxes = _ocr_from_screen_context_cache(min_confidence=min_confidence)
+    if cached_boxes is not None:
+        return cached_boxes
+
+    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    if backend != "local":
+        try:
+            from ..integrations.vision_backend import ocr_png as delegated_ocr
+
+            return delegated_ocr(png, min_confidence=min_confidence)
+        except Exception:
+            if backend == "imgl":
+                raise
+    return _ocr_png_local(png, min_confidence=min_confidence)
+
+
+def _ocr_from_screen_context_cache(*, min_confidence: float) -> list[OcrTextBox] | None:
+    import os
+
+    if os.environ.get("VDISPLAY_OCR_CACHE", "1").strip().lower() in {"0", "false", "no", "off"}:
+        return None
+    try:
+        from ..integrations.observe_cache import ocr_boxes_from_cached_context
+        from ..integrations.screen_context import ScreenContext
+
+        payload = os.environ.get("VDISPLAY_SCREEN_CONTEXT_JSON", "").strip()
+        if payload:
+            ctx = ScreenContext.from_dict(json.loads(payload))
+        else:
+            path = os.environ.get("VDISPLAY_SCREEN_CONTEXT_PATH", "").strip()
+            if not path:
+                return None
+            sidecar = Path(path).expanduser()
+            if not sidecar.is_file():
+                return None
+            ctx = ScreenContext.from_dict(json.loads(sidecar.read_text(encoding="utf-8")))
+        boxes = ocr_boxes_from_cached_context(ctx)
+        if boxes is None:
+            return None
+        return [box for box in boxes if box.confidence >= min_confidence]
+    except Exception:
+        return None
+
+
+def _ocr_png_local(png: bytes, *, min_confidence: float = 30.0) -> list[OcrTextBox]:
+    """Run Tesseract OCR locally (vdisplay built-in)."""
     ready, reason = ocr_available()
     if not ready:
         raise RuntimeError(reason)

@@ -2,16 +2,24 @@
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import Callable
 from typing import Any
 
 from fastapi import FastAPI, Header, Query
 from fastapi.responses import JSONResponse
+from vdisplay.application.commands import CommandVerb
+from vdisplay.application.session_context import (
+    HEADER_REQUEST_ID,
+    HEADER_REQUEST_SOURCE,
+    HEADER_SESSION_DIR,
+    HEADER_SESSION_ID,
+)
 
 from .. import schemas as S
+from ..audit_context import audit_context_from_headers
 from ..envelope import json_error, json_from_runtime, strip_ok, success
 from ..runtime import AgentRuntime
+from ._audit_execute import execute_control_route
 
 
 def register_routes(
@@ -65,58 +73,118 @@ def register_routes(
     async def controls_list(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit_session_id: str | None = Header(default=None, alias=HEADER_SESSION_ID),
+        audit_session_dir: str | None = Header(default=None, alias=HEADER_SESSION_DIR),
+        audit_request_id: str | None = Header(default=None, alias=HEADER_REQUEST_ID),
+        audit_request_source: str | None = Header(default=None, alias=HEADER_REQUEST_SOURCE),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.list_controls, body)
-            return json_from_runtime(S.ACTION_CONTROLS_LIST, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CONTROLS_LIST, exc)
+        audit = audit_context_from_headers(
+            session_id=audit_session_id,
+            session_dir=audit_session_dir,
+            request_id=audit_request_id,
+            request_source=audit_request_source,
+        )
+        return await execute_control_route(
+            S.ACTION_CONTROLS_LIST,
+            CommandVerb.CONTROLS_LIST,
+            body,
+            audit=audit,
+            fallback=broker.list_controls,
+        )
 
     @app.post("/controls/find")
     async def controls_find(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit_session_id: str | None = Header(default=None, alias=HEADER_SESSION_ID),
+        audit_session_dir: str | None = Header(default=None, alias=HEADER_SESSION_DIR),
+        audit_request_id: str | None = Header(default=None, alias=HEADER_REQUEST_ID),
+        audit_request_source: str | None = Header(default=None, alias=HEADER_REQUEST_SOURCE),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.find_controls, body)
-            return json_from_runtime(S.ACTION_CONTROLS_FIND, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CONTROLS_FIND, exc)
+        audit = audit_context_from_headers(
+            session_id=audit_session_id,
+            session_dir=audit_session_dir,
+            request_id=audit_request_id,
+            request_source=audit_request_source,
+        )
+        return await execute_control_route(
+            S.ACTION_CONTROLS_FIND,
+            CommandVerb.CONTROLS_FIND,
+            body,
+            audit=audit,
+            fallback=broker.find_controls,
+        )
 
     @app.post("/control/invoke")
     async def control_invoke(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit_session_id: str | None = Header(default=None, alias=HEADER_SESSION_ID),
+        audit_session_dir: str | None = Header(default=None, alias=HEADER_SESSION_DIR),
+        audit_request_id: str | None = Header(default=None, alias=HEADER_REQUEST_ID),
+        audit_request_source: str | None = Header(default=None, alias=HEADER_REQUEST_SOURCE),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.invoke_control, body)
-            return json_from_runtime(S.ACTION_CONTROL_INVOKE, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CONTROL_INVOKE, exc)
+        audit = audit_context_from_headers(
+            session_id=audit_session_id,
+            session_dir=audit_session_dir,
+            request_id=audit_request_id,
+            request_source=audit_request_source,
+        )
+        return await execute_control_route(
+            S.ACTION_CONTROL_INVOKE,
+            CommandVerb.CONTROL_CLICK,
+            body,
+            audit=audit,
+            fallback=broker.invoke_control,
+        )
 
     @app.post("/control/focus")
     async def control_focus(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit_session_id: str | None = Header(default=None, alias=HEADER_SESSION_ID),
+        audit_session_dir: str | None = Header(default=None, alias=HEADER_SESSION_DIR),
+        audit_request_id: str | None = Header(default=None, alias=HEADER_REQUEST_ID),
+        audit_request_source: str | None = Header(default=None, alias=HEADER_REQUEST_SOURCE),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.focus_control, body)
-            return json_from_runtime(S.ACTION_CONTROL_FOCUS, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CONTROL_FOCUS, exc)
+        audit = audit_context_from_headers(
+            session_id=audit_session_id,
+            session_dir=audit_session_dir,
+            request_id=audit_request_id,
+            request_source=audit_request_source,
+        )
+        return await execute_control_route(
+            S.ACTION_CONTROL_FOCUS,
+            CommandVerb.CONTROL_FOCUS,
+            body,
+            audit=audit,
+            fallback=broker.focus_control,
+        )
 
     @app.post("/control/set-value")
     async def control_set_value(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit_session_id: str | None = Header(default=None, alias=HEADER_SESSION_ID),
+        audit_session_dir: str | None = Header(default=None, alias=HEADER_SESSION_DIR),
+        audit_request_id: str | None = Header(default=None, alias=HEADER_REQUEST_ID),
+        audit_request_source: str | None = Header(default=None, alias=HEADER_REQUEST_SOURCE),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(broker.set_control_value, body)
-            return json_from_runtime(S.ACTION_CONTROL_SET_VALUE, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_CONTROL_SET_VALUE, exc)
+        audit = audit_context_from_headers(
+            session_id=audit_session_id,
+            session_dir=audit_session_dir,
+            request_id=audit_request_id,
+            request_source=audit_request_source,
+        )
+        return await execute_control_route(
+            S.ACTION_CONTROL_SET_VALUE,
+            CommandVerb.CONTROL_SET_VALUE,
+            body,
+            audit=audit,
+            fallback=broker.set_control_value,
+        )

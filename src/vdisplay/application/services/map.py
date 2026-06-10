@@ -81,6 +81,18 @@ def map_build(
         png=png if svg else None,
         title=f"{monitor or 'screen'} / {region_id}",
     )
+    try:
+        from ..application.gui_map_events import record_gui_map_built
+
+        record_gui_map_built(
+            map_path=output,
+            element_count=len(pack.elements),
+            region_count=len(pack.regions),
+            map_id=region_id,
+            scope_ids=list(pack.regions.keys()),
+        )
+    except Exception:
+        pass
     return {
         "ok": True,
         "elements": len(pack.elements),
@@ -128,7 +140,15 @@ def map_diff(
         scope_id=scope,
         min_confidence=min_confidence,
     )
-    return {"ok": diff.ok, "map": map_path, "scope": scope, **diff.to_dict()}
+    payload = {"ok": diff.ok, "map": map_path, "scope": scope, **diff.to_dict()}
+    if diff.drifted:
+        try:
+            from ..application.gui_map_events import record_gui_map_drift
+
+            record_gui_map_drift(map_path=map_path, drift=diff.to_dict(), scope_id=scope)
+        except Exception:
+            pass
+    return payload
 
 
 def map_refresh(
@@ -169,6 +189,24 @@ def map_refresh(
         png=png if svg else None,
         title=f"{monitor_name or updated.monitor or 'screen'} / refresh",
     )
+    if diff.drifted:
+        try:
+            from ..application.gui_map_events import record_gui_map_drift
+
+            record_gui_map_drift(map_path=map_path, drift=diff.to_dict(), scope_id=scope)
+        except Exception:
+            pass
+    try:
+        from ..application.gui_map_events import record_gui_map_built
+
+        record_gui_map_built(
+            map_path=out_path,
+            element_count=len(updated.elements),
+            region_count=len(updated.regions),
+            scope_ids=list(updated.regions.keys()),
+        )
+    except Exception:
+        pass
     return {
         "ok": diff.ok,
         "drifted": diff.drifted,

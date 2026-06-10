@@ -15,7 +15,7 @@ SUMD - Structured Unified Markdown Descriptor for AI-aware project refactorizati
 ## Metadata
 
 - **name**: `vdisplay`
-- **version**: `0.1.14`
+- **version**: `0.1.16`
 - **python_requires**: `>=3.10`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
@@ -35,7 +35,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: vdisplay;
-  version: 0.1.14;
+  version: 0.1.16;
 }
 
 dependencies {
@@ -70,7 +70,7 @@ tests {
 }
 
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, XDG_CURRENT_DESKTOP, DESKTOP_SESSION, VDISPLAY_BROWSER_DETACHED, VDISPLAY_VISION_LLM_MODE, VDISPLAY_VISION_LLM_MODALITIES, VDISPLAY_VISION_LLM, VDISPLAY_VISION_LLM_TIMEOUT_S, VDISPLAY_VISION_LLM_ENABLED, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_SESSION_DIR, VDISPLAY_SESSION, VDISPLAY_SESSION_ID, YDOTOOL_SOCKET, VDISPLAY_ALLOW_YDOTOOL_TYPING, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_CONTROL_SETTLE_MS, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, XDG_CURRENT_DESKTOP, DESKTOP_SESSION, VDISPLAY_BROWSER_DETACHED, VDISPLAY_VISION_LLM_MODE, VDISPLAY_VISION_LLM_MODALITIES, VDISPLAY_VISION_LLM, VDISPLAY_VISION_LLM_TIMEOUT_S, VDISPLAY_VISION_LLM_ENABLED, VDISPLAY_CONTROL_FOCUS_MS, VDISPLAY_CONTROL_POINTER_SETTLE_MS, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_SESSION_DIR, VDISPLAY_SESSION, VDISPLAY_SESSION_ID, YDOTOOL_SOCKET, VDISPLAY_ALLOW_YDOTOOL_TYPING, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_CONTROL_SETTLE_MS, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
 }
 
 deploy {
@@ -112,7 +112,7 @@ sqlmodel>=0.0.22
 
 ## Call Graph
 
-*458 nodes · 500 edges · 112 modules · CC̄=3.5*
+*465 nodes · 500 edges · 114 modules · CC̄=3.5*
 
 ### Hubs (by degree)
 
@@ -129,8 +129,8 @@ sqlmodel>=0.0.22
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.23s
-# nodes: 458 | edges: 500 | modules: 112
+# generated in 0.24s
+# nodes: 465 | edges: 500 | modules: 114
 # CC̄=3.5
 
 HUBS[20]:
@@ -152,28 +152,28 @@ HUBS[20]:
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
-  src.vdisplay.discovery.resolve_host_display
-    CC=11  in:26  out:7  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
-  src.vdisplay.commands.agent.handle
-    CC=15  in:0  out:32  total:32
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:33  total:33
+  src.vdisplay.discovery.resolve_host_display
+    CC=11  in:26  out:7  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  examples.host-mirror.mirror_demo.main
-    CC=7  in:0  out:31  total:31
-  src.vdisplay.control.descriptors.detect_platform_profile
-    CC=14  in:8  out:23  total:31
   examples.control-plane.control_demo.run_browser_demo
     CC=6  in:1  out:30  total:31
   src.vdisplay.commands.map.handle
     CC=7  in:0  out:31  total:31
+  examples.host-mirror.mirror_demo.main
+    CC=7  in:0  out:31  total:31
+  src.vdisplay.control.descriptors.detect_platform_profile
+    CC=14  in:8  out:23  total:31
   src.vdisplay.agent_config.resolve_agent_url
     CC=6  in:24  out:5  total:29
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+    CC=5  in:21  out:8  total:29
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -364,17 +364,20 @@ MODULES:
     _utcnow  CC=1  out:1
     default_task_db_path  CC=3  out:9
     task_to_dict  CC=4  out:5
-  src.vdisplay.agent_config  [7 funcs]
+  src.vdisplay.agent_config  [8 funcs]
     _default_agent_base  CC=3  out:4
     _probe_agent_url  CC=3  out:3
     _probe_default_agent  CC=3  out:3
     agent_auto_enabled  CC=1  out:3
     reset_agent_probe_cache  CC=1  out:0
+    resolve_agent_token  CC=3  out:2
     resolve_agent_url  CC=6  out:5
     use_agent  CC=2  out:4
   src.vdisplay.agent_dispatch  [2 funcs]
     agent_client  CC=2  out:3
     dispatch_via_agent  CC=1  out:4
+  src.vdisplay.agent_envelope  [1 funcs]
+    flatten_agent_envelope  CC=6  out:3
   src.vdisplay.api  [8 funcs]
     create  CC=6  out:8
     create  CC=4  out:6
@@ -388,6 +391,8 @@ MODULES:
     error_from_exception  CC=4  out:11
   src.vdisplay.application.executor  [1 funcs]
     execute  CC=6  out:18
+  src.vdisplay.application.handlers.control  [1 funcs]
+    control_request_body  CC=3  out:3
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
   src.vdisplay.application.services.sampler  [2 funcs]
@@ -450,11 +455,18 @@ MODULES:
     main  CC=2  out:5
   src.vdisplay.cli_handlers  [1 funcs]
     print_json  CC=1  out:1
+  src.vdisplay.client  [9 funcs]
+    __init__  CC=2  out:2
+    _normalize_payload  CC=1  out:1
+    request  CC=3  out:8
+    _route_browser_open  CC=4  out:0
+    _route_command  CC=7  out:7
+    _route_control_command  CC=5  out:0
+    _route_outputs_query  CC=4  out:3
+    _route_terminal_open  CC=4  out:0
+    _route_windows_query  CC=6  out:4
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
-  src.vdisplay.commands.agent  [2 funcs]
-    _agent_client  CC=2  out:3
-    handle  CC=15  out:32
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
@@ -517,9 +529,6 @@ MODULES:
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
-  src.vdisplay.control.action_bounds  [2 funcs]
-    action_bounds_for_vision  CC=2  out:4
-    click_point_for_vision  CC=1  out:1
   src.vdisplay.control.base  [3 funcs]
     capabilities  CC=2  out:2
     session_kind  CC=2  out:1
@@ -529,18 +538,8 @@ MODULES:
     engine_profile_id  CC=2  out:3
     normalize_browser_engine  CC=3  out:6
     resolve_session_browser_engine  CC=3  out:4
-  src.vdisplay.control.browser_session_store  [8 funcs]
-    _chromium_executable  CC=2  out:4
-    find_free_port  CC=1  out:4
-    launch_detached_chromium  CC=7  out:17
-    load_meta  CC=5  out:14
-    meta_path  CC=1  out:0
-    profile_dir  CC=1  out:0
-    remove_meta  CC=2  out:3
-    save_meta  CC=1  out:5
-  src.vdisplay.control.contracts  [2 funcs]
-    control_route_request_from_command  CC=4  out:27
-    provider_score_from_dataclass  CC=4  out:4
+  src.vdisplay.control.browser_session_store  [1 funcs]
+    session_available  CC=3  out:3
   src.vdisplay.control.descriptors  [5 funcs]
     all_provider_descriptors  CC=1  out:2
     all_selector_extensions  CC=1  out:0
@@ -551,28 +550,8 @@ MODULES:
     resolve_provider  CC=1  out:1
     resolve_provider_routing  CC=2  out:2
     resolve_route  CC=2  out:2
-  src.vdisplay.control.gui_map  [11 funcs]
-    _boxes_in_scope_for_build  CC=4  out:2
-    _prepare_ocr_boxes_for_build  CC=13  out:11
-    _slug  CC=2  out:4
-    _translate_ocr_boxes  CC=4  out:3
-    build_gui_map_from_ocr  CC=7  out:11
-    crop_png_bounds  CC=3  out:10
-    element_from_ocr_box  CC=9  out:11
-    resolve_map_region  CC=2  out:2
+  src.vdisplay.control.gui_map  [1 funcs]
     save_gui_map  CC=1  out:4
-    scoped_capture_region  CC=2  out:1
-  src.vdisplay.control.gui_map_diff  [15 funcs]
-    _append_new_elements  CC=14  out:13
-    _box_to_bounds  CC=1  out:1
-    _boxes_in_scope  CC=5  out:2
-    _center  CC=1  out:2
-    _classify_element_drift  CC=6  out:14
-    _distance  CC=1  out:3
-    _labels_match  CC=5  out:2
-    _new_ocr_labels  CC=7  out:4
-    _normalize_label  CC=1  out:4
-    _refresh_known_elements  CC=5  out:6
   src.vdisplay.control.gui_map_export  [1 funcs]
     write_map_artifacts  CC=4  out:14
   src.vdisplay.control.plugins  [10 funcs]
@@ -588,32 +567,40 @@ MODULES:
     unregister_control_provider  CC=4  out:6
   src.vdisplay.control.policy  [1 funcs]
     assess_control_capability  CC=7  out:9
-  src.vdisplay.control.profile_inference  [1 funcs]
+  src.vdisplay.control.profile_inference  [3 funcs]
+    infer_application_profile  CC=6  out:10
     profile_for  CC=3  out:2
+    profile_provider_boost  CC=6  out:4
+  src.vdisplay.control.providers.ax_impl  [1 funcs]
+    ax_deps_available  CC=3  out:0
+  src.vdisplay.control.providers.browser_playwright  [1 funcs]
+    _playwright_available  CC=3  out:1
   src.vdisplay.control.providers.browser_session  [1 funcs]
     open  CC=14  out:21
   src.vdisplay.control.providers.terminal_session  [1 funcs]
     default_registry  CC=1  out:0
+  src.vdisplay.control.providers.uia_impl  [1 funcs]
+    uia_deps_available  CC=3  out:0
   src.vdisplay.control.registry  [4 funcs]
     build  CC=3  out:6
     get_descriptor  CC=2  out:2
     register  CC=2  out:1
     default_provider_registry  CC=1  out:1
-  src.vdisplay.control.router  [8 funcs]
-    __init__  CC=2  out:1
-    _build_decision  CC=7  out:9
-    evaluate  CC=2  out:5
-    route  CC=4  out:5
-    route_command  CC=1  out:2
-    _eligible_for_profile  CC=8  out:2
-    _select_winner  CC=9  out:9
+  src.vdisplay.control.router  [1 funcs]
     default_router  CC=2  out:1
   src.vdisplay.control.routing_semantics  [1 funcs]
     build_routing_semantics  CC=1  out:8
-  src.vdisplay.control.scoring  [3 funcs]
-    normalize_backend  CC=4  out:3
-    rank_providers  CC=8  out:12
-    select_verify_provider  CC=9  out:2
+  src.vdisplay.control.scoring  [37 funcs]
+    _all_provider_names  CC=3  out:4
+    _apply_routing_boosts  CC=7  out:6
+    _atspi_ready  CC=2  out:3
+    _ax_ready  CC=2  out:2
+    _base_score  CC=2  out:1
+    _browser_context_score  CC=4  out:4
+    _browser_ready  CC=2  out:2
+    _browser_session_check  CC=6  out:4
+    _browser_session_ready  CC=5  out:5
+    _is_browser_context  CC=3  out:1
   src.vdisplay.control.screenshot_verify  [10 funcs]
     _capture_via_agent  CC=6  out:9
     _maybe_crop_capture  CC=7  out:4
@@ -657,8 +644,9 @@ MODULES:
     preview_available  CC=2  out:0
     preview_matches_from_nodes  CC=7  out:5
     render_match_overlay  CC=10  out:25
-  src.vdisplay.control.vision_template  [1 funcs]
+  src.vdisplay.control.vision_template  [2 funcs]
     template_anchor_find  CC=2  out:11
+    template_available  CC=2  out:0
   src.vdisplay.discovery  [13 funcs]
     _attach_output_nl  CC=2  out:3
     _display_hint  CC=3  out:2
@@ -771,8 +759,8 @@ EDGES:
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.23s
-# nodes: 458 | edges: 500 | modules: 112
+# generated in 0.24s
+# nodes: 465 | edges: 500 | modules: 114
 # CC̄=3.5
 
 HUBS[20]:
@@ -794,28 +782,28 @@ HUBS[20]:
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
-  src.vdisplay.discovery.resolve_host_display
-    CC=11  in:26  out:7  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
-  src.vdisplay.commands.agent.handle
-    CC=15  in:0  out:32  total:32
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:33  total:33
+  src.vdisplay.discovery.resolve_host_display
+    CC=11  in:26  out:7  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  examples.host-mirror.mirror_demo.main
-    CC=7  in:0  out:31  total:31
-  src.vdisplay.control.descriptors.detect_platform_profile
-    CC=14  in:8  out:23  total:31
   examples.control-plane.control_demo.run_browser_demo
     CC=6  in:1  out:30  total:31
   src.vdisplay.commands.map.handle
     CC=7  in:0  out:31  total:31
+  examples.host-mirror.mirror_demo.main
+    CC=7  in:0  out:31  total:31
+  src.vdisplay.control.descriptors.detect_platform_profile
+    CC=14  in:8  out:23  total:31
   src.vdisplay.agent_config.resolve_agent_url
     CC=6  in:24  out:5  total:29
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+    CC=5  in:21  out:8  total:29
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -1006,17 +994,20 @@ MODULES:
     _utcnow  CC=1  out:1
     default_task_db_path  CC=3  out:9
     task_to_dict  CC=4  out:5
-  src.vdisplay.agent_config  [7 funcs]
+  src.vdisplay.agent_config  [8 funcs]
     _default_agent_base  CC=3  out:4
     _probe_agent_url  CC=3  out:3
     _probe_default_agent  CC=3  out:3
     agent_auto_enabled  CC=1  out:3
     reset_agent_probe_cache  CC=1  out:0
+    resolve_agent_token  CC=3  out:2
     resolve_agent_url  CC=6  out:5
     use_agent  CC=2  out:4
   src.vdisplay.agent_dispatch  [2 funcs]
     agent_client  CC=2  out:3
     dispatch_via_agent  CC=1  out:4
+  src.vdisplay.agent_envelope  [1 funcs]
+    flatten_agent_envelope  CC=6  out:3
   src.vdisplay.api  [8 funcs]
     create  CC=6  out:8
     create  CC=4  out:6
@@ -1030,6 +1021,8 @@ MODULES:
     error_from_exception  CC=4  out:11
   src.vdisplay.application.executor  [1 funcs]
     execute  CC=6  out:18
+  src.vdisplay.application.handlers.control  [1 funcs]
+    control_request_body  CC=3  out:3
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
   src.vdisplay.application.services.sampler  [2 funcs]
@@ -1092,11 +1085,18 @@ MODULES:
     main  CC=2  out:5
   src.vdisplay.cli_handlers  [1 funcs]
     print_json  CC=1  out:1
+  src.vdisplay.client  [9 funcs]
+    __init__  CC=2  out:2
+    _normalize_payload  CC=1  out:1
+    request  CC=3  out:8
+    _route_browser_open  CC=4  out:0
+    _route_command  CC=7  out:7
+    _route_control_command  CC=5  out:0
+    _route_outputs_query  CC=4  out:3
+    _route_terminal_open  CC=4  out:0
+    _route_windows_query  CC=6  out:4
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
-  src.vdisplay.commands.agent  [2 funcs]
-    _agent_client  CC=2  out:3
-    handle  CC=15  out:32
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
@@ -1159,9 +1159,6 @@ MODULES:
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
-  src.vdisplay.control.action_bounds  [2 funcs]
-    action_bounds_for_vision  CC=2  out:4
-    click_point_for_vision  CC=1  out:1
   src.vdisplay.control.base  [3 funcs]
     capabilities  CC=2  out:2
     session_kind  CC=2  out:1
@@ -1171,18 +1168,8 @@ MODULES:
     engine_profile_id  CC=2  out:3
     normalize_browser_engine  CC=3  out:6
     resolve_session_browser_engine  CC=3  out:4
-  src.vdisplay.control.browser_session_store  [8 funcs]
-    _chromium_executable  CC=2  out:4
-    find_free_port  CC=1  out:4
-    launch_detached_chromium  CC=7  out:17
-    load_meta  CC=5  out:14
-    meta_path  CC=1  out:0
-    profile_dir  CC=1  out:0
-    remove_meta  CC=2  out:3
-    save_meta  CC=1  out:5
-  src.vdisplay.control.contracts  [2 funcs]
-    control_route_request_from_command  CC=4  out:27
-    provider_score_from_dataclass  CC=4  out:4
+  src.vdisplay.control.browser_session_store  [1 funcs]
+    session_available  CC=3  out:3
   src.vdisplay.control.descriptors  [5 funcs]
     all_provider_descriptors  CC=1  out:2
     all_selector_extensions  CC=1  out:0
@@ -1193,28 +1180,8 @@ MODULES:
     resolve_provider  CC=1  out:1
     resolve_provider_routing  CC=2  out:2
     resolve_route  CC=2  out:2
-  src.vdisplay.control.gui_map  [11 funcs]
-    _boxes_in_scope_for_build  CC=4  out:2
-    _prepare_ocr_boxes_for_build  CC=13  out:11
-    _slug  CC=2  out:4
-    _translate_ocr_boxes  CC=4  out:3
-    build_gui_map_from_ocr  CC=7  out:11
-    crop_png_bounds  CC=3  out:10
-    element_from_ocr_box  CC=9  out:11
-    resolve_map_region  CC=2  out:2
+  src.vdisplay.control.gui_map  [1 funcs]
     save_gui_map  CC=1  out:4
-    scoped_capture_region  CC=2  out:1
-  src.vdisplay.control.gui_map_diff  [15 funcs]
-    _append_new_elements  CC=14  out:13
-    _box_to_bounds  CC=1  out:1
-    _boxes_in_scope  CC=5  out:2
-    _center  CC=1  out:2
-    _classify_element_drift  CC=6  out:14
-    _distance  CC=1  out:3
-    _labels_match  CC=5  out:2
-    _new_ocr_labels  CC=7  out:4
-    _normalize_label  CC=1  out:4
-    _refresh_known_elements  CC=5  out:6
   src.vdisplay.control.gui_map_export  [1 funcs]
     write_map_artifacts  CC=4  out:14
   src.vdisplay.control.plugins  [10 funcs]
@@ -1230,32 +1197,40 @@ MODULES:
     unregister_control_provider  CC=4  out:6
   src.vdisplay.control.policy  [1 funcs]
     assess_control_capability  CC=7  out:9
-  src.vdisplay.control.profile_inference  [1 funcs]
+  src.vdisplay.control.profile_inference  [3 funcs]
+    infer_application_profile  CC=6  out:10
     profile_for  CC=3  out:2
+    profile_provider_boost  CC=6  out:4
+  src.vdisplay.control.providers.ax_impl  [1 funcs]
+    ax_deps_available  CC=3  out:0
+  src.vdisplay.control.providers.browser_playwright  [1 funcs]
+    _playwright_available  CC=3  out:1
   src.vdisplay.control.providers.browser_session  [1 funcs]
     open  CC=14  out:21
   src.vdisplay.control.providers.terminal_session  [1 funcs]
     default_registry  CC=1  out:0
+  src.vdisplay.control.providers.uia_impl  [1 funcs]
+    uia_deps_available  CC=3  out:0
   src.vdisplay.control.registry  [4 funcs]
     build  CC=3  out:6
     get_descriptor  CC=2  out:2
     register  CC=2  out:1
     default_provider_registry  CC=1  out:1
-  src.vdisplay.control.router  [8 funcs]
-    __init__  CC=2  out:1
-    _build_decision  CC=7  out:9
-    evaluate  CC=2  out:5
-    route  CC=4  out:5
-    route_command  CC=1  out:2
-    _eligible_for_profile  CC=8  out:2
-    _select_winner  CC=9  out:9
+  src.vdisplay.control.router  [1 funcs]
     default_router  CC=2  out:1
   src.vdisplay.control.routing_semantics  [1 funcs]
     build_routing_semantics  CC=1  out:8
-  src.vdisplay.control.scoring  [3 funcs]
-    normalize_backend  CC=4  out:3
-    rank_providers  CC=8  out:12
-    select_verify_provider  CC=9  out:2
+  src.vdisplay.control.scoring  [37 funcs]
+    _all_provider_names  CC=3  out:4
+    _apply_routing_boosts  CC=7  out:6
+    _atspi_ready  CC=2  out:3
+    _ax_ready  CC=2  out:2
+    _base_score  CC=2  out:1
+    _browser_context_score  CC=4  out:4
+    _browser_ready  CC=2  out:2
+    _browser_session_check  CC=6  out:4
+    _browser_session_ready  CC=5  out:5
+    _is_browser_context  CC=3  out:1
   src.vdisplay.control.screenshot_verify  [10 funcs]
     _capture_via_agent  CC=6  out:9
     _maybe_crop_capture  CC=7  out:4
@@ -1299,8 +1274,9 @@ MODULES:
     preview_available  CC=2  out:0
     preview_matches_from_nodes  CC=7  out:5
     render_match_overlay  CC=10  out:25
-  src.vdisplay.control.vision_template  [1 funcs]
+  src.vdisplay.control.vision_template  [2 funcs]
     template_anchor_find  CC=2  out:11
+    template_available  CC=2  out:0
   src.vdisplay.discovery  [13 funcs]
     _attach_output_nl  CC=2  out:3
     _display_hint  CC=3  out:2
@@ -1400,20 +1376,15 @@ EDGES:
 ### Code Analysis (`project/analysis.toon.yaml`)
 
 ```toon markpact:analysis path=project/analysis.toon.yaml
-# code2llm | 250f 34143L | python:196,json:20,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
-# generated in 0.07s
-# CC̅=3.5 | critical:2/1483 | dups:0 | cycles:0
+# code2llm | 253f 34318L | python:199,json:20,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
+# generated in 0.08s
+# CC̅=3.5 | critical:0/1497 | dups:0 | cycles:0
 
-HEALTH[3]:
-  🔴 GOD   src/vdisplay/control/gui_map.py = 516L, 6 classes, 31m, max CC=13
-  🟡 CC    handle CC=15 (limit:15)
-  🟡 CC    snapshot CC=15 (limit:15)
+HEALTH[0]: ok
 
-REFACTOR[2]:
-  1. split src/vdisplay/control/gui_map.py  (god module)
-  2. split 2 high-CC methods  (CC>15)
+REFACTOR[0]: none needed
 
-PIPELINES[679]:
+PIPELINES[680]:
   [1] Src [main]: main → create_server
       PURITY: 100% pure
   [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url
@@ -1519,18 +1490,17 @@ LAYERS:
   src/                            CC̄=3.7    ←in:0  →out:0
   │ !! scoring                    801L  2C   40m  CC=12     ←6
   │ !! portal_screencast          779L  1C   34m  CC=11     ←6
-  │ !! control                    743L  0C   22m  CC=14     ←0
-  │ !! provider                   704L  1C   37m  CC=11     ←0
+  │ !! control                    763L  0C   23m  CC=14     ←0
+  │ !! provider                   715L  1C   37m  CC=12     ←0
   │ !! verifier                   567L  3C   24m  CC=13     ←1
   │ !! host                       555L  0C   15m  CC=14     ←6
-  │ !! gui_map                    516L  6C   31m  CC=13     ←6
   │ !! gui_map_diff               500L  3C   18m  CC=14     ←1
+  │ !! session_recorder           500L  3C   25m  CC=13     ←1
   │ verify                     498L  0C   21m  CC=12     ←1
-  │ session_recorder           496L  3C   25m  CC=13     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ descriptors                464L  5C   11m  CC=14     ←9
   │ client                     422L  1C   40m  CC=7      ←0
-  │ atspi_impl                 407L  0C   19m  CC=8      ←1
+  │ atspi_impl                 413L  0C   19m  CC=8      ←1
   │ commands                   370L  4C   11m  CC=9      ←0
   │ discovery                  363L  0C   14m  CC=11     ←21
   │ selector                   347L  1C   18m  CC=14     ←9
@@ -1550,6 +1520,8 @@ LAYERS:
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
   │ vision_template            258L  1C   10m  CC=11     ←4
   │ browser_session            246L  2C   13m  CC=14     ←3
+  │ gui_map                    245L  6C   16m  CC=9      ←3
+  │ gui_map_build              243L  0C   11m  CC=9      ←3
   │ policy                     242L  1C    8m  CC=7      ←2
   │ agent                      241L  0C   22m  CC=6      ←1
   │ atspi                      240L  1C   15m  CC=8      ←0
@@ -1576,18 +1548,19 @@ LAYERS:
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
   │ routing_semantics          158L  1C    8m  CC=7      ←4
+  │ agent                      155L  0C    6m  CC=5      ←0
+  │ x11                        150L  1C   13m  CC=9      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
-  │ !! agent                      143L  0C    3m  CC=15     ←0
   │ policy                     140L  1C    4m  CC=11     ←2
   │ common                     137L  0C    9m  CC=2      ←9
   │ sampler                    132L  0C    8m  CC=9      ←0
-  │ !! x11                        132L  1C   10m  CC=15     ←0
   │ img2nl_enrich              124L  0C    6m  CC=12     ←0
   │ registry                   117L  1C   14m  CC=3      ←2
   │ linux_ydotool              114L  1C    9m  CC=8      ←0
   │ relay                      110L  0C    3m  CC=5      ←0
   │ scan                       110L  0C    7m  CC=6      ←2
   │ sampler                    109L  1C    3m  CC=5      ←1
+  │ gui_map_resolve            109L  0C    9m  CC=6      ←2
   │ normalize                  103L  0C    7m  CC=14     ←1
   │ artifacts                  102L  0C    5m  CC=13     ←1
   │ engine                      99L  0C    6m  CC=11     ←4
@@ -1631,6 +1604,7 @@ LAYERS:
   │ models                      26L  2C    0m  CC=0.0    ←0
   │ action_bounds               24L  0C    2m  CC=2      ←3
   │ nlp                         23L  0C    2m  CC=2      ←0
+  │ timing                      23L  0C    2m  CC=2      ←2
   │ base                        22L  2C    3m  CC=1      ←0
   │ monitors                    19L  0C    2m  CC=1      ←0
   │ constants                   19L  0C    0m  CC=0.0    ←0
@@ -1802,8 +1776,8 @@ COUPLING:
   HUB: examples.common/ (fan-in=10)
   HUB: src.vdisplay/ (fan-in=53)
   HUB: packages.dsl2vdisplay/ (fan-in=15)
-  SMELL: src.vdisplay/ fan-out=12 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
+  SMELL: src.vdisplay/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon
@@ -1813,15 +1787,15 @@ EXTERNAL:
 ### Duplication (`project/duplication.toon.yaml`)
 
 ```toon markpact:analysis path=project/duplication.toon.yaml
-# redup/duplication | 42 groups | 195f 27782L | 2026-06-10
+# redup/duplication | 43 groups | 198f 27957L | 2026-06-10
 
 SUMMARY:
-  files_scanned: 195
-  total_lines:   27782
-  dup_groups:    42
-  dup_fragments: 98
-  saved_lines:   420
-  scan_ms:       2885
+  files_scanned: 198
+  total_lines:   27957
+  dup_groups:    43
+  dup_fragments: 100
+  saved_lines:   427
+  scan_ms:       3619
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.4%)
@@ -1832,7 +1806,7 @@ HOTSPOTS[7] (files with most duplication):
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py  dup=30L  groups=2  frags=4  (0.1%)
   src/vdisplay/client.py  dup=24L  groups=1  frags=2  (0.1%)
 
-DUPLICATES[42] (ranked by impact):
+DUPLICATES[43] (ranked by impact):
   [920423ffadef7598] ! STRU  _score_uia_provider  L=35 N=2 saved=35 sim=1.00
       src/vdisplay/control/scoring.py:325-359  (_score_uia_provider)
       src/vdisplay/control/scoring.py:362-396  (_score_ax_provider)
@@ -1922,9 +1896,12 @@ DUPLICATES[42] (ranked by impact):
   [93f796dd58175244]   STRU  _terminal_line_matches  L=7 N=2 saved=7 sim=1.00
       src/vdisplay/control/selector.py:183-189  (_terminal_line_matches)
       src/vdisplay/control/selector.py:192-198  (_terminal_col_matches)
+  [6fc9c2a6260f7dbb]   STRU  control_focus_type_seconds  L=7 N=2 saved=7 sim=1.00
+      src/vdisplay/control/timing.py:8-14  (control_focus_type_seconds)
+      src/vdisplay/control/timing.py:17-23  (control_pointer_settle_seconds)
   [1d15d7ed86dd4da6]   EXAC  find  L=6 N=2 saved=6 sim=1.00
       src/vdisplay/control/providers/atspi.py:206-211  (find)
-      src/vdisplay/control/providers/x11.py:92-97  (find)
+      src/vdisplay/control/providers/x11.py:59-64  (find)
   [ab50b6c9821c38ed]   EXAC  bounds  L=6 N=2 saved=6 sim=1.00
       src/vdisplay/control/providers/ax.py:161-166  (bounds)
       src/vdisplay/control/providers/uia.py:161-166  (bounds)
@@ -1944,8 +1921,8 @@ DUPLICATES[42] (ranked by impact):
       packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:298-302  (_screenshot_to_text)
       packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:305-309  (_mirror_to_text)
   [69ba40a4847babb6]   STRU  resolve_map_element  L=5 N=2 saved=5 sim=1.00
-      src/vdisplay/control/gui_map.py:437-441  (resolve_map_element)
-      src/vdisplay/control/gui_map.py:444-448  (resolve_map_region)
+      src/vdisplay/control/gui_map_resolve.py:12-16  (resolve_map_element)
+      src/vdisplay/control/gui_map_resolve.py:19-23  (resolve_map_region)
   [084cc31ae50eea8e]   EXAC  bounds  L=4 N=2 saved=4 sim=1.00
       src/vdisplay/control/providers/atspi.py:237-240  (bounds)
       src/vdisplay/control/providers/terminal.py:124-127  (bounds)
@@ -1962,8 +1939,8 @@ DUPLICATES[42] (ranked by impact):
       src/vdisplay/control/providers/browser_session.py:237-239  (close_all)
       src/vdisplay/control/providers/terminal_session.py:218-220  (close_all)
   [7e769be7bd62da72]   EXAC  bounds  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/control/providers/vision/provider.py:699-701  (bounds)
-      src/vdisplay/control/providers/x11.py:130-132  (bounds)
+      src/vdisplay/control/providers/vision/provider.py:710-712  (bounds)
+      src/vdisplay/control/providers/x11.py:105-107  (bounds)
   [2d7b9210c1b65241]   STRU  img2nl_enabled  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/application/services/img2nl_enrich.py:10-12  (img2nl_enabled)
       src/vdisplay/control/browser_session_store.py:34-36  (detached_sessions_enabled)
@@ -1974,7 +1951,7 @@ DUPLICATES[42] (ranked by impact):
       src/vdisplay/windows/filter.py:8-10  (looks_like_internal_class)
       src/vdisplay/windows/filter.py:13-15  (looks_like_internal_name)
 
-REFACTOR[42] (ranked by priority):
+REFACTOR[43] (ranked by priority):
   [1] ○ extract_function   → src/vdisplay/control/utils/_score_uia_provider.py
       WHY: 2 occurrences of 35-line block across 1 files — saves 35 lines
       FILES: src/vdisplay/control/scoring.py
@@ -2050,59 +2027,62 @@ REFACTOR[42] (ranked by priority):
   [25] ○ extract_function   → src/vdisplay/control/utils/_terminal_line_matches.py
       WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
       FILES: src/vdisplay/control/selector.py
-  [26] ○ extract_function   → src/vdisplay/control/providers/utils/find.py
+  [26] ○ extract_function   → src/vdisplay/control/utils/control_focus_type_seconds.py
+      WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
+      FILES: src/vdisplay/control/timing.py
+  [27] ○ extract_function   → src/vdisplay/control/providers/utils/find.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/atspi.py, src/vdisplay/control/providers/x11.py
-  [27] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [28] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax.py, src/vdisplay/control/providers/uia.py
-  [28] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_name_fields.py
+  [29] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_name_fields.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [29] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_selector.py
+  [30] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_selector.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [30] ○ extract_function   → src/vdisplay/utils/_vdisplay_src_path.py
+  [31] ○ extract_function   → src/vdisplay/utils/_vdisplay_src_path.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: src/vdisplay/capture/portal_screencast.py, src/vdisplay/control/providers/atspi.py
-  [31] ○ extract_function   → examples/utils/_use_mock_backend.py
+  [32] ○ extract_function   → examples/utils/_use_mock_backend.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py, examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py
-  [32] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_screenshot_to_text.py
+  [33] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_screenshot_to_text.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
-  [33] ○ extract_function   → src/vdisplay/control/utils/resolve_map_element.py
+  [34] ○ extract_function   → src/vdisplay/control/utils/resolve_map_element.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
-      FILES: src/vdisplay/control/gui_map.py
-  [34] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+      FILES: src/vdisplay/control/gui_map_resolve.py
+  [35] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/providers/atspi.py, src/vdisplay/control/providers/terminal.py
-  [35] ○ extract_function   → src/vdisplay/control/providers/utils/create_ax_backend.py
+  [36] ○ extract_function   → src/vdisplay/control/providers/utils/create_ax_backend.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [36] ○ extract_function   → src/vdisplay/control/utils/_vertical_overlap.py
+  [37] ○ extract_function   → src/vdisplay/control/utils/_vertical_overlap.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: src/vdisplay/control/vision_ocr.py
-  [37] ○ extract_function   → src/vdisplay/input/utils/available.py
+  [38] ○ extract_function   → src/vdisplay/input/utils/available.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/input/linux_xdotool.py, src/vdisplay/input/linux_ydotool.py
-  [38] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
+  [39] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/browser_session.py, src/vdisplay/control/providers/terminal_session.py
-  [39] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [40] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/vision/provider.py, src/vdisplay/control/providers/x11.py
-  [40] ○ extract_function   → src/vdisplay/utils/img2nl_enabled.py
+  [41] ○ extract_function   → src/vdisplay/utils/img2nl_enabled.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/application/services/img2nl_enrich.py, src/vdisplay/control/browser_session_store.py
-  [41] ○ extract_function   → src/vdisplay/control/utils/vision_llm_fallback_enabled.py
+  [42] ○ extract_function   → src/vdisplay/control/utils/vision_llm_fallback_enabled.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/vdisplay/control/vision_llm.py
-  [42] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
+  [43] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/vdisplay/windows/filter.py
 
-QUICK_WINS[29] (low risk, high savings — do first):
+QUICK_WINS[30] (low risk, high savings — do first):
   [1] extract_function   saved=35L  → src/vdisplay/control/utils/_score_uia_provider.py
       FILES: scoring.py
   [2] extract_function   saved=33L  → examples/utils/_load_common.py
@@ -2124,7 +2104,7 @@ QUICK_WINS[29] (low risk, high savings — do first):
   [10] extract_function   saved=14L  → src/vdisplay/control/utils/_uia_ready.py
       FILES: scoring.py
 
-EFFORT_ESTIMATE (total ≈ 14.6h):
+EFFORT_ESTIMATE (total ≈ 14.8h):
   hard   _score_uia_provider                 saved=35L  ~105min
   medium _load_common                        saved=33L  ~66min
   medium local_windows_payload               saved=23L  ~46min
@@ -2135,37 +2115,29 @@ EFFORT_ESTIMATE (total ≈ 14.6h):
   medium handle_windows                      saved=17L  ~34min
   medium _controls_list                      saved=16L  ~32min
   easy   _uia_ready                          saved=14L  ~28min
-  ... +32 more (~416min)
+  ... +33 more (~430min)
 
 METRICS-TARGET:
-  dup_groups:  42 → 0
-  saved_lines: 420 lines recoverable
+  dup_groups:  43 → 0
+  saved_lines: 427 lines recoverable
 ```
 
 ### Evolution / Churn (`project/evolution.toon.yaml`)
 
 ```toon markpact:analysis path=project/evolution.toon.yaml
-# code2llm/evolution | 1421 func | 159f | 2026-06-10
+# code2llm/evolution | 1435 func | 162f | 2026-06-10
 # generated in 0.01s
 
-NEXT[5] (ranked by impact):
+NEXT[3] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/control/scoring.py
       WHY: 801L, 2 classes, max CC=12
       EFFORT: ~4h  IMPACT: 9612
 
-  [2] !  SPLIT-FUNC      handle  CC=15  fan=19
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 285
-
-  [3] !  SPLIT-FUNC      X11ControlProvider.snapshot  CC=15  fan=12
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 180
-
-  [4] !! SPLIT           maps/pycharm-chat.json
+  [2] !! SPLIT           maps/pycharm-chat.json
       WHY: 2503L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [5] !! SPLIT           planfile.yaml
+  [3] !! SPLIT           planfile.yaml
       WHY: 1319L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
@@ -2177,9 +2149,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          3.6 → ≤2.5
-  max-CC:      15 → ≤7
+  max-CC:      14 → ≤7
   god-modules: 11 → 0
-  high-CC(≥15): 2 → ≤1
+  high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

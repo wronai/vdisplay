@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "app_id": "pycharm",
+  "label": "PyCharm AI chat (template)",
+  "description": "Build a scoped GUI map for the AI chat panel, then pass --map to vdisplay ide prompt.",
+  "suggested_targets": {
+    "chat": "ai-chat-panel",
+    "message": "ai-chat-input",
+    "send": "ai-chat-send"
+  },
+  "build_example": "vdisplay map build --monitor DP-1 --crop-bounds x,y,w,h -o maps/pycharm-chat.json",
+  "prompt_example": "vdisplay ide prompt --ide pycharm --map maps/pycharm-chat.json --text \"Explain this stack trace\""
+}

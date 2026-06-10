@@ -1,0 +1,27 @@
+syntax = "proto3";
+package vdisplay.v1;
+
+message TraceContext {
+  string session_id = 1;
+  string request_id = 2;
+  string correlation_id = 3;
+  string request_source = 4;
+  int64 created_at_ms = 5;
+}
+
+message Artifact {
+  string kind = 1;
+  string path = 2;
+  string label = 3;
+  string role = 4;
+}
+
+message StringMap {
+  map<string, string> values = 1;
+}
+
+message ErrorInfo {
+  string code = 1;
+  string message = 2;
+  string details_json = 3;
+}

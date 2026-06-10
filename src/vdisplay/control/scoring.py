@@ -665,13 +665,23 @@ def _apply_routing_boosts(
             reasons.append("selector.backend forces provider")
 
     profile = context.get("application_profile")
+    profile_id: str | None = None
     if profile is not None:
+        profile_id = getattr(profile, "profile_id", profile if isinstance(profile, str) else None)
+    if profile_id is not None:
         from .profile_inference import profile_provider_boost
 
         boost, boost_reasons = profile_provider_boost(provider, profile)
         if boost:
             score += boost
             reasons.extend(boost_reasons)
+
+    from ..application.projections.backend_scores import provider_score_prior
+
+    prior_boost, prior_reasons = provider_score_prior(provider, application_profile=profile_id)
+    if prior_boost:
+        score += prior_boost
+        reasons.extend(prior_reasons)
     return score, reasons
 
 

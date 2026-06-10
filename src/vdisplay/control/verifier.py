@@ -380,7 +380,7 @@ class VerifierPipeline:
         visual_payload: dict[str, Any],
     ) -> dict[str, Any] | None:
         after_capture = (visual_payload.get("capture") or {}).get("after")
-        if after_capture is None and ctx.before_png is None:
+        if after_capture is None and ctx.before_png is None and spec.mode != "ocr_contains":
             return None
         from .vision_ocr import ocr_available, ocr_png
 
@@ -388,11 +388,25 @@ class VerifierPipeline:
         if not ready:
             return {"verified": False, "reason": reason, "method": "ocr"}
 
-        after_png, _meta = capture_control_screenshot(
-            display=ctx.display,
-            target=ctx.target,
-            capture_fn=ctx.capture_fn,
+        after_png = after_capture
+        if after_png is None:
+            after_png, after_meta = capture_control_screenshot(
+                display=ctx.display,
+                target=ctx.target,
+                capture_fn=ctx.capture_fn,
+            )
+        else:
+            after_meta = (visual_payload.get("capture") or {}).get("after_meta") or {}
+
+        sidecar_path = (
+            (ctx.before_capture_meta or {}).get("screen_context_path")
+            or after_meta.get("screen_context_path")
+            or (visual_payload.get("screen_context") or {}).get("path")
         )
+        if sidecar_path:
+            import os
+
+            os.environ.setdefault("VDISPLAY_SCREEN_CONTEXT_PATH", str(sidecar_path))
         region = _region_for_verify(ctx, spec)
         if region is not None:
             from PIL import Image

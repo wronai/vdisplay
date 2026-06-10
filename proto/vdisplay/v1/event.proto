@@ -1,0 +1,16 @@
+syntax = "proto3";
+package vdisplay.v1;
+
+import "vdisplay/v1/common.proto";
+
+message DomainEventEnvelope {
+  string event_id = 1;
+  TraceContext trace = 2;
+  int64 occurred_at_ms = 3;
+  string aggregate_type = 4;
+  string aggregate_id = 5;
+  string event_type = 6;
+  uint32 event_version = 7;
+  bytes body_json = 8;
+  repeated Artifact artifacts = 9;
+}

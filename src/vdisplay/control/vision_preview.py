@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import base64
 import io
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -127,6 +128,86 @@ def confidence_color(confidence: float, *, selected: bool = False, rejected: boo
     return (255, 70, 70)
 
 
+def preview_backend() -> str:
+    return os.environ.get("VDISPLAY_VISION_PREVIEW", "auto").strip().lower() or "auto"
+
+
+def _prefer_imgl_annotate() -> bool:
+    backend = preview_backend()
+    if backend in {"local", "pillow"}:
+        return False
+    if backend in {"imgl", "annotate"}:
+        return True
+    try:
+        from ..integrations.vision_backend import prefer_imgl_backend
+
+        return prefer_imgl_backend()
+    except ImportError:
+        return False
+
+
+def _preview_matches_to_catalog(matches: list[PreviewMatch]) -> list[Any]:
+    from imgl.catalog_types import InteractiveOption
+
+    catalog: list[InteractiveOption] = []
+    for item in matches:
+        bounds = item.bounds
+        catalog.append(
+            InteractiveOption(
+                index=int(item.index),
+                category="button" if item.selected else "input",
+                element_id=f"vision-{item.index}",
+                element_type=item.kind,
+                label=item.label,
+                text=item.label,
+                window_id=None,
+                window_title=None,
+                position=(int(bounds.x), int(bounds.y)),
+                bbox={
+                    "x": int(bounds.x),
+                    "y": int(bounds.y),
+                    "w": int(bounds.width),
+                    "h": int(bounds.height),
+                },
+            )
+        )
+    return catalog
+
+
+def _render_match_overlay_imgl_annotate(
+    png: bytes,
+    matches: list[PreviewMatch],
+    *,
+    selected_index: int | None = None,
+    rejected: list[PreviewMatch] | None = None,
+) -> bytes:
+    import tempfile
+    from pathlib import Path
+
+    from imgl.export.annotate_export import scene_to_annotated_image
+    from imgl.types import Scene
+    from PIL import Image
+
+    catalog_items = list(matches)
+    if rejected:
+        catalog_items.extend(rejected)
+
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as handle:
+        handle.write(png)
+        temp_path = handle.name
+    try:
+        with Image.open(temp_path) as image:
+            width, height = image.size
+        scene = Scene(width=width, height=height, source_image=temp_path)
+        catalog = _preview_matches_to_catalog(catalog_items)
+        annotated = scene_to_annotated_image(scene, catalog, source_image=temp_path)
+        out = io.BytesIO()
+        annotated.save(out, format="PNG")
+        return out.getvalue()
+    finally:
+        Path(temp_path).unlink(missing_ok=True)
+
+
 def render_match_overlay(
     png: bytes,
     matches: list[PreviewMatch],
@@ -135,6 +216,50 @@ def render_match_overlay(
     rejected: list[PreviewMatch] | None = None,
 ) -> bytes:
     """Draw numbered bounding boxes and confidence labels on a screenshot."""
+    import os
+
+    if _prefer_imgl_annotate():
+        try:
+            return _render_match_overlay_imgl_annotate(
+                png,
+                matches,
+                selected_index=selected_index,
+                rejected=rejected,
+            )
+        except ImportError:
+            if preview_backend() in {"imgl", "annotate"}:
+                raise
+
+    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    if backend != "local":
+        try:
+            from ..integrations.vision_backend import render_match_overlay as delegated
+
+            return delegated(
+                png,
+                matches,
+                selected_index=selected_index,
+                rejected=rejected,
+            )
+        except Exception:
+            if backend == "imgl":
+                raise
+    return _render_match_overlay_local(
+        png,
+        matches,
+        selected_index=selected_index,
+        rejected=rejected,
+    )
+
+
+def _render_match_overlay_local(
+    png: bytes,
+    matches: list[PreviewMatch],
+    *,
+    selected_index: int | None = None,
+    rejected: list[PreviewMatch] | None = None,
+) -> bytes:
+    """Local Pillow overlay renderer (vdisplay built-in)."""
     ready, reason = preview_available()
     if not ready:
         raise RuntimeError(reason)

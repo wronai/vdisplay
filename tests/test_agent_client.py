@@ -45,6 +45,26 @@ def test_client_unreachable_raises(monkeypatch: pytest.MonkeyPatch) -> None:
         client.health()
 
 
+def test_probe_rejects_non_vdisplay_health(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.agent_config import _probe_agent_url, reset_agent_probe_cache
+
+    class FakeResponse:
+        status = 200
+
+        def read(self) -> bytes:
+            return b'{"ok": true}'
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+    monkeypatch.setattr("urllib.request.urlopen", lambda *a, **k: FakeResponse())
+    reset_agent_probe_cache()
+    assert _probe_agent_url("http://127.0.0.1:8765") is None
+
+
 def test_probe_retries_after_initial_miss(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("VDISPLAY_AGENT_URL", raising=False)
     monkeypatch.setenv("VDISPLAY_AGENT_AUTO", "1")

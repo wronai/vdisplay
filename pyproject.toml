@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.16"
+version = "0.1.17"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 authors = [{name = "Tom"}, {name = "Tom Sapletta",email = "tom@sapletta.com"}]
 license = "Apache-2.0"
 dependencies = []
@@ -68,6 +68,18 @@ agent = [
 img2nl = [
     "img2nl[analyze]",
 ]
+imgl = [
+    "imgl",
+]
+vql = [
+    "vql",
+    'img2vql; sys_platform == "linux"',
+]
+observe = [
+    "imgl",
+    "vql",
+    'img2vql; sys_platform == "linux"',
+]
 
 [project.urls]
 Homepage = "https://github.com/wronai/vdisplay"
@@ -120,6 +132,10 @@ rest2vdisplay = { workspace = true }
 mcp2vdisplay = { workspace = true }
 cli2vdisplay = { workspace = true }
 uri2vdisplay = { workspace = true }
+# Sibling repos (github.com layout: wronai/vdisplay + semcod/imgl + oqlos/vql)
+imgl = { path = "../../semcod/imgl", editable = true }
+vql = { path = "../../oqlos/vql", editable = true }
+img2vql = { path = "../../oqlos/vql/packages/img2vql", editable = true }
 
 [tool.pfix]
 # Self-healing Python configuration

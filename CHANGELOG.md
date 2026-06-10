@@ -65,6 +65,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.17] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/control-plane.md
+- Update docs/guides/README.md
+- Update docs/guides/desktop-control-today.md
+- Update docs/guides/session-report.md
+- Update docs/guides/wayland-control.md
+- Update docs/index.md
+- ... and 6 more files
+
+### Test
+- Update tests/test_agent_audit_session.py
+- Update tests/test_agent_client.py
+- Update tests/test_agent_outputs_nl.py
+- Update tests/test_client_http.py
+- Update tests/test_client_routes.py
+- Update tests/test_control_action_state.py
+- Update tests/test_control_diagnostics.py
+- Update tests/test_control_retry_policy.py
+- Update tests/test_control_set_value_verify.py
+- Update tests/test_control_verify_policy.py
+- ... and 12 more files
+
+### Other
+- Update .cursor/settings.json
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update .koru/project.json
+- Update .planfile/config.yaml
+- Update .planfile/sprints/current.yaml
+- Update app.doql.less
+- Update brain/scratch_atspi_dump.txt
+- Update brain/scratch_find_pycharm_chat.py
+- Update brain/scratch_test_screencast.py
+- ... and 35 more files
+
 ## [0.1.16] - 2026-06-10
 
 ### Docs

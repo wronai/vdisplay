@@ -29,6 +29,9 @@ def _selector_kwargs(body: dict[str, Any]) -> dict[str, Any]:
         "vision_anchor_rel": body.get("vision_anchor_rel"),
         "vision_target": body.get("vision_target"),
         "vision_min_confidence": body.get("vision_min_confidence"),
+        "map_path": body.get("map_path"),
+        "map_scope": body.get("map_scope"),
+        "map_target": body.get("map_target"),
     }
 
 

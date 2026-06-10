@@ -46,14 +46,22 @@ A **session recorder** collects every command step, routing decision, verify out
     README.md              # human report (regenerated)
     session.json           # machine index (updated each step)
     env.json
+    maps/
+      chat.json
+      chat.md
     steps/
       0001/
         request.json
         result.json
+        diagnostics.json     # routing, control, verify (structured)
         command.dsl.txt
         preview.png
       0002/
         ...
+    index.jsonl              # append-only domain event log
+    projections/
+      backend_scores.json
+      control_state.json
 ```
 
 ### Naming rules
@@ -66,25 +74,50 @@ A **session recorder** collects every command step, routing decision, verify out
 
 ## Activation
 
-### MVP (PR-1)
-
 | Mechanism | Example |
 |-----------|---------|
-| Env | `VDISPLAY_SESSION_LOG_DIR=sessions/2026-06-10_1039_pycharm-chat` |
-| CLI global flag | `vdisplay --session-log-dir sessions/... control click ...` |
-| Auto slug | If dir unset but `VDISPLAY_SESSION=1`: create `sessions/{ts}_{hostname}/` |
+| Env | `export VDISPLAY_SESSION=1` |
+| Env slug | `export VDISPLAY_SESSION_ID=pycharm-chat` |
+| Env explicit dir | `export VDISPLAY_SESSION_DIR=.vdisplay/my-run` |
+| CLI global flag | `vdisplay --session --session-id my-run control click ...` |
 
-Session starts on first `executor.execute()` when dir is set; `README.md` + `session.json` written after each step and on session close.
+Inspect recorded sessions:
+
+```bash
+vdisplay session list
+vdisplay session show                    # latest under .vdisplay/
+vdisplay session show --format json --dir .vdisplay/2026-06-10T...
+vdisplay session export --dir .vdisplay/my-run -o /tmp/my-run.zip
+```
+
+Session starts on first `executor.execute()` when recording is enabled; `README.md` + `session.json` updated after each step.
+
+### Agent route (Wayland broker)
+
+When commands run via `vdisplay-agent` (`route=agent`), the client sends audit metadata in HTTP headers:
+
+| Header | Purpose |
+|--------|---------|
+| `X-VDisplay-Session-Dir` | Shared session folder (absolute path on broker host) |
+| `X-VDisplay-Session-Id` | Audit slug |
+| `X-VDisplay-Request-Id` | Per-step id |
+| `X-VDisplay-Request-Source` | Adapter name (`cli`, `dsl`, …) |
+
+The broker runs `executor.execute()` locally when headers are present, so screenshots and control artifacts land in the same session directory. Set `VDISPLAY_AGENT_AUDIT_DELEGATE=0` to record on the client instead (artifacts may be missing for remote paths).
 
 ### Later
 
-- `vdisplay session start|close|status`
+- `vdisplay session start|close|status` (explicit lifecycle)
 - REST header `X-VDisplay-Session-Dir`
 - MCP tool metadata field `session_dir`
 
-## Data model
+## Data model (legacy notes)
 
-### `session.json` (top level)
+### `session.json` (top level) — extended fields
+
+`maps[]` lists archived GUI map artifacts under `maps/` (json, md, svg copies).
+
+### Older draft schema
 
 ```json
 {

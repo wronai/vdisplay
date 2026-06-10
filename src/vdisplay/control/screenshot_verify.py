@@ -177,6 +177,41 @@ def diff_png_bytes(
     min_changed_pixels: int = 0,
 ) -> dict[str, Any]:
     """Compare two PNG payloads and report whether they differ meaningfully."""
+    import os
+
+    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    if backend != "local":
+        try:
+            from ..integrations.vision_backend import diff_png_bytes as delegated
+
+            return delegated(
+                before,
+                after,
+                region=region,
+                min_changed_ratio=min_changed_ratio,
+                min_changed_pixels=min_changed_pixels,
+            )
+        except Exception:
+            if backend == "imgl":
+                raise
+    return _diff_png_bytes_local(
+        before,
+        after,
+        region=region,
+        min_changed_ratio=min_changed_ratio,
+        min_changed_pixels=min_changed_pixels,
+    )
+
+
+def _diff_png_bytes_local(
+    before: bytes,
+    after: bytes,
+    *,
+    region: tuple[int, int, int, int] | None = None,
+    min_changed_ratio: float = 0.001,
+    min_changed_pixels: int = 0,
+) -> dict[str, Any]:
+    """Local PIL/bytes screenshot diff (vdisplay built-in)."""
     compare_region = region
     if compare_region is not None:
         from ..capture.linux_xwd import _crop_png, is_blank_png

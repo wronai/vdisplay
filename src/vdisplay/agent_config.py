@@ -30,13 +30,35 @@ def _default_agent_base() -> str:
     return f"http://{host}:{port}"
 
 
+def _is_vdisplay_agent_health(payload: object) -> bool:
+    """Reject lookalike /health responders (e.g. other localhost brokers on 8765)."""
+    if not isinstance(payload, dict):
+        return False
+    if payload.get("ok") is not True:
+        return False
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        return False
+    service = str(data.get("service") or data.get("broker") or "").strip().lower()
+    return service == "vdisplay-agent"
+
+
 def _probe_agent_url(base_url: str, *, timeout: float = 0.2) -> str | None:
     try:
         with urllib.request.urlopen(f"{base_url.rstrip('/')}/health", timeout=timeout) as response:
-            if response.status == 200:
-                return base_url.rstrip("/")
+            if response.status != 200:
+                return None
+            raw = response.read()
     except (urllib.error.URLError, TimeoutError, OSError, ValueError):
         return None
+    try:
+        import json
+
+        payload = json.loads(raw.decode("utf-8"))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return None
+    if _is_vdisplay_agent_health(payload):
+        return base_url.rstrip("/")
     return None
 
 

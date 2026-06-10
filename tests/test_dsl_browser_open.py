@@ -145,13 +145,13 @@ def test_agent_client_browser_open_route() -> None:
     client = AgentClient("http://127.0.0.1:0", token="")
     captured: dict[str, object] = {}
 
-    def fake_request(method, path, body=None, **kwargs):
+    def fake_request_json(method, path, body=None, **kwargs):
         captured.update({"method": method, "path": path, "body": body})
-        return {"ok": True, "data": {"session_id": "web-1", "mode": "browser"}}
+        return {"ok": True, "session_id": "web-1", "mode": "browser"}
 
-    client._request = fake_request  # type: ignore[method-assign]
+    client.request_json = fake_request_json  # type: ignore[method-assign]
     payload = client.browser_open(url="https://example.com", session_id="web-1", headless=False)
-    assert payload["data"]["session_id"] == "web-1"
+    assert payload["session_id"] == "web-1"
     assert captured["method"] == "POST"
     assert captured["path"] == "/session/browser/open"
     assert captured["body"] == {

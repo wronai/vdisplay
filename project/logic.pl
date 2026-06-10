@@ -1,5 +1,5 @@
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('vdisplay', '0.1.14', 'python').
+project_metadata('vdisplay', '0.1.16', 'python').
 
 % ── Project Files ────────────────────────────────────────
 project_file('app.doql.less', 55, 'less').
@@ -151,9 +151,11 @@ project_file('src/vdisplay/control/capabilities.py', 77, 'python').
 project_file('src/vdisplay/control/contracts.py', 165, 'python').
 project_file('src/vdisplay/control/descriptors.py', 465, 'python').
 project_file('src/vdisplay/control/engine.py', 68, 'python').
-project_file('src/vdisplay/control/gui_map.py', 517, 'python').
+project_file('src/vdisplay/control/gui_map.py', 246, 'python').
+project_file('src/vdisplay/control/gui_map_build.py', 244, 'python').
 project_file('src/vdisplay/control/gui_map_diff.py', 501, 'python').
 project_file('src/vdisplay/control/gui_map_export.py', 180, 'python').
+project_file('src/vdisplay/control/gui_map_resolve.py', 110, 'python').
 project_file('src/vdisplay/control/models.py', 188, 'python').
 project_file('src/vdisplay/control/plugins.py', 164, 'python').
 project_file('src/vdisplay/control/policy.py', 243, 'python').
@@ -171,8 +173,8 @@ project_file('src/vdisplay/control/providers/terminal_session.py', 228, 'python'
 project_file('src/vdisplay/control/providers/uia.py', 170, 'python').
 project_file('src/vdisplay/control/providers/uia_impl.py', 300, 'python').
 project_file('src/vdisplay/control/providers/vision/__init__.py', 4, 'python').
-project_file('src/vdisplay/control/providers/vision/provider.py', 706, 'python').
-project_file('src/vdisplay/control/providers/x11.py', 141, 'python').
+project_file('src/vdisplay/control/providers/vision/provider.py', 716, 'python').
+project_file('src/vdisplay/control/providers/x11.py', 151, 'python').
 project_file('src/vdisplay/control/registry.py', 118, 'python').
 project_file('src/vdisplay/control/router.py', 272, 'python').
 project_file('src/vdisplay/control/routing_semantics.py', 159, 'python').
@@ -181,6 +183,7 @@ project_file('src/vdisplay/control/screenshot_verify.py', 266, 'python').
 project_file('src/vdisplay/control/selector.py', 348, 'python').
 project_file('src/vdisplay/control/session.py', 217, 'python').
 project_file('src/vdisplay/control/session_kind.py', 16, 'python').
+project_file('src/vdisplay/control/timing.py', 24, 'python').
 project_file('src/vdisplay/control/verifier.py', 568, 'python').
 project_file('src/vdisplay/control/verify.py', 499, 'python').
 project_file('src/vdisplay/control/verify_strategy.py', 17, 'python').
@@ -254,10 +257,12 @@ project_file('tests/test_control_screenshot_verify.py', 227, 'python').
 project_file('tests/test_control_selector.py', 36, 'python').
 project_file('tests/test_control_selector_v2.py', 88, 'python').
 project_file('tests/test_control_set_value_verify.py', 153, 'python').
-project_file('tests/test_control_settle.py', 46, 'python').
+project_file('tests/test_control_settle.py', 53, 'python').
 project_file('tests/test_control_terminal.py', 184, 'python').
+project_file('tests/test_control_timing.py', 28, 'python').
 project_file('tests/test_control_verifier_hybrid.py', 200, 'python').
 project_file('tests/test_control_verify.py', 265, 'python').
+project_file('tests/test_control_x11.py', 81, 'python').
 project_file('tests/test_coords_rotation.py', 39, 'python').
 project_file('tests/test_cross_platform_providers.py', 179, 'python').
 project_file('tests/test_dsl_browser_open.py', 176, 'python').
@@ -905,21 +910,17 @@ python_function('src/vdisplay/control/engine.py', 'resolve_route', 1, 2, 2).
 python_function('src/vdisplay/control/engine.py', 'resolve_provider', 1, 1, 1).
 python_function('src/vdisplay/control/gui_map.py', 'load_gui_map', 1, 2, 6).
 python_function('src/vdisplay/control/gui_map.py', 'save_gui_map', 2, 1, 4).
-python_function('src/vdisplay/control/gui_map.py', '_slug', 1, 2, 3).
-python_function('src/vdisplay/control/gui_map.py', 'tile_fingerprint', 2, 4, 11).
-python_function('src/vdisplay/control/gui_map.py', 'element_from_ocr_box', 1, 9, 9).
-python_function('src/vdisplay/control/gui_map.py', 'crop_png_bounds', 2, 3, 7).
-python_function('src/vdisplay/control/gui_map.py', '_translate_ocr_boxes', 3, 4, 3).
-python_function('src/vdisplay/control/gui_map.py', 'parse_crop_bounds', 1, 6, 6).
-python_function('src/vdisplay/control/gui_map.py', '_boxes_in_scope_for_build', 2, 4, 2).
-python_function('src/vdisplay/control/gui_map.py', '_prepare_ocr_boxes_for_build', 2, 13, 9).
-python_function('src/vdisplay/control/gui_map.py', 'build_gui_map_from_ocr', 2, 7, 11).
-python_function('src/vdisplay/control/gui_map.py', 'resolve_map_element', 2, 2, 2).
-python_function('src/vdisplay/control/gui_map.py', 'resolve_map_region', 2, 2, 2).
-python_function('src/vdisplay/control/gui_map.py', 'map_element_to_node', 1, 5, 4).
-python_function('src/vdisplay/control/gui_map.py', 'scoped_capture_region', 2, 2, 1).
-python_function('src/vdisplay/control/gui_map.py', 'verify_hints_from_map_element', 1, 3, 0).
-python_function('src/vdisplay/control/gui_map.py', 'resolve_map_verify_mode', 1, 11, 2).
+python_function('src/vdisplay/control/gui_map_build.py', '_slug', 1, 2, 3).
+python_function('src/vdisplay/control/gui_map_build.py', 'tile_fingerprint', 2, 4, 11).
+python_function('src/vdisplay/control/gui_map_build.py', 'element_from_ocr_box', 1, 9, 9).
+python_function('src/vdisplay/control/gui_map_build.py', 'crop_png_bounds', 2, 3, 7).
+python_function('src/vdisplay/control/gui_map_build.py', '_translate_ocr_boxes', 3, 4, 3).
+python_function('src/vdisplay/control/gui_map_build.py', 'parse_crop_bounds', 1, 6, 6).
+python_function('src/vdisplay/control/gui_map_build.py', '_boxes_in_scope_for_build', 2, 4, 2).
+python_function('src/vdisplay/control/gui_map_build.py', '_prepare_ocr_boxes_for_build', 2, 4, 8).
+python_function('src/vdisplay/control/gui_map_build.py', '_maybe_crop_png', 5, 6, 1).
+python_function('src/vdisplay/control/gui_map_build.py', '_filter_ocr_boxes', 1, 5, 2).
+python_function('src/vdisplay/control/gui_map_build.py', 'build_gui_map_from_ocr', 2, 7, 11).
 python_function('src/vdisplay/control/gui_map_diff.py', '_center', 1, 1, 1).
 python_function('src/vdisplay/control/gui_map_diff.py', '_distance', 2, 1, 2).
 python_function('src/vdisplay/control/gui_map_diff.py', '_box_to_bounds', 1, 1, 1).
@@ -942,6 +943,15 @@ python_function('src/vdisplay/control/gui_map_export.py', 'render_map_svg', 2, 4
 python_function('src/vdisplay/control/gui_map_export.py', '_element_svg', 1, 5, 3).
 python_function('src/vdisplay/control/gui_map_export.py', '_png_b64', 1, 1, 2).
 python_function('src/vdisplay/control/gui_map_export.py', 'write_map_artifacts', 1, 4, 8).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'resolve_map_element', 2, 2, 2).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'resolve_map_region', 2, 2, 2).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'map_element_to_node', 1, 5, 4).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'scoped_capture_region', 2, 2, 1).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'verify_hints_from_map_element', 1, 3, 0).
+python_function('src/vdisplay/control/gui_map_resolve.py', 'resolve_map_verify_mode', 1, 2, 3).
+python_function('src/vdisplay/control/gui_map_resolve.py', '_normalize_verify_mode', 1, 3, 2).
+python_function('src/vdisplay/control/gui_map_resolve.py', '_direct_verify_mode', 1, 3, 0).
+python_function('src/vdisplay/control/gui_map_resolve.py', '_identity_region_verify_mode', 1, 6, 0).
 python_function('src/vdisplay/control/plugins.py', '_register_plugin', 3, 1, 2).
 python_function('src/vdisplay/control/plugins.py', '_bootstrap_builtin_registry', 0, 3, 3).
 python_function('src/vdisplay/control/plugins.py', 'load_entry_point_plugins', 1, 8, 9).
@@ -1033,7 +1043,7 @@ python_function('src/vdisplay/control/providers/uia_impl.py', '_passes_uia_filte
 python_function('src/vdisplay/control/providers/uia_impl.py', 'filter_records', 2, 3, 1).
 python_function('src/vdisplay/control/providers/uia_impl.py', 'create_uia_backend', 1, 2, 1).
 python_function('src/vdisplay/control/providers/x11.py', '_snapshot_hint', 2, 3, 2).
-python_function('src/vdisplay/control/providers/x11.py', '_window_to_snapshot', 1, 9, 15).
+python_function('src/vdisplay/control/providers/x11.py', '_window_to_snapshot', 1, 9, 6).
 python_function('src/vdisplay/control/registry.py', '_build_atspi', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_uia', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_ax', 0, 1, 1).
@@ -1124,6 +1134,8 @@ python_function('src/vdisplay/control/session.py', 'metadata_from_terminal_sessi
 python_function('src/vdisplay/control/session.py', 'build_catalog_from_agent_store', 1, 11, 10).
 python_function('src/vdisplay/control/session.py', 'build_catalog_local', 0, 4, 9).
 python_function('src/vdisplay/control/session.py', 'merge_catalogs', 0, 5, 5).
+python_function('src/vdisplay/control/timing.py', 'control_focus_type_seconds', 0, 2, 3).
+python_function('src/vdisplay/control/timing.py', 'control_pointer_settle_seconds', 0, 2, 3).
 python_function('src/vdisplay/control/verifier.py', 'verify_spec_from_flags', 0, 10, 1).
 python_function('src/vdisplay/control/verifier.py', '_region_for_verify', 2, 10, 3).
 python_function('src/vdisplay/control/verifier.py', '_ocr_text_contains', 2, 8, 5).
@@ -1492,7 +1504,7 @@ python_function('tests/test_control_set_value_verify.py', 'test_control_set_valu
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_zero_without_verify', 0, 2, 1).
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_default_with_verify', 1, 2, 2).
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_from_env', 1, 2, 2).
-python_function('tests/test_control_settle.py', 'test_terminal_set_value_verify_respects_settle', 1, 3, 7).
+python_function('tests/test_control_settle.py', 'test_terminal_set_value_verify_with_settle_env', 1, 3, 9).
 python_function('tests/test_control_terminal.py', '_demo_registry', 0, 1, 2).
 python_function('tests/test_control_terminal.py', '_seed_default_demo', 0, 1, 3).
 python_function('tests/test_control_terminal.py', 'test_terminal_screen_nodes', 0, 7, 7).
@@ -1505,6 +1517,10 @@ python_function('tests/test_control_terminal.py', 'test_resolve_provider_termina
 python_function('tests/test_control_terminal.py', 'test_resolve_provider_auto_routes_terminal_environment', 0, 2, 5).
 python_function('tests/test_control_terminal.py', 'test_resolve_provider_unknown_backend', 0, 4, 4).
 python_function('tests/test_control_terminal.py', 'test_terminal_service_missing_session_raises', 0, 2, 4).
+python_function('tests/test_control_timing.py', 'test_control_focus_type_seconds_default', 1, 2, 2).
+python_function('tests/test_control_timing.py', 'test_control_focus_type_seconds_from_env', 1, 2, 2).
+python_function('tests/test_control_timing.py', 'test_control_pointer_settle_seconds_default', 1, 2, 2).
+python_function('tests/test_control_timing.py', 'test_control_pointer_settle_seconds_from_env', 1, 2, 2).
 python_function('tests/test_control_verifier_hybrid.py', '_png', 1, 1, 4).
 python_function('tests/test_control_verifier_hybrid.py', 'test_verify_spec_from_dual_flags', 0, 3, 1).
 python_function('tests/test_control_verifier_hybrid.py', 'test_hybrid_rescues_failed_semantic_with_visual', 1, 5, 10).
@@ -1522,6 +1538,8 @@ python_function('tests/test_control_verify.py', 'test_snapshot_diff_alias_matche
 python_function('tests/test_control_verify.py', 'test_collect_changed_nodes_flattens_diff', 0, 4, 4).
 python_function('tests/test_control_verify.py', 'test_verify_detects_focus_change_without_value_change', 0, 3, 3).
 python_function('tests/test_control_verify.py', 'test_verify_fails_when_nothing_changes', 0, 3, 2).
+python_function('tests/test_control_x11.py', 'test_x11_set_value_clicks_before_typing', 1, 5, 7).
+python_function('tests/test_control_x11.py', 'test_x11_invoke_clicks_center', 1, 4, 7).
 python_function('tests/test_coords_rotation.py', 'test_global_pointer_coords_rotated_left_aspect_mismatch', 0, 4, 1).
 python_function('tests/test_coords_rotation.py', 'test_global_pointer_coords_monitor_1to1_on_normal_rotation', 1, 4, 2).
 python_function('tests/test_cross_platform_providers.py', '_mock_linux_readiness', 1, 1, 1).
@@ -2305,17 +2323,25 @@ python_method('VisionStubProvider', '_node_for', 1, 3, 3).
 python_method('VisionStubProvider', '_click_node', 1, 7, 4).
 python_method('VisionStubProvider', 'invoke_map_node', 1, 1, 1).
 python_method('VisionStubProvider', 'focus_map_node', 1, 1, 1).
-python_method('VisionStubProvider', 'set_value_map_node', 2, 9, 10).
-python_method('VisionStubProvider', '_pointer_click_at', 1, 6, 7).
+python_method('VisionStubProvider', 'set_value_map_node', 2, 10, 11).
+python_method('VisionStubProvider', '_pointer_click_at', 1, 8, 8).
 python_method('VisionStubProvider', 'invoke', 1, 8, 5).
 python_method('VisionStubProvider', 'focus', 1, 1, 1).
-python_method('VisionStubProvider', 'set_value', 2, 11, 11).
+python_method('VisionStubProvider', 'set_value', 2, 12, 12).
 python_method('VisionStubProvider', '_paste_value', 2, 8, 5).
 python_method('VisionStubProvider', 'bounds', 1, 1, 1).
 python_class('src/vdisplay/control/providers/x11.py', 'X11ControlProvider').
 python_method('X11ControlProvider', '__init__', 0, 2, 3).
 python_method('X11ControlProvider', 'available', 0, 2, 2).
 python_method('X11ControlProvider', 'snapshot', 0, 5, 7).
+python_method('X11ControlProvider', 'find', 1, 2, 2).
+python_method('X11ControlProvider', '_node_for', 1, 3, 1).
+python_method('X11ControlProvider', '_click_at', 2, 2, 4).
+python_method('X11ControlProvider', '_click_node', 1, 2, 2).
+python_method('X11ControlProvider', 'invoke', 1, 1, 2).
+python_method('X11ControlProvider', 'focus', 1, 2, 3).
+python_method('X11ControlProvider', 'set_value', 2, 2, 4).
+python_method('X11ControlProvider', 'bounds', 1, 1, 1).
 python_class('src/vdisplay/control/registry.py', 'ProviderRegistry').
 python_method('ProviderRegistry', '__init__', 0, 1, 0).
 python_method('ProviderRegistry', 'register', 2, 2, 1).
@@ -2440,6 +2466,11 @@ python_method('_StubPluginProvider', 'invoke', 1, 1, 0).
 python_method('_StubPluginProvider', 'focus', 1, 1, 0).
 python_method('_StubPluginProvider', 'set_value', 2, 1, 0).
 python_method('_StubPluginProvider', 'bounds', 1, 1, 0).
+python_class('tests/test_control_x11.py', '_FakeInput').
+python_method('_FakeInput', '__init__', 0, 1, 0).
+python_method('_FakeInput', 'move', 2, 1, 1).
+python_method('_FakeInput', 'click', 1, 1, 1).
+python_method('_FakeInput', 'type_text', 1, 1, 1).
 python_class('tests/test_mirror_primary.py', '_FakeResult').
 python_method('_FakeResult', '__init__', 2, 1, 0).
 python_class('tests/test_session_catalog.py', '_FakeHandle').

@@ -74,6 +74,28 @@ def match_template(
     method: str = "ccoeff_normed",
 ) -> list[TemplateMatch]:
     """Find template occurrences in a screenshot using OpenCV matchTemplate."""
+    import os
+
+    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    if backend != "local":
+        try:
+            from ..integrations.vision_backend import match_template as delegated
+
+            return delegated(png, template_png, threshold=threshold, method=method)
+        except Exception:
+            if backend == "imgl":
+                raise
+    return _match_template_local(png, template_png, threshold=threshold, method=method)
+
+
+def _match_template_local(
+    png: bytes,
+    template_png: bytes,
+    *,
+    threshold: float = 0.85,
+    method: str = "ccoeff_normed",
+) -> list[TemplateMatch]:
+    """Local OpenCV template matching (vdisplay built-in)."""
     ready, reason = template_available()
     if not ready:
         raise RuntimeError(reason)

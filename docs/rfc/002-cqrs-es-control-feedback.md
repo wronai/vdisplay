@@ -611,7 +611,7 @@ feat(events): append-only index.jsonl from executor and session recorder
 
 ---
 
-### PR-D: Control lifecycle + retry policy
+### PR-D: Control lifecycle + retry policy ✅
 
 **Goal:** Policy-driven retry/fallback with explicit phases.
 

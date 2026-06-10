@@ -1,0 +1,16 @@
+syntax = "proto3";
+package vdisplay.v1;
+
+import "vdisplay/v1/common.proto";
+
+message ResultEnvelope {
+  TraceContext trace = 1;
+  bool ok = 2;
+  string action = 3;
+  string handler = 4;
+  bytes payload_json = 5;
+  bytes diagnostics_json = 6;
+  repeated Artifact artifacts = 7;
+  ErrorInfo error = 8;
+  int32 duration_ms = 9;
+}

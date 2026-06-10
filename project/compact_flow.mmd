@@ -16,14 +16,14 @@ flowchart TD
     packages__nlp2vdisplay["packages.nlp2vdisplay<br/>3 funcs"]
     packages__rest2vdisplay["packages.rest2vdisplay<br/>2 funcs"]
     packages__uri2vdisplay["packages.uri2vdisplay<br/>2 funcs"]
-    packages__vdisplay_agent["packages.vdisplay-agent<br/>129 funcs"]
-    src__vdisplay["src.vdisplay<br/>1238 funcs"]
-    packages__vdisplay_agent ==>|28| src__vdisplay
+    packages__vdisplay_agent["packages.vdisplay-agent<br/>136 funcs"]
+    src__vdisplay["src.vdisplay<br/>1444 funcs"]
+    packages__vdisplay_agent ==>|32| src__vdisplay
+    src__vdisplay ==>|7| packages__dsl2vdisplay
     packages__dsl2vdisplay ==>|6| src__vdisplay
-    src__vdisplay ==>|6| packages__dsl2vdisplay
+    src__vdisplay ==>|5| packages__vdisplay_agent
     packages__mcp2vdisplay ==>|4| src__vdisplay
     packages__rest2vdisplay ==>|4| packages__dsl2vdisplay
-    src__vdisplay ==>|4| packages__vdisplay_agent
     examples__host_mirror -->|3| src__vdisplay
     examples__host_mirror -->|3| examples__common
     examples__host_relay -->|3| src__vdisplay

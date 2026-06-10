@@ -21,6 +21,15 @@ Consolidated reference. Package-specific vars may also appear in [agent-broker.m
 |----------|---------|
 | `YDOTOOL_SOCKET` | ydotool daemon socket (e.g. `/tmp/.ydotool_socket`) |
 | `VDISPLAY_IMG2NL` | `1` — optional img2nl enrichment for VQL |
+| `VDISPLAY_DESCRIBE_BACKEND` | `auto` \| `imgl` \| `img2vql` \| `img2nl` — screenshot NL describe path |
+| `VDISPLAY_OBSERVE` | `1` — build `ScreenContext` sidecar after screenshot (auto when imgl/vql installed) |
+| `VDISPLAY_IMGL` | `1` — run IMGL scene analysis in observe pipeline |
+| `VDISPLAY_VQL` | `1` — export VQL program JSON (+ SVG with `--svg`) |
+| `VDISPLAY_VISION_BACKEND` | `auto` \| `local` \| `imgl` — OCR/template/diff/preview backend (`local` = built-in; `imgl` = IMGL `vision_ops`; `auto` = IMGL when installed) |
+| `VDISPLAY_VISION_PREVIEW` | `auto` \| `local` \| `imgl` — preview overlay renderer (`imgl` = IMGL `annotate_export`; `auto` = IMGL when installed) |
+| `VDISPLAY_OBSERVE_CACHE` | `1` — reuse IMGL/VQL from session `artifacts/observe/` when fingerprint matches |
+| `VDISPLAY_OCR_CACHE` | `1` — use OCR boxes from `VDISPLAY_SCREEN_CONTEXT_PATH` sidecar before full-screen OCR |
+| `VDISPLAY_SCREEN_CONTEXT_PATH` | Path to `.context.json` sidecar for verify OCR cache |
 | `VDISPLAY_VISION_LLM` | OpenRouter model id for cold-path vision (separate from `LLM_MODEL`) |
 | `VDISPLAY_VISION_LLM_ENABLED` | `0` \| `1` |
 | `VDISPLAY_VISION_LLM_MODE` | `off` \| `fallback` \| `enrich` \| `both` |
@@ -46,6 +55,18 @@ Guide: [guides/vision-fallback.md](../guides/vision-fallback.md)
 | `QT_ACCESSIBILITY` | `1` — enable Qt accessibility |
 | `GDK_BACKEND` | `x11` — force XWayland for GTK apps (AT-SPI path) |
 
+## koru / coru integration (external)
+
+Used by `koru.integrations.vdisplay_client` when koru drives IDE chat via vdisplay instead of the autopilot plugin socket.
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `KORU_VDISPLAY_CONTROL_FALLBACK` | `auto` | `auto` — enable on Wayland when plugin disconnected; `0` — disable |
+| `KORU_VDISPLAY_AGENT_URL` | from vdisplay | Broker URL when vdisplay is not imported in-process |
+| `KORU_VDISPLAY_DRY_RUN` | off | Log drive payload without actuating |
+
+vdisplay fallback **does not** replace the koru IDE plugin for Cursor/Glass UI chat (Electron webview is not matched by generic AT-SPI selectors). See [guides/desktop-control-today.md](../guides/desktop-control-today.md).
+
 ## Orchestration (external)
 
 | Variable | Purpose |
@@ -59,6 +80,10 @@ Guide: [guides/vision-fallback.md](../guides/vision-fallback.md)
 | `VDISPLAY_SESSION` | `1` — auto-create `.vdisplay/<timestamp>__.../` per process |
 | `VDISPLAY_SESSION_DIR` | Explicit session directory (overrides auto path) |
 | `VDISPLAY_SESSION_ID` | Slug suffix for auto-created session dir |
+| `VDISPLAY_AGENT_AUDIT_DELEGATE` | `1` (default) — agent-routed commands record on broker via `X-VDisplay-*` headers |
+| `VDISPLAY_EVENT_STORE` | `1` by default when session recording is on; writes `index.jsonl` |
+| `VDISPLAY_EVENT_FORMAT` | `json` (default) \| `protobuf` — also append length-delimited records to `index.pb` |
+| `VDISPLAY_PROJECTIONS` | `1` (default) — rebuild `projections/*.json` after each event |
 | `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in README (future) |
 
 CLI: `vdisplay --session [--session-id SLUG] …` — root audit slug. Control `--session-id` is the **terminal/browser** session id (different field).
@@ -69,7 +94,10 @@ See [session-report.md](../guides/session-report.md) and [RFC 002](rfc/002-cqrs-
 
 | Variable | Purpose |
 |----------|---------|
-| `VDISPLAY_CONTROL_SETTLE_MS` | Pause after click/type before verify snapshot (default `150`) |
+| `VDISPLAY_CONTROL_RETRY` | `auto` \| `0` \| `1` — retry failed verify (`auto` = on when `--verify`) |
+| `VDISPLAY_CONTROL_MAX_ATTEMPTS` | Max retry attempts (default `3`) |
+| `VDISPLAY_CONTROL_RETRY_DELAY_MS` | Pause between retries (default `150`) |
+| `VDISPLAY_CONTROL_RETRY_STRATEGIES` | Comma list: `retry_scope,fallback_backend,refresh_map` |
 | `VDISPLAY_CONTROL_FOCUS_MS` | Pause after click-to-focus before keystrokes (default `350`) |
 | `VDISPLAY_CONTROL_POINTER_SETTLE_MS` | Pause after pointer click before typing (default `50`) |
 | `VDISPLAY_ALLOW_YDOTOOL_TYPING` | `1` — allow ydotool keystrokes on Wayland (default off on GNOME) |

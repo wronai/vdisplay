@@ -4,6 +4,8 @@
 
 Back to [documentation index](index.md) · [RFC 001 — extensibility](rfc/001-extensibility-model.md)
 
+> **Current capabilities & gaps (2026-06):** For a task-oriented view of what works on Linux desktop today (browser, terminal, PyCharm, Cursor, koru fallback), see [guides/desktop-control-today.md](guides/desktop-control-today.md).
+
 Unified GUI control for browsers, terminals, and native desktop apps. Vision (screenshot/screencast) is used for verification and fallback — not as the primary actuation path.
 
 ## Architecture

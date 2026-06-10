@@ -6,12 +6,16 @@ import asyncio
 from collections.abc import Callable
 from typing import Any
 
-from fastapi import FastAPI, Header
+from fastapi import Depends, FastAPI, Header
 from fastapi.responses import JSONResponse
+from vdisplay.application.commands import CommandVerb
 
 from .. import schemas as S
 from ..envelope import json_error, json_from_runtime, strip_ok, success
 from ..runtime import AgentRuntime
+from ._audit_execute import execute_audit_route, execute_audited_service
+from ..audit_context import AuditContext
+from ._audit_headers import read_audit_headers
 
 
 def register_routes(
@@ -23,82 +27,106 @@ def register_routes(
     async def session_virtual_start(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            return json_from_runtime(S.ACTION_VIRTUAL_START, broker.start_virtual(**body))
-        except Exception as exc:
-            return json_error(S.ACTION_VIRTUAL_START, exc)
+        return await execute_audited_service(
+            S.ACTION_VIRTUAL_START,
+            body,
+            audit=audit,
+            fallback=lambda payload: broker.start_virtual(**payload),
+            record_verb=CommandVerb.VIRTUAL_START,
+        )
 
     @app.post("/session/mirror/start")
     async def session_mirror_start(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            return json_from_runtime(S.ACTION_MIRROR_START, broker.start_mirror(**body))
-        except Exception as exc:
-            return json_error(S.ACTION_MIRROR_START, exc)
+        return await execute_audited_service(
+            S.ACTION_MIRROR_START,
+            body,
+            audit=audit,
+            fallback=lambda payload: broker.start_mirror(**payload),
+            record_verb=CommandVerb.MIRROR,
+        )
 
     @app.post("/session/relay/start")
     async def session_relay_start(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            return json_from_runtime(S.ACTION_RELAY_START, broker.start_relay(**body))
-        except Exception as exc:
-            return json_error(S.ACTION_RELAY_START, exc)
+        from ._audit_execute import execute_audited_service
+
+        return await execute_audited_service(
+            S.ACTION_RELAY_START,
+            body,
+            audit=audit,
+            fallback=lambda payload: broker.start_relay(**payload),
+            record_verb=CommandVerb.ADOPT,
+        )
 
     @app.post("/session/browser/open")
     async def session_browser_open(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            return json_from_runtime(
-                S.ACTION_BROWSER_START,
-                broker.start_browser(
-                    url=str(body.get("url") or body.get("app") or ""),
-                    session_id=body.get("session_id"),
-                    headless=bool(body.get("headless", True)),
-                    title=body.get("title"),
-                    engine=body.get("engine") or body.get("vendor"),
-                ),
-            )
-        except Exception as exc:
-            return json_error(S.ACTION_BROWSER_START, exc)
+
+        def _start_browser(payload: dict[str, Any]) -> dict[str, Any]:
+            mapped = dict(payload)
+            if mapped.get("app") and not mapped.get("url"):
+                mapped["url"] = mapped["app"]
+            return broker.start_browser(**mapped)
+
+        return await execute_audit_route(
+            S.ACTION_BROWSER_START,
+            CommandVerb.BROWSER_OPEN,
+            body,
+            audit=audit,
+            fallback=_start_browser,
+        )
 
     @app.post("/session/terminal/open")
     async def session_terminal_open(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            return json_from_runtime(S.ACTION_TERMINAL_START, broker.start_terminal(**body))
-        except Exception as exc:
-            return json_error(S.ACTION_TERMINAL_START, exc)
+        return await execute_audit_route(
+            S.ACTION_TERMINAL_START,
+            CommandVerb.TERMINAL_OPEN,
+            body,
+            audit=audit,
+            fallback=lambda payload: broker.start_terminal(**payload),
+        )
 
     @app.post("/session/screencast/start")
     async def session_screencast_start(
         body: dict[str, Any],
         authorization: str | None = Header(default=None),
+        audit: AuditContext = Depends(read_audit_headers),
     ) -> JSONResponse:
         check_auth(authorization)
-        try:
-            payload = await asyncio.to_thread(
-                broker.start_screencast,
-                interactive=bool(body.get("interactive", True)),
-                timeout_s=float(body.get("timeout_s", 120)),
-                multiple=body.get("multiple"),
-            )
-            return json_from_runtime(S.ACTION_SCREENCAST_START, payload)
-        except Exception as exc:
-            return json_error(S.ACTION_SCREENCAST_START, exc)
+        from ._audit_execute import execute_audited_service
+
+        return await execute_audited_service(
+            S.ACTION_SCREENCAST_START,
+            body,
+            audit=audit,
+            fallback=lambda payload: broker.start_screencast(
+                interactive=bool(payload.get("interactive", True)),
+                timeout_s=float(payload.get("timeout_s", 120)),
+                multiple=payload.get("multiple"),
+            ),
+            record_verb=CommandVerb.SCREENSHOT,
+        )
 
     @app.post("/session/screencast/stop")
     def session_screencast_stop(
