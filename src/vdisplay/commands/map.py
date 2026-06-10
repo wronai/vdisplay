@@ -18,6 +18,11 @@ def register(sub: argparse._SubParsersAction) -> None:
     build.add_argument("--monitor", help="Monitor/output name (e.g. DP-2)")
     build.add_argument("--region-id", default="screen", help="Default region id in map")
     build.add_argument("--region-label", help="Human label for default region")
+    build.add_argument(
+        "--crop-bounds",
+        help="Limit OCR to x,y,width,height (global monitor coords); reduces noise vs full-screen OCR",
+    )
+    build.add_argument("--min-text-len", type=int, default=2, help="Skip OCR labels shorter than N chars")
     build.add_argument("--min-confidence", type=float, default=0.5, help="OCR confidence threshold")
     build.set_defaults(func=handle)
 
@@ -58,6 +63,8 @@ def handle(args: argparse.Namespace) -> int:
                 region_id=getattr(args, "region_id", "screen"),
                 region_label=getattr(args, "region_label", None),
                 min_confidence=getattr(args, "min_confidence", 0.5),
+                crop_bounds=getattr(args, "crop_bounds", None),
+                min_text_len=getattr(args, "min_text_len", 2),
             )
         )
         return 0

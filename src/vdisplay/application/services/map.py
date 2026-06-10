@@ -51,11 +51,16 @@ def map_build(
     region_id: str = "screen",
     region_label: str | None = None,
     min_confidence: float = 0.5,
+    crop_bounds: str | None = None,
+    min_text_len: int = 2,
     capture_fn: Any | None = None,
 ) -> dict[str, Any]:
-    """Capture screen, OCR all text boxes, emit map.json (+ optional md/svg)."""
-    png, meta = _capture(display=display, capture_fn=capture_fn)
+    """Capture screen, OCR text boxes (optionally scoped), emit map.json (+ optional md/svg)."""
+    from ...control.gui_map import parse_crop_bounds
+
+    png, meta = _capture(display=display, monitor=monitor, capture_fn=capture_fn)
     meta, monitor, rotation = _prepare_capture_meta(display=display, monitor=monitor, png=png, meta=meta)
+    scope_bounds = parse_crop_bounds(crop_bounds) if crop_bounds else None
 
     pack = build_gui_map_from_ocr(
         png,
@@ -65,6 +70,8 @@ def map_build(
         region_id=region_id,
         region_label=region_label or region_id,
         min_confidence=min_confidence,
+        scope_bounds=scope_bounds,
+        min_text_len=min_text_len,
     )
     written = write_map_artifacts(
         pack,
@@ -80,6 +87,7 @@ def map_build(
         "regions": len(pack.regions),
         "monitor": monitor,
         "rotation": rotation,
+        "scope_bounds": pack.regions.get(region_id).scope_bounds.to_dict() if region_id in pack.regions else None,
         "artifacts": written,
     }
 
@@ -106,7 +114,7 @@ def map_diff(
     capture_fn: Any | None = None,
 ) -> dict[str, Any]:
     pack = load_gui_map(map_path)
-    png, meta = _capture(display=display, capture_fn=capture_fn)
+    png, meta = _capture(display=display, monitor=monitor or pack.monitor, capture_fn=capture_fn)
     meta, _, _ = _prepare_capture_meta(
         display=display,
         monitor=monitor or pack.monitor,
@@ -137,7 +145,7 @@ def map_refresh(
     capture_fn: Any | None = None,
 ) -> dict[str, Any]:
     pack = load_gui_map(map_path)
-    png, meta = _capture(display=display, capture_fn=capture_fn)
+    png, meta = _capture(display=display, monitor=monitor or pack.monitor, capture_fn=capture_fn)
     meta, monitor_name, rotation = _prepare_capture_meta(
         display=display,
         monitor=monitor or pack.monitor,
@@ -173,18 +181,88 @@ def map_refresh(
     }
 
 
-def _capture(*, display: str | None, capture_fn: Any | None) -> tuple[bytes, dict[str, Any]]:
+def _capture(
+    *,
+    display: str | None,
+    monitor: str | None = None,
+    capture_fn: Any | None = None,
+) -> tuple[bytes, dict[str, Any]]:
     if capture_fn is not None:
         png = capture_fn(display=display)
         return png, {"method": "injected"}
-    from ...capture.host import capture_host_png
 
+    agent_capture = _capture_via_agent(display=display, monitor=monitor)
+    if agent_capture is not None:
+        return agent_capture
+
+    from ...capture.host import capture_host_png
+    from ...agent_config import resolve_agent_url
+
+    if resolve_agent_url(allow_auto=True):
+        raise VDisplayError(
+            "map capture failed via agent. Ensure screencast is ready:\n"
+            "  1. vdisplay-agent serve\n"
+            "  2. vdisplay agent screencast start\n"
+            "(screencast is lost every time the agent restarts)"
+        )
+
+    monitor_index = _monitor_index(display, monitor)
     try:
-        return capture_host_png(display=display)
+        return capture_host_png(
+            display=display,
+            monitor=monitor_index,
+            source=monitor or "primary",
+        )
     except VDisplayError:
         raise
     except Exception as exc:
-        raise VDisplayError(f"map build capture failed: {exc}") from exc
+        raise VDisplayError(f"map capture failed: {exc}") from exc
+
+
+def _capture_via_agent(
+    *,
+    display: str | None,
+    monitor: str | None,
+) -> tuple[bytes, dict[str, Any]] | None:
+    """Use agent ScreenCast when the CLI has no in-process portal session."""
+    from pathlib import Path
+    import tempfile
+
+    from ...agent_config import resolve_agent_url
+    from ...client import AgentClient
+
+    agent_url = resolve_agent_url(allow_auto=True)
+    if not agent_url:
+        return None
+
+    client = AgentClient(agent_url)
+    status = client.screencast_status()
+    if not status.get("ready"):
+        raise VDisplayError(
+            "agent screencast not ready. Start in order:\n"
+            "  1. vdisplay-agent serve\n"
+            "  2. vdisplay agent screencast start\n"
+            "(screencast is lost when the agent restarts — run step 2 again after serve)"
+        )
+
+    kwargs: dict[str, Any] = {"display": display}
+    if monitor:
+        kwargs["source"] = monitor
+    with tempfile.TemporaryDirectory(prefix="vdisplay-map-") as tmpdir:
+        png, meta = client.capture_png_bytes(output=str(Path(tmpdir) / "frame.png"), **kwargs)
+    return png, enrich_screencast_stream_meta(dict(meta))
+
+
+def _monitor_index(display: str | None, monitor: str | None) -> int:
+    if not monitor:
+        return 1
+    from ...discovery import list_monitors, resolve_host_display
+
+    resolved = resolve_host_display(display)
+    for index, item in enumerate(list_monitors(resolved), start=1):
+        if str(item.get("name") or "") == monitor:
+            return index
+    return 1
 
 
 def _monitor_rotation(display: str | None, monitor: str) -> str | None:

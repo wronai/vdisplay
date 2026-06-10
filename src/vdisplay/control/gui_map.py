@@ -288,6 +288,68 @@ def element_from_ocr_box(
     )
 
 
+def crop_png_bounds(
+    png: bytes,
+    scope: GuiMapBounds,
+    *,
+    padding: int = 8,
+) -> tuple[bytes, int, int]:
+    """Crop PNG to scope; return (cropped_png, offset_x, offset_y) in parent coords."""
+    from PIL import Image
+
+    image = Image.open(io.BytesIO(png))
+    left = max(0, scope.x - padding)
+    top = max(0, scope.y - padding)
+    right = min(image.width, scope.x + scope.width + padding)
+    bottom = min(image.height, scope.y + scope.height + padding)
+    if right <= left or bottom <= top:
+        return png, 0, 0
+    buf = io.BytesIO()
+    image.crop((left, top, right, bottom)).save(buf, format="PNG")
+    return buf.getvalue(), left, top
+
+
+def _translate_ocr_boxes(boxes: list[OcrTextBox], offset_x: int, offset_y: int) -> list[OcrTextBox]:
+    if offset_x == 0 and offset_y == 0:
+        return boxes
+    translated: list[OcrTextBox] = []
+    for box in boxes:
+        bounds = box.bounds
+        translated.append(
+            OcrTextBox(
+                box.text,
+                ControlBounds(
+                    x=bounds.x + offset_x,
+                    y=bounds.y + offset_y,
+                    width=bounds.width,
+                    height=bounds.height,
+                ),
+                box.confidence,
+            )
+        )
+    return translated
+
+
+def parse_crop_bounds(raw: str) -> GuiMapBounds:
+    parts = [part.strip() for part in raw.split(",")]
+    if len(parts) != 4:
+        raise VDisplayError("crop bounds must be x,y,width,height")
+    x, y, width, height = (int(part) for part in parts)
+    if width <= 0 or height <= 0:
+        raise VDisplayError("crop bounds width and height must be positive")
+    return GuiMapBounds(x=x, y=y, width=width, height=height)
+
+
+def _boxes_in_scope_for_build(boxes: list[OcrTextBox], scope: GuiMapBounds) -> list[OcrTextBox]:
+    kept: list[OcrTextBox] = []
+    for box in boxes:
+        bounds = GuiMapBounds.from_control_bounds(box.bounds)
+        cx, cy = bounds.center
+        if scope.x <= cx <= scope.x + scope.width and scope.y <= cy <= scope.y + scope.height:
+            kept.append(box)
+    return kept
+
+
 def build_gui_map_from_ocr(
     png: bytes,
     capture_meta: dict[str, Any],
@@ -297,14 +359,31 @@ def build_gui_map_from_ocr(
     region_id: str = "screen",
     region_label: str | None = None,
     min_confidence: float = 0.5,
+    scope_bounds: GuiMapBounds | None = None,
+    min_text_len: int = 2,
 ) -> GuiMapPack:
     from .vision_ocr import ocr_png
 
-    boxes = [box for box in ocr_png(png) if box.confidence >= min_confidence]
-    pack = GuiMapPack(monitor=monitor, rotation=rotation, capture_meta=dict(capture_meta))
     width = int(capture_meta.get("width") or 0)
     height = int(capture_meta.get("height") or 0)
-    scope = GuiMapBounds(x=0, y=0, width=width, height=height)
+    full_scope = GuiMapBounds(x=0, y=0, width=width, height=height)
+    scope = scope_bounds or full_scope
+    ocr_png_bytes = png
+    offset_x = 0
+    offset_y = 0
+    if scope_bounds is not None and (
+        scope.x > 0 or scope.y > 0 or scope.width < width or scope.height < height
+    ):
+        ocr_png_bytes, offset_x, offset_y = crop_png_bounds(png, scope)
+
+    boxes = _translate_ocr_boxes(ocr_png(ocr_png_bytes), offset_x, offset_y)
+    boxes = [
+        box
+        for box in boxes
+        if box.confidence >= min_confidence and len((box.text or "").strip()) >= min_text_len
+    ]
+    boxes = _boxes_in_scope_for_build(boxes, scope)
+    pack = GuiMapPack(monitor=monitor, rotation=rotation, capture_meta=dict(capture_meta))
     region = GuiMapRegion(
         id=region_id,
         label=region_label or region_id,
@@ -392,3 +471,29 @@ def verify_hints_from_map_element(element: GuiMapElement) -> dict[str, str | Non
     if element.identity.name:
         hints["verify_selector"] = f'label[name="{element.identity.name}"]'
     return hints
+
+
+def resolve_map_verify_mode(
+    element: GuiMapElement,
+    *,
+    action: str,
+    value: str | None = None,
+) -> str:
+    """Map stored verify_mode to a vision-only pipeline mode (never semantic)."""
+    raw = (element.verify_mode or "identity+region").strip().lower()
+    if raw in {"semantic", "structure", "dom", "text", "hybrid"}:
+        raw = "identity+region"
+    if raw != "identity+region":
+        if raw == "ocr":
+            return "ocr_contains"
+        if raw == "screenshot":
+            return "screenshot_diff"
+        return raw
+    if action == "set_value" and value:
+        return "ocr_contains"
+    if element.identity.anchor_text:
+        return "anchor_visible"
+    label = element.identity.name_prefix or element.identity.name
+    if label:
+        return "ocr_contains"
+    return "screenshot_diff"

@@ -13,7 +13,7 @@ from vdisplay.control.gui_map import (
     element_from_ocr_box,
     save_gui_map,
 )
-from vdisplay.control.gui_map_diff import diff_gui_map, match_ocr_box_for_element, refresh_gui_map
+from vdisplay.control.gui_map_diff import assess_map_drift, diff_gui_map, match_ocr_box_for_element, refresh_gui_map
 from vdisplay.control.models import ControlBounds
 from vdisplay.control.vision_ocr import OcrTextBox
 
@@ -128,3 +128,82 @@ def test_map_diff_service(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> No
     payload = map_diff(map_path=str(path))
     assert payload["ok"] is True
     assert payload["summary"]["ok"] == 1
+
+
+def test_assess_map_drift_refresh_required_on_many_missing() -> None:
+    from vdisplay.control.gui_map_diff import ElementDrift, GuiMapDiff
+
+    payload = GuiMapDiff(
+        ok=False,
+        drifted=True,
+        summary={"ok": 2, "missing": 5, "bounds": 1, "fingerprint": 0},
+        elements=[
+            ElementDrift("chat", "missing", "OCR anchor not found near stored bounds"),
+            ElementDrift("message", "bounds", "bounds moved 20px"),
+        ],
+    )
+    recommendation, actionable, keys = assess_map_drift(payload)
+    assert recommendation == "refresh_required"
+    assert actionable is True
+    assert keys["chat"] == "missing"
+    assert keys["message"] == "bounds"
+
+
+def test_build_gui_map_scoped_crop_filters_outside_boxes(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.control.gui_map import GuiMapBounds, build_gui_map_from_ocr
+
+    png = _fake_png()
+    all_boxes = [
+        OcrTextBox("Inside", ControlBounds(x=20, y=30, width=60, height=16), 0.9),
+        OcrTextBox("Outside", ControlBounds(x=300, y=150, width=60, height=16), 0.9),
+    ]
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_png", lambda _png: all_boxes)
+    scope = GuiMapBounds(x=0, y=0, width=200, height=100)
+    pack = build_gui_map_from_ocr(
+        png,
+        {"width": 400, "height": 200},
+        region_id="chat",
+        scope_bounds=scope,
+    )
+    assert set(pack.elements) == {"inside"}
+    assert pack.regions["chat"].scope_bounds.width == 200
+
+
+def test_map_capture_prefers_agent_screencast(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.application.services.map import _capture
+
+    png = _fake_png()
+    monkeypatch.setattr(
+        "vdisplay.application.services.map._capture_via_agent",
+        lambda **_k: (png, {"method": "agent-screencast", "source": "DP-2"}),
+    )
+
+    def _fail_host(**_kwargs):
+        raise AssertionError("capture_host_png should not run when agent capture succeeds")
+
+    monkeypatch.setattr("vdisplay.capture.host.capture_host_png", _fail_host)
+    captured, meta = _capture(display=":0", monitor="DP-2")
+    assert captured == png
+    assert meta["source"] == "DP-2"
+
+
+def test_map_capture_requires_screencast_when_agent_running(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.application.services.map import _capture
+    from vdisplay.exceptions import VDisplayError
+
+    monkeypatch.setattr(
+        "vdisplay.agent_config.resolve_agent_url",
+        lambda **_k: "http://127.0.0.1:8765",
+    )
+
+    class _Client:
+        def __init__(self, *_args, **_kwargs):
+            pass
+
+        def screencast_status(self):
+            return {"ready": False}
+
+    monkeypatch.setattr("vdisplay.client.AgentClient", _Client)
+
+    with pytest.raises(VDisplayError, match="screencast not ready"):
+        _capture(display=":0", monitor="DP-2")

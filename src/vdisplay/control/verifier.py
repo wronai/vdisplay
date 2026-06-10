@@ -80,8 +80,16 @@ def verify_spec_from_flags(
         mode = "hybrid"
     elif verify_screenshot:
         mode = "screenshot_diff"
-    elif verify_mode in {"semantic", "hybrid", "dom", "anchor_visible", "ocr_contains"}:
-        mode = verify_mode
+    elif verify_mode in {
+        "semantic",
+        "hybrid",
+        "dom",
+        "anchor_visible",
+        "ocr_contains",
+        "screenshot_diff",
+        "identity+region",
+    }:
+        mode = "ocr_contains" if verify_mode == "identity+region" else verify_mode
     else:
         mode = "semantic"
     min_change_ratio = 0.00005 if verify_screenshot else 0.02
@@ -154,6 +162,21 @@ class VerifierPipeline:
                 confidence=confidence,
                 visual=anchor_payload,
                 reasons=[str(anchor_payload.get("reason") or ("anchor visible" if verified else "anchor not visible"))],
+            )
+
+        if spec.mode == "ocr_contains":
+            ocr_payload = self._run_ocr(ctx, spec, {})
+            verified = bool(ocr_payload and ocr_payload.get("verified"))
+            confidence = float((ocr_payload or {}).get("confidence") or (0.9 if verified else 0.0))
+            reason = str(
+                (ocr_payload or {}).get("reason") or ("ocr text matched" if verified else "ocr text missing")
+            )
+            return VerificationResult(
+                verified=verified,
+                mode=spec.mode,
+                confidence=confidence,
+                ocr=ocr_payload,
+                reasons=[reason],
             )
 
         semantic_payload, semantic_ok, visual_payload, visual_ok, ocr_payload = self._evaluate_runs(ctx, spec)
@@ -251,11 +274,16 @@ class VerifierPipeline:
             target=ctx.target,
             capture_fn=ctx.capture_fn,
         )
-        if spec.region is not None:
+        region = spec.region
+        if region is None and ctx.map_element is not None:
+            bounds = ctx.map_element.action_bounds.to_control_bounds()
+            if bounds.width > 0 and bounds.height > 0:
+                region = _region_from_bounds(bounds)
+        if region is not None:
             from PIL import Image
 
             image = Image.open(io.BytesIO(after_png))
-            x, y, w, h = spec.region
+            x, y, w, h = region
             buf = io.BytesIO()
             image.crop((x, y, x + w, y + h)).save(buf, format="PNG")
             after_png = buf.getvalue()
@@ -263,7 +291,11 @@ class VerifierPipeline:
         boxes = ocr_png(after_png)
         text = " ".join(box.text for box in boxes)
         expected = spec.expected_text or ""
-        found = expected.lower() in text.lower()
+        if expected and len(expected) > 24 and "-" in expected:
+            tokens = [part for part in expected.replace("_", "-").split("-") if len(part) >= 3]
+            found = all(token.lower() in text.lower() for token in tokens) if tokens else expected.lower() in text.lower()
+        else:
+            found = expected.lower() in text.lower()
         confidence = 0.9 if found else 0.0
         return {
             "verified": found and confidence >= spec.min_confidence,
