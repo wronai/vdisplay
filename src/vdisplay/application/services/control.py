@@ -31,9 +31,10 @@ def _resolve_verify_mode(
     verify: bool,
     value: str | None,
     routing_mode: str,
+    selected_provider: str | None = None,
 ) -> str:
     """Vision set-value must verify pasted/typed text, not anchor visibility."""
-    if action == "set_value" and verify and value:
+    if action == "set_value" and verify and value and selected_provider == "vision":
         return "ocr_contains"
     return routing_mode
 
@@ -688,6 +689,7 @@ def _execute_action(
         verify=verify,
         value=value,
         routing_mode=routing.verify_mode,
+        selected_provider=getattr(routing, "selected_provider", None),
     )
 
     verification = VerifierPipeline().verify_after_action(

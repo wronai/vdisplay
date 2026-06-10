@@ -10,15 +10,26 @@ from vdisplay.control.selector import ControlSelector
 from vdisplay.control.verifier import VerificationResult
 
 
-def test_resolve_verify_mode_set_value_uses_ocr_contains() -> None:
+def test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision() -> None:
     assert (
         _resolve_verify_mode(
             action="set_value",
             verify=True,
             value="hello",
             routing_mode="anchor_visible",
+            selected_provider="vision",
         )
         == "ocr_contains"
+    )
+    assert (
+        _resolve_verify_mode(
+            action="set_value",
+            verify=True,
+            value="hello",
+            routing_mode="semantic",
+            selected_provider="terminal",
+        )
+        == "semantic"
     )
     assert (
         _resolve_verify_mode(
@@ -73,6 +84,7 @@ def test_control_set_value_verify_mode_ocr_contains(
     class FakeRouting:
         verify_mode = "anchor_visible"
         verify_provider = "vision"
+        selected_provider = "vision"
 
         def to_dict(self):
             return {}

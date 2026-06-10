@@ -32,6 +32,28 @@ def control_service_kwargs(cmd: CommandRequest) -> dict[str, Any]:
     return payload
 
 
+def control_selector_only_kwargs(cmd: CommandRequest) -> dict[str, Any]:
+    """Selector kwargs for service calls — strips fields passed explicitly by handlers."""
+    reserved = {
+        "backend",
+        "display",
+        "verify",
+        "screenshot_verify",
+        "verify_label",
+        "verify_selector",
+        "value",
+        "preview",
+        "preview_output",
+        "preview_debug",
+        "max_depth",
+        "format",
+    }
+    kwargs = control_service_kwargs(cmd)
+    for key in reserved:
+        kwargs.pop(key, None)
+    return kwargs
+
+
 def control_request_body(cmd: CommandRequest) -> dict[str, Any]:
     body = control_service_kwargs(cmd)
     body.update(
