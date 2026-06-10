@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- `control/vision_llm.py` — cold-path OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
+- Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
+- Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+- Docs: [vision-only-wayland.md](docs/vision-only-wayland.md) cold-path env configuration
+
+## [0.1.10] - 2026-06-10
+
+### Fixed
+- Fix unused-imports issues (ticket-0c1eb72e)
+- Fix magic-numbers issues (ticket-6a84c34d)
+- Fix unused-imports issues (ticket-0c0af9db)
+- Fix magic-numbers issues (ticket-9869f3ea)
+- Fix relative-imports issues (ticket-cf1b1ad1)
+- Fix unused-imports issues (ticket-556083c7)
+- Fix unused-imports issues (ticket-d033c132)
+
 ## [0.1.10] - 2026-06-09
 
 ### Fixed
