@@ -37,6 +37,15 @@ def test_build_routing_semantics_browser_requires_session() -> None:
     assert semantics.host_environment in HostEnvironmentKind
 
 
+def test_build_routing_semantics_vision_anchor_visible() -> None:
+    semantics = build_routing_semantics(
+        selector=ControlSelector(vision_anchor="Play", environment="vision"),
+    )
+    assert semantics.target_environment == EnvironmentKind.VISION
+    assert "anchor_visible" in semantics.legal_verify_modes
+    assert "ocr" in semantics.legal_verify_modes
+
+
 def test_x11_provider_ineligible_on_wayland_host_without_xwayland(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.control.descriptors import PlatformProfile
 

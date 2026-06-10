@@ -1,11 +1,11 @@
-# vdisplay | 229f 28001L | yaml:4,json:22,txt:1,shell:7,toml:9,python:176,yml:5 | 2026-06-09
-# generated in 0.04s
-# stats: 1229 func | 0 cls | 229 mod | CC̄=3.4 | critical:15 | cycles:0
-# alerts[5]: fan-out _start_screencast_impl=36; fan-out snapshot_dict=24; fan-out _portal_impl=23; fan-out create_app=23; fan-out main=22
-# hotspots[5]: _start_screencast_impl fan=36; snapshot_dict fan=24; create_app fan=23; _portal_impl fan=23; register_routes fan=22
-# evolution: CC̄ 3.4→3.4 (flat 0.0)
+# vdisplay | 247f 31265L | yaml:5,json:22,toml:11,txt:1,shell:7,python:191,yml:5 | 2026-06-10
+# generated in 0.03s
+# stats: 1358 func | 0 cls | 247 mod | CC̄=3.5 | critical:19 | cycles:0
+# alerts[5]: fan-out _start_screencast_impl=37; CC global_pointer_coords=30; fan-out diff_gui_map=25; fan-out snapshot_dict=24; fan-out _portal_impl=23
+# hotspots[5]: _start_screencast_impl fan=37; diff_gui_map fan=25; snapshot_dict fan=24; create_app fan=23; _portal_impl fan=23
+# evolution: CC̄ 3.5→3.5 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[229]:
+M[247]:
   app.vql.json,127
   brain/scratch_atspi.py,18
   examples/agent-broker/broker_demo.py,57
@@ -20,6 +20,12 @@ M[229]:
   examples/common/screenshot_meta.py,162
   examples/common/validate_artifacts.py,84
   examples/control-plane/control_demo.py,172
+  examples/control-plugin-ax/pyproject.toml,24
+  examples/control-plugin-ax/src/vdisplay_example_ax_plugin/__init__.py,23
+  examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py,93
+  examples/control-plugin-uia/pyproject.toml,23
+  examples/control-plugin-uia/src/vdisplay_example_uia_plugin/__init__.py,23
+  examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py,94
   examples/control-plugin/pyproject.toml,16
   examples/control-plugin/src/vdisplay_example_plugin/__init__.py,27
   examples/control-plugin/src/vdisplay_example_plugin/my_provider.py,92
@@ -44,6 +50,7 @@ M[229]:
   examples/host-relay/run-host.sh,24
   examples/run_all_examples.sh,158
   goal.yaml,512
+  koru.yaml,141
   packages/cli2vdisplay/pyproject.toml,16
   packages/cli2vdisplay/src/cli2vdisplay/cli.py,34
   packages/dsl2vdisplay/pyproject.toml,28
@@ -102,7 +109,7 @@ M[229]:
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py,5
   packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py,56
   packages/vdisplay-agent/src/vdisplay_agent/services/capture.py,96
-  packages/vdisplay-agent/src/vdisplay_agent/services/control.py,99
+  packages/vdisplay-agent/src/vdisplay_agent/services/control.py,113
   packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py,19
   packages/vdisplay-agent/src/vdisplay_agent/services/relay.py,32
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py,183
@@ -131,10 +138,11 @@ M[229]:
   src/vdisplay/application/runtime.py,86
   src/vdisplay/application/services/__init__.py,3
   src/vdisplay/application/services/capture.py,182
-  src/vdisplay/application/services/control.py,432
+  src/vdisplay/application/services/control.py,678
   src/vdisplay/application/services/discovery.py,239
   src/vdisplay/application/services/img2nl_enrich.py,102
   src/vdisplay/application/services/info.py,51
+  src/vdisplay/application/services/map.py,197
   src/vdisplay/application/services/sampler.py,109
   src/vdisplay/application/services/sampler_loop.py,280
   src/vdisplay/application/services/session.py,326
@@ -146,11 +154,11 @@ M[229]:
   src/vdisplay/backends/mirror_stub.py,34
   src/vdisplay/capture/__init__.py,15
   src/vdisplay/capture/base.py,9
-  src/vdisplay/capture/host.py,534
+  src/vdisplay/capture/host.py,555
   src/vdisplay/capture/linux_xwd.py,320
   src/vdisplay/capture/policy.py,140
   src/vdisplay/capture/portal.py,221
-  src/vdisplay/capture/portal_screencast.py,749
+  src/vdisplay/capture/portal_screencast.py,779
   src/vdisplay/capture/providers/__init__.py,3
   src/vdisplay/capture/providers/base.py,22
   src/vdisplay/capture/providers/drm.py,92
@@ -161,14 +169,15 @@ M[229]:
   src/vdisplay/cli.py,32
   src/vdisplay/cli_handlers.py,34
   src/vdisplay/client.py,407
-  src/vdisplay/commands/__init__.py,44
+  src/vdisplay/commands/__init__.py,46
   src/vdisplay/commands/agent.py,143
   src/vdisplay/commands/all_cmd.py,46
-  src/vdisplay/commands/common.py,98
-  src/vdisplay/commands/control.py,149
-  src/vdisplay/commands/diagnose.py,49
+  src/vdisplay/commands/common.py,137
+  src/vdisplay/commands/control.py,156
+  src/vdisplay/commands/diagnose.py,53
   src/vdisplay/commands/info.py,16
   src/vdisplay/commands/io.py,7
+  src/vdisplay/commands/map.py,91
   src/vdisplay/commands/mirror.py,53
   src/vdisplay/commands/monitors.py,19
   src/vdisplay/commands/nlp.py,23
@@ -178,20 +187,24 @@ M[229]:
   src/vdisplay/commands/virtual.py,81
   src/vdisplay/commands/windows.py,29
   src/vdisplay/control/__init__.py,69
+  src/vdisplay/control/action_bounds.py,24
   src/vdisplay/control/base.py,69
   src/vdisplay/control/browser_engine.py,55
   src/vdisplay/control/browser_session_store.py,196
   src/vdisplay/control/capabilities.py,76
   src/vdisplay/control/contracts.py,164
-  src/vdisplay/control/descriptors.py,458
+  src/vdisplay/control/descriptors.py,464
   src/vdisplay/control/engine.py,67
+  src/vdisplay/control/gui_map.py,394
+  src/vdisplay/control/gui_map_diff.py,385
+  src/vdisplay/control/gui_map_export.py,179
   src/vdisplay/control/models.py,187
   src/vdisplay/control/plugins.py,163
   src/vdisplay/control/policy.py,178
   src/vdisplay/control/profile_inference.py,271
   src/vdisplay/control/providers/__init__.py,18
   src/vdisplay/control/providers/atspi.py,240
-  src/vdisplay/control/providers/atspi_impl.py,404
+  src/vdisplay/control/providers/atspi_impl.py,407
   src/vdisplay/control/providers/ax.py,169
   src/vdisplay/control/providers/ax_impl.py,255
   src/vdisplay/control/providers/browser_playwright.py,339
@@ -202,25 +215,30 @@ M[229]:
   src/vdisplay/control/providers/uia.py,169
   src/vdisplay/control/providers/uia_impl.py,268
   src/vdisplay/control/providers/vision/__init__.py,3
-  src/vdisplay/control/providers/vision/provider.py,356
+  src/vdisplay/control/providers/vision/provider.py,578
   src/vdisplay/control/providers/x11.py,132
   src/vdisplay/control/registry.py,117
   src/vdisplay/control/router.py,271
-  src/vdisplay/control/routing_semantics.py,154
-  src/vdisplay/control/scoring.py,747
-  src/vdisplay/control/screenshot_verify.py,212
-  src/vdisplay/control/selector.py,335
+  src/vdisplay/control/routing_semantics.py,158
+  src/vdisplay/control/scoring.py,750
+  src/vdisplay/control/screenshot_verify.py,262
+  src/vdisplay/control/selector.py,342
   src/vdisplay/control/session.py,216
   src/vdisplay/control/session_kind.py,15
-  src/vdisplay/control/verifier.py,311
-  src/vdisplay/control/verify.py,427
-  src/vdisplay/control/verify_strategy.py,15
-  src/vdisplay/control/vision_ocr.py,221
-  src/vdisplay/control/vision_template.py,211
+  src/vdisplay/control/verifier.py,393
+  src/vdisplay/control/verify.py,475
+  src/vdisplay/control/verify_strategy.py,16
+  src/vdisplay/control/vision_disambiguate.py,78
+  src/vdisplay/control/vision_ocr.py,301
+  src/vdisplay/control/vision_preview.py,238
+  src/vdisplay/control/vision_template.py,258
   src/vdisplay/discovery.py,363
   src/vdisplay/exceptions.py,10
-  src/vdisplay/input/__init__.py,3
-  src/vdisplay/input/linux_xdotool.py,45
+  src/vdisplay/input/__init__.py,11
+  src/vdisplay/input/coords.py,186
+  src/vdisplay/input/linux_xdotool.py,68
+  src/vdisplay/input/linux_ydotool.py,97
+  src/vdisplay/input/resolve.py,27
   src/vdisplay/models.py,26
   src/vdisplay/nl.py,158
   src/vdisplay/nlp.py,158
@@ -236,6 +254,28 @@ M[229]:
   testql-scenarios/generated-cli-tests.testql.toon.yaml,20
   tree.txt,241
 D:
+  src/vdisplay/input/coords.py:
+    e: global_pointer_coords,_local_to_region_coords,_rotate_local_to_region,_aspect_mismatch,_rotation_for_monitor,_monitor_by_name
+    global_pointer_coords(local_x;local_y;capture_meta)
+    _local_to_region_coords(local_x;local_y)
+    _rotate_local_to_region(local_x;local_y)
+    _aspect_mismatch(monitor_w;monitor_h;png_w;png_h)
+    _rotation_for_monitor(display;name)
+    _monitor_by_name(display;name)
+  src/vdisplay/control/gui_map_diff.py:
+    e: ElementDrift,RegionDrift,GuiMapDiff,_center,_distance,_box_to_bounds,_normalize_label,_labels_match,_boxes_in_scope,match_ocr_box_for_element,diff_gui_map,refresh_gui_map
+    ElementDrift: to_dict(0)
+    RegionDrift: to_dict(0)
+    GuiMapDiff: to_dict(0)
+    _center(bounds)
+    _distance(a;b)
+    _box_to_bounds(box)
+    _normalize_label(text)
+    _labels_match(stored;live)
+    _boxes_in_scope(boxes;scope)
+    match_ocr_box_for_element(element;boxes)
+    diff_gui_map(pack;png;capture_meta)
+    refresh_gui_map(pack;png;capture_meta)
   src/vdisplay/application/commands.py:
     e: CommandVerb,CommandRequest,CommandResult,_resolve_browser_engine_from_dsl
     CommandVerb(StrEnum):
@@ -255,7 +295,7 @@ D:
     filter_records(records;selector)
     create_uia_backend(backend)
   src/vdisplay/control/vision_ocr.py:
-    e: OcrTextBox,ocr_available,ocr_png,_normalize,_box_matches,match_selector_boxes,ocr_find_selector,_vertical_overlap,_horizontal_overlap,anchor_spatial_relation,_find_anchor_boxes,anchor_spatial_find
+    e: OcrTextBox,ocr_available,ocr_png,_normalize,_box_matches,match_selector_boxes,ocr_find_selector,_vertical_overlap,_horizontal_overlap,anchor_spatial_relation,_find_anchor_boxes,anchor_spatial_find,anchor_based_find,ocr_anchor_combined_find
     OcrTextBox: to_dict(0)
     ocr_available()
     ocr_png(png)
@@ -268,12 +308,17 @@ D:
     anchor_spatial_relation(candidate;anchor;rel)
     _find_anchor_boxes(boxes;anchor_text)
     anchor_spatial_find(boxes)
+    anchor_based_find(boxes)
+    ocr_anchor_combined_find(png)
   src/vdisplay/control/policy.py:
     e: ControlCapabilityContract,evaluate_provider_routing,_evaluate_readiness,assess_control_capability
     ControlCapabilityContract: to_dict(0)
     evaluate_provider_routing()
     _evaluate_readiness()
     assess_control_capability()
+  src/vdisplay/control/providers/vision/provider.py:
+    e: VisionStubProvider
+    VisionStubProvider(ControlProvider): __init__(0),available(0),_capture_png(0),last_capture(0),last_find_debug(0),enable_preview_debug(1),_box_key(0),_record_find_debug(0),_node_from_ocr(1),_node_from_template(1),_node_from_anchor(1),_selector_wants_ocr(0),_find_nodes(1),_template_nodes_from_png(3),_anchor_nodes_from_png(3),_ocr_nodes_from_png(3),_stub_anchor_node(1),snapshot(0),find(1),_node_for(1),_pointer_click_at(1),invoke(1),focus(1),set_value(2),_paste_value(3),bounds(1)  # Canvas/game/stream surfaces — semantic tree unavailable; OCR...
   src/vdisplay/control/scoring.py:
     e: ProviderScore,ProviderRoutingDecision,_all_provider_names,_base_score,normalize_backend,score_to_confidence,_atspi_ready,_uia_ready,_ax_ready,_browser_ready,_xdotool_ready,_xwayland_reachable,_terminal_ready,_browser_session_ready,_vision_ready,_terminal_session_ready,_is_terminal_context,_is_browser_context,_is_desktop_context,selector_context,_linux_desktop_hosts,_score_atspi_provider,_score_uia_provider,_score_ax_provider,_score_terminal_provider,_score_browser_provider,_score_x11_provider,_score_vision_provider,_score_plugin_provider,score_provider,rank_providers,_verify_screenshot_only,_verify_hybrid,select_verify_provider
     ProviderScore: to_dict(0)
@@ -329,14 +374,11 @@ D:
     _matches_selector(record;selector)
     filter_records(records;selector)
     create_ax_backend(backend)
-  src/vdisplay/control/providers/vision/provider.py:
-    e: VisionStubProvider
-    VisionStubProvider(ControlProvider): __init__(0),available(0),_capture_png(0),_node_from_ocr(1),_node_from_template(1),_node_from_anchor(1),_find_nodes(1),_find_template_nodes(1),_find_anchor_nodes(1),_find_ocr_nodes(1),_stub_anchor_node(1),snapshot(0),find(1),_node_for(1),_pointer_click_at(1),invoke(1),focus(1),set_value(2),bounds(1)  # Canvas/game/stream surfaces — semantic tree unavailable; OCR...
   src/vdisplay/control/verifier.py:
     e: VerifyContext,VerificationResult,VerifierPipeline,verify_spec_from_flags,_aggregate_dual,_aggregate_screenshot_only,_aggregate_semantic_only,default_verifier
     VerifyContext:
     VerificationResult: to_dict(0)
-    VerifierPipeline: _evaluate_runs(2),verify_after_action(1),_run_semantic(1),_run_visual(2),_run_ocr(3),_aggregate(0)
+    VerifierPipeline: _evaluate_runs(2),verify_after_action(1),_run_semantic(1),_run_visual(2),_run_ocr(3),_run_anchor_visible(2),_aggregate(0)
     verify_spec_from_flags()
     _aggregate_dual(semantic_ok;visual_ok)
     _aggregate_screenshot_only(visual_ok)
@@ -364,6 +406,17 @@ D:
     register(sub)
     _agent_client()
     handle(args)
+  src/vdisplay/control/screenshot_verify.py:
+    e: _region_from_bounds,enrich_screencast_stream_meta,_resolve_screencast_stream_region,capture_control_screenshot,_target_region,_maybe_crop_capture,_capture_via_agent,diff_png_bytes,verify_screenshot_pair
+    _region_from_bounds(bounds)
+    enrich_screencast_stream_meta(meta)
+    _resolve_screencast_stream_region()
+    capture_control_screenshot()
+    _target_region(target)
+    _maybe_crop_capture(payload;region)
+    _capture_via_agent()
+    diff_png_bytes(before;after)
+    verify_screenshot_pair(before;after)
   src/vdisplay/control/providers/x11.py:
     e: X11ControlProvider
     X11ControlProvider(ControlProvider): __init__(0),available(0),snapshot(0),find(1),_node_for(1),_click_node(1),invoke(1),focus(1),set_value(2),bounds(1)
@@ -394,54 +447,6 @@ D:
     find_monitor_for_window(window;monitors)
     assign_windows_to_monitors(windows;monitors)
     enrich_outputs_nl(outputs;windows)
-  src/vdisplay/control/providers/browser_playwright.py:
-    e: _PageLike,_ElementLike,BrowserPlaywrightProvider,_playwright_available,_role_for_element,_capabilities_for,_actions_for,_bounds_from_box,_dom_state,_node_from_element
-    _PageLike(Protocol): goto(1),title(0),query_selector_all(1),locator(1)
-    _ElementLike(Protocol): evaluate(1),bounding_box(0),inner_text(0),get_attribute(1),click(0),fill(1),focus(0)
-    BrowserPlaywrightProvider(ControlProvider): __init__(0),available(0),_resolve_session_id(0),_page_for(0),snapshot(0),find(1),_resolve_element(1),invoke(1),focus(1),set_value(2),bounds(1),close(0)
-    _playwright_available()
-    _role_for_element(element)
-    _capabilities_for(role)
-    _actions_for(role)
-    _bounds_from_box(box)
-    _dom_state(element)
-    _node_from_element(element)
-  src/vdisplay/control/providers/terminal.py:
-    e: TerminalControlProvider,_terminal_deps_available,_parse_ref,_matches_terminal_node,_find_terminal_nodes
-    TerminalControlProvider(ControlProvider): __init__(0),available(0),_resolve_session_id(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
-    _terminal_deps_available()
-    _parse_ref(element_id)
-    _matches_terminal_node(node;selector)
-    _find_terminal_nodes(nodes;selector)
-  src/vdisplay/control/providers/browser_session.py:
-    e: BrowserSession,BrowserSessionRegistry,new_session_id,default_registry
-    BrowserSession: close(0)
-    BrowserSessionRegistry: __init__(0),_tracks_detached_sessions(0),list_ids(0),get(1),require(1),open(1),_attach(1),open_mock(1),close(1),close_all(0)  # Browser sessions — in-process registry with optional CDP rea...
-    new_session_id()
-    default_registry()
-  src/vdisplay/windows/normalize.py:
-    e: parse_wm_class,normalize_atom_list,resolve_window_pid,process_info,usable_title,derive_app_label,derive_role
-    parse_wm_class(raw)
-    normalize_atom_list(raw)
-    resolve_window_pid(display;window_id;props)
-    process_info(pid)
-    usable_title(candidate)
-    derive_app_label()
-    derive_role()
-  src/vdisplay/windows/filter.py:
-    e: looks_like_internal_class,looks_like_internal_name,is_trivial_internal,is_junk_title,is_visible_app,is_internal_window,matches_title,matches_class,matches_app,window_passes_filters,filter_windows,is_companion_frame
-    looks_like_internal_class(value)
-    looks_like_internal_name(value)
-    is_trivial_internal()
-    is_junk_title(title;net_wm_name)
-    is_visible_app(role;title;net_wm_name;width;height)
-    is_internal_window()
-    matches_title(info;needle)
-    matches_class(info;needle)
-    matches_app(info;needle)
-    window_passes_filters(info)
-    filter_windows(windows)
-    is_companion_frame(candidate;window)
   src/vdisplay/control/descriptors.py:
     e: SelectorExtension,HostEnvironmentKind,PlatformProfile,ApplicationProfile,ProviderDescriptor,resolve_host_environment,descriptor_for,all_provider_descriptors,all_application_profiles,all_selector_extensions,detect_platform_profile,extension_catalog
     SelectorExtension: to_dict(0)  # Backend- or profile-specific selector fields beyond the core...
@@ -469,46 +474,31 @@ D:
     _score_candidate(profile)
     infer_application_profile(selector)
     profile_provider_boost(provider;profile)
-  packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
-    e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
-    _pid_alive(pid)
-    _parse_ss_pids(output)
-    _pids_from_ss(port)
-    _pids_from_lsof(port)
-    find_listener_pids(port)
-    _probe_is_vdisplay_agent(host;port)
-    stop_pids(pids)
-    ensure_broker_port_free(host;port)
-  src/vdisplay/control/screenshot_verify.py:
-    e: _region_from_bounds,capture_control_screenshot,_target_region,_maybe_crop_capture,_capture_via_agent,diff_png_bytes,verify_screenshot_pair
-    _region_from_bounds(bounds)
-    capture_control_screenshot()
-    _target_region(target)
-    _maybe_crop_capture(payload;region)
-    _capture_via_agent()
-    diff_png_bytes(before;after)
-    verify_screenshot_pair(before;after)
-  src/vdisplay/control/verify.py:
-    e: _node_key,_display_text,_subtree_ids,_scope_root_id,_structural_key,_nodes_by_match_key,diff_snapshots,snapshot_diff,collect_changed_nodes,_label_prefix_changes,_selector_change,_handle_selector_verification,_handle_label_verification,_handle_set_value_verification,_handle_focus_verification,_handle_invoke_verification,_add_diff_nodes,verify_action_result,_is_verified
-    _node_key(node)
-    _display_text(node)
-    _subtree_ids(snapshot;root_id)
-    _scope_root_id(snapshot;target)
-    _structural_key(snapshot;node_id;scope_root_id)
-    _nodes_by_match_key(snapshot;node_ids)
-    diff_snapshots(before;after)
-    snapshot_diff(before;after)
-    collect_changed_nodes(diff)
-    _label_prefix_changes(before;after)
-    _selector_change(before;after;selector)
-    _handle_selector_verification(before;after;verify_selector)
-    _handle_label_verification(before;after;verify_label;scope_root_id)
-    _handle_set_value_verification(after;target;scope_root;expected_value)
-    _handle_focus_verification(diff)
-    _handle_invoke_verification(after;target;diff;has_label_or_selector)
-    _add_diff_nodes(diff)
-    verify_action_result()
-    _is_verified(action;state_diff)
+  src/vdisplay/control/providers/browser_playwright.py:
+    e: _PageLike,_ElementLike,BrowserPlaywrightProvider,_playwright_available,_role_for_element,_capabilities_for,_actions_for,_bounds_from_box,_dom_state,_node_from_element
+    _PageLike(Protocol): goto(1),title(0),query_selector_all(1),locator(1)
+    _ElementLike(Protocol): evaluate(1),bounding_box(0),inner_text(0),get_attribute(1),click(0),fill(1),focus(0)
+    BrowserPlaywrightProvider(ControlProvider): __init__(0),available(0),_resolve_session_id(0),_page_for(0),snapshot(0),find(1),_resolve_element(1),invoke(1),focus(1),set_value(2),bounds(1),close(0)
+    _playwright_available()
+    _role_for_element(element)
+    _capabilities_for(role)
+    _actions_for(role)
+    _bounds_from_box(box)
+    _dom_state(element)
+    _node_from_element(element)
+  src/vdisplay/control/providers/terminal.py:
+    e: TerminalControlProvider,_terminal_deps_available,_parse_ref,_matches_terminal_node,_find_terminal_nodes
+    TerminalControlProvider(ControlProvider): __init__(0),available(0),_resolve_session_id(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
+    _terminal_deps_available()
+    _parse_ref(element_id)
+    _matches_terminal_node(node;selector)
+    _find_terminal_nodes(nodes;selector)
+  src/vdisplay/control/providers/browser_session.py:
+    e: BrowserSession,BrowserSessionRegistry,new_session_id,default_registry
+    BrowserSession: close(0)
+    BrowserSessionRegistry: __init__(0),_tracks_detached_sessions(0),list_ids(0),get(1),require(1),open(1),_attach(1),open_mock(1),close(1),close_all(0)  # Browser sessions — in-process registry with optional CDP rea...
+    new_session_id()
+    default_registry()
   src/vdisplay/capture/host.py:
     e: _wayland_host_session,_monitor_source_name,resolve_window_region,_monitor_capture_region,_capture_all_from_driver_full,_capture_all_from_screencast,_try_screencast_capture,_try_mirror_capture,_try_driver_capture,capture_host_png,_host_capture_error,capture_host_to_file,_capture_individual_monitors,_try_bulk_capture,capture_all_monitors
     _wayland_host_session(display)
@@ -526,6 +516,84 @@ D:
     _capture_individual_monitors(monitors;resolved;output_dir;target;method;prefer_mirror;screencast_session)
     _try_bulk_capture(resolved;monitors;output_dir;method;prefer_mirror;screencast_session)
     capture_all_monitors()
+  src/vdisplay/application/services/control.py:
+    e: _apply_selector_overrides,_selector_from_kwargs,_provider_kwargs,_resolve_target,_load_map_pack,_resolve_map_target,_map_find_payload,_execute_map_action,list_control_plugins,diagnose_control,controls_list,_attach_vision_preview,controls_find,control_click,control_focus,control_set_value,_perform_action,_capture_before_state,_build_action_payload,_execute_action,_build_tree
+    _apply_selector_overrides(selector)
+    _selector_from_kwargs()
+    _provider_kwargs()
+    _resolve_target(provider;snapshot;selector)
+    _load_map_pack(map_path)
+    _resolve_map_target(map_path;map_target)
+    _map_find_payload(map_path;map_scope)
+    _execute_map_action()
+    list_control_plugins()
+    diagnose_control()
+    controls_list()
+    _attach_vision_preview(payload)
+    controls_find()
+    control_click()
+    control_focus()
+    control_set_value()
+    _perform_action(provider;action;target;value)
+    _capture_before_state()
+    _build_action_payload()
+    _execute_action()
+    _build_tree(snapshot)
+  src/vdisplay/windows/normalize.py:
+    e: parse_wm_class,normalize_atom_list,resolve_window_pid,process_info,usable_title,derive_app_label,derive_role
+    parse_wm_class(raw)
+    normalize_atom_list(raw)
+    resolve_window_pid(display;window_id;props)
+    process_info(pid)
+    usable_title(candidate)
+    derive_app_label()
+    derive_role()
+  src/vdisplay/windows/filter.py:
+    e: looks_like_internal_class,looks_like_internal_name,is_trivial_internal,is_junk_title,is_visible_app,is_internal_window,matches_title,matches_class,matches_app,window_passes_filters,filter_windows,is_companion_frame
+    looks_like_internal_class(value)
+    looks_like_internal_name(value)
+    is_trivial_internal()
+    is_junk_title(title;net_wm_name)
+    is_visible_app(role;title;net_wm_name;width;height)
+    is_internal_window()
+    matches_title(info;needle)
+    matches_class(info;needle)
+    matches_app(info;needle)
+    window_passes_filters(info)
+    filter_windows(windows)
+    is_companion_frame(candidate;window)
+  packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
+    e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
+    _pid_alive(pid)
+    _parse_ss_pids(output)
+    _pids_from_ss(port)
+    _pids_from_lsof(port)
+    find_listener_pids(port)
+    _probe_is_vdisplay_agent(host;port)
+    stop_pids(pids)
+    ensure_broker_port_free(host;port)
+  src/vdisplay/control/verify.py:
+    e: _node_key,_display_text,_subtree_ids,_scope_root_id,_structural_key,_nodes_by_match_key,diff_snapshots,snapshot_diff,collect_changed_nodes,_label_prefix_changes,_label_prefix_changes_by_identity,_selector_change,_handle_selector_verification,_handle_label_verification,_handle_set_value_verification,_handle_focus_verification,_handle_invoke_verification,_add_diff_nodes,verify_action_result,_is_verified
+    _node_key(node)
+    _display_text(node)
+    _subtree_ids(snapshot;root_id)
+    _scope_root_id(snapshot;target)
+    _structural_key(snapshot;node_id;scope_root_id)
+    _nodes_by_match_key(snapshot;node_ids)
+    diff_snapshots(before;after)
+    snapshot_diff(before;after)
+    collect_changed_nodes(diff)
+    _label_prefix_changes(before;after)
+    _label_prefix_changes_by_identity(before;after)
+    _selector_change(before;after;selector)
+    _handle_selector_verification(before;after;verify_selector)
+    _handle_label_verification(before;after;verify_label;scope_root_id)
+    _handle_set_value_verification(after;target;scope_root;expected_value)
+    _handle_focus_verification(diff)
+    _handle_invoke_verification(after;target;diff;has_label_or_selector)
+    _add_diff_nodes(diff)
+    verify_action_result()
+    _is_verified(action;state_diff)
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:
     e: _config_from_body,_ensure_virtual_session,_capture_virtual_persistent,_recover_screencast,start_sampler,stop_sampler,sampler_status
     _config_from_body(body)
@@ -637,6 +705,25 @@ D:
     _display_hint(display;resolved;outputs)
     list_monitors(display)
     window_discovery_meta(display)
+  src/vdisplay/control/gui_map.py:
+    e: GuiMapBounds,GuiMapPoint,GuiMapIdentity,GuiMapElement,GuiMapRegion,GuiMapPack,load_gui_map,save_gui_map,_slug,tile_fingerprint,element_from_ocr_box,build_gui_map_from_ocr,resolve_map_element,resolve_map_region,map_element_to_node,scoped_capture_region,verify_hints_from_map_element
+    GuiMapBounds: from_dict(1),to_dict(0),from_control_bounds(1),to_control_bounds(0)
+    GuiMapPoint: from_dict(1),to_dict(0)
+    GuiMapIdentity: from_dict(1),to_dict(0)
+    GuiMapElement: from_dict(1),to_dict(0)
+    GuiMapRegion: from_dict(1),to_dict(0)
+    GuiMapPack: from_dict(1),to_dict(0)
+    load_gui_map(path)
+    save_gui_map(path;pack)
+    _slug(text)
+    tile_fingerprint(png;bounds)
+    element_from_ocr_box(box)
+    build_gui_map_from_ocr(png;capture_meta)
+    resolve_map_element(pack;target_id)
+    resolve_map_region(pack;scope_id)
+    map_element_to_node(element)
+    scoped_capture_region(pack;scope_id)
+    verify_hints_from_map_element(element)
   src/vdisplay/control/session.py:
     e: SessionMetadata,SessionCatalog,AgentSessionStore,parse_session_kind,_safe_info,_safe_capabilities,metadata_from_agent_record,metadata_from_browser_session,metadata_from_terminal_session,build_catalog_from_agent_store,build_catalog_local,merge_catalogs
     SessionMetadata(BaseModel): to_dict(0)  # Portable session record for APIs and diagnostics...
@@ -651,6 +738,18 @@ D:
     build_catalog_from_agent_store(store)
     build_catalog_local()
     merge_catalogs()
+  src/vdisplay/control/vision_template.py:
+    e: TemplateMatch,template_available,load_template_png,_png_to_gray_array,match_template,_dedupe_matches,_search_region_for_relation,template_find_selector,match_template_bounds,template_anchor_find
+    TemplateMatch: to_dict(0)
+    template_available()
+    load_template_png(source)
+    _png_to_gray_array(png)
+    match_template(png;template_png)
+    _dedupe_matches(matches)
+    _search_region_for_relation(anchor;rel)
+    template_find_selector(png;selector)
+    match_template_bounds(png;template_path;anchor_box;relation)
+    template_anchor_find(png)
   src/vdisplay/capture/portal.py:
     e: PortalProvider,_portal_impl,_system_python,capture_portal_png,_capture_portal_to_file
     PortalProvider: available(0),capture_full(0),capture_region(1)  # Opt-in portal capture (VDISPLAY_CAPTURE_ALLOW_PORTAL=1). Not...
@@ -664,6 +763,37 @@ D:
     assess_unattended_capture()
     _assess_virtual(reason)
     _assess_wayland(agent_url;screencast_ready)
+  src/vdisplay/capture/portal_screencast.py:
+    e: PortalScreenCastSession,get_active_screencast,_set_active,_set_active_if_self,_screencast_multiple,start_screencast_session,stop_screencast_session,invalidate_screencast_session,_system_python,_ensure_portal_deps,_open_screencast_pipewire_fd,_start_screencast,_portal_request_path,_stream_properties,_stream_serial,_stream_target,screencast_stream_region,_ensure_fd_inheritable,_dbus_fd,_close_pipewire_fd,_start_screencast_impl,_listen_portal_request,_close_screencast_session,_capture_pipewire_stream,_capture_pipewire_frame_gi_subprocess,_capture_pipewire_frame_gst_launch,_capture_pipewire_node,_vdisplay_src_path,_start_screencast_subprocess
+    PortalScreenCastSession: start(0),_parse_node_ids(1),_parse_stream_targets(1),status(0),capture_png(0),stop(0)  # Hold an open portal ScreenCast session and grab PNG frames f...
+    get_active_screencast()
+    _set_active(session)
+    _set_active_if_self(session)
+    _screencast_multiple(explicit)
+    start_screencast_session()
+    stop_screencast_session()
+    invalidate_screencast_session(session)
+    _system_python()
+    _ensure_portal_deps()
+    _open_screencast_pipewire_fd(session_path)
+    _start_screencast()
+    _portal_request_path(bus;token)
+    _stream_properties(raw)
+    _stream_serial(properties)
+    _stream_target(node_id;properties)
+    screencast_stream_region(session)
+    _ensure_fd_inheritable(fd)
+    _dbus_fd(value)
+    _close_pipewire_fd(fd)
+    _start_screencast_impl()
+    _listen_portal_request(bus;request_path;callback)
+    _close_screencast_session(session_path)
+    _capture_pipewire_stream()
+    _capture_pipewire_frame_gi_subprocess(cap_fd;node_id;target_object;out)
+    _capture_pipewire_frame_gst_launch(cap_fd;node_id;target_object;out)
+    _capture_pipewire_node(node_id)
+    _vdisplay_src_path()
+    _start_screencast_subprocess()
   src/vdisplay/capture/providers/engine.py:
     e: _allow_portal,_providers,capture_full_png,capture_region_png,list_capture_providers,_try_providers
     _allow_portal()
@@ -676,16 +806,6 @@ D:
     e: DrmProvider,_drm_devices
     DrmProvider: available(0),capture_full(0),capture_region(1),_capture(1)
     _drm_devices()
-  src/vdisplay/control/vision_template.py:
-    e: TemplateMatch,template_available,load_template_png,_png_to_gray_array,match_template,_dedupe_matches,_search_region_for_relation,template_anchor_find
-    TemplateMatch: to_dict(0)
-    template_available()
-    load_template_png(source)
-    _png_to_gray_array(png)
-    match_template(png;template_png)
-    _dedupe_matches(matches)
-    _search_region_for_relation(anchor;rel)
-    template_anchor_find(png)
   packages/dsl2vdisplay/src/dsl2vdisplay/cli.py:
     e: main,_main_legacy,_main_subcommand
     main(argv)
@@ -720,6 +840,19 @@ D:
     _output_capture_region(display;output_name)
     _mirror_target_candidates(display;source;outputs)
     _output_mode(display;output)
+  src/vdisplay/control/vision_preview.py:
+    e: PreviewMatch,VisionPreviewDebug,preview_available,action_pick_index,_match_kind,preview_matches_from_nodes,confidence_color,render_match_overlay,build_vision_preview,write_preview_png,decode_preview_png
+    PreviewMatch: to_dict(0)
+    VisionPreviewDebug: to_dict(0)
+    preview_available()
+    action_pick_index(selector)
+    _match_kind(node)
+    preview_matches_from_nodes(nodes)
+    confidence_color(confidence)
+    render_match_overlay(png;matches)
+    build_vision_preview(png;nodes)
+    write_preview_png(png;path)
+    decode_preview_png(payload)
   src/vdisplay/application/services/img2nl_enrich.py:
     e: img2nl_enabled,img2nl_locale,_image_path,describe_screenshot_image,enrich_screenshot_payload
     img2nl_enabled()
@@ -757,36 +890,6 @@ D:
     _eligible_for_profile(candidates;application_profile)
     _select_winner(backend;candidates)
     default_router()
-  src/vdisplay/capture/portal_screencast.py:
-    e: PortalScreenCastSession,get_active_screencast,_set_active,_set_active_if_self,_screencast_multiple,start_screencast_session,stop_screencast_session,invalidate_screencast_session,_system_python,_ensure_portal_deps,_open_screencast_pipewire_fd,_start_screencast,_portal_request_path,_stream_properties,_stream_serial,_stream_target,_ensure_fd_inheritable,_dbus_fd,_close_pipewire_fd,_start_screencast_impl,_listen_portal_request,_close_screencast_session,_capture_pipewire_stream,_capture_pipewire_frame_gi_subprocess,_capture_pipewire_frame_gst_launch,_capture_pipewire_node,_vdisplay_src_path,_start_screencast_subprocess
-    PortalScreenCastSession: start(0),_parse_node_ids(1),_parse_stream_targets(1),status(0),capture_png(0),stop(0)  # Hold an open portal ScreenCast session and grab PNG frames f...
-    get_active_screencast()
-    _set_active(session)
-    _set_active_if_self(session)
-    _screencast_multiple(explicit)
-    start_screencast_session()
-    stop_screencast_session()
-    invalidate_screencast_session(session)
-    _system_python()
-    _ensure_portal_deps()
-    _open_screencast_pipewire_fd(session_path)
-    _start_screencast()
-    _portal_request_path(bus;token)
-    _stream_properties(raw)
-    _stream_serial(properties)
-    _stream_target(node_id;properties)
-    _ensure_fd_inheritable(fd)
-    _dbus_fd(value)
-    _close_pipewire_fd(fd)
-    _start_screencast_impl()
-    _listen_portal_request(bus;request_path;callback)
-    _close_screencast_session(session_path)
-    _capture_pipewire_stream()
-    _capture_pipewire_frame_gi_subprocess(cap_fd;node_id;target_object;out)
-    _capture_pipewire_frame_gst_launch(cap_fd;node_id;target_object;out)
-    _capture_pipewire_node(node_id)
-    _vdisplay_src_path()
-    _start_screencast_subprocess()
   src/vdisplay/application/services/capture.py:
     e: resolve_screenshot_routing,capture_screenshot,capture_screenshot_local,_capture_via_agent,capture_screenshot_via_client
     resolve_screenshot_routing(cmd)
@@ -809,24 +912,6 @@ D:
     find_windows(display)
     pick_best_window(matches)
     find_companion_frames(display;window)
-  src/vdisplay/application/services/control.py:
-    e: _apply_selector_overrides,_selector_from_kwargs,_provider_kwargs,_resolve_target,list_control_plugins,diagnose_control,controls_list,controls_find,control_click,control_focus,control_set_value,_perform_action,_capture_before_state,_build_action_payload,_execute_action,_build_tree
-    _apply_selector_overrides(selector)
-    _selector_from_kwargs()
-    _provider_kwargs()
-    _resolve_target(provider;snapshot;selector)
-    list_control_plugins()
-    diagnose_control()
-    controls_list()
-    controls_find()
-    control_click()
-    control_focus()
-    control_set_value()
-    _perform_action(provider;action;target;value)
-    _capture_before_state()
-    _build_action_payload()
-    _execute_action()
-    _build_tree(snapshot)
   packages/vdisplay-agent/src/vdisplay_agent/services/capture.py:
     e: capture_frame,_capture_session,_capture_all_monitors,_region_from_body,_capture_host
     capture_frame(store;body)
@@ -849,6 +934,15 @@ D:
     _display_socket_exists(display)
     _probe_display(display)
     _wait_for_display(display)
+  src/vdisplay/control/gui_map_export.py:
+    e: render_map_markdown,_region_markdown,_element_markdown,render_map_svg,_element_svg,_png_b64,write_map_artifacts
+    render_map_markdown(pack)
+    _region_markdown(region;pack)
+    _element_markdown(element)
+    render_map_svg(png;pack)
+    _element_svg(element)
+    _png_b64(png)
+    write_map_artifacts(pack)
   src/vdisplay/control/plugins.py:
     e: RegisteredPlugin,_register_plugin,_bootstrap_builtin_registry,load_entry_point_plugins,get_provider_registry,register_control_provider,unregister_control_provider,list_control_plugins,iter_provider_names,reset_control_plugins_for_tests,get_registered_descriptor
     RegisteredPlugin: to_dict(0)
@@ -862,6 +956,18 @@ D:
     iter_provider_names()
     reset_control_plugins_for_tests()
     get_registered_descriptor(provider_id)
+  src/vdisplay/control/providers/atspi.py:
+    e: AtspiControlProvider,_gi_available,_system_python,_vdisplay_src_path,_run_subprocess,_actions_from_dict,_snapshot_from_dict
+    AtspiControlProvider(ControlProvider): __init__(0),available(0),probe_integration(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
+    _gi_available()
+    _system_python()
+    _vdisplay_src_path()
+    _run_subprocess(payload)
+    _actions_from_dict(raw_actions)
+    _snapshot_from_dict(data)
+  src/vdisplay/capture/providers/mss.py:
+    e: MssProvider
+    MssProvider: __init__(1),available(0),capture_full(0),capture_region(1),_grab(1)
   src/vdisplay/control/providers/atspi_impl.py:
     e: _atspi,_map_role,_atspi_module,_iface,_node_actions,_text_iface,_node_text_value,_provider_ref,_node_state,_node_capabilities,_node_bounds,_application_matches,snapshot_dict,_resolve_accessible,dispatch,_handle_available,_handle_invoke,_handle_focus,_handle_set_value
     _atspi()
@@ -883,18 +989,10 @@ D:
     _handle_invoke(payload)
     _handle_focus(payload)
     _handle_set_value(payload)
-  src/vdisplay/control/providers/atspi.py:
-    e: AtspiControlProvider,_gi_available,_system_python,_vdisplay_src_path,_run_subprocess,_actions_from_dict,_snapshot_from_dict
-    AtspiControlProvider(ControlProvider): __init__(0),available(0),probe_integration(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)
-    _gi_available()
-    _system_python()
-    _vdisplay_src_path()
-    _run_subprocess(payload)
-    _actions_from_dict(raw_actions)
-    _snapshot_from_dict(data)
-  src/vdisplay/capture/providers/mss.py:
-    e: MssProvider
-    MssProvider: __init__(1),available(0),capture_full(0),capture_region(1),_grab(1)
+  src/vdisplay/input/linux_ydotool.py:
+    e: LinuxYdotoolInput,_ydotool_env
+    LinuxYdotoolInput: __init__(0),available(-1),can_type(-1),can_paste(-1),move(2),click(1),type_text(1),hotkey(0)  # Drive mouse/keyboard on Wayland through ``ydotool`` / ``ydot...
+    _ydotool_env()
   packages/cli2vdisplay/src/cli2vdisplay/cli.py:
     e: main
     main(argv)
@@ -960,6 +1058,10 @@ D:
     e: FbdevProvider,_fb_info
     FbdevProvider: available(0),capture_full(0),capture_region(1),_capture(1)
     _fb_info()
+  src/vdisplay/commands/map.py:
+    e: register,handle
+    register(sub)
+    handle(args)
   packages/vdisplay-agent/src/vdisplay_agent/envelope.py:
     e: agent_meta,success,failure,from_runtime,json_success,json_from_runtime,json_error,strip_ok,flatten_envelope
     agent_meta()
@@ -1076,6 +1178,15 @@ D:
     decode_xprop_value(raw)
     window_geometry(display;window_id)
     search_window_ids(display)
+  src/vdisplay/application/services/map.py:
+    e: _prepare_capture_meta,map_build,map_show,map_diff,map_refresh,_capture,_monitor_rotation
+    _prepare_capture_meta()
+    map_build()
+    map_show()
+    map_diff()
+    map_refresh()
+    _capture()
+    _monitor_rotation(display;monitor)
   packages/vdisplay-agent/src/vdisplay_agent/session_store.py:
     e: SessionRecord,SessionStore
     SessionRecord:
@@ -1153,6 +1264,15 @@ D:
     run_command(args)
     run_command_bytes(args)
     auto_install_package(package_name)
+  src/vdisplay/control/vision_disambiguate.py:
+    e: _HasConfidence,item_confidence,filter_by_confidence,pick_by_index,resolve_vision_matches,vision_threshold,disambiguation_meta
+    _HasConfidence(Protocol):
+    item_confidence(item)
+    filter_by_confidence(matches)
+    pick_by_index(matches;index)
+    resolve_vision_matches(matches;selector)
+    vision_threshold(selector)
+    disambiguation_meta()
   src/vdisplay/control/models.py:
     e: EnvironmentKind,ControlRole,ControlActionKind,ControlBounds,ControlAction,ElementCapabilities,ControlNode,ControlSnapshot,ActionResult
     EnvironmentKind(StrEnum):  # Target automation environment for provider routing...
@@ -1231,6 +1351,10 @@ D:
     _control_focus(cmd)
     _control_set_value(cmd)
     execute_local(cmd)
+  src/vdisplay/input/resolve.py:
+    e: PointerInput,resolve_pointer_input
+    PointerInput(Protocol): move(2),click(1),type_text(1)
+    resolve_pointer_input()
   packages/dsl2vdisplay/src/dsl2vdisplay/schema_registry.py:
     e: _load_schema,all_schemas,schema_for_verb,validate_command_dict
     _load_schema(name)
@@ -1252,6 +1376,18 @@ D:
   examples/control-plugin/src/vdisplay_example_plugin/my_provider.py:
     e: EchoControlProvider
     EchoControlProvider(ControlProvider): __init__(0),available(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1)  # Returns synthetic nodes — useful for CI and plugin integrati...
+  examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py:
+    e: ExampleUiaProvider,_use_mock_backend,_demo_backend,build_example_uia
+    ExampleUiaProvider(UiaControlProvider): __init__(0),available(0)  # UIA adapter — native on Windows, mock tree elsewhere for CI/...
+    _use_mock_backend()
+    _demo_backend()
+    build_example_uia()
+  examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py:
+    e: ExampleAxProvider,_use_mock_backend,_demo_backend,build_example_ax
+    ExampleAxProvider(AxControlProvider): __init__(0),available(0)  # AX adapter — native on macOS, mock tree elsewhere for CI/doc...
+    _use_mock_backend()
+    _demo_backend()
+    build_example_ax()
   src/vdisplay/commands/mirror.py:
     e: register,handle
     register(sub)
@@ -1278,6 +1414,9 @@ D:
     e: control_selector_kwargs,control_request_body
     control_selector_kwargs(cmd)
     control_request_body(cmd)
+  src/vdisplay/input/linux_xdotool.py:
+    e: LinuxXdotoolInput
+    LinuxXdotoolInput: __init__(1),_env(0),available(-1),can_type(0),can_paste(0),move(2),click(1),type_text(1),hotkey(0)
   packages/mcp2vdisplay/src/mcp2vdisplay/cli.py:
     e: main,create_server
     main()
@@ -1310,6 +1449,17 @@ D:
     e: build_parser,main
     build_parser()
     main(argv)
+  src/vdisplay/commands/common.py:
+    e: add_display_arg,add_all_arg,add_window_filter_args,include_all_from_args,add_control_selector_args,add_map_args,add_preview_args,control_selector_kwargs_from_args,control_selector_kwargs_for_service
+    add_display_arg(parser)
+    add_all_arg(parser)
+    add_window_filter_args(parser)
+    include_all_from_args(args)
+    add_control_selector_args(parser)
+    add_map_args(parser)
+    add_preview_args(parser)
+    control_selector_kwargs_from_args(args)
+    control_selector_kwargs_for_service(args)
   src/vdisplay/commands/__init__.py:
     e: register_all
     register_all(sub)
@@ -1325,21 +1475,13 @@ D:
   src/vdisplay/control/base.py:
     e: ControlProvider
     ControlProvider(ABC): available(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1),capabilities(0),verify_modes(0),session_kind(0)
+  src/vdisplay/control/action_bounds.py:
+    e: action_bounds_for_vision,click_point_for_vision
+    action_bounds_for_vision(bounds)
+    click_point_for_vision(bounds)
   src/vdisplay/application/__init__.py:
     e: __getattr__
     __getattr__(name)
-  src/vdisplay/input/linux_xdotool.py:
-    e: LinuxXdotoolInput
-    LinuxXdotoolInput: __init__(1),_env(0),move(2),click(1),type_text(1),hotkey(0)
-  src/vdisplay/commands/common.py:
-    e: add_display_arg,add_all_arg,add_window_filter_args,include_all_from_args,add_control_selector_args,control_selector_kwargs_from_args,control_selector_kwargs_for_service
-    add_display_arg(parser)
-    add_all_arg(parser)
-    add_window_filter_args(parser)
-    include_all_from_args(args)
-    add_control_selector_args(parser)
-    control_selector_kwargs_from_args(args)
-    control_selector_kwargs_for_service(args)
   packages/mcp2vdisplay/src/mcp2vdisplay/server.py:
     e: create_server
     create_server()
@@ -1375,9 +1517,15 @@ D:
     e: _build_echo,register_plugin
     _build_echo()
     register_plugin(registry)
+  examples/control-plugin-uia/src/vdisplay_example_uia_plugin/__init__.py:
+    e: register_plugin
+    register_plugin(registry)
   examples/common/host_capture.py:
     e: capture_host_screenshot
     capture_host_screenshot(path)
+  examples/control-plugin-ax/src/vdisplay_example_ax_plugin/__init__.py:
+    e: register_plugin
+    register_plugin(registry)
   src/vdisplay/payloads.py:
     e: monitors_payload,local_windows_payload,windows_payload,adopted_payload,all_payload
     monitors_payload(display)
@@ -1437,6 +1585,8 @@ D:
   goal.yaml:
   app.vql.json:
   planfile.yaml:
+  koru.yaml:
+  pyproject.toml:
   tree.txt:
   prefact.yaml:
   project.sh:
@@ -1464,6 +1614,7 @@ D:
   packages/nlp2vdisplay/pyproject.toml:
   packages/vdisplay-agent/pyproject.toml:
   packages/vdisplay-agent/src/vdisplay_agent/schemas.py:
+  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py:
   examples/run_all_examples.sh:
     e: validate_dir,clean_output,_agent_base_url,_wayland_host_capture_ready,_run_host_example,_run_host_mirror,_run_host_relay,_run_docker_host_mirror,_run_docker_host_relay
@@ -1503,8 +1654,10 @@ D:
   examples/host-relay/output/after_adopt.png.meta.json:
   examples/host-relay/output/after_release.png.meta.json:
   examples/host-relay/output/before_automation.png.meta.json:
+  examples/control-plugin-uia/pyproject.toml:
   examples/dev-workspace/docker-compose.yml:
   examples/dev-workspace/Dockerfile:
+  examples/control-plugin-ax/pyproject.toml:
   src/vdisplay/exceptions.py:
     e: VDisplayError,BackendNotAvailableError,CapabilityError
     VDisplayError(Exception):
@@ -1534,5 +1687,3 @@ D:
   src/vdisplay/input/__init__.py:
   brain/scratch_atspi.py:
   testql-scenarios/generated-cli-tests.testql.toon.yaml:
-  pyproject.toml:
-  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:

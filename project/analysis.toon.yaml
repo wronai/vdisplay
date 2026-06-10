@@ -1,28 +1,32 @@
-# code2llm | 229f 28001L | python:176,json:22,toml:9,shell:7,yml:5,yaml:4,txt:1 | 2026-06-09
-# generated in 0.11s
-# CC̅=3.4 | critical:15/1229 | dups:0 | cycles:0
+# code2llm | 247f 31265L | python:191,json:22,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
+# generated in 0.07s
+# CC̅=3.5 | critical:19/1358 | dups:0 | cycles:0
 
-HEALTH[15]:
+HEALTH[19]:
   🟡 CC    _route_command CC=17 (limit:15)
   🟡 CC    handle CC=15 (limit:15)
+  🟡 CC    match_selector_boxes CC=20 (limit:15)
+  🟡 CC    _score_x11_provider CC=18 (limit:15)
+  🟡 CC    score_provider CC=16 (limit:15)
+  🟡 CC    _resolve_screencast_stream_region CC=15 (limit:15)
   🟡 CC    _evaluate_readiness CC=18 (limit:15)
   🟡 CC    assess_control_capability CC=19 (limit:15)
   🟡 CC    _evaluate_runs CC=16 (limit:15)
+  🟡 CC    active_fields CC=16 (limit:15)
+  🟡 CC    snapshot CC=15 (limit:15)
   🟡 CC    _matches_selector CC=20 (limit:15)
   🟡 CC    collect_elements CC=22 (limit:15)
   🟡 CC    _matches_selector CC=17 (limit:15)
   🟡 CC    from_dsl CC=23 (limit:15)
-  🟡 CC    match_selector_boxes CC=20 (limit:15)
-  🟡 CC    _score_x11_provider CC=18 (limit:15)
-  🟡 CC    score_provider CC=16 (limit:15)
-  🟡 CC    active_fields CC=16 (limit:15)
-  🟡 CC    snapshot CC=15 (limit:15)
-  🟡 CC    _find_anchor_nodes CC=17 (limit:15)
+  🟡 CC    global_pointer_coords CC=30 (limit:15)
+  🟡 CC    diff_gui_map CC=23 (limit:15)
+  🟡 CC    refresh_gui_map CC=24 (limit:15)
+  🟡 CC    _find_nodes CC=19 (limit:15)
 
 REFACTOR[1]:
-  1. split 15 high-CC methods  (CC>15)
+  1. split 19 high-CC methods  (CC>15)
 
-PIPELINES[603]:
+PIPELINES[648]:
   [1] Src [main]: main → create_server
       PURITY: 100% pure
   [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url
@@ -125,61 +129,68 @@ PIPELINES[603]:
       PURITY: 100% pure
 
 LAYERS:
-  src/                            CC̄=3.6    ←in:0  →out:0
-  │ !! portal_screencast          749L  1C   33m  CC=9      ←5
-  │ !! scoring                    747L  2C   34m  CC=18     ←6
-  │ !! host                       534L  0C   15m  CC=13     ←5
+  src/                            CC̄=3.7    ←in:0  →out:0
+  │ !! portal_screencast          779L  1C   34m  CC=11     ←6
+  │ !! scoring                    750L  2C   34m  CC=18     ←6
+  │ !! control                    678L  0C   21m  CC=14     ←0
+  │ !! provider                   578L  1C   26m  CC=19     ←0
+  │ !! host                       555L  0C   15m  CC=14     ←6
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
-  │ descriptors                458L  5C   11m  CC=14     ←9
-  │ control                    432L  0C   16m  CC=9      ←0
-  │ verify                     427L  0C   19m  CC=13     ←1
+  │ verify                     475L  0C   20m  CC=13     ←1
+  │ descriptors                464L  5C   11m  CC=14     ←9
   │ !! client                     407L  1C   38m  CC=17     ←0
-  │ atspi_impl                 404L  0C   19m  CC=8      ←1
-  │ discovery                  363L  0C   14m  CC=11     ←19
-  │ !! provider                   356L  1C   19m  CC=17     ←0
+  │ atspi_impl                 407L  0C   19m  CC=8      ←1
+  │ gui_map                    394L  6C   25m  CC=11     ←5
+  │ !! verifier                   393L  3C   13m  CC=16     ←1
+  │ !! gui_map_diff               385L  3C   12m  CC=24     ←1
+  │ discovery                  363L  0C   14m  CC=11     ←21
+  │ !! selector                   342L  1C   17m  CC=16     ←9
   │ browser_playwright         339L  3C   30m  CC=14     ←2
-  │ !! selector                   335L  1C   17m  CC=16     ←9
   │ session                    326L  0C   12m  CC=4      ←0
-  │ linux_xwd                  320L  0C   21m  CC=12     ←12
-  │ !! verifier                   311L  3C   12m  CC=16     ←1
+  │ linux_xwd                  320L  0C   21m  CC=12     ←15
+  │ !! vision_ocr                 301L  1C   14m  CC=20     ←6
   │ !! commands                   292L  3C    6m  CC=23     ←0
   │ local                      283L  0C   21m  CC=4      ←1
   │ sampler_loop               280L  3C   12m  CC=10     ←1
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ !! uia_impl                   268L  4C   24m  CC=22     ←3
+  │ !! screenshot_verify          262L  0C    9m  CC=15     ←5
   │ terminal_screen            260L  3C   14m  CC=7      ←3
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
+  │ vision_template            258L  1C   10m  CC=11     ←4
   │ !! ax_impl                    255L  4C   24m  CC=17     ←2
   │ browser_session            246L  2C   13m  CC=14     ←3
   │ agent                      241L  0C   22m  CC=6      ←1
   │ atspi                      240L  1C   15m  CC=8      ←0
   │ discovery                  239L  0C   11m  CC=4      ←0
+  │ vision_preview             238L  2C   11m  CC=10     ←1
   │ terminal_session           227L  2C   16m  CC=7      ←6
   │ portal                     221L  1C    7m  CC=11     ←1
-  │ !! vision_ocr                 221L  1C   12m  CC=20     ←3
   │ session                    216L  3C   11m  CC=11     ←2
-  │ screenshot_verify          212L  0C    7m  CC=13     ←3
-  │ vision_template            211L  1C    8m  CC=11     ←2
   │ query                      209L  0C    6m  CC=9      ←4
+  │ map                        197L  0C    7m  CC=6      ←0
   │ browser_session_store      196L  1C   14m  CC=7      ←2
   │ api                        193L  3C   32m  CC=6      ←4
   │ models                     187L  9C    7m  CC=4      ←0
+  │ !! coords                     186L  0C    6m  CC=30     ←1
   │ capture                    182L  0C    5m  CC=9      ←1
+  │ gui_map_export             179L  0C    7m  CC=8      ←1
   │ !! policy                     178L  1C    4m  CC=19     ←2
   │ filter                     173L  0C   12m  CC=14     ←2
   │ uia                        169L  1C   10m  CC=6      ←0
   │ ax                         169L  1C   10m  CC=6      ←0
   │ linux_xvfb                 164L  1C   14m  CC=8      ←0
   │ contracts                  164L  5C    7m  CC=4      ←1
-  │ plugins                    163L  1C   11m  CC=8      ←4
+  │ plugins                    163L  1C   11m  CC=8      ←6
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
-  │ routing_semantics          154L  1C    8m  CC=7      ←4
-  │ control                    149L  0C    3m  CC=8      ←0
+  │ routing_semantics          158L  1C    8m  CC=7      ←4
+  │ control                    156L  0C    3m  CC=8      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
   │ !! agent                      143L  0C    3m  CC=15     ←0
   │ policy                     140L  1C    4m  CC=11     ←2
+  │ common                     137L  0C    9m  CC=2      ←8
   │ sampler                    132L  0C    8m  CC=9      ←0
   │ !! x11                        132L  1C   10m  CC=15     ←0
   │ registry                   117L  1C   14m  CC=3      ←2
@@ -189,40 +200,44 @@ LAYERS:
   │ normalize                  103L  0C    7m  CC=14     ←1
   │ img2nl_enrich              102L  0C    5m  CC=10     ←0
   │ engine                      99L  0C    6m  CC=11     ←4
-  │ common                      98L  0C    7m  CC=2      ←8
+  │ linux_ydotool               97L  1C    9m  CC=8      ←0
   │ drm                         92L  1C    5m  CC=11     ←0
+  │ map                         91L  0C    2m  CC=7      ←0
   │ payloads                    86L  0C    5m  CC=1      ←2
   │ runtime                     86L  1C    7m  CC=6      ←3
   │ virtual                     81L  0C    2m  CC=6      ←0
+  │ vision_disambiguate         78L  1C    6m  CC=4      ←4
   │ fbdev                       77L  1C    5m  CC=7      ←0
   │ capabilities                76L  1C    1m  CC=1      ←0
   │ agent_config                71L  0C    8m  CC=6      ←15
   │ base                        69L  1C   10m  CC=2      ←0
   │ __init__                    69L  0C    0m  CC=0.0    ←0
-  │ utils                       68L  0C    4m  CC=4      ←14
+  │ utils                       68L  0C    4m  CC=4      ←15
   │ mss                         68L  1C    5m  CC=8      ←0
+  │ linux_xdotool               68L  1C    9m  CC=3      ←0
   │ engine                      67L  0C    3m  CC=2      ←1
   │ base                        64L  1C   11m  CC=1      ←0
   │ browser_engine              55L  1C    4m  CC=3      ←5
   │ mirror                      53L  0C    2m  CC=3      ←0
   │ screenshot                  53L  0C    2m  CC=1      ←0
+  │ diagnose                    53L  0C    2m  CC=5      ←0
   │ executor                    51L  0C    2m  CC=6      ←4
   │ info                        51L  0C    1m  CC=6      ←0
-  │ diagnose                    49L  0C    2m  CC=5      ←0
   │ all_cmd                     46L  0C    4m  CC=1      ←0
+  │ __init__                    46L  0C    1m  CC=2      ←1
   │ __init__                    46L  0C    0m  CC=0.0    ←0
-  │ linux_xdotool               45L  1C    6m  CC=2      ←0
-  │ __init__                    44L  0C    1m  CC=2      ←1
   │ control                     44L  0C    2m  CC=3      ←3
   │ rank                        43L  0C    5m  CC=9      ←1
   │ errors                      39L  2C    2m  CC=4      ←3
   │ x11                         35L  1C    4m  CC=4      ←0
-  │ cli_handlers                34L  0C    6m  CC=1      ←12
+  │ cli_handlers                34L  0C    6m  CC=1      ←13
   │ mirror_stub                 34L  1C    4m  CC=1      ←0
   │ cli                         32L  0C    2m  CC=2      ←0
   │ agent_dispatch              30L  0C    2m  CC=2      ←0
   │ windows                     29L  0C    2m  CC=1      ←0
+  │ resolve                     27L  1C    4m  CC=4      ←1
   │ models                      26L  2C    0m  CC=0.0    ←0
+  │ action_bounds               24L  0C    2m  CC=2      ←2
   │ nlp                         23L  0C    2m  CC=2      ←0
   │ base                        22L  2C    3m  CC=1      ←0
   │ monitors                    19L  0C    2m  CC=1      ←0
@@ -230,16 +245,16 @@ LAYERS:
   │ __init__                    18L  0C    0m  CC=0.0    ←0
   │ agent_envelope              17L  0C    1m  CC=6      ←1
   │ info                        16L  0C    2m  CC=1      ←0
+  │ verify_strategy             16L  1C    0m  CC=0.0    ←0
   │ session_kind                15L  1C    0m  CC=0.0    ←0
-  │ verify_strategy             15L  1C    0m  CC=0.0    ←0
   │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ __init__                    14L  0C    1m  CC=2      ←0
   │ __init__                    12L  0C    0m  CC=0.0    ←0
+  │ __init__                    11L  0C    0m  CC=0.0    ←0
   │ exceptions                  10L  3C    0m  CC=0.0    ←0
   │ base                         9L  1C    1m  CC=1      ←0
   │ io                           7L  0C    1m  CC=1      ←0
   │ __init__                     6L  0C    0m  CC=0.0    ←0
-  │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
@@ -258,7 +273,7 @@ LAYERS:
   │ control                    122L  0C    1m  CC=1      ←0
   │ command                    120L  0C    7m  CC=3      ←0
   │ query                      115L  0C    8m  CC=4      ←1
-  │ control                     99L  0C    8m  CC=4      ←0
+  │ control                    113L  0C    8m  CC=4      ←0
   │ capture                     96L  0C    5m  CC=8      ←0
   │ server                      95L  0C    1m  CC=1      ←0
   │ app                         87L  0C    1m  CC=2      ←3
@@ -314,7 +329,7 @@ LAYERS:
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
-  examples/                       CC̄=2.7    ←in:0  →out:0
+  examples/                       CC̄=2.6    ←in:0  →out:0
   │ !! after_adopt.png.meta.json   584L  0C    0m  CC=0.0    ←0
   │ !! after_release.png.meta.json   551L  0C    0m  CC=0.0    ←0
   │ !! before_automation.png.meta.json   551L  0C    0m  CC=0.0    ←0
@@ -323,6 +338,8 @@ LAYERS:
   │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
   │ relay_demo                 137L  0C    3m  CC=11     ←0
   │ mirror_demo                 97L  0C    2m  CC=7      ←0
+  │ provider                    94L  1C    5m  CC=3      ←1
+  │ provider                    93L  1C    5m  CC=3      ←0
   │ my_provider                 92L  1C    8m  CC=3      ←1
   │ validate_artifacts          84L  0C    3m  CC=12     ←0
   │ agent                       73L  0C    2m  CC=4      ←0
@@ -343,6 +360,10 @@ LAYERS:
   │ run.sh                      26L  0C    1m  CC=0.0    ←0
   │ run-host.sh                 25L  0C    0m  CC=0.0    ←0
   │ run-host.sh                 24L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml              24L  0C    0m  CC=0.0    ←0
+  │ __init__                    23L  0C    1m  CC=1      ←0
+  │ __init__                    23L  0C    1m  CC=1      ←0
+  │ pyproject.toml              23L  0C    0m  CC=0.0    ←0
   │ Dockerfile                  19L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml          17L  0C    0m  CC=0.0    ←0
   │ docker-compose.yml          16L  0C    0m  CC=0.0    ←0
@@ -356,6 +377,7 @@ LAYERS:
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
   │ tree.txt                   241L  0C    0m  CC=0.0    ←0
   │ pyproject.toml             160L  0C    0m  CC=0.0    ←0
+  │ koru.yaml                  141L  0C    0m  CC=0.0    ←0
   │ app.vql.json               127L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                94L  0C    0m  CC=0.0    ←0
   │ project.sh                  59L  0C    0m  CC=0.0    ←0
@@ -368,26 +390,26 @@ LAYERS:
   │
 
 COUPLING:
-                                          src.vdisplay    packages.vdisplay-agent      packages.dsl2vdisplay            examples.common     packages.rest2vdisplay      packages.mcp2vdisplay       examples.host-mirror        examples.host-relay          examples.ci-agent    examples.control-plugin  examples.headless-virtual      packages.cli2vdisplay      packages.nlp2vdisplay      examples.agent-broker     examples.control-plane
-               src.vdisplay                         ──                          4                          6                         ←1                          1                         ←4                         ←3                         ←3                                                     1                                                                               ←1                         ←1                         ←1  hub
-    packages.vdisplay-agent                         28                         ──                                                                                1                                                                                                                                                                                                                                                                                !! fan-out
-      packages.dsl2vdisplay                          6                                                    ──                                                    ←4                         ←2                                                                                                                                                                ←2                                                                                   hub
-            examples.common                          1                                                                               ──                                                                               ←3                         ←3                         ←2                                                    ←2                                                                                                              hub
-     packages.rest2vdisplay                          2                         ←1                          4                                                    ──                                                                                                                                                                                                                                                                              
-      packages.mcp2vdisplay                          4                                                     2                                                                               ──                                                                                                                                                                                            1                                                      
-       examples.host-mirror                          3                                                                                3                                                                               ──                                                                                                                                                                                                                        
-        examples.host-relay                          3                                                                                3                                                                                                          ──                                                                                                                                                                                             
-          examples.ci-agent                                                                                                           2                                                                                                                                     ──                                                                                                                                                                  
-    examples.control-plugin                          1                                                                                                                                                                                                                                                 ──                                                                                                                                       
-  examples.headless-virtual                                                                                                           2                                                                                                                                                                                           ──                                                                                                            
-      packages.cli2vdisplay                                                                                2                                                                                                                                                                                                                                                 ──                                                                                 
-      packages.nlp2vdisplay                          1                                                                                                                                     ←1                                                                                                                                                                                           ──                                                      
-      examples.agent-broker                          1                                                                                                                                                                                                                                                                                                                                                             ──                           
-     examples.control-plane                          1                                                                                                                                                                                                                                                                                                                                                                                        ──
+                                              src.vdisplay      packages.vdisplay-agent        packages.dsl2vdisplay              examples.common       packages.rest2vdisplay        packages.mcp2vdisplay         examples.host-mirror          examples.host-relay   examples.control-plugin-ax  examples.control-plugin-uia            examples.ci-agent      examples.control-plugin    examples.headless-virtual        packages.cli2vdisplay        packages.nlp2vdisplay
+                 src.vdisplay                           ──                            4                            6                           ←1                            1                           ←4                           ←3                           ←3                           ←1                           ←1                                                         1                                                                                     ←1  hub
+      packages.vdisplay-agent                           28                           ──                                                                                      1                                                                                                                                                                                                                                                                                                    !! fan-out
+        packages.dsl2vdisplay                            6                                                        ──                                                        ←4                           ←2                                                                                                                                                                                                                                      ←2                               hub
+              examples.common                            1                                                                                     ──                                                                                     ←3                           ←3                                                                                     ←2                                                        ←2                                                            hub
+       packages.rest2vdisplay                            2                           ←1                            4                                                        ──                                                                                                                                                                                                                                                                                                  
+        packages.mcp2vdisplay                            4                                                         2                                                                                     ──                                                                                                                                                                                                                                                                    1
+         examples.host-mirror                            3                                                                                      3                                                                                     ──                                                                                                                                                                                                                                        
+          examples.host-relay                            3                                                                                      3                                                                                                                  ──                                                                                                                                                                                                           
+   examples.control-plugin-ax                            1                                                                                                                                                                                                                                      ──                            2                                                                                                                                                 
+  examples.control-plugin-uia                            1                                                                                                                                                                                                                                      ←2                           ──                                                                                                                                                 
+            examples.ci-agent                                                                                                                   2                                                                                                                                                                                                         ──                                                                                                                    
+      examples.control-plugin                            1                                                                                                                                                                                                                                                                                                                             ──                                                                                       
+    examples.headless-virtual                                                                                                                   2                                                                                                                                                                                                                                                                   ──                                                          
+        packages.cli2vdisplay                                                                                      2                                                                                                                                                                                                                                                                                                                             ──                             
+        packages.nlp2vdisplay                            1                                                                                                                                               ←1                                                                                                                                                                                                                                                                   ──
   CYCLES: none
-  HUB: examples.common/ (fan-in=10)
+  HUB: src.vdisplay/ (fan-in=53)
   HUB: packages.dsl2vdisplay/ (fan-in=15)
-  HUB: src.vdisplay/ (fan-in=51)
+  HUB: examples.common/ (fan-in=10)
   SMELL: src.vdisplay/ fan-out=12 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
 

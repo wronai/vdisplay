@@ -185,13 +185,16 @@ def template_find_selector(
     png: bytes,
     selector: ControlSelector,
     *,
-    threshold: float = 0.85,
+    threshold: float | None = None,
 ) -> list[TemplateMatch]:
     """Find template matches for a selector's ``vision_template`` field."""
     if not selector.vision_template:
         return []
+    from .vision_disambiguate import vision_threshold
+
+    effective = threshold if threshold is not None else vision_threshold(selector)
     template_png = load_template_png(selector.vision_template)
-    return match_template(png, template_png, threshold=threshold)
+    return match_template(png, template_png, threshold=effective)
 
 
 def match_template_bounds(

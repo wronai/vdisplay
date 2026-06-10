@@ -66,7 +66,7 @@ def test_vision_find_ocr_returns_bounds(monkeypatch: pytest.MonkeyPatch) -> None
     assert nodes[0].state.get("ocr") is True
 
 
-def test_vision_invoke_clicks_ocr_center(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_vision_invoke_clicks_expanded_ocr_bounds(monkeypatch: pytest.MonkeyPatch) -> None:
     boxes = [
         OcrTextBox("Go", ControlBounds(x=100, y=200, width=40, height=20), 0.91),
     ]
@@ -82,7 +82,8 @@ def test_vision_invoke_clicks_ocr_center(monkeypatch: pytest.MonkeyPatch) -> Non
     nodes = provider.find(ControlSelector(vision_anchor="Go"))
     result = provider.invoke(nodes[0].id)
     assert result["ok"] is True
-    assert clicked == [(120, 210)]
+    # Narrow OCR hits expand to a wider input target (width 40 -> 320).
+    assert clicked == [(260, 210)]
 
 
 def test_vision_set_value_types_after_click(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -98,6 +99,32 @@ def test_vision_set_value_types_after_click(monkeypatch: pytest.MonkeyPatch) -> 
     result = provider.set_value(nodes[0].id, "Alice")
     assert result["ok"] is True
     assert typed == ["Alice"]
+
+
+def test_vision_set_value_chat_anchor_skips_gnome_hotkey(monkeypatch: pytest.MonkeyPatch) -> None:
+    boxes = [OcrTextBox("Ask anything", ControlBounds(x=5, y=5, width=120, height=16), 0.9)]
+    _mock_ocr_boxes(monkeypatch, boxes)
+    monkeypatch.setattr(VisionStubProvider, "_capture_png", lambda self, **kwargs: (_fake_png(), {}))
+    hotkeys: list[tuple[str, ...]] = []
+    typed: list[str] = []
+
+    class FakeInput:
+        def hotkey(self, *keys: str) -> None:
+            hotkeys.append(keys)
+
+        def type_text(self, text: str) -> None:
+            typed.append(text)
+
+    monkeypatch.setattr(
+        "vdisplay.input.resolve.resolve_pointer_input",
+        lambda **_k: (FakeInput(), "ydotool"),
+    )
+    provider = VisionStubProvider(pointer_click=lambda _x, _y: None)
+    nodes = provider.find(ControlSelector(vision_anchor="anything"))
+    result = provider.set_value(nodes[0].id, "test")
+    assert result["ok"] is True
+    assert hotkeys == []
+    assert typed == ["test"]
 
 
 def test_vision_ocr_miss_returns_empty_find(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -224,6 +224,12 @@ def _capture_all_from_screencast(
             }
         else:
             meta["screencast_full_frame"] = True
+            from .portal_screencast import screencast_stream_region
+
+            stream_region = screencast_stream_region(screencast_session)
+            if stream_region is not None:
+                meta["region"] = stream_region
+                meta["screencast_stream"] = True
         try:
             from PIL import Image
 
@@ -272,6 +278,12 @@ def _try_screencast_capture(screencast_session, region, errors) -> tuple[bytes, 
             }
         else:
             extra["screencast_full_frame"] = True
+            from .portal_screencast import screencast_stream_region
+
+            stream_region = screencast_stream_region(session)
+            if stream_region is not None:
+                extra["region"] = stream_region
+                extra["screencast_stream"] = True
         return png, extra
     except VDisplayError as exc:
         errors.append(f"portal-screencast: {exc}")
@@ -349,6 +361,15 @@ def capture_host_png(
     if screencast_hit is not None:
         png, extra = screencast_hit
         meta.update(extra)
+        if region is not None and "region" not in meta:
+            meta["region"] = {
+                "x": region[0],
+                "y": region[1],
+                "width": region[2],
+                "height": region[3],
+            }
+        meta["source"] = source_name
+        meta["monitor_name"] = source_name
         return png, meta
 
     if _wayland_host_session(resolved):

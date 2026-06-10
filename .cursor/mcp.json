@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "koru": {
+      "command": "/home/tom/github/wronai/vdisplay/.venv/bin/koru",
+      "args": [
+        "mcp-serve"
+      ],
+      "transport": "stdio"
+    }
+  }
+}

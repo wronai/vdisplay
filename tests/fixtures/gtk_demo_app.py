@@ -27,7 +27,8 @@ def main() -> int:
         counter["value"] += 1
         label.set_text(f"Count: {counter['value']}")
 
-    window = Gtk.Window(title="vdisplay-gtk-demo")
+    window_title = os.environ.get("VDISPLAY_GTK_DEMO_TITLE", "vdisplay-gtk-demo")
+    window = Gtk.Window(title=window_title)
     window.set_default_size(320, 180)
     window.connect("destroy", Gtk.main_quit)
 

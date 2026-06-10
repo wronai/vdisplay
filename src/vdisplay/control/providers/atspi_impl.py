@@ -188,9 +188,12 @@ def _node_capabilities(
 
 
 def _node_bounds(accessible) -> ControlBounds | None:
+    component = _iface(accessible, "component")
+    if component is None:
+        return None
     try:
         Atspi = _atspi()
-        extents = accessible.get_extents(Atspi.CoordType.SCREEN)
+        extents = Atspi.Component.get_extents(component, Atspi.CoordType.SCREEN)
     except Exception:
         return None
     if extents is None:

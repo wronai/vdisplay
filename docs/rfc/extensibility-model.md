@@ -19,8 +19,8 @@ Status: **accepted** — see [RFC 001](./001-extensibility-model.md) for the can
 
 | PR | Scope | Status |
 |----|-------|--------|
-| PR-4 … PR-22 | Extension model + cross-platform UIA/AX + vision OCR/template | **done** |
-| PR-23+ | See [RFC 001 — Recommended next PRs](./001-extensibility-model.md#recommended-next-prs) | planned |
+| PR-4 … PR-27 | Extension model + vision OCR/template/disambiguation/preview/map pack/drift | **done** |
+| PR-28+ | See [RFC 001 — Recommended next PRs](./001-extensibility-model.md#recommended-next-prs) | planned |
 
 ## Diagnostics
 

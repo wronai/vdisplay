@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+
 from ..utils import require_command, run_command
 
 
@@ -11,6 +13,27 @@ class LinuxXdotoolInput:
         if self.display is None:
             return {}
         return {"DISPLAY": self.display}
+
+    @staticmethod
+    def available() -> tuple[bool, str]:
+        if shutil.which("xdotool") is None:
+            return False, "xdotool not installed"
+        return True, "xdotool available"
+
+    def can_type(self) -> bool:
+        if shutil.which("xdotool") is None:
+            return False
+        # xdotool typing works for X11/XWayland clients only.
+        # On a native Wayland session it can move/click but not type into
+        # Wayland-native windows.
+        from ..capture.linux_xwd import _is_wayland_session
+
+        if _is_wayland_session():
+            return False
+        return True
+
+    def can_paste(self) -> bool:
+        return self.can_type()
 
     def move(self, x: int, y: int) -> None:
         require_command("xdotool")

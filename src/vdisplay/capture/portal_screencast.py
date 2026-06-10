@@ -298,6 +298,30 @@ def _stream_target(node_id: int, properties: dict[str, Any]) -> str:
     return _stream_serial(properties) or str(node_id)
 
 
+def screencast_stream_region(session: PortalScreenCastSession | None) -> dict[str, int] | None:
+    """Desktop region for the first portal ScreenCast stream (position + size)."""
+    if session is None:
+        return None
+    streams = list(getattr(session, "streams", None) or [])
+    if not streams:
+        return None
+    properties = streams[0].get("properties") or {}
+    position = properties.get("position") or [0, 0]
+    size = properties.get("size") or []
+    if len(position) < 2 or len(size) < 2:
+        return None
+    width = int(size[0])
+    height = int(size[1])
+    if width <= 0 or height <= 0:
+        return None
+    return {
+        "x": int(position[0]),
+        "y": int(position[1]),
+        "width": width,
+        "height": height,
+    }
+
+
 def _ensure_fd_inheritable(fd: int) -> None:
     flags = fcntl.fcntl(fd, fcntl.F_GETFD)
     fcntl.fcntl(fd, fcntl.F_SETFD, flags & ~fcntl.FD_CLOEXEC)

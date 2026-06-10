@@ -223,6 +223,47 @@ def _label_prefix_changes(
     return changes
 
 
+def _label_prefix_changes_by_identity(
+    before: ControlSnapshot,
+    after: ControlSnapshot,
+    *,
+    prefix: str,
+    scope_root_id: str,
+) -> list[dict[str, Any]]:
+    """Match label changes by (role, name) when structural keys shift between snapshots."""
+    scope_before = _subtree_ids(before, scope_root_id)
+    scope_after = _subtree_ids(after, scope_root_id)
+    before_by_identity: dict[tuple[str, str | None], ControlNode] = {}
+    for node_id in scope_before:
+        node = before.nodes.get(node_id)
+        if node is None:
+            continue
+        before_by_identity[(node.role.value, node.name)] = node
+
+    changes: list[dict[str, Any]] = []
+    for node_id in scope_after:
+        after_node = after.nodes.get(node_id)
+        if after_node is None:
+            continue
+        before_node = before_by_identity.get((after_node.role.value, after_node.name))
+        if before_node is None:
+            continue
+        before_text = _display_text(before_node) or ""
+        after_text = _display_text(after_node) or ""
+        if not before_text.startswith(prefix) and not after_text.startswith(prefix):
+            continue
+        if before_text != after_text:
+            changes.append(
+                {
+                    "role": before_node.role.value,
+                    "name": before_node.name,
+                    "before": before_text,
+                    "after": after_text,
+                }
+            )
+    return changes
+
+
 def _selector_change(
     before: ControlSnapshot,
     after: ControlSnapshot,
@@ -269,6 +310,13 @@ def _handle_label_verification(
     if not verify_label:
         return {}
     label_changes = _label_prefix_changes(before, after, prefix=verify_label, scope_root_id=scope_root_id)
+    if not label_changes:
+        label_changes = _label_prefix_changes_by_identity(
+            before,
+            after,
+            prefix=verify_label,
+            scope_root_id=scope_root_id,
+        )
     if label_changes:
         return {"label_changes": label_changes}
     return {}

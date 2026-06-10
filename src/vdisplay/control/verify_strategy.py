@@ -12,4 +12,5 @@ class VerifyStrategy(StrEnum):
     DOM = "dom"
     SCREENSHOT = "screenshot"
     OCR = "ocr"
+    ANCHOR_VISIBLE = "anchor_visible"
     HYBRID = "hybrid"

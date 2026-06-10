@@ -105,6 +105,66 @@ def test_verify_click_with_verify_label() -> None:
     assert result["state_diff"]["label_changes"][0]["after"] == "Count: 1"
 
 
+def test_verify_label_falls_back_to_identity_when_structure_shifts() -> None:
+    before_nodes = {
+        "panel": _node("panel", role=ControlRole.PANEL, name="box", children_ids=["label", "button"]),
+        "label": _node(
+            "label",
+            role=ControlRole.LABEL,
+            name="counter-label",
+            text_value="Count: 0",
+            parent_id="panel",
+        ),
+        "button": _node(
+            "button",
+            role=ControlRole.BUTTON,
+            name="Increment",
+            parent_id="panel",
+        ),
+    }
+    after_nodes = {
+        "panel": _node("panel", role=ControlRole.PANEL, name="box", children_ids=["button", "label"]),
+        "label": _node(
+            "label",
+            role=ControlRole.LABEL,
+            name="counter-label",
+            text_value="Count: 1",
+            parent_id="panel",
+        ),
+        "button": _node(
+            "button",
+            role=ControlRole.BUTTON,
+            name="Increment",
+            parent_id="panel",
+        ),
+    }
+    before = ControlSnapshot(
+        backend="test",
+        window_id=None,
+        app_label="gtk_demo_app.py",
+        nodes=before_nodes,
+        root_ids=["panel"],
+    )
+    after = ControlSnapshot(
+        backend="test",
+        window_id=None,
+        app_label="gtk_demo_app.py",
+        nodes=after_nodes,
+        root_ids=["panel"],
+    )
+    button = before_nodes["button"]
+
+    result = verify_action_result(
+        before=before,
+        after=after,
+        target=button,
+        action="invoke",
+        verify_label="Count:",
+    )
+    assert result["verified"] is True
+    assert result["state_diff"]["label_changes"][0]["after"] == "Count: 1"
+
+
 def test_verify_click_with_verify_selector() -> None:
     before, after, button = _gtk_demo_snapshots()
     result = verify_action_result(

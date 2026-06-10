@@ -76,7 +76,13 @@ BROWSER_SELECTOR = SelectorExtension(
 VISION_SELECTOR = SelectorExtension(
     name="vision",
     fields=frozenset(
-        {"vision_anchor", "vision_template", "vision_anchor_rel", "vision_target"}
+        {
+            "vision_anchor",
+            "vision_template",
+            "vision_anchor_rel",
+            "vision_target",
+            "vision_min_confidence",
+        }
     ),
     environments=frozenset({"vision"}),
     description="Visual anchor/template hints when semantic trees are unavailable",
@@ -277,7 +283,7 @@ BUILTIN_PROVIDER_DESCRIPTORS: tuple[ProviderDescriptor, ...] = (
         capabilities=VISION_SURFACE,
         selector_extensions=(VISION_SELECTOR,),
         actions=frozenset({"snapshot", "find", "invoke", "focus", "set_value", "bounds"}),
-        verify_strategies=frozenset({VerifyStrategy.SCREENSHOT, VerifyStrategy.OCR}),
+        verify_strategies=frozenset({VerifyStrategy.SCREENSHOT, VerifyStrategy.OCR, VerifyStrategy.ANCHOR_VISIBLE}),
         required_deps=("screenshot capture", "tesseract", "pytesseract"),
         aliases=frozenset({"vision-only", "ocr"}),
         base_score=45,

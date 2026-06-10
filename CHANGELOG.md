@@ -175,6 +175,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Docs
 - Update README.md, CHANGELOG.md, TODO.md with architecture notes and roadmap
 
+## [0.1.12] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update docs/control-plane.md
+- Update docs/rfc/001-extensibility-model.md
+- Update docs/rfc/extensibility-model.md
+- Update examples/README.md
+- Update examples/control-plane/gui-map-pack.md
+- Update examples/control-plane/vision-disambiguation.md
+- Update examples/control-plane/vision-preview.md
+- Update examples/control-plugin-ax/README.md
+- Update examples/control-plugin-uia/README.md
+- ... and 3 more files
+
+### Test
+- Update tests/fixtures/gtk_demo_app.py
+- Update tests/test_control_gtk_demo.py
+- Update tests/test_control_verify.py
+- Update tests/test_coords_rotation.py
+- Update tests/test_example_uia_ax_plugins.py
+- Update tests/test_gui_map.py
+- Update tests/test_gui_map_diff.py
+- Update tests/test_routing_semantics.py
+- Update tests/test_vision_anchor_visible_verify.py
+- Update tests/test_vision_multimatch_disambiguation.py
+- ... and 3 more files
+
+### Other
+- Update .cursor/mcp.json
+- Update .gitignore
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update .koru/project.json
+- Update .planfile/config.yaml
+- Update .planfile/sprints/current.yaml
+- Update examples/control-plugin-ax/pyproject.toml
+- Update examples/control-plugin-ax/src/vdisplay_example_ax_plugin/__init__.py
+- Update examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py
+- ... and 22 more files
+
 ## [0.1.11] - 2026-06-10
 
 ### Docs

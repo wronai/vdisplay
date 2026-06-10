@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vdisplay-example-ax-plugin"
+version = "0.1.0"
+description = "Example macOS AX control provider wheel (PR-23 cross-platform plugin guide)"
+requires-python = ">=3.10"
+dependencies = [
+    "vdisplay",
+]
+
+[project.optional-dependencies]
+macos = [
+    "pyobjc-framework-ApplicationServices>=10.0",
+    "pyobjc-framework-Cocoa>=10.0",
+]
+
+[project.entry-points."vdisplay.control_providers"]
+example-ax = "vdisplay_example_ax_plugin:register_plugin"
+
+[tool.setuptools.packages.find]
+where = ["src"]

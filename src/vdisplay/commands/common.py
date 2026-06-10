@@ -68,6 +68,37 @@ def add_control_selector_args(parser: argparse.ArgumentParser) -> None:
         help="Spatial relation from vision anchor to target",
     )
     parser.add_argument("--vision-target", help="Vision target text relative to anchor")
+    parser.add_argument(
+        "--vision-min-confidence",
+        type=float,
+        default=None,
+        help="Vision match threshold 0.0–1.0 (OCR + template); filters weak matches before --index",
+    )
+
+
+def add_map_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--map", dest="map_path", help="GUI Map Pack JSON (map.json)")
+    parser.add_argument("--scope", dest="map_scope", help="Map region id to limit capture/OCR")
+    parser.add_argument("--target", dest="map_target", help="Map element id for click/set-value")
+
+
+def add_preview_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument(
+        "--preview",
+        action="store_true",
+        help="Render vision match overlay PNG (requires --backend vision or vision selector)",
+    )
+    parser.add_argument(
+        "--preview-output",
+        "-o",
+        dest="preview_output",
+        help="Write overlay PNG to path (e.g. preview.png)",
+    )
+    parser.add_argument(
+        "--preview-debug",
+        action="store_true",
+        help="Include rejected matches and selector debug metadata in preview JSON",
+    )
 
 
 def control_selector_kwargs_from_args(args: argparse.Namespace) -> dict:
@@ -92,6 +123,10 @@ def control_selector_kwargs_from_args(args: argparse.Namespace) -> dict:
         "vision_template": getattr(args, "vision_template", None),
         "vision_anchor_rel": getattr(args, "vision_anchor_rel", None),
         "vision_target": getattr(args, "vision_target", None),
+        "vision_min_confidence": getattr(args, "vision_min_confidence", None),
+        "map_path": getattr(args, "map_path", None),
+        "map_scope": getattr(args, "map_scope", None),
+        "map_target": getattr(args, "map_target", None),
     }
 
 

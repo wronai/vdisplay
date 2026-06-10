@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vdisplay-example-uia-plugin"
+version = "0.1.0"
+description = "Example Windows UIA control provider wheel (PR-23 cross-platform plugin guide)"
+requires-python = ">=3.10"
+dependencies = [
+    "vdisplay",
+]
+
+[project.optional-dependencies]
+windows = [
+    "comtypes>=1.4.0",
+]
+
+[project.entry-points."vdisplay.control_providers"]
+example-uia = "vdisplay_example_uia_plugin:register_plugin"
+
+[tool.setuptools.packages.find]
+where = ["src"]

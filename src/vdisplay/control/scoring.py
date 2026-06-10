@@ -744,4 +744,7 @@ def select_verify_provider(
     if verify_semantic and action_provider == "browser":
         return action_provider, "dom"
 
+    if verify_semantic and action_provider == "vision":
+        return action_provider, "anchor_visible"
+
     return action_provider, "semantic"

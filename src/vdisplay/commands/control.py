@@ -7,6 +7,8 @@ from ..application.services import session as session_svc
 from .common import (
     add_control_selector_args,
     add_display_arg,
+    add_map_args,
+    add_preview_args,
     control_selector_kwargs_for_service,
 )
 from .io import print_json
@@ -33,6 +35,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     finding = control_sub.add_parser("find", help="Find controls by selector")
     add_display_arg(finding)
     _add_selector_args(finding)
+    add_preview_args(finding)
     finding.set_defaults(func=handle)
 
     click = control_sub.add_parser("click", help="Invoke control (button/menu)")
@@ -72,6 +75,7 @@ def register(sub: argparse._SubParsersAction) -> None:
 
 def _add_selector_args(parser: argparse.ArgumentParser) -> None:
     add_control_selector_args(parser)
+    add_map_args(parser)
 
 
 def handle(args: argparse.Namespace) -> int:
@@ -104,6 +108,9 @@ def handle(args: argparse.Namespace) -> int:
             control_svc.controls_find(
                 display=args.display,
                 backend=args.backend,
+                preview=getattr(args, "preview", False),
+                preview_output=getattr(args, "preview_output", None),
+                preview_debug=getattr(args, "preview_debug", False),
                 **control_selector_kwargs_for_service(args),
             )
         )

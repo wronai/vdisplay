@@ -196,6 +196,7 @@ def anchor_spatial_find(
     rel: str,
     target_text: str | None = None,
     fuzzy: bool = True,
+    anchor_index: int = 0,
 ) -> tuple[list[OcrTextBox], list[OcrTextBox]]:
     """Find OCR boxes relative to an anchor label using bounds-based geometry."""
     rel_norm = (rel or "near").strip().lower()
@@ -206,7 +207,10 @@ def anchor_spatial_find(
     if not anchors:
         return anchors, []
 
-    anchor = anchors[0]
+    idx = max(0, int(anchor_index))
+    if idx >= len(anchors):
+        return anchors, []
+    anchor = anchors[idx]
     spatial: list[OcrTextBox] = []
     for box in boxes:
         if box is anchor:
@@ -228,6 +232,7 @@ def anchor_based_find(
     relation: str,
     target_text: str | None = None,
     fuzzy: bool = True,
+    anchor_index: int = 0,
 ) -> tuple[list[OcrTextBox], list[OcrTextBox]]:
     """Alias for bounds-based anchor find (PR-22 spec name)."""
     return anchor_spatial_find(
@@ -236,6 +241,7 @@ def anchor_based_find(
         rel=relation,
         target_text=target_text,
         fuzzy=fuzzy,
+        anchor_index=anchor_index,
     )
 
 
@@ -249,8 +255,11 @@ def ocr_anchor_combined_find(
     template_threshold: float = 0.85,
     min_confidence: float = 30.0,
     fuzzy: bool = True,
+    anchor_index: int = 0,
+    vision_min_confidence: float | None = None,
 ) -> list[Any]:
     """Combine OCR anchor resolution with optional template matching near the anchor."""
+    from .vision_disambiguate import filter_by_confidence
     from .vision_template import load_template_png, match_template_bounds, template_anchor_find
 
     all_boxes = ocr_png(png, min_confidence=min_confidence)
@@ -260,26 +269,33 @@ def ocr_anchor_combined_find(
         rel=relation,
         target_text=target_text,
         fuzzy=fuzzy,
+        anchor_index=anchor_index,
     )
     if not anchors:
         return []
 
+    idx = max(0, min(int(anchor_index), len(anchors) - 1))
+    anchor = anchors[idx]
+    threshold = template_threshold
+    if vision_min_confidence is not None:
+        threshold = max(0.0, min(1.0, float(vision_min_confidence)))
+
     if template_path:
         template_matches = template_anchor_find(
             png,
-            anchor_bounds=anchors[0].bounds,
+            anchor_bounds=anchor.bounds,
             rel=relation,
             template_png=load_template_png(template_path),
-            threshold=template_threshold,
+            threshold=threshold,
         )
         if not template_matches:
             template_matches = match_template_bounds(
                 png,
                 template_path,
-                anchors[0].bounds,
+                anchor.bounds,
                 relation,
-                threshold=template_threshold,
+                threshold=threshold,
             )
-        return template_matches
+        return filter_by_confidence(template_matches, min_confidence=vision_min_confidence)
 
-    return spatial
+    return filter_by_confidence(spatial, min_confidence=vision_min_confidence)

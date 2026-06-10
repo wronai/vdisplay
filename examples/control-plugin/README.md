@@ -131,3 +131,4 @@ pytest tests/contract/test_providers.py -q   # builtin count unchanged
 - Plugin API: `src/vdisplay/control/plugins.py`
 - Contract tests: `tests/contract/test_providers.py`
 - PR-12 tests: `tests/test_control_plugins.py`
+- **PR-23** platform wheels: [`control-plugin-uia/`](../control-plugin-uia/), [`control-plugin-ax/`](../control-plugin-ax/)

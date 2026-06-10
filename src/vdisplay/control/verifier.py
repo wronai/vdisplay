@@ -8,6 +8,7 @@ from typing import Any, Callable
 
 from .base import ControlProvider
 from .contracts import VerifySpec
+from .gui_map import GuiMapElement, verify_hints_from_map_element
 from .models import ControlNode, ControlSnapshot
 from .screenshot_verify import (
     _region_from_bounds,
@@ -40,6 +41,7 @@ class VerifyContext:
     verify_mode: str = "semantic"
     verify_provider: str | None = None
     spec: VerifySpec | None = None
+    map_element: GuiMapElement | None = None
 
 
 @dataclass
@@ -78,8 +80,10 @@ def verify_spec_from_flags(
         mode = "hybrid"
     elif verify_screenshot:
         mode = "screenshot_diff"
+    elif verify_mode in {"semantic", "hybrid", "dom", "anchor_visible", "ocr_contains"}:
+        mode = verify_mode
     else:
-        mode = verify_mode if verify_mode in {"semantic", "hybrid", "dom"} else "semantic"
+        mode = "semantic"
     min_change_ratio = 0.00005 if verify_screenshot else 0.02
     return VerifySpec(
         mode=mode,  # type: ignore[arg-type]
@@ -140,6 +144,18 @@ class VerifierPipeline:
         if spec is None:
             return VerificationResult(verified=None, mode="none", confidence=0.0)
 
+        if spec.mode == "anchor_visible":
+            anchor_payload = self._run_anchor_visible(ctx, spec)
+            verified = bool(anchor_payload.get("verified"))
+            confidence = float(anchor_payload.get("confidence") or (0.9 if verified else 0.0))
+            return VerificationResult(
+                verified=verified,
+                mode=spec.mode,
+                confidence=confidence,
+                visual=anchor_payload,
+                reasons=[str(anchor_payload.get("reason") or ("anchor visible" if verified else "anchor not visible"))],
+            )
+
         semantic_payload, semantic_ok, visual_payload, visual_ok, ocr_payload = self._evaluate_runs(ctx, spec)
 
         verified, confidence, reasons = self._aggregate(
@@ -166,14 +182,20 @@ class VerifierPipeline:
             app=ctx.selector.app or ctx.session_id,
             window_id=ctx.selector.window_id or ctx.session_id,
         )
+        verify_label = ctx.verify_label
+        verify_selector = ctx.verify_selector
+        if ctx.map_element is not None:
+            hints = verify_hints_from_map_element(ctx.map_element)
+            verify_label = verify_label or hints.get("verify_label")
+            verify_selector = verify_selector or hints.get("verify_selector")
         payload = verify_action_result(
             before=ctx.before_snapshot,
             after=after_snapshot,
             target=ctx.target,
             action=ctx.action,
             expected_value=ctx.value,
-            verify_label=ctx.verify_label,
-            verify_selector=ctx.verify_selector,
+            verify_label=verify_label,
+            verify_selector=verify_selector,
         )
         payload["provider"] = getattr(ctx.action_provider, "name", "unknown")
         if ctx.verify_mode == "dom" or (ctx.spec and ctx.spec.mode == "dom"):
@@ -189,6 +211,10 @@ class VerifierPipeline:
             capture_fn=ctx.capture_fn,
         )
         compare_region = spec.region
+        if compare_region is None and ctx.map_element is not None:
+            bounds = ctx.map_element.action_bounds.to_control_bounds()
+            if bounds.width > 0 and bounds.height > 0:
+                compare_region = _region_from_bounds(bounds)
         if compare_region is None and ctx.target.bounds is not None:
             if ctx.target.bounds.width > 0 and ctx.target.bounds.height > 0:
                 compare_region = _region_from_bounds(ctx.target.bounds)
@@ -246,6 +272,62 @@ class VerifierPipeline:
             "text": text.strip(),
             "confidence": confidence,
             "boxes": [box.to_dict() for box in boxes[:20]],
+        }
+
+    def _run_anchor_visible(self, ctx: VerifyContext, spec: VerifySpec) -> dict[str, Any]:
+        """PR-22 — confirm template PNG or OCR anchor label is still visible after action."""
+        after_png, after_meta = capture_control_screenshot(
+            display=ctx.display,
+            target=ctx.target,
+            capture_fn=ctx.capture_fn,
+        )
+
+        if ctx.selector.vision_template:
+            from .vision_template import template_available, template_find_selector
+
+            ready, reason = template_available()
+            if not ready:
+                return {"verified": False, "method": "template", "reason": reason, "capture": after_meta}
+            matches = template_find_selector(
+                after_png,
+                ctx.selector,
+                threshold=spec.min_confidence,
+            )
+            found = bool(matches)
+            return {
+                "verified": found,
+                "method": "template",
+                "confidence": float(matches[0].confidence) if matches else 0.0,
+                "match_count": len(matches),
+                "capture": after_meta,
+            }
+
+        anchor_label = spec.expected_text or ctx.selector.vision_anchor or ctx.verify_label
+        if not anchor_label:
+            return {
+                "verified": False,
+                "method": "anchor_visible",
+                "reason": "missing vision_template or vision_anchor/expected_text for anchor_visible verify",
+                "capture": after_meta,
+            }
+
+        from .vision_ocr import ocr_available, ocr_png, match_selector_boxes
+
+        ready, reason = ocr_available()
+        if not ready:
+            return {"verified": False, "method": "ocr_anchor", "reason": reason, "capture": after_meta}
+
+        boxes = ocr_png(after_png)
+        matched = match_selector_boxes(boxes, ControlSelector(vision_anchor=anchor_label))
+        found = bool(matched)
+        confidence = float(matched[0].confidence) if matched else 0.0
+        return {
+            "verified": found and confidence >= spec.min_confidence,
+            "method": "ocr_anchor",
+            "expected_text": anchor_label,
+            "confidence": confidence,
+            "match_count": len(matched),
+            "capture": after_meta,
         }
 
     def _aggregate(

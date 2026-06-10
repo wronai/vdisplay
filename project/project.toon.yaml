@@ -1,54 +1,54 @@
-# vdisplay | 1229 func | 158f | 28001L | python | 2026-06-09
-# generated in 0.01s
+# vdisplay | 1358 func | 173f | 31265L | python | 2026-06-10
+# generated in 0.00s
 
 HEALTH:
-  CC̄=3.4  critical=75 (limit:10)  dup=1  cycles=0
+  CC̄=3.5  critical=97 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     _start_screencast_impl = 36 (limit:10)
+  !!! high_fan_out     _start_screencast_impl = 37 (limit:10)
+  !!! cc_exceeded      global_pointer_coords = 30 (limit:15)
+  !!! high_fan_out     diff_gui_map = 25 (limit:10)
   !!! high_fan_out     snapshot_dict = 24 (limit:10)
   !!! high_fan_out     create_app = 23 (limit:10)
   !!! high_fan_out     _portal_impl = 23 (limit:10)
   !!! high_fan_out     register_routes = 22 (limit:10)
   !!! high_fan_out     main = 22 (limit:10)
-  !!! high_fan_out     main = 20 (limit:10)
-  !!! high_fan_out     ComtypesUiaBackend.collect_elements = 20 (limit:10)
-  !!  cc_exceeded      CommandRequest.from_dsl = 23 (limit:15)
-  !!  cc_exceeded      ComtypesUiaBackend.collect_elements = 22 (limit:15)
+  !!! high_fan_out     render_match_overlay = 22 (limit:10)
+  !!! high_fan_out     refresh_gui_map = 22 (limit:10)
 
-MODULES[229] (top by size):
+MODULES[247] (top by size):
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/capture/portal_screencast.py] 749L C:1 F:33 CC↑9 D:5 (python)
-  M[src/vdisplay/control/scoring.py] 747L C:2 F:34 CC↑18 D:6 (python)
+  M[src/vdisplay/capture/portal_screencast.py] 779L C:1 F:34 CC↑11 D:6 (python)
+  M[src/vdisplay/control/scoring.py] 750L C:2 F:34 CC↑18 D:6 (python)
+  M[src/vdisplay/application/services/control.py] 678L C:0 F:21 CC↑14 D:0 (python)
   M[examples/host-relay/output/after_adopt.png.meta.json] 584L C:0 F:0 CC↑0 D:0 (json)
+  M[src/vdisplay/control/providers/vision/provider.py] 578L C:1 F:26 CC↑19 D:0 (python)
+  M[src/vdisplay/capture/host.py] 555L C:0 F:15 CC↑14 D:6 (python)
   M[examples/host-relay/output/after_release.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
   M[examples/host-relay/output/before_automation.png.meta.json] 551L C:0 F:0 CC↑0 D:0 (json)
-  M[src/vdisplay/capture/host.py] 534L C:0 F:15 CC↑13 D:5 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
-  M[src/vdisplay/control/descriptors.py] 458L C:5 F:11 CC↑14 D:9 (python)
-  M[src/vdisplay/application/services/control.py] 432L C:0 F:16 CC↑9 D:0 (python)
-  M[src/vdisplay/control/verify.py] 427L C:0 F:19 CC↑13 D:1 (python)
+  M[src/vdisplay/control/verify.py] 475L C:0 F:20 CC↑13 D:1 (python)
+  M[src/vdisplay/control/descriptors.py] 464L C:5 F:11 CC↑14 D:9 (python)
   M[src/vdisplay/client.py] 407L C:1 F:38 CC↑17 D:0 (python)
-  M[packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py] 406L C:0 F:30 CC↑11 D:1 (python)
-  M[src/vdisplay/control/providers/atspi_impl.py] 404L C:0 F:19 CC↑8 D:1 (python)
-  LANGS: python:176/json:22/toml:9/shell:7/other:5/yml:5/yaml:4/txt:1
+  M[src/vdisplay/control/providers/atspi_impl.py] 407L C:0 F:19 CC↑8 D:1 (python)
+  LANGS: python:191/json:22/toml:11/shell:7/other:5/yml:5/yaml:5/txt:1
 
 HOTSPOTS[10]:
-  ★ _start_screencast_impl fan=36  // Orchestrates 36 calls
+  ★ _start_screencast_impl fan=37  // Orchestrates 37 calls
+  ★ diff_gui_map fan=25  // Compare stored map against a fresh capture + OCR.
   ★ snapshot_dict fan=24  // Orchestrates 24 calls
   ★ create_app fan=23  // REST adapter for vdisplay.
 
 When VDISPLAY_AGENT_URL is set (or --agent-url), DSL
   ★ _portal_impl fan=23  // Orchestrates 23 calls
-  ★ register_routes fan=22  // Orchestrates 22 calls
 
 REFACTOR[15]:
-  [1] H/H Split god module src/vdisplay/control/scoring.py (747L, 2 classes)
-  [2] H/H Split god module src/vdisplay/capture/host.py (534L, 0 classes)
-  [3] H/H Split god module src/vdisplay/capture/portal_screencast.py (749L, 1 classes)
-  [4] H/H Split god module examples/host-relay/output/after_adopt.png.meta.json (584L, 0 classes)
-  [5] H/H Split god module examples/host-relay/output/after_release.png.meta.json (551L, 0 classes)
+  [1] H/L Split global_pointer_coords (CC=30)
+  [2] H/H Split god module src/vdisplay/control/providers/vision/provider.py (578L, 1 classes)
+  [3] H/H Split god module src/vdisplay/control/scoring.py (750L, 2 classes)
+  [4] H/H Split god module src/vdisplay/application/services/control.py (678L, 0 classes)
+  [5] H/H Split god module src/vdisplay/capture/host.py (555L, 0 classes)
 
 EVOLUTION:
-  2026-06-09 CC̄=3.4 crit=75 28001L // Automated analysis
+  2026-06-10 CC̄=3.5 crit=97 31265L // Automated analysis

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.11-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$6.75-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-7.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.12-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$6.79-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-8.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $6.7498 (10 commits)
-- 👤 **Human dev:** ~$715 (7.1h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $6.7899 (11 commits)
+- 👤 **Human dev:** ~$815 (8.1h @ $100/h, 30min dedup)
 
 Generated on 2026-06-10 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -922,6 +922,9 @@ Supported backends:
 - `browser` — Playwright headless/headed browser DOM
 - `terminal` — Terminal session emulation and cursor positioning
 - `x11` — `xdotool` keyboard/mouse pointer injection fallback
+- `vision` — screenshot OCR + template/anchor matching (canvas, games, no a11y tree)
+
+Optional deps: `pip install "vdisplay[vision]"` (Pillow, pytesseract, opencv-python).
 
 ### CLI Examples
 
@@ -974,6 +977,135 @@ vdisplay control set-value --backend terminal --session-id t1 --terminal-line 1 
 vdisplay diagnose control --selector "#go" --session-id web-1 --backend auto
 ```
 
+### Vision template & spatial anchor (PR-22)
+
+When AT-SPI / DOM are unavailable (canvas, games, remote desktop), use the **`vision`** backend:
+
+```bash
+pip install "vdisplay[vision]"   # Pillow + pytesseract + opencv-python
+
+# 1) OCR text on screen — click by label
+vdisplay control click --backend vision --vision-anchor "Play" --verify
+
+# 2) Template PNG — crop a button snippet once, then match on every frame
+vdisplay screenshot -o desk.png --source DP-1          # reference capture
+# crop ./templates/play-btn.png from desk.png (any image editor)
+vdisplay control click --backend vision \
+  --vision-template ./templates/play-btn.png --verify
+
+# 3) Spatial anchor — target relative to a label
+vdisplay control click --backend vision \
+  --vision-anchor "Email" \
+  --vision-anchor-rel right_of \
+  --vision-target "Submit" \
+  --verify
+
+# 4) Relations: right_of | below | above | left_of | near
+vdisplay control click --backend vision \
+  --vision-anchor "Password" \
+  --vision-anchor-rel below \
+  --vision-target "Sign in"
+
+# 5) Diagnose vision routing + deps
+vdisplay diagnose control --backend vision --vision-anchor "Play"
+vdisplay diagnose control --vision-template ./templates/play-btn.png
+
+# 6) Wayland host — start screencast before vision find (screenshot source for OCR/template)
+vdisplay agent serve                    # terminal 1
+vdisplay agent screencast start         # terminal 2
+vdisplay control click --backend vision --vision-template ./btn.png
+```
+
+**Vision selector cheat sheet**
+
+| Scenario | CLI flags | Mechanism |
+|----------|-----------|-----------|
+| Text button / label | `--vision-anchor "OK"` | OCR substring match |
+| Icon without text | `--vision-template path/to/icon.png` | OpenCV `matchTemplate` |
+| Field next to label | `--vision-anchor "Email"` + `--vision-anchor-rel right_of` + `--vision-target` | OCR + geometry |
+| Verify after click | `--verify` on vision backend | `anchor_visible` — template or anchor still on screen |
+
+### Vision multi-match disambiguation (PR-24)
+
+When OCR or template matching returns **multiple hits** (duplicate labels, repeated icons), disambiguate with
+`--index` and optional `--vision-min-confidence`:
+
+```bash
+# Two "Submit" buttons on screen — click the second (0-based index)
+vdisplay control click --backend vision --vision-anchor "Submit" --index 1
+
+# Raise template/OCR confidence floor (0.0–1.0 unified scale)
+vdisplay control click --backend vision \
+  --vision-template ./templates/play-btn.png \
+  --vision-min-confidence 0.92
+
+# Two "Email" labels — pick the lower form row, then target to the right
+vdisplay control click --backend vision \
+  --vision-anchor "Email" \
+  --vision-anchor-rel right_of \
+  --vision-target "Submit" \
+  --index 1
+
+# Inspect all matches before clicking
+vdisplay control find --backend vision --vision-anchor "Submit" | jq '.matches[] | {name, confidence: .state.confidence, y: .bounds.y}'
+```
+
+**Disambiguation rules**
+
+| Flag | Applies to | Default |
+|------|------------|---------|
+| `--index N` | Nth match after confidence filter | `0` |
+| `--index N` + `--vision-anchor-rel` | Nth **anchor label** (duplicate anchors) | `0` |
+| `--vision-min-confidence` | Drop OCR/template matches below threshold | template `0.85`, OCR tesseract floor `0.30` |
+
+Match nodes include `state.match_count`, `state.selected_index`, and `state.confidence` for diagnostics.
+
+### Vision match preview overlay (PR-25)
+
+Debug **why** a vision match was picked — numbered bounding boxes on the screencast screenshot:
+
+```bash
+# Find + overlay PNG (base64 in JSON + optional file)
+vdisplay control find --backend vision --vision-anchor "Submit" \
+  --preview --preview-output preview.png
+
+# Stricter threshold + second match + rejected boxes in debug mode
+vdisplay control find --backend vision --vision-anchor "Submit" \
+  --index 1 --vision-min-confidence 0.85 \
+  --preview --preview-debug -o preview.png
+
+# Diagnose routing + vision preview in one call
+vdisplay diagnose control --backend vision --vision-anchor "Submit" \
+  --preview -o diagnose-preview.png
+```
+
+Overlay legend: **green** = selected match, **blue/orange/red** = confidence tiers, **gray `#R`** = rejected (with `--preview-debug`).
+
+Decode preview from JSON: `jq -r '.preview.preview_png_base64' | base64 -d > preview.png`
+
+Full guide: [examples/control-plane/vision-preview.md](examples/control-plane/vision-preview.md)
+
+### GUI Map Pack + scoped verify (PR-26)
+
+Build a persistent atlas once, then drive clicks/types from stored **action bounds** (not raw OCR boxes):
+
+```bash
+vdisplay map build --monitor DP-2 --output dp2-map.json --md dp2-map.md --svg dp2-map.svg
+vdisplay control click --backend vision --map dp2-map.json --target ask_anything
+vdisplay control set-value --backend vision --map dp2-map.json --target ask_anything --value "test" --verify
+```
+
+Each map element stores `raw_bounds`, `action_bounds`, `click_point`, `identity`, and optional `tile_fingerprint`. Verify uses identity fallback when AT-SPI structure shifts.
+
+Full guide: [examples/control-plane/gui-map-pack.md](examples/control-plane/gui-map-pack.md)
+
+Detect UI drift before automation runs stale:
+
+```bash
+vdisplay map diff --map dp2-map.json --scope pycharm.ai_chat   # exit 1 if drift
+vdisplay map refresh --map dp2-map.json --output dp2-map.json  # update bounds/fingerprints
+```
+
 ### GNOME backend picker
 
 | Goal | Backend | Example |
@@ -982,7 +1114,7 @@ vdisplay diagnose control --selector "#go" --session-id web-1 --backend auto
 | Java IDE | `atspi` | `control click --app PyCharm --role button --name Run` |
 | Web app / form | `browser` + session | `control browser-open` then `--selector "#id"` |
 | Shell / TUI / CI | `terminal` + session | `terminal open` then `--terminal-line N` |
-| Canvas / no a11y tree | `vision` (stub) | `diagnose control --vision-anchor btn` |
+| Canvas / no a11y tree | `vision` | `control click --backend vision --vision-anchor Play --verify` |
 | Pointer injection | `x11` | **ineligible on Wayland** — use `atspi` or sessions |
 
 ### Python API Example

@@ -276,11 +276,15 @@ Session gates: browser and terminal providers require an open session (`browser_
 | PR-20 | Vision OCR find/invoke (tesseract + pointer fallback) |
 | PR-21 | Full Windows UIA / macOS AX invoke (comtypes + ApplicationServices) |
 | PR-22 | Vision template + spatial anchor matching (opencv + bounds geometry) |
+| PR-23 | Cross-platform control plugin examples (UIA/AX wheels) |
+| PR-24 | Vision multi-match disambiguation (index + confidence thresholds) |
+| PR-25 | Vision match preview overlay in diagnose / control find | **done** |
+| PR-26 | GUI Map Pack + scoped vision/verify + rotation-aware coords | **done** |
+| PR-27 | Map refresh/diff (UI drift vs tile fingerprints) | **done** |
 
 ## Recommended next PRs
 
-1. **PR-23** — Cross-platform control plugin examples (UIA/AX wheels).
-2. **PR-24** — Vision multi-match disambiguation (index + confidence thresholds).
+1. **PR-28** — Map-scoped vision find (crop capture to region before OCR, not only map-target click).
 
 ## One-line principle
 

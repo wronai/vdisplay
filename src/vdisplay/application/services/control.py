@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 from typing import Any
 
 from ...control.base import ControlProvider
@@ -13,6 +14,14 @@ from dataclasses import replace
 from ...control.selector import ControlSelector, parse_selector, pick_match
 from ...control.screenshot_verify import capture_control_screenshot
 from ...control.verifier import VerifierPipeline, VerifyContext, verify_spec_from_flags
+from ...control.gui_map import (
+    GuiMapElement,
+    load_gui_map,
+    map_element_to_node,
+    resolve_map_element,
+    resolve_map_region,
+    verify_hints_from_map_element,
+)
 from ...exceptions import VDisplayError
 
 
@@ -37,6 +46,7 @@ def _apply_selector_overrides(selector: ControlSelector, **kwargs: Any) -> Contr
         "vision_template",
         "vision_anchor_rel",
         "vision_target",
+        "vision_min_confidence",
     ):
         value = overrides.get(key)
         if value is not None and value != "":
@@ -79,6 +89,11 @@ def _selector_from_kwargs(**kwargs: Any) -> ControlSelector:
         vision_template=kwargs.get("vision_template"),
         vision_anchor_rel=kwargs.get("vision_anchor_rel"),
         vision_target=kwargs.get("vision_target"),
+        vision_min_confidence=(
+            float(kwargs["vision_min_confidence"])
+            if kwargs.get("vision_min_confidence") is not None
+            else None
+        ),
         dom_css=kwargs.get("dom_css"),
         dom_xpath=kwargs.get("dom_xpath"),
         backend=kwargs.get("backend"),
@@ -101,10 +116,119 @@ def _resolve_target(
     if callable(find):
         matches = find(selector)
         if matches:
-            index = max(0, selector.index)
+            # With spatial anchor, --index disambiguates duplicate anchor labels (PR-24).
+            pick_index = 0 if selector.vision_anchor_rel else selector.index
+            index = max(0, pick_index)
             if index < len(matches):
                 return matches[index]
     return pick_match(snapshot.nodes, selector)
+
+
+def _load_map_pack(map_path: str | None):
+    if not map_path:
+        return None
+    return load_gui_map(map_path)
+
+
+def _resolve_map_target(map_path: str, map_target: str) -> GuiMapElement:
+    pack = load_gui_map(map_path)
+    return resolve_map_element(pack, map_target)
+
+
+def _map_find_payload(map_path: str, map_scope: str | None = None) -> dict[str, Any]:
+    pack = load_gui_map(map_path)
+    element_ids: list[str]
+    if map_scope:
+        region = resolve_map_region(pack, map_scope)
+        element_ids = list(region.elements)
+    else:
+        element_ids = list(pack.elements.keys())
+    matches = [map_element_to_node(pack.elements[element_id]).to_dict() for element_id in element_ids if element_id in pack.elements]
+    selected = matches[0] if matches else None
+    return {
+        "ok": True,
+        "map": map_path,
+        "scope": map_scope,
+        "matches": matches,
+        "selected": selected,
+        "count": len(matches),
+    }
+
+
+def _execute_map_action(
+    *,
+    action: str,
+    display: str | None,
+    map_path: str,
+    map_target: str,
+    verify: bool,
+    screenshot_verify: bool = False,
+    value: str | None = None,
+    verify_label: str | None = None,
+    verify_selector: str | None = None,
+    capture_fn: Any | None = None,
+) -> dict[str, Any]:
+    element = _resolve_map_target(map_path, map_target)
+    target = map_element_to_node(element)
+    hints = verify_hints_from_map_element(element)
+    verify_label = verify_label or hints.get("verify_label")
+    verify_selector = verify_selector or hints.get("verify_selector")
+
+    from ...control.providers.vision import VisionStubProvider
+
+    provider = VisionStubProvider(display=display)
+    before_snapshot = provider.snapshot()
+    before_png, screenshot_capture_meta = _capture_before_state(
+        display=display,
+        target=target,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        verify_mode=hints.get("verify_mode") or "semantic",
+        capture_fn=capture_fn,
+    )
+    result = _perform_action(provider, action, target, value)
+    selector = ControlSelector(
+        backend="vision",
+        vision_anchor=element.identity.anchor_text,
+        extra={"map_path": map_path, "map_target": map_target},
+    )
+    verification = VerifierPipeline().verify_after_action(
+        VerifyContext(
+            action_provider=provider,
+            before_snapshot=before_snapshot,
+            target=target,
+            action=action,
+            selector=selector,
+            value=value,
+            verify_label=verify_label,
+            verify_selector=verify_selector,
+            display=display,
+            capture_fn=capture_fn,
+            before_png=before_png,
+            before_capture_meta=screenshot_capture_meta,
+            verify_semantic=verify,
+            verify_screenshot=screenshot_verify,
+            verify_mode="semantic",
+            map_element=element,
+        )
+    )
+    routing = evaluate_provider_routing(
+        backend="vision",
+        selector=selector,
+        display=display,
+        verify_semantic=verify,
+        verify_screenshot=screenshot_verify,
+    )
+    return _build_action_payload(
+        action=action,
+        selector=selector,
+        target=target,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        result={**result, "map_path": map_path, "map_target": map_target},
+        routing=routing,
+        verification=verification,
+    )
 
 
 def list_control_plugins() -> dict[str, Any]:
@@ -118,6 +242,9 @@ def diagnose_control(
     *,
     display: str | None = None,
     backend: str = "auto",
+    preview: bool = False,
+    preview_output: str | None = None,
+    preview_debug: bool = False,
     **selector_kwargs: Any,
 ) -> dict[str, Any]:
     contract = assess_control_capability(display=display)
@@ -151,6 +278,40 @@ def diagnose_control(
         payload["browser_engine"] = browser_engine.value
     if session_id:
         payload["session_id"] = session_id
+
+    if preview and selector is not None:
+        has_vision = bool(
+            selector.vision_anchor
+            or selector.vision_template
+            or selector.vision_anchor_rel
+            or backend == "vision"
+        )
+        if not has_vision:
+            payload["preview"] = {
+                "preview_available": False,
+                "reason": "preview requires vision selector fields or --backend vision",
+            }
+        else:
+            preview_backend = "vision" if backend == "auto" else backend
+            try:
+                find_payload = controls_find(
+                    display=display,
+                    backend=preview_backend,
+                    preview=True,
+                    preview_output=preview_output,
+                    preview_debug=preview_debug,
+                    **selector_kwargs,
+                )
+                payload["vision_find"] = {
+                    "count": find_payload.get("count"),
+                    "selected": find_payload.get("selected"),
+                    "matches": find_payload.get("matches"),
+                }
+                if "preview" in find_payload:
+                    payload["preview"] = find_payload["preview"]
+            except VDisplayError as exc:
+                payload["preview"] = {"preview_available": False, "reason": str(exc)}
+
     return payload
 
 
@@ -180,12 +341,70 @@ def controls_list(
     return payload
 
 
+def _attach_vision_preview(
+    payload: dict[str, Any],
+    *,
+    provider: ControlProvider,
+    nodes: list[ControlNode],
+    selector: ControlSelector,
+    preview: bool,
+    preview_output: str | None,
+    preview_debug: bool,
+) -> dict[str, Any]:
+    from ...control.providers.vision import VisionStubProvider
+    from ...control.vision_preview import (
+        build_vision_preview,
+        preview_available,
+        write_preview_png,
+    )
+
+    if not preview:
+        return payload
+
+    ready, reason = preview_available()
+    if not ready:
+        payload["preview"] = {"preview_available": False, "reason": reason}
+        return payload
+
+    if not isinstance(provider, VisionStubProvider):
+        payload["preview"] = {
+            "preview_available": False,
+            "reason": "preview requires vision backend (use --backend vision)",
+        }
+        return payload
+
+    capture = provider.last_capture()
+    if capture is None:
+        payload["preview"] = {"preview_available": False, "reason": "no vision screenshot captured"}
+        return payload
+
+    png, _meta = capture
+    debug = provider.last_find_debug() if preview_debug else None
+    preview_payload = build_vision_preview(png, nodes, selector=selector, debug=debug)
+    if preview_output:
+        overlay = base64.b64decode(preview_payload["preview_png_base64"])
+        preview_payload["preview_path"] = write_preview_png(overlay, preview_output)
+    payload["preview"] = preview_payload
+    return payload
+
+
 def controls_find(
     *,
     display: str | None = None,
     backend: str = "auto",
+    preview: bool = False,
+    preview_output: str | None = None,
+    preview_debug: bool = False,
     **selector_kwargs: Any,
 ) -> dict[str, Any]:
+    map_path = selector_kwargs.get("map_path")
+    map_scope = selector_kwargs.get("map_scope")
+    if map_path and not any(
+        selector_kwargs.get(key)
+        for key in ("vision_anchor", "vision_template", "role", "name", "selector", "text", "text_contains")
+    ):
+        return _map_find_payload(map_path, map_scope)
+
     selector = _selector_from_kwargs(**selector_kwargs)
     session_id = selector_kwargs.get("session_id") or selector.session_id
     provider = resolve_provider(
@@ -193,6 +412,8 @@ def controls_find(
         **_provider_kwargs(display=display, session_id=session_id),
         selector=selector,
     )
+    if preview_debug and hasattr(provider, "enable_preview_debug"):
+        provider.enable_preview_debug(True)
     snapshot = provider.snapshot(
         app=selector.app or session_id,
         window_id=selector.window_id or session_id,
@@ -200,13 +421,22 @@ def controls_find(
     matches = provider.find(selector)
     if not matches:
         raise VDisplayError(f"no control matched selector: {selector}")
-    picked = pick_match(snapshot.nodes, selector)
-    return {
+    picked = _resolve_target(provider, snapshot, selector)
+    payload = {
         "ok": True,
         "matches": [node.to_dict() for node in matches[:20]],
         "selected": picked.to_dict() if picked else None,
         "count": len(matches),
     }
+    return _attach_vision_preview(
+        payload,
+        provider=provider,
+        nodes=matches,
+        selector=selector,
+        preview=preview,
+        preview_output=preview_output,
+        preview_debug=preview_debug,
+    )
 
 
 def control_click(
@@ -353,6 +583,22 @@ def _execute_action(
     capture_fn: Any | None = None,
     **selector_kwargs: Any,
 ) -> dict[str, Any]:
+    map_path = selector_kwargs.get("map_path")
+    map_target = selector_kwargs.get("map_target")
+    if map_path and map_target:
+        return _execute_map_action(
+            action=action,
+            display=display,
+            map_path=map_path,
+            map_target=map_target,
+            verify=verify,
+            screenshot_verify=screenshot_verify,
+            value=value,
+            verify_label=verify_label,
+            verify_selector=verify_selector,
+            capture_fn=capture_fn,
+        )
+
     selector = _selector_from_kwargs(**selector_kwargs)
     session_id = selector_kwargs.get("session_id") or selector.session_id
     provider, routing = resolve_provider_routing(

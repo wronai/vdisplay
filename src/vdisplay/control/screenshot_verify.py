@@ -22,6 +22,56 @@ def _region_from_bounds(bounds: ControlBounds, *, padding: int = 12) -> tuple[in
     )
 
 
+def enrich_screencast_stream_meta(meta: dict[str, Any]) -> dict[str, Any]:
+    """Attach portal stream position/size when capture used a full ScreenCast frame."""
+    meta = dict(meta)
+    if meta.get("region") or not meta.get("screencast_full_frame"):
+        return meta
+    stream_region = _resolve_screencast_stream_region()
+    if stream_region is not None:
+        meta["region"] = stream_region
+        meta["screencast_stream"] = True
+    return meta
+
+
+def _resolve_screencast_stream_region() -> dict[str, int] | None:
+    from ..capture.portal_screencast import get_active_screencast, screencast_stream_region
+
+    region = screencast_stream_region(get_active_screencast())
+    if region is not None:
+        return region
+
+    from ..agent_config import resolve_agent_url
+    from ..client import AgentClient
+
+    agent_url = resolve_agent_url(allow_auto=True)
+    if not agent_url:
+        return None
+    try:
+        status = AgentClient(agent_url).screencast_status()
+    except VDisplayError:
+        return None
+    payload = status.get("data") if isinstance(status.get("data"), dict) else status
+    streams = list((payload or {}).get("streams") or [])
+    if not streams:
+        return None
+    properties = streams[0].get("properties") or {}
+    position = properties.get("position") or [0, 0]
+    size = properties.get("size") or []
+    if len(position) < 2 or len(size) < 2:
+        return None
+    width = int(size[0])
+    height = int(size[1])
+    if width <= 0 or height <= 0:
+        return None
+    return {
+        "x": int(position[0]),
+        "y": int(position[1]),
+        "width": width,
+        "height": height,
+    }
+
+
 def capture_control_screenshot(
     *,
     display: str | None = None,
@@ -40,7 +90,7 @@ def capture_control_screenshot(
     from ..capture.host import capture_host_png
 
     png, meta = capture_host_png(display=display, region=region)
-    meta = dict(meta)
+    meta = enrich_screencast_stream_meta(dict(meta))
     return _maybe_crop_capture((png, meta), region)
 
 
@@ -108,7 +158,7 @@ def _capture_via_agent(
             png, meta = client.capture_png_bytes(output=output, **kwargs)
     except VDisplayError:
         return None
-    meta = dict(meta)
+    meta = enrich_screencast_stream_meta(dict(meta))
     meta["method"] = meta.get("method") or "agent-screencast"
     if region is not None:
         meta["region"] = kwargs["region"]

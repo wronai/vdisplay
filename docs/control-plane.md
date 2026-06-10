@@ -86,6 +86,66 @@ List registered plugins:
 curl -s http://127.0.0.1:8765/control/plugins | jq .
 ```
 
+### Cross-platform plugin wheels (PR-23)
+
+Ship platform-specific semantic control as optional installable wheels:
+
+| Example wheel | Platform | Entry point | Mock on Linux CI |
+|---------------|----------|-------------|------------------|
+| [`examples/control-plugin-uia/`](../examples/control-plugin-uia/) | Windows UIA | `example-uia` | `MockUiaBackend` (Notepad tree) |
+| [`examples/control-plugin-ax/`](../examples/control-plugin-ax/) | macOS AX | `example-ax` | `MockAxBackend` (Calculator tree) |
+
+```bash
+pip install -e examples/control-plugin-uia examples/control-plugin-ax
+vdisplay control list --backend example-uia --app Notepad
+vdisplay control click --backend example-ax --role button --name OK --verify
+```
+
+Core builtins `uia` and `ax` remain in vdisplay; the example wheels show how OEMs
+package native deps (`comtypes`, `pyobjc`) without editing core routing.
+
+### Vision multi-match disambiguation (PR-24)
+
+When OCR/template find returns multiple hits, filter and pick with selector fields:
+
+| Field | CLI flag | Role |
+|-------|----------|------|
+| `index` | `--index` | Pick Nth match after confidence filter (0-based) |
+| `vision_min_confidence` | `--vision-min-confidence` | Unified 0.0–1.0 threshold for OCR + template |
+| `vision_anchor_rel` + `index` | `--vision-anchor-rel` + `--index` | Pick Nth duplicate **anchor** label before spatial search |
+
+```bash
+# Second "Submit" on screen
+vdisplay control click --backend vision --vision-anchor Submit --index 1
+
+# Stricter template match
+vdisplay control click --backend vision \
+  --vision-template ./btn.png --vision-min-confidence 0.92
+
+# List matches with confidence metadata
+vdisplay control find --backend vision --vision-anchor Submit | jq '.matches'
+```
+
+Implementation: `src/vdisplay/control/vision_disambiguate.py` — used by vision provider
+find paths and `controls_find` / `_resolve_target`.
+
+### Vision match preview overlay (PR-25)
+
+Render numbered bounding boxes on the screencast frame — debug **why** a match was picked:
+
+```bash
+vdisplay control find --backend vision --vision-anchor Submit \
+  --preview --preview-output preview.png
+
+vdisplay diagnose control --backend vision --vision-anchor Submit \
+  --preview --preview-debug -o preview.png
+```
+
+JSON field `preview.preview_png_base64` (or `preview_path` with `-o`). Green box = selected
+match; gray `#R` boxes = rejected when `--preview-debug`.
+
+See [examples/control-plane/vision-preview.md](../examples/control-plane/vision-preview.md).
+
 ## Browser sessions
 
 ```bash

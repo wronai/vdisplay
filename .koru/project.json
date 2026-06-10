@@ -1,0 +1,8 @@
+{
+  "created_at": "2026-06-10T07:24:10.135044+00:00",
+  "project": "/home/tom/github/wronai/vdisplay",
+  "runtime_dir": ".planfile/.koru",
+  "schema": "koru.project/v1",
+  "source": "auto",
+  "updated_at": "2026-06-10T07:24:10.135044+00:00"
+}

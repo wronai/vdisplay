@@ -24,6 +24,11 @@ def _selector_kwargs(body: dict[str, Any]) -> dict[str, Any]:
         "session_id": body.get("session_id"),
         "dom_css": body.get("dom_css"),
         "dom_xpath": body.get("dom_xpath"),
+        "vision_anchor": body.get("vision_anchor"),
+        "vision_template": body.get("vision_template"),
+        "vision_anchor_rel": body.get("vision_anchor_rel"),
+        "vision_target": body.get("vision_target"),
+        "vision_min_confidence": body.get("vision_min_confidence"),
     }
 
 
@@ -35,11 +40,17 @@ def diagnose_control(
     *,
     display: str | None = None,
     backend: str = "auto",
+    preview: bool = False,
+    preview_output: str | None = None,
+    preview_debug: bool = False,
     **selector_kwargs: Any,
 ) -> dict[str, Any]:
     return control_svc.diagnose_control(
         display=display,
         backend=backend,
+        preview=preview,
+        preview_output=preview_output,
+        preview_debug=preview_debug,
         **selector_kwargs,
     )
 
@@ -60,6 +71,9 @@ def find_controls(body: dict[str, Any]) -> dict[str, Any]:
     return control_svc.controls_find(
         display=body.get("display"),
         backend=str(body.get("backend") or "auto"),
+        preview=bool(body.get("preview", False)),
+        preview_output=body.get("preview_output"),
+        preview_debug=bool(body.get("preview_debug", False)),
         **_selector_kwargs(body),
     )
 

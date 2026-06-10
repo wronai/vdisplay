@@ -9,6 +9,10 @@ Runnable examples for different environments. Full index: [docs/examples.md](../
 | [agent-broker/](agent-broker/) | **vdisplay-agent** + CLI/DSL/REST clients via `VDISPLAY_AGENT_URL` |
 | [control-plane/](control-plane/) | Semantic UI control (AT-SPI / terminal / browser) with verification |
 | [control-plugin/](control-plugin/) | **PR-18** — example control provider wheel + plugin author guide |
+| [control-plugin-uia/](control-plugin-uia/) | **PR-23** — Windows UIA plugin wheel (mock on Linux CI) |
+| [control-plugin-ax/](control-plugin-ax/) | **PR-23** — macOS AX plugin wheel (mock on Linux CI) |
+| [control-plane/vision-disambiguation.md](control-plane/vision-disambiguation.md) | **PR-24** — vision multi-match `--index` + `--vision-min-confidence` |
+| [control-plane/vision-preview.md](control-plane/vision-preview.md) | **PR-25** — vision match preview overlay (`--preview`, `-o preview.png`) |
 | [host-mirror/](host-mirror/) | Mirror host desktop via `xrandr` + screenshot |
 | [host-relay/](host-relay/) | Move window off-screen and restore |
 

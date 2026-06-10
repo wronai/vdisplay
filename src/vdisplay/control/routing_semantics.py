@@ -77,7 +77,11 @@ _TARGET_VERIFY_MODES: dict[EnvironmentKind, tuple[VerifyStrategy, ...]] = {
         VerifyStrategy.STRUCTURE,
         VerifyStrategy.HYBRID,
     ),
-    EnvironmentKind.VISION: (VerifyStrategy.SCREENSHOT, VerifyStrategy.OCR),
+    EnvironmentKind.VISION: (
+        VerifyStrategy.SCREENSHOT,
+        VerifyStrategy.OCR,
+        VerifyStrategy.ANCHOR_VISIBLE,
+    ),
     EnvironmentKind.MOBILE: (VerifyStrategy.STRUCTURE, VerifyStrategy.SCREENSHOT),
 }
 

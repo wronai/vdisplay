@@ -36,6 +36,7 @@ class ControlSelector:
     vision_template: str | None = None
     vision_anchor_rel: str | None = None
     vision_target: str | None = None
+    vision_min_confidence: float | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
@@ -67,6 +68,11 @@ class ControlSelector:
             vision_template=payload.get("vision_template"),
             vision_anchor_rel=payload.get("vision_anchor_rel"),
             vision_target=payload.get("vision_target"),
+            vision_min_confidence=(
+                float(payload["vision_min_confidence"])
+                if payload.get("vision_min_confidence") is not None
+                else None
+            ),
             extra=extra,
         )
 
@@ -95,6 +101,7 @@ class ControlSelector:
                 "vision_template",
                 "vision_anchor_rel",
                 "vision_target",
+                "vision_min_confidence",
                 "text",
                 "text_contains",
             ),
