@@ -227,7 +227,7 @@ def _build_registry() -> dict[str, DesktopApp]:
                 chat_selectors=_PYCHARM_CHAT_SELECTORS,
                 submit_selectors=_COMMON_SUBMIT_SELECTORS,
                 map_template=_template_path("pycharm-chat.manifest.json"),
-                map_targets={"chat": "ai-chat-panel", "message": "ask", "send": "continue"},
+                map_targets={"chat": "ai-chat-panel", "message": "ai-chat-input", "send": "ai-chat-send"},
                 notes="Native Wayland: build GUI map once; XWayland variant improves AT-SPI.",
             )
         )
@@ -375,11 +375,11 @@ def map_input_target_candidates(app_id: str, explicit: str | None = None) -> tup
     for value in (
         explicit,
         app.map_targets.get("message"),
+        "message",
         "ask",
         "prompt",
         "chat",
         "composer",
-        "message",
     ):
         if value and value not in ordered:
             ordered.append(value)

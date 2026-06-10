@@ -50,7 +50,7 @@ def map_build(
     monitor: str | None = None,
     region_id: str = "screen",
     region_label: str | None = None,
-    min_confidence: float = 0.5,
+    min_confidence: float = 0.4,
     crop_bounds: str | None = None,
     min_text_len: int = 2,
     capture_fn: Any | None = None,
@@ -122,7 +122,7 @@ def map_diff(
     display: str | None = None,
     monitor: str | None = None,
     scope: str | None = None,
-    min_confidence: float = 0.5,
+    min_confidence: float = 0.4,
     capture_fn: Any | None = None,
 ) -> dict[str, Any]:
     pack = load_gui_map(map_path)
@@ -158,7 +158,7 @@ def map_refresh(
     display: str | None = None,
     monitor: str | None = None,
     scope: str | None = None,
-    min_confidence: float = 0.5,
+    min_confidence: float = 0.4,
     add_new: bool = False,
     md: str | None = None,
     svg: str | None = None,

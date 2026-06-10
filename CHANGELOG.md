@@ -65,6 +65,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.19] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_control_set_value_verify.py
+- Update tests/test_hmi_watch.py
+
+### Other
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update maps/pycharm-chat-fresh.json
+- Update maps/pycharm-chat-input.json
+- Update maps/pycharm-chat.json
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- ... and 7 more files
+
 ## [0.1.18] - 2026-06-10
 
 ### Docs

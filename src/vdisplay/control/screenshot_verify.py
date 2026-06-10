@@ -80,15 +80,15 @@ def capture_control_screenshot(
     display: str | None = None,
     target: ControlNode | None = None,
     capture_fn: CaptureFn | None = None,
-) -> tuple[bytes, dict[str, Any]]:
+) -> tuple[bytes | None, dict[str, Any]]:
     """Capture PNG bytes for verify (full display or padded target region)."""
     region = _target_region(target)
     if capture_fn is not None:
         return capture_fn(display=display, region=region), {"region": region, "method": "injected"}
 
-    agent_capture = _capture_via_agent(display=display, region=region)
+    agent_capture, agent_meta = _capture_via_agent(display=display, region=region)
     if agent_capture is not None:
-        return _maybe_crop_capture(agent_capture, region)
+        return _maybe_crop_capture((agent_capture, agent_meta), region)
 
     from ..capture.host import capture_host_png
 
@@ -138,14 +138,14 @@ def _capture_via_agent(
     *,
     display: str | None,
     region: tuple[int, int, int, int] | None,
-) -> tuple[bytes, dict[str, Any]] | None:
+) -> tuple[bytes | None, dict[str, Any]]:
     """Use vdisplay-agent ScreenCast when the CLI process has no local portal session."""
     from ..agent_config import resolve_agent_url
     from ..client import AgentClient
 
     agent_url = resolve_agent_url(allow_auto=True)
     if not agent_url:
-        return None
+        return None, {"error": "agent not configured"}
     kwargs: dict[str, Any] = {"display": display}
     if region is not None:
         kwargs["region"] = {
@@ -159,8 +159,8 @@ def _capture_via_agent(
         with tempfile.TemporaryDirectory(prefix="vdisplay-verify-") as tmpdir:
             output = str(Path(tmpdir) / "frame.png")
             png, meta = client.capture_png_bytes(output=output, **kwargs)
-    except VDisplayError:
-        return None
+    except VDisplayError as exc:
+        return None, {"error": f"agent capture failed: {exc}"}
     meta = enrich_screencast_stream_meta(dict(meta))
     meta["method"] = meta.get("method") or "agent-screencast"
     if region is not None:

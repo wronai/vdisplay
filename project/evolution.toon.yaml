@@ -1,34 +1,34 @@
-# code2llm/evolution | 1662 func | 192f | 2026-06-10
+# code2llm/evolution | 1721 func | 197f | 2026-06-10
 # generated in 0.01s
 
 NEXT[10] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/application/session_recorder.py
-      WHY: 983L, 3 classes, max CC=31
-      EFFORT: ~4h  IMPACT: 30473
+      WHY: 1018L, 3 classes, max CC=31
+      EFFORT: ~4h  IMPACT: 31558
 
-  [2] !! SPLIT-FUNC      context_to_vql_program  CC=34  fan=29
+  [2] !! SPLIT-FUNC      run_hmi_watch  CC=39  fan=28
+      WHY: CC=39 exceeds 15
+      EFFORT: ~1h  IMPACT: 1092
+
+  [3] !! SPLIT-FUNC      context_to_vql_program  CC=34  fan=29
       WHY: CC=34 exceeds 15
       EFFORT: ~1h  IMPACT: 986
 
-  [3] !  SPLIT-FUNC      reprocess_session_diagnostics  CC=22  fan=38
-      WHY: CC=22 exceeds 15
-      EFFORT: ~1h  IMPACT: 836
+  [4] !! SPLIT-FUNC      sample_pointer  CC=31  fan=21
+      WHY: CC=31 exceeds 15
+      EFFORT: ~1h  IMPACT: 651
 
-  [4] !! SPLIT-FUNC      build_map_health  CC=38  fan=16
+  [5] !! SPLIT-FUNC      send_ide_prompt  CC=27  fan=23
+      WHY: CC=27 exceeds 15
+      EFFORT: ~1h  IMPACT: 621
+
+  [6] !! SPLIT-FUNC      build_map_health  CC=38  fan=16
       WHY: CC=38 exceeds 15
       EFFORT: ~1h  IMPACT: 608
 
-  [5] !! SPLIT-FUNC      render_readme  CC=31  fan=19
+  [7] !! SPLIT-FUNC      render_readme  CC=31  fan=19
       WHY: CC=31 exceeds 15
       EFFORT: ~1h  IMPACT: 589
-
-  [6] !! SPLIT-FUNC      send_ide_prompt  CC=25  fan=22
-      WHY: CC=25 exceeds 15
-      EFFORT: ~1h  IMPACT: 550
-
-  [7] !! SPLIT-FUNC      _build_control_diagnostics  CC=26  fan=21
-      WHY: CC=26 exceeds 15
-      EFFORT: ~1h  IMPACT: 546
 
   [8] !  SPLIT-FUNC      observe_screen  CC=22  fan=23
       WHY: CC=22 exceeds 15
@@ -38,21 +38,21 @@ NEXT[10] (ranked by impact):
       WHY: CC=28 exceeds 15
       EFFORT: ~1h  IMPACT: 504
 
-  [10] !  SPLIT-FUNC      VerifierPipeline._run_ocr  CC=20  fan=18
-      WHY: CC=20 exceeds 15
-      EFFORT: ~1h  IMPACT: 360
+  [10] !  SPLIT-FUNC      VerifierPipeline._run_ocr  CC=23  fan=20
+      WHY: CC=23 exceeds 15
+      EFFORT: ~1h  IMPACT: 460
 
 
 RISKS[3]:
   ⚠ Splitting maps/pycharm-chat.json may break 0 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting src/vdisplay/application/session_recorder.py may break 37 import paths
+  ⚠ Splitting src/vdisplay/application/session_recorder.py may break 46 import paths
 
 METRICS-TARGET:
   CC̄:          3.9 → ≤2.7
-  max-CC:      38 → ≤19
-  god-modules: 11 → 0
-  high-CC(≥15): 19 → ≤9
+  max-CC:      39 → ≤19
+  god-modules: 12 → 0
+  high-CC(≥15): 21 → ≤10
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

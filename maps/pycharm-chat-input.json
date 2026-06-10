@@ -1,0 +1,48 @@
+{
+  "capture_meta": {
+    "bytes": 781591,
+    "display": ":0",
+    "height": 1600,
+    "method": "portal-screencast",
+    "monitor": 1,
+    "monitor_name": "DP-2",
+    "ok": true,
+    "path": "/tmp/vdisplay-map-1lgbjjts/frame.png",
+    "region": {
+      "height": 1280,
+      "width": 2048,
+      "x": 0,
+      "y": 1932
+    },
+    "rotation": "left",
+    "screencast_full_frame": true,
+    "screencast_nodes": [
+      104
+    ],
+    "screencast_stream": true,
+    "source": "DP-2",
+    "target": null,
+    "width": 2560
+  },
+  "elements": {},
+  "monitor": "DP-2",
+  "regions": {
+    "pycharm.ai_chat": {
+      "anchors": [],
+      "elements": [],
+      "fingerprint": null,
+      "id": "pycharm.ai_chat",
+      "label": "pycharm.ai_chat",
+      "monitor": "DP-2",
+      "rotation": "left",
+      "scope_bounds": {
+        "height": 120,
+        "width": 800,
+        "x": 1507,
+        "y": 1650
+      }
+    }
+  },
+  "rotation": "left",
+  "version": 1
+}

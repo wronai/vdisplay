@@ -112,19 +112,6 @@ def _find_map_target(
                 "map_target": target,
                 "selected": node.to_dict(),
             }
-    lowered_targets = [target.lower() for target in targets]
-    for element_id, element in pack.elements.items():
-        anchor = (element.identity.anchor_text or element.identity.name or "").lower()
-        if any(token in anchor or token in element_id.lower() for token in lowered_targets):
-            node = map_element_to_node(element)
-            return element_id, {
-                "ok": True,
-                "count": 1,
-                "map": map_path,
-                "map_target": element_id,
-                "selected": node.to_dict(),
-                "matched_by": "anchor_fuzzy",
-            }
     return None, {
         "ok": False,
         "map_path": map_path,

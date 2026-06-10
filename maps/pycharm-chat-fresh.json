@@ -1,0 +1,795 @@
+{
+  "capture_meta": {
+    "bytes": 624655,
+    "display": ":0",
+    "height": 1600,
+    "method": "portal-screencast",
+    "monitor": 1,
+    "monitor_name": "DP-2",
+    "ok": true,
+    "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+    "region": {
+      "height": 1280,
+      "width": 2048,
+      "x": 0,
+      "y": 1932
+    },
+    "rotation": "left",
+    "screencast_full_frame": true,
+    "screencast_nodes": [
+      104
+    ],
+    "screencast_stream": true,
+    "source": "DP-2",
+    "target": null,
+    "width": 2560
+  },
+  "elements": {
+    "1_268": {
+      "action_bounds": {
+        "height": 46,
+        "width": 320,
+        "x": 1558,
+        "y": 1557
+      },
+      "anchors": [
+        "1,268"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 1718,
+        "y": 1580
+      },
+      "id": "1_268",
+      "identity": {
+        "anchor_text": "1,268",
+        "name": "1,268",
+        "name_prefix": "1,268",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 34,
+        "width": 38,
+        "x": 1558,
+        "y": 1563
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:d6ae0bb99585ceb5",
+      "verify_mode": "identity+region"
+    },
+    "2spaces": {
+      "action_bounds": {
+        "height": 28,
+        "width": 320,
+        "x": 2111,
+        "y": 1568
+      },
+      "anchors": [
+        "2spaces"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2271,
+        "y": 1582
+      },
+      "id": "2spaces",
+      "identity": {
+        "anchor_text": "2spaces",
+        "name": "2spaces",
+        "name_prefix": "2spaces",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 16,
+        "width": 68,
+        "x": 2111,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:18dbf10c36f69b1b",
+      "verify_mode": "identity+region"
+    },
+    "breaks": {
+      "action_bounds": {
+        "height": 28,
+        "width": 320,
+        "x": 1637,
+        "y": 1568
+      },
+      "anchors": [
+        "breaks)"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 1797,
+        "y": 1582
+      },
+      "id": "breaks",
+      "identity": {
+        "anchor_text": "breaks)",
+        "name": "breaks)",
+        "name_prefix": "breaks)",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 15,
+        "width": 54,
+        "x": 1637,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:79b6f0fa81abf568",
+      "verify_mode": "identity+region"
+    },
+    "chars": {
+      "action_bounds": {
+        "height": 15,
+        "width": 192,
+        "x": 1499,
+        "y": 1574
+      },
+      "anchors": [
+        "\u2018chars,"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 1595,
+        "y": 1581
+      },
+      "id": "chars",
+      "identity": {
+        "anchor_text": "\u2018chars,",
+        "name": "\u2018chars,",
+        "name_prefix": "\u2018chars,",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 15,
+        "width": 192,
+        "x": 1499,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:cdd0feb1b4808756",
+      "verify_mode": "identity+region"
+    },
+    "json": {
+      "action_bounds": {
+        "height": 46,
+        "width": 320,
+        "x": 2228,
+        "y": 1557
+      },
+      "anchors": [
+        "JSON"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2388,
+        "y": 1580
+      },
+      "id": "json",
+      "identity": {
+        "anchor_text": "JSON",
+        "name": "JSON",
+        "name_prefix": "JSON",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 34,
+        "width": 36,
+        "x": 2228,
+        "y": 1563
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:75147a772ed15b18",
+      "verify_mode": "identity+region"
+    },
+    "lf": {
+      "action_bounds": {
+        "height": 28,
+        "width": 320,
+        "x": 1977,
+        "y": 1568
+      },
+      "anchors": [
+        "LF"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2137,
+        "y": 1582
+      },
+      "id": "lf",
+      "identity": {
+        "anchor_text": "LF",
+        "name": "LF",
+        "name_prefix": "LF",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 12,
+        "width": 17,
+        "x": 1977,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:c21ab573c62767ee",
+      "verify_mode": "identity+region"
+    },
+    "line": {
+      "action_bounds": {
+        "height": 46,
+        "width": 320,
+        "x": 1601,
+        "y": 1557
+      },
+      "anchors": [
+        "line"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 1761,
+        "y": 1580
+      },
+      "id": "line",
+      "identity": {
+        "anchor_text": "line",
+        "name": "line",
+        "name_prefix": "line",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 34,
+        "width": 29,
+        "x": 1601,
+        "y": 1563
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:7e173dcfdf85ee0e",
+      "verify_mode": "identity+region"
+    },
+    "no": {
+      "action_bounds": {
+        "height": 28,
+        "width": 320,
+        "x": 2201,
+        "y": 1568
+      },
+      "anchors": [
+        "No"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2361,
+        "y": 1582
+      },
+      "id": "no",
+      "identity": {
+        "anchor_text": "No",
+        "name": "No",
+        "name_prefix": "No",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 13,
+        "width": 18,
+        "x": 2201,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:e7cfd65cf83d2cb0",
+      "verify_mode": "identity+region"
+    },
+    "pre_release": {
+      "action_bounds": {
+        "height": 28,
+        "width": 412,
+        "x": 1813,
+        "y": 1568
+      },
+      "anchors": [
+        "(Pre-Release)"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2019,
+        "y": 1582
+      },
+      "id": "pre_release",
+      "identity": {
+        "anchor_text": "(Pre-Release)",
+        "name": "(Pre-Release)",
+        "name_prefix": "(Pre-Release)",
+        "role": "textbox"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 15,
+        "width": 103,
+        "x": 1813,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "textbox",
+      "rotation": "left",
+      "tile_fingerprint": "phash:bea7048a4d064804",
+      "verify_mode": "identity+region"
+    },
+    "sche": {
+      "action_bounds": {
+        "height": 46,
+        "width": 320,
+        "x": 2272,
+        "y": 1557
+      },
+      "anchors": [
+        "sche!"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2432,
+        "y": 1580
+      },
+      "id": "sche",
+      "identity": {
+        "anchor_text": "sche!",
+        "name": "sche!",
+        "name_prefix": "sche!",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 34,
+        "width": 43,
+        "x": 2272,
+        "y": 1563
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:6fcab02c4f5099a7",
+      "verify_mode": "identity+region"
+    },
+    "utf_8": {
+      "action_bounds": {
+        "height": 28,
+        "width": 320,
+        "x": 2016,
+        "y": 1568
+      },
+      "anchors": [
+        "UTF-8"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 2176,
+        "y": 1582
+      },
+      "id": "utf_8",
+      "identity": {
+        "anchor_text": "UTF-8",
+        "name": "UTF-8",
+        "name_prefix": "UTF-8",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 13,
+        "width": 48,
+        "x": 2016,
+        "y": 1574
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:d07232a922f8fcba",
+      "verify_mode": "identity+region"
+    },
+    "windsurf": {
+      "action_bounds": {
+        "height": 46,
+        "width": 320,
+        "x": 1739,
+        "y": 1557
+      },
+      "anchors": [
+        "Windsurf"
+      ],
+      "capture_meta": {
+        "bytes": 624655,
+        "display": ":0",
+        "height": 1600,
+        "method": "portal-screencast",
+        "monitor": 1,
+        "monitor_name": "DP-2",
+        "ok": true,
+        "path": "/tmp/vdisplay-map-6rmdeh8x/frame.png",
+        "region": {
+          "height": 1280,
+          "width": 2048,
+          "x": 0,
+          "y": 1932
+        },
+        "rotation": "left",
+        "screencast_full_frame": true,
+        "screencast_nodes": [
+          104
+        ],
+        "screencast_stream": true,
+        "source": "DP-2",
+        "target": null,
+        "width": 2560
+      },
+      "click_point": {
+        "x": 1899,
+        "y": 1580
+      },
+      "id": "windsurf",
+      "identity": {
+        "anchor_text": "Windsurf",
+        "name": "Windsurf",
+        "name_prefix": "Windsurf",
+        "role": "label"
+      },
+      "monitor": "DP-2",
+      "notes": "OCR detection; click uses action_bounds",
+      "raw_bounds": {
+        "height": 34,
+        "width": 66,
+        "x": 1739,
+        "y": 1563
+      },
+      "region_id": "pycharm.ai_chat",
+      "role": "label",
+      "rotation": "left",
+      "tile_fingerprint": "phash:0bd9b50e4e7a2c5a",
+      "verify_mode": "identity+region"
+    }
+  },
+  "monitor": "DP-2",
+  "regions": {
+    "pycharm.ai_chat": {
+      "anchors": [
+        "\u2018chars,",
+        "1,268",
+        "line",
+        "breaks)",
+        "Windsurf",
+        "(Pre-Release)",
+        "LF",
+        "UTF-8",
+        "2spaces",
+        "No",
+        "JSON",
+        "sche!"
+      ],
+      "elements": [
+        "chars",
+        "1_268",
+        "line",
+        "breaks",
+        "windsurf",
+        "pre_release",
+        "lf",
+        "utf_8",
+        "2spaces",
+        "no",
+        "json",
+        "sche"
+      ],
+      "fingerprint": "phash:5feb9c511dddd3b5",
+      "id": "pycharm.ai_chat",
+      "label": "pycharm.ai_chat",
+      "monitor": "DP-2",
+      "rotation": "left",
+      "scope_bounds": {
+        "height": 600,
+        "width": 800,
+        "x": 1507,
+        "y": 1027
+      }
+    }
+  },
+  "rotation": "left",
+  "version": 1
+}

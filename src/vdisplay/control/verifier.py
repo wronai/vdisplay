@@ -388,15 +388,24 @@ class VerifierPipeline:
         if not ready:
             return {"verified": False, "reason": reason, "method": "ocr"}
 
-        after_png = after_capture
+        after_meta: dict[str, Any] = {}
+        after_png: bytes | None = None
+        if isinstance(after_capture, (bytes, bytearray)):
+            after_png = bytes(after_capture)
+            after_meta_raw = (visual_payload.get("capture") or {}).get("after_meta")
+            if isinstance(after_meta_raw, dict):
+                after_meta = after_meta_raw
+        elif isinstance(after_capture, dict):
+            after_meta = after_capture
+
         if after_png is None:
-            after_png, after_meta = capture_control_screenshot(
+            after_png, capture_meta = capture_control_screenshot(
                 display=ctx.display,
                 target=ctx.target,
                 capture_fn=ctx.capture_fn,
             )
-        else:
-            after_meta = (visual_payload.get("capture") or {}).get("after_meta") or {}
+            if isinstance(capture_meta, dict):
+                after_meta = {**after_meta, **capture_meta}
 
         sidecar_path = (
             (ctx.before_capture_meta or {}).get("screen_context_path")
