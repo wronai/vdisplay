@@ -1,6 +1,18 @@
 # Examples index
 
-Back to [documentation index](index.md) · [Docker guide](docker-guide.md) · [Agent broker](agent-broker.md) · [README.md](../README.md)
+Back to [documentation index](index.md) · [start-here.md](start-here.md) · [guides/](guides/)
+
+## Which example for which problem?
+
+| Problem | Example |
+|---------|---------|
+| Install broker once; CLI/DSL/REST share capture | [agent-broker](../examples/agent-broker/) |
+| Headless CI / Docker screenshot | [headless-virtual](../examples/headless-virtual/) |
+| AT-SPI / browser / terminal control demos | [control-plane](../examples/control-plane/) |
+| GUI Map Pack (vision-only Wayland) | [control-plane/gui-map-pack.md](../examples/control-plane/gui-map-pack.md) |
+| Mirror host desktop to second output | [host-mirror](../examples/host-mirror/) |
+| Hide window off-screen (relay) | [host-relay](../examples/host-relay/) |
+| Custom control provider plugin | [control-plugin](../examples/control-plugin/) |
 
 ## Desktop host — vdisplay-agent (recommended)
 

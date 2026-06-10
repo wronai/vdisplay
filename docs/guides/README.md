@@ -10,6 +10,7 @@ Short decision docs: one question per page. For stable API/CLI/env lists see [re
 | [vision-fallback.md](vision-fallback.md) | OCR verify, cold-path vision LLM, env vars |
 | [browser-control.md](browser-control.md) | Playwright sessions, DOM selectors |
 | [terminal-control.md](terminal-control.md) | PTY sessions, grid selectors |
+| [session-report.md](session-report.md) | Session recorder — audit trail (RFC) |
 
 Platform matrix and provider routing: [control-plane.md](../control-plane.md)
 

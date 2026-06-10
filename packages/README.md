@@ -1,5 +1,7 @@
 # vdisplay control layer packages
 
+Documentation hub: [docs/index.md](../docs/index.md) · [docs/start-here.md](../docs/start-here.md)
+
 Sterowanie `vdisplay` przez DSL i bus CQRS. Adaptery delegują do `dsl2vdisplay.dispatch()`.
 
 ## Packages
@@ -131,4 +133,4 @@ vdisplay monitors
 vdisplay virtual screenshot -o /tmp/vd.png
 ```
 
-Full broker reference: [docs/agent-broker.md](../docs/agent-broker.md)
+Full broker reference: [docs/agent-broker.md](../docs/agent-broker.md) · Guide: [docs/guides/agent-broker.md](../docs/guides/agent-broker.md)

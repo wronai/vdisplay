@@ -52,4 +52,13 @@ Guide: [guides/vision-fallback.md](../guides/vision-fallback.md)
 |----------|---------|
 | `LLM_MODEL` | General text LLM for agents — **not** used for vision verify |
 
+## Session recorder (planned — see [session-report.md](../guides/session-report.md))
+
+| Variable | Purpose |
+|----------|---------|
+| `VDISPLAY_SESSION_LOG_DIR` | Write session report to this directory |
+| `VDISPLAY_SESSION_NAME` | Slug when auto-creating session dir |
+| `VDISPLAY_SESSION` | `1` — auto-create `./sessions/{timestamp}_{slug}/` |
+| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in generated README (phase 2) |
+
 See also: [vision-only-wayland.md](../vision-only-wayland.md) · [troubleshooting.md](../troubleshooting.md)

@@ -1,5 +1,7 @@
 # vdisplay-agent broker
 
+> **Navigation:** Quick guide [guides/agent-broker.md](guides/agent-broker.md) · Architecture [architecture.md](architecture.md)
+
 Back to [documentation index](index.md) · [packages/README.md](../packages/README.md)
 
 Install **vdisplay-agent once** on the host. All clients (CLI, DSL, REST, MCP) talk to it over localhost HTTP instead of opening capture backends, portals, or DRM devices directly.

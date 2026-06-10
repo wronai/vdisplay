@@ -33,6 +33,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.14] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/agent-broker.md
+- Update docs/architecture.md
+- Update docs/control-plane.md
+- Update docs/examples.md
+- Update docs/guides/README.md
+- Update docs/guides/session-report.md
+- ... and 8 more files
+
+### Other
+- Update app.doql.less
+- Update maps/pycharm-chat.json
+- Update project/calls.png
+- Update project/compact_flow.png
+- Update project/duplication.toon.yaml
+- Update project/flow.png
+- Update project/index.html
+- Update project/logic.pl
+- Update project/map.toon.yaml
+- Update project/planfile-tickets.yaml
+- ... and 2 more files
+
 ## [0.1.13] - 2026-06-10
 
 ### Docs

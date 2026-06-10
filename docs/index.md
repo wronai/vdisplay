@@ -22,6 +22,7 @@
 | [guides/vision-fallback.md](guides/vision-fallback.md) | OCR verify + vision LLM? |
 | [guides/browser-control.md](guides/browser-control.md) | Playwright DOM control? |
 | [guides/terminal-control.md](guides/terminal-control.md) | PTY grid control? |
+| [guides/session-report.md](guides/session-report.md) | Session audit trail / recorder (RFC) |
 
 ### Reference (lookup)
 

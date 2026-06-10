@@ -1,6 +1,6 @@
 # Installation
 
-Back to [documentation index](index.md) · [Agent broker](agent-broker.md) · [README.md](../README.md)
+Back to [documentation index](index.md) · [start-here.md](start-here.md)
 
 ## Python package
 

@@ -1,5 +1,7 @@
 # Architecture — command execution layer
 
+> **Navigation:** [start-here.md](start-here.md) (local vs broker) · [guides/agent-broker.md](guides/agent-broker.md)
+
 Back to [documentation index](index.md) · [Agent broker](agent-broker.md)
 
 All interfaces (CLI, DSL, REST, MCP) share one execution path.

@@ -1,5 +1,4 @@
 source: code2llm
-# generated in 0.37s
 schema: code2llm.planfile_tickets.v1
 project_root: /home/tom/github/wronai/vdisplay
 tickets:
@@ -7213,5 +7212,534 @@ tickets:
   - src/vdisplay/windows/scan.py
   dedupe_key: 'code2llm:smell:god_function:src/vdisplay/windows/scan.py:34:God Function:
     xprop'
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_set_value_verify'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_set_value_verify`
+    took 10.29s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_set_value_verify
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_find_increment_button'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_find_increment_button`
+    took 8.12s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_find_increment_button
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_click_verify_label'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_click_verify_label`
+    took 7.77s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_click_verify_label
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_list_by_window_title'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_list_by_window_title`
+    took 5.37s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_list_by_window_title
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_dsl_browser_open.test_browser_open_enables_dom_provider_eligibility'
+  description: 'Test `tests.test_dsl_browser_open.test_browser_open_enables_dom_provider_eligibility`
+    took 4.57s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_dsl_browser_open.py
+  dedupe_key: test-optimization:tests.test_dsl_browser_open:test_browser_open_enables_dom_provider_eligibility
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_plugins.test_extension_catalog_includes_plugins'
+  description: 'Test `tests.test_control_plugins.test_extension_catalog_includes_plugins`
+    took 4.51s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_plugins.py
+  dedupe_key: test-optimization:tests.test_control_plugins:test_extension_catalog_includes_plugins
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_atspi.test_controls_list_cli_integration'
+  description: 'Test `tests.test_control_atspi.test_controls_list_cli_integration`
+    took 3.96s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_atspi.py
+  dedupe_key: test-optimization:tests.test_control_atspi:test_controls_list_cli_integration
+- signal: slow_test_warning
+  title: 'Address slow test: tests.contract.test_descriptors.test_extension_catalog_shape'
+  description: 'Test `tests.contract.test_descriptors.test_extension_catalog_shape`
+    took 3.58s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/contract/test_descriptors.py
+  dedupe_key: test-optimization:tests.contract.test_descriptors:test_extension_catalog_shape
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_integration.test_virtual_screenshot_round_trip'
+  description: 'Test `tests.test_agent_integration.test_virtual_screenshot_round_trip`
+    took 3.39s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_integration.py
+  dedupe_key: test-optimization:tests.test_agent_integration:test_virtual_screenshot_round_trip
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_terminal.test_terminal_service_verify_text_change'
+  description: 'Test `tests.test_control_terminal.test_terminal_service_verify_text_change`
+    took 3.14s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_terminal.py
+  dedupe_key: test-optimization:tests.test_control_terminal:test_terminal_service_verify_text_change
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_terminal.test_terminal_service_set_value'
+  description: 'Test `tests.test_control_terminal.test_terminal_service_set_value`
+    took 2.96s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_terminal.py
+  dedupe_key: test-optimization:tests.test_control_terminal:test_terminal_service_set_value
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_terminal.test_resolve_provider_auto_routes_terminal_environment'
+  description: 'Test `tests.test_control_terminal.test_resolve_provider_auto_routes_terminal_environment`
+    took 2.89s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_terminal.py
+  dedupe_key: test-optimization:tests.test_control_terminal:test_resolve_provider_auto_routes_terminal_environment
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_terminal.test_resolve_provider_terminal_backend'
+  description: 'Test `tests.test_control_terminal.test_resolve_provider_terminal_backend`
+    took 2.35s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_terminal.py
+  dedupe_key: test-optimization:tests.test_control_terminal:test_resolve_provider_terminal_backend
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_dsl_terminal_control.test_dsl_terminal_set_value_end_to_end'
+  description: 'Test `tests.test_dsl_terminal_control.test_dsl_terminal_set_value_end_to_end`
+    took 2.30s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_dsl_terminal_control.py
+  dedupe_key: test-optimization:tests.test_dsl_terminal_control:test_dsl_terminal_set_value_end_to_end
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_terminal.test_resolve_provider_unknown_backend'
+  description: 'Test `tests.test_control_terminal.test_resolve_provider_unknown_backend`
+    took 2.16s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_terminal.py
+  dedupe_key: test-optimization:tests.test_control_terminal:test_resolve_provider_unknown_backend
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_browser.test_resolve_browser_backend_without_playwright'
+  description: 'Test `tests.test_control_browser.test_resolve_browser_backend_without_playwright`
+    took 2.03s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_browser.py
+  dedupe_key: test-optimization:tests.test_control_browser:test_resolve_browser_backend_without_playwright
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_vision_preview.test_controls_find_preview_integration'
+  description: 'Test `tests.test_vision_preview.test_controls_find_preview_integration`
+    took 2.02s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_vision_preview.py
+  dedupe_key: test-optimization:tests.test_vision_preview:test_controls_find_preview_integration
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_terminal_session.test_agent_open_terminal_session_and_find'
+  description: 'Test `tests.test_agent_terminal_session.test_agent_open_terminal_session_and_find`
+    took 1.88s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_terminal_session.py
+  dedupe_key: test-optimization:tests.test_agent_terminal_session:test_agent_open_terminal_session_and_find
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent.test_agent_capabilities'
+  description: 'Test `tests.test_agent.test_agent_capabilities` took 1.65s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent.py
+  dedupe_key: test-optimization:tests.test_agent:test_agent_capabilities
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_api_contract.test_agent_capabilities_envelope'
+  description: 'Test `tests.test_agent_api_contract.test_agent_capabilities_envelope`
+    took 1.62s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_api_contract.py
+  dedupe_key: test-optimization:tests.test_agent_api_contract:test_agent_capabilities_envelope
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_browser_session.test_browser_session_scoring_ineligible_without_open_session'
+  description: 'Test `tests.test_control_browser_session.test_browser_session_scoring_ineligible_without_open_session`
+    took 1.61s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_browser_session.py
+  dedupe_key: test-optimization:tests.test_control_browser_session:test_browser_session_scoring_ineligible_without_open_session
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_atspi.test_atspi_snapshot_lists_nodes'
+  description: 'Test `tests.test_control_atspi.test_atspi_snapshot_lists_nodes` took
+    1.33s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_atspi.py
+  dedupe_key: test-optimization:tests.test_control_atspi:test_atspi_snapshot_lists_nodes
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_profile_inference.test_infer_vision_from_anchor'
+  description: 'Test `tests.test_profile_inference.test_infer_vision_from_anchor`
+    took 0.93s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_profile_inference.py
+  dedupe_key: test-optimization:tests.test_profile_inference:test_infer_vision_from_anchor
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_profile_inference.test_infer_web_spa_from_dom_css'
+  description: 'Test `tests.test_profile_inference.test_infer_web_spa_from_dom_css`
+    took 0.89s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_profile_inference.py
+  dedupe_key: test-optimization:tests.test_profile_inference:test_infer_web_spa_from_dom_css
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_routing_semantics.test_assess_control_capability_includes_host_environment'
+  description: 'Test `tests.test_routing_semantics.test_assess_control_capability_includes_host_environment`
+    took 0.88s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_routing_semantics.py
+  dedupe_key: test-optimization:tests.test_routing_semantics:test_assess_control_capability_includes_host_environment
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_profile_inference.test_infer_native_gtk_from_role'
+  description: 'Test `tests.test_profile_inference.test_infer_native_gtk_from_role`
+    took 0.86s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_profile_inference.py
+  dedupe_key: test-optimization:tests.test_profile_inference:test_infer_native_gtk_from_role
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_profile_inference.test_infer_terminal_pty_from_coordinates'
+  description: 'Test `tests.test_profile_inference.test_infer_terminal_pty_from_coordinates`
+    took 0.84s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_profile_inference.py
+  dedupe_key: test-optimization:tests.test_profile_inference:test_infer_terminal_pty_from_coordinates
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_vision_provider_stub.test_infer_vision_only_surface_profile'
+  description: 'Test `tests.test_vision_provider_stub.test_infer_vision_only_surface_profile`
+    took 0.82s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_vision_provider_stub.py
+  dedupe_key: test-optimization:tests.test_vision_provider_stub:test_infer_vision_only_surface_profile
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_browser_engine_profiles.test_web_spa_fallback_without_engine_session'
+  description: 'Test `tests.test_browser_engine_profiles.test_web_spa_fallback_without_engine_session`
+    took 0.80s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_browser_engine_profiles.py
+  dedupe_key: test-optimization:tests.test_browser_engine_profiles:test_web_spa_fallback_without_engine_session
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_browser_engine_profiles.test_infer_browser_firefox_profile_from_session'
+  description: 'Test `tests.test_browser_engine_profiles.test_infer_browser_firefox_profile_from_session`
+    took 0.79s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_browser_engine_profiles.py
+  dedupe_key: test-optimization:tests.test_browser_engine_profiles:test_infer_browser_firefox_profile_from_session
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent.test_agent_virtual_session_capture'
+  description: 'Test `tests.test_agent.test_agent_virtual_session_capture` took 0.76s
+    to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent.py
+  dedupe_key: test-optimization:tests.test_agent:test_agent_virtual_session_capture
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_integration.test_dsl_dispatch_round_trip'
+  description: 'Test `tests.test_agent_integration.test_dsl_dispatch_round_trip` took
+    0.57s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_integration.py
+  dedupe_key: test-optimization:tests.test_agent_integration:test_dsl_dispatch_round_trip
+- signal: slow_test_warning
+  title: Address high test suite startup overhead
+  description: 'The test suite startup and collection overhead is high: 8.24s.
+
+
+    This overhead is spent on imports, collection, and test environment initialization.
+
+    Analyze fixtures with broad scopes, reduce heavy imports on test collection, and
+    optimize pytest-xdist startup settings to decrease the delay before tests start
+    running.'
+  priority: high
+  labels:
+  - llm-ready
+  - test-optimization
+  - startup-overhead
+  files:
+  - pyproject.toml
+  dedupe_key: test-optimization:general:startup-overhead
 applied: []
 skipped: []

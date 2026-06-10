@@ -1,6 +1,9 @@
 # vdisplay examples
 
-Runnable examples for different environments. Full index: [docs/examples.md](../docs/examples.md).
+Runnable examples for different environments.
+
+- **Index (which example for which problem):** [docs/examples.md](../docs/examples.md)
+- **Docs entry:** [docs/start-here.md](../docs/start-here.md)
 
 ## Desktop host — install once
 

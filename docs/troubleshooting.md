@@ -1,6 +1,6 @@
 # Troubleshooting
 
-Back to [documentation index](index.md)
+Back to [documentation index](index.md) · [start-here.md](start-here.md) · [guides/wayland-control.md](guides/wayland-control.md)
 
 ## Docker mirror shows `display: ":99"` or one output
 
@@ -163,9 +163,14 @@ Usually caused by a **full-monitor map** (400+ OCR elements) or UI scroll/layout
    ```bash
    vdisplay map refresh --map maps/pycharm-dp2.json --scope pycharm.ai_chat --output maps/pycharm-dp2.json
    ```
-3. Rebuild with **scoped crop** (fewer false anchors):
+3. Rebuild with **scoped crop** (fewer false anchors). Use **pixel coordinates in the screencast frame**, not the placeholder `X,Y,W,H`:
+
+   Find bounds with preview first:
    ```bash
-   vdisplay map build --monitor DP-2 --crop-bounds X,Y,W,H \
+   vdisplay control find --backend vision --text-contains "Ask" \
+     --preview --preview-output /tmp/preview.png
+   # note selected.bounds → build crop around the chat panel, e.g.:
+   vdisplay map build --monitor DP-2 --crop-bounds 1507,1027,800,1200 \
      --region-id pycharm.ai_chat --output maps/pycharm-chat.json --min-text-len 3
    ```
 

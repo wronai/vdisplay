@@ -1,5 +1,7 @@
 # Vision-only automation on Linux Wayland
 
+> **Navigation:** Task guide [guides/wayland-control.md](guides/wayland-control.md) · Map workflow [guides/gui-map-pack.md](guides/gui-map-pack.md) · Env vars [reference/env.md](reference/env.md)
+
 Back to [documentation index](index.md) · [GUI Map Pack](../examples/control-plane/gui-map-pack.md)
 
 For apps without a usable accessibility tree (PyCharm native Wayland, canvas, game surfaces), vdisplay uses profile **`vision_only_surface`**: screencast capture + OCR/map bounds + ydotool pointer injection.
@@ -24,13 +26,14 @@ vdisplay-agent serve &
 sleep 2
 vdisplay agent screencast start
 
-# build scoped map (not full monitor)
-vdisplay map build --monitor DP-2 --crop-bounds X,Y,W,H \
+# build scoped map (not full monitor) — crop-bounds = x,y,width,height in screencast pixels
+vdisplay control find --backend vision --text-contains "Ask" --preview --preview-output /tmp/preview.png
+vdisplay map build --monitor DP-2 --crop-bounds 1507,1027,800,1200 \
   --output maps/chat.json --region-id pycharm.ai_chat
 
-# act via map
-vdisplay control click --map maps/chat.json --target chat
-vdisplay control set-value --map maps/chat.json --target message --value "test"
+# act via map (prefer stable target id from map show, e.g. ask — not status-bar "message")
+vdisplay control click --map maps/chat.json --target ask
+vdisplay control set-value --map maps/chat.json --target ask --value "test" --verify
 
 # verify with tokens
 vdisplay control find --backend vision --text-contains "test"

@@ -1,5 +1,7 @@
 # Control plane
 
+> **Navigation:** Guides [guides/](guides/) · CLI [reference/cli.md](reference/cli.md) · Architecture [architecture.md](architecture.md)
+
 Back to [documentation index](index.md) · [RFC 001 — extensibility](rfc/001-extensibility-model.md)
 
 Unified GUI control for browsers, terminals, and native desktop apps. Vision (screenshot/screencast) is used for verification and fallback — not as the primary actuation path.
