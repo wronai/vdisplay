@@ -44,6 +44,11 @@ def load_template_png(source: str) -> bytes:
     path = Path(text).expanduser()
     if path.is_file():
         return path.read_bytes()
+    looks_like_path = "/" in text or text.startswith((".", "~"))
+    if looks_like_path:
+        raise FileNotFoundError(
+            f"vision_template file not found: {path} (use an absolute path or crop a PNG snippet first)"
+        )
     try:
         return base64.b64decode(text, validate=True)
     except Exception as exc:

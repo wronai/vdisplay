@@ -189,7 +189,10 @@ class VisionStubProvider(ControlProvider):
         png: bytes,
         capture_meta: dict[str, Any],
     ) -> list[ControlNode]:
-        matches = template_find_selector(png, selector)
+        try:
+            matches = template_find_selector(png, selector)
+        except FileNotFoundError as exc:
+            raise VDisplayError(str(exc)) from exc
         return [
             self._node_from_template(item, index=index, selector=selector, capture_meta=capture_meta)
             for index, item in enumerate(matches)

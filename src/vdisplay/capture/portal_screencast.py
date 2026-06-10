@@ -430,7 +430,11 @@ def _start_screencast_impl(
             if code == 1:
                 fail("user cancelled screencast session creation")
             elif code == 2:
-                fail("screencast session creation denied")
+                fail(
+                    "screencast session creation denied (portal rejected CreateSession). "
+                    "GNOME: Settings → Privacy → Screen Recording → enable python3 and "
+                    "vdisplay-agent, then retry from a local GUI terminal (not SSH)."
+                )
             else:
                 fail(f"CreateSession failed with response={code}")
             return
@@ -466,11 +470,13 @@ def _start_screencast_impl(
     create_path = _portal_request_path(bus, create_token)
     _listen_portal_request(bus, create_path, on_create)
 
+    import uuid
+
     try:
         screencast.CreateSession(
             {
                 "handle_token": create_token,
-                "session_handle_token": "vdisplay_screencast",
+                "session_handle_token": f"vdisplay_sc_{uuid.uuid4().hex[:8]}",
             }
         )
     except dbus.exceptions.DBusException as exc:
