@@ -78,79 +78,104 @@ def _add_selector_args(parser: argparse.ArgumentParser) -> None:
     add_map_args(parser)
 
 
+def _handle_browser_open(args: argparse.Namespace) -> int:
+    engine = getattr(args, "vendor", None) or getattr(args, "engine", None)
+    print_json(
+        session_svc.browser_open(
+            url=args.url,
+            session_id=args.session_id,
+            headless=not getattr(args, "headed", False),
+            engine=engine,
+        )
+    )
+    return 0
+
+
+def _handle_control_list(args: argparse.Namespace) -> int:
+    print_json(
+        control_svc.controls_list(
+            display=args.display,
+            window_id=args.window_id,
+            app=args.app,
+            backend=args.backend,
+            max_depth=args.max_depth,
+            format=args.format,
+            session_id=getattr(args, "session_id", None),
+        )
+    )
+    return 0
+
+
+def _handle_control_find(args: argparse.Namespace) -> int:
+    print_json(
+        control_svc.controls_find(
+            display=args.display,
+            backend=args.backend,
+            preview=getattr(args, "preview", False),
+            preview_output=getattr(args, "preview_output", None),
+            preview_debug=getattr(args, "preview_debug", False),
+            **control_selector_kwargs_for_service(args),
+        )
+    )
+    return 0
+
+
+def _handle_control_click(args: argparse.Namespace) -> int:
+    print_json(
+        control_svc.control_click(
+            display=args.display,
+            backend=args.backend,
+            verify=args.verify,
+            screenshot_verify=getattr(args, "screenshot_verify", False),
+            verify_label=getattr(args, "verify_label", None),
+            verify_selector=getattr(args, "verify_selector", None),
+            **control_selector_kwargs_for_service(args),
+        )
+    )
+    return 0
+
+
+def _handle_control_focus(args: argparse.Namespace) -> int:
+    print_json(
+        control_svc.control_focus(
+            display=args.display,
+            backend=args.backend,
+            verify=args.verify,
+            screenshot_verify=getattr(args, "screenshot_verify", False),
+            **control_selector_kwargs_for_service(args),
+        )
+    )
+    return 0
+
+
+def _handle_control_set_value(args: argparse.Namespace) -> int:
+    print_json(
+        control_svc.control_set_value(
+            display=args.display,
+            backend=args.backend,
+            verify=args.verify,
+            screenshot_verify=getattr(args, "screenshot_verify", False),
+            verify_label=getattr(args, "verify_label", None),
+            verify_selector=getattr(args, "verify_selector", None),
+            value=args.value,
+            **control_selector_kwargs_for_service(args),
+        )
+    )
+    return 0
+
+
+_CONTROL_HANDLERS = {
+    "browser-open": _handle_browser_open,
+    "list": _handle_control_list,
+    "find": _handle_control_find,
+    "click": _handle_control_click,
+    "focus": _handle_control_focus,
+    "set-value": _handle_control_set_value,
+}
+
+
 def handle(args: argparse.Namespace) -> int:
-    if args.action == "browser-open":
-        engine = getattr(args, "vendor", None) or getattr(args, "engine", None)
-        print_json(
-            session_svc.browser_open(
-                url=args.url,
-                session_id=args.session_id,
-                headless=not getattr(args, "headed", False),
-                engine=engine,
-            )
-        )
-        return 0
-    if args.action == "list":
-        print_json(
-            control_svc.controls_list(
-                display=args.display,
-                window_id=args.window_id,
-                app=args.app,
-                backend=args.backend,
-                max_depth=args.max_depth,
-                format=args.format,
-                session_id=getattr(args, "session_id", None),
-            )
-        )
-        return 0
-    if args.action == "find":
-        print_json(
-            control_svc.controls_find(
-                display=args.display,
-                backend=args.backend,
-                preview=getattr(args, "preview", False),
-                preview_output=getattr(args, "preview_output", None),
-                preview_debug=getattr(args, "preview_debug", False),
-                **control_selector_kwargs_for_service(args),
-            )
-        )
-        return 0
-    if args.action == "click":
-        print_json(
-            control_svc.control_click(
-                display=args.display,
-                backend=args.backend,
-                verify=args.verify,
-                screenshot_verify=getattr(args, "screenshot_verify", False),
-                verify_label=getattr(args, "verify_label", None),
-                verify_selector=getattr(args, "verify_selector", None),
-                **control_selector_kwargs_for_service(args),
-            )
-        )
-        return 0
-    if args.action == "focus":
-        print_json(
-            control_svc.control_focus(
-                display=args.display,
-                backend=args.backend,
-                verify=args.verify,
-                screenshot_verify=getattr(args, "screenshot_verify", False),
-                **control_selector_kwargs_for_service(args),
-            )
-        )
-        return 0
-    if args.action == "set-value":
-        print_json(
-            control_svc.control_set_value(
-                display=args.display,
-                backend=args.backend,
-                verify=args.verify,
-                screenshot_verify=getattr(args, "screenshot_verify", False),
-                verify_label=getattr(args, "verify_label", None),
-                verify_selector=getattr(args, "verify_selector", None),
-                value=args.value,
-                **control_selector_kwargs_for_service(args),
-            )
-        )
-        return 0
-    return 1
+    handler = _CONTROL_HANDLERS.get(args.action)
+    if handler is None:
+        return 1
+    return handler(args)

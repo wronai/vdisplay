@@ -194,6 +194,123 @@ def assess_map_drift(
     return recommendation, actionable, key_targets
 
 
+def _classify_element_drift(
+    element: GuiMapElement,
+    live_box: OcrTextBox | None,
+    *,
+    png: bytes,
+    bounds_tolerance_px: float,
+) -> tuple[DriftKind, ElementDrift, OcrTextBox | None]:
+    if live_box is None:
+        return (
+            "missing",
+            ElementDrift(
+                element_id=element.id,
+                status="missing",
+                message="OCR anchor not found near stored bounds",
+                stored_bounds=element.raw_bounds.to_dict(),
+                stored_fingerprint=element.tile_fingerprint,
+            ),
+            None,
+        )
+
+    live_raw = _box_to_bounds(live_box)
+    delta = _distance(element.raw_bounds, live_raw)
+    live_fp = tile_fingerprint(png, live_raw)
+    stored_fp = element.tile_fingerprint
+
+    if delta > bounds_tolerance_px:
+        return (
+            "bounds",
+            ElementDrift(
+                element_id=element.id,
+                status="bounds",
+                message=f"bounds moved {delta:.1f}px",
+                stored_bounds=element.raw_bounds.to_dict(),
+                live_bounds=live_raw.to_dict(),
+                stored_fingerprint=stored_fp,
+                live_fingerprint=live_fp,
+                delta_px=delta,
+            ),
+            live_box,
+        )
+
+    if stored_fp and live_fp and stored_fp != live_fp:
+        return (
+            "fingerprint",
+            ElementDrift(
+                element_id=element.id,
+                status="fingerprint",
+                message="tile fingerprint changed",
+                stored_bounds=element.raw_bounds.to_dict(),
+                live_bounds=live_raw.to_dict(),
+                stored_fingerprint=stored_fp,
+                live_fingerprint=live_fp,
+                delta_px=delta,
+            ),
+            live_box,
+        )
+
+    return (
+        "ok",
+        ElementDrift(
+            element_id=element.id,
+            status="ok",
+            message="stable",
+            stored_bounds=element.raw_bounds.to_dict(),
+            live_bounds=live_raw.to_dict(),
+            stored_fingerprint=stored_fp,
+            live_fingerprint=live_fp,
+            delta_px=delta,
+        ),
+        live_box,
+    )
+
+
+def _region_drifts_for(region_items: list[GuiMapRegion], png: bytes) -> list[RegionDrift]:
+    region_drifts: list[RegionDrift] = []
+    for region in region_items:
+        live_fp = tile_fingerprint(png, region.scope_bounds)
+        if region.fingerprint and live_fp and region.fingerprint != live_fp:
+            region_drifts.append(
+                RegionDrift(
+                    region_id=region.id,
+                    status="fingerprint",
+                    message="region fingerprint changed",
+                    stored_fingerprint=region.fingerprint,
+                    live_fingerprint=live_fp,
+                )
+            )
+        else:
+            region_drifts.append(
+                RegionDrift(
+                    region_id=region.id,
+                    status="ok",
+                    message="stable",
+                    stored_fingerprint=region.fingerprint,
+                    live_fingerprint=live_fp,
+                )
+            )
+    return region_drifts
+
+
+def _new_ocr_labels(
+    pack: GuiMapPack,
+    boxes: list[OcrTextBox],
+    matched_box_ids: set[int],
+) -> list[str]:
+    known_labels = {
+        _normalize_label(element.identity.name or "")
+        for element in pack.elements.values()
+        if element.identity.name
+    }
+    return [
+        box.text
+        for box in boxes
+        if id(box) not in matched_box_ids and _normalize_label(box.text) not in known_labels
+    ]
+
+
 def diff_gui_map(
     pack: GuiMapPack,
     png: bytes,
@@ -232,105 +349,19 @@ def diff_gui_map(
         if element is None:
             continue
         live_box = match_ocr_box_for_element(element, boxes)
-        if live_box is None:
-            counts["missing"] += 1
-            element_drifts.append(
-                ElementDrift(
-                    element_id=element_id,
-                    status="missing",
-                    message="OCR anchor not found near stored bounds",
-                    stored_bounds=element.raw_bounds.to_dict(),
-                    stored_fingerprint=element.tile_fingerprint,
-                )
-            )
-            continue
-
-        matched_box_ids.add(id(live_box))
-        live_raw = _box_to_bounds(live_box)
-        delta = _distance(element.raw_bounds, live_raw)
-        live_fp = tile_fingerprint(png, live_raw)
-        stored_fp = element.tile_fingerprint
-
-        if delta > bounds_tolerance_px:
-            counts["bounds"] += 1
-            element_drifts.append(
-                ElementDrift(
-                    element_id=element_id,
-                    status="bounds",
-                    message=f"bounds moved {delta:.1f}px",
-                    stored_bounds=element.raw_bounds.to_dict(),
-                    live_bounds=live_raw.to_dict(),
-                    stored_fingerprint=stored_fp,
-                    live_fingerprint=live_fp,
-                    delta_px=delta,
-                )
-            )
-            continue
-
-        if stored_fp and live_fp and stored_fp != live_fp:
-            counts["fingerprint"] += 1
-            element_drifts.append(
-                ElementDrift(
-                    element_id=element_id,
-                    status="fingerprint",
-                    message="tile fingerprint changed",
-                    stored_bounds=element.raw_bounds.to_dict(),
-                    live_bounds=live_raw.to_dict(),
-                    stored_fingerprint=stored_fp,
-                    live_fingerprint=live_fp,
-                    delta_px=delta,
-                )
-            )
-            continue
-
-        counts["ok"] += 1
-        element_drifts.append(
-            ElementDrift(
-                element_id=element_id,
-                status="ok",
-                message="stable",
-                stored_bounds=element.raw_bounds.to_dict(),
-                live_bounds=live_raw.to_dict(),
-                stored_fingerprint=stored_fp,
-                live_fingerprint=live_fp,
-                delta_px=delta,
-            )
+        status, drift, matched = _classify_element_drift(
+            element,
+            live_box,
+            png=png,
+            bounds_tolerance_px=bounds_tolerance_px,
         )
+        counts[status] += 1
+        element_drifts.append(drift)
+        if matched is not None:
+            matched_box_ids.add(id(matched))
 
-    region_drifts: list[RegionDrift] = []
-    for region in region_items:
-        live_fp = tile_fingerprint(png, region.scope_bounds)
-        if region.fingerprint and live_fp and region.fingerprint != live_fp:
-            region_drifts.append(
-                RegionDrift(
-                    region_id=region.id,
-                    status="fingerprint",
-                    message="region fingerprint changed",
-                    stored_fingerprint=region.fingerprint,
-                    live_fingerprint=live_fp,
-                )
-            )
-        else:
-            region_drifts.append(
-                RegionDrift(
-                    region_id=region.id,
-                    status="ok",
-                    message="stable",
-                    stored_fingerprint=region.fingerprint,
-                    live_fingerprint=live_fp,
-                )
-            )
-
-    known_labels = {
-        _normalize_label(element.identity.name or "")
-        for element in pack.elements.values()
-        if element.identity.name
-    }
-    new_labels = [
-        box.text
-        for box in boxes
-        if id(box) not in matched_box_ids and _normalize_label(box.text) not in known_labels
-    ]
+    region_drifts = _region_drifts_for(region_items, png)
+    new_labels = _new_ocr_labels(pack, boxes, matched_box_ids)
 
     drifted = any(item.status != "ok" for item in element_drifts + region_drifts)
     diff = GuiMapDiff(
@@ -346,6 +377,86 @@ def diff_gui_map(
     diff.actionable = actionable
     diff.key_targets = key_targets
     return diff
+
+
+def _refresh_known_elements(
+    pack: GuiMapPack,
+    diff: GuiMapDiff,
+    boxes: list[OcrTextBox],
+    *,
+    capture_meta: dict[str, Any],
+    png: bytes,
+) -> GuiMapPack:
+    updated = GuiMapPack.from_dict(pack.to_dict())
+    updated.capture_meta = dict(capture_meta)
+    for item in diff.elements:
+        if item.status == "missing":
+            continue
+        element = updated.elements.get(item.element_id)
+        if element is None:
+            continue
+        live_box = match_ocr_box_for_element(element, boxes)
+        if live_box is None:
+            continue
+        refreshed = element_from_ocr_box(
+            live_box,
+            element_id=element.id,
+            region_id=element.region_id,
+            capture_meta=capture_meta,
+            monitor=element.monitor,
+            rotation=element.rotation,
+            png=png,
+        )
+        refreshed.notes = element.notes
+        refreshed.verify_mode = element.verify_mode
+        updated.elements[element.id] = refreshed
+    return updated
+
+
+def _append_new_elements(
+    pack: GuiMapPack,
+    *,
+    boxes: list[OcrTextBox],
+    diff: GuiMapDiff,
+    scope_id: str | None,
+    capture_meta: dict[str, Any],
+    png: bytes,
+) -> None:
+    if not diff.new_ocr_labels:
+        return
+    from .gui_map import _slug
+
+    used = set(pack.elements.keys())
+    region_key = scope_id or (next(iter(pack.regions)) if pack.regions else None)
+    region = pack.regions.get(region_key) if region_key else None
+    known = {
+        _normalize_label(element.identity.name or "")
+        for element in pack.elements.values()
+        if element.identity.name
+    }
+    for index, box in enumerate(boxes):
+        if _normalize_label(box.text) in known:
+            continue
+        base = _slug(box.text or f"new_{index}")
+        element_id = base
+        suffix = 1
+        while element_id in used:
+            element_id = f"{base}_{suffix}"
+            suffix += 1
+        used.add(element_id)
+        element = element_from_ocr_box(
+            box,
+            element_id=element_id,
+            region_id=region.id if region else None,
+            capture_meta=capture_meta,
+            monitor=pack.monitor,
+            rotation=pack.rotation,
+            png=png,
+        )
+        element.notes = "added by map refresh"
+        pack.elements[element_id] = element
+        if region is not None:
+            region.elements.append(element_id)
 
 
 def refresh_gui_map(
@@ -371,66 +482,19 @@ def refresh_gui_map(
     if scope_id and scope_id in pack.regions:
         boxes = _boxes_in_scope(boxes, pack.regions[scope_id].scope_bounds)
 
-    updated = GuiMapPack.from_dict(pack.to_dict())
-    updated.capture_meta = dict(capture_meta)
-
-    for item in diff.elements:
-        if item.status == "missing":
-            continue
-        element = updated.elements.get(item.element_id)
-        if element is None:
-            continue
-        live_box = match_ocr_box_for_element(element, boxes)
-        if live_box is None:
-            continue
-        refreshed = element_from_ocr_box(
-            live_box,
-            element_id=element.id,
-            region_id=element.region_id,
-            capture_meta=capture_meta,
-            monitor=element.monitor,
-            rotation=element.rotation,
-            png=png,
-        )
-        refreshed.notes = element.notes
-        refreshed.verify_mode = element.verify_mode
-        updated.elements[element.id] = refreshed
+    updated = _refresh_known_elements(pack, diff, boxes, capture_meta=capture_meta, png=png)
 
     for region in updated.regions.values():
         region.fingerprint = tile_fingerprint(png, region.scope_bounds)
 
-    if add_new and diff.new_ocr_labels:
-        from .gui_map import _slug
-
-        used = set(updated.elements.keys())
-        region_key = scope_id or (next(iter(updated.regions)) if updated.regions else None)
-        region = updated.regions.get(region_key) if region_key else None
-        for index, box in enumerate(boxes):
-            if _normalize_label(box.text) in {
-                _normalize_label(element.identity.name or "")
-                for element in updated.elements.values()
-                if element.identity.name
-            }:
-                continue
-            base = _slug(box.text or f"new_{index}")
-            element_id = base
-            suffix = 1
-            while element_id in used:
-                element_id = f"{base}_{suffix}"
-                suffix += 1
-            used.add(element_id)
-            element = element_from_ocr_box(
-                box,
-                element_id=element_id,
-                region_id=region.id if region else None,
-                capture_meta=capture_meta,
-                monitor=updated.monitor,
-                rotation=updated.rotation,
-                png=png,
-            )
-            element.notes = "added by map refresh"
-            updated.elements[element_id] = element
-            if region is not None:
-                region.elements.append(element_id)
+    if add_new:
+        _append_new_elements(
+            updated,
+            boxes=boxes,
+            diff=diff,
+            scope_id=scope_id,
+            capture_meta=capture_meta,
+            png=png,
+        )
 
     return updated, diff

@@ -71,21 +71,20 @@ def evaluate_provider_routing(
     )
 
 
-def _evaluate_readiness() -> tuple[list[str], list[str], bool, bool, bool, bool, bool, bool]:
-    from .descriptors import HostEnvironmentKind, detect_platform_profile
-    from .scoring import _ax_ready, _uia_ready
+def _evaluate_platform_backends(
+    host,
+    *,
+    atspi_ok: bool,
+    atspi_reason: str,
+    uia_ok: bool,
+    uia_reason: str,
+    ax_ok: bool,
+    ax_reason: str,
+) -> tuple[list[str], list[str]]:
+    from .descriptors import HostEnvironmentKind
 
     backends: list[str] = []
     reasons: list[str] = []
-
-    host = detect_platform_profile().host_environment
-    atspi_ok, atspi_reason = _atspi_ready()
-    uia_ok, uia_reason = _uia_ready()
-    ax_ok, ax_reason = _ax_ready()
-    browser_ok, browser_reason = _browser_ready()
-    xdotool_ok, xdotool_reason = _xdotool_ready()
-    terminal_ok, terminal_reason = _terminal_ready()
-
     if host in (HostEnvironmentKind.LINUX_X11, HostEnvironmentKind.LINUX_WAYLAND):
         if atspi_ok:
             backends.append("atspi")
@@ -104,13 +103,19 @@ def _evaluate_readiness() -> tuple[list[str], list[str], bool, bool, bool, bool,
             reasons.append(ax_reason)
         else:
             reasons.append(f"ax unavailable: {ax_reason}")
+    return backends, reasons
 
-    if browser_ok:
-        backends.append("browser")
-        reasons.append(browser_reason)
-    else:
-        reasons.append(f"browser unavailable: {browser_reason}")
 
+def _evaluate_pointer_fallback(
+    host,
+    *,
+    xdotool_ok: bool,
+    xdotool_reason: str,
+) -> tuple[list[str], list[str]]:
+    from .descriptors import HostEnvironmentKind
+
+    backends: list[str] = []
+    reasons: list[str] = []
     if xdotool_ok and host == HostEnvironmentKind.LINUX_X11:
         backends.append("x11-fallback")
         reasons.append(xdotool_reason)
@@ -121,6 +126,43 @@ def _evaluate_readiness() -> tuple[list[str], list[str], bool, bool, bool, bool,
         if xwayland_ok:
             backends.append("x11-fallback")
             reasons.append(f"{xdotool_reason} (XWayland clients)")
+    return backends, reasons
+
+
+def _evaluate_readiness() -> tuple[list[str], list[str], bool, bool, bool, bool, bool, bool, bool]:
+    from .descriptors import HostEnvironmentKind, detect_platform_profile
+    from .scoring import _ax_ready, _uia_ready
+
+    host = detect_platform_profile().host_environment
+    atspi_ok, atspi_reason = _atspi_ready()
+    uia_ok, uia_reason = _uia_ready()
+    ax_ok, ax_reason = _ax_ready()
+    browser_ok, browser_reason = _browser_ready()
+    xdotool_ok, xdotool_reason = _xdotool_ready()
+    terminal_ok, terminal_reason = _terminal_ready()
+
+    backends, reasons = _evaluate_platform_backends(
+        host,
+        atspi_ok=atspi_ok,
+        atspi_reason=atspi_reason,
+        uia_ok=uia_ok,
+        uia_reason=uia_reason,
+        ax_ok=ax_ok,
+        ax_reason=ax_reason,
+    )
+    pointer_backends, pointer_reasons = _evaluate_pointer_fallback(
+        host,
+        xdotool_ok=xdotool_ok,
+        xdotool_reason=xdotool_reason,
+    )
+    backends.extend(pointer_backends)
+    reasons.extend(pointer_reasons)
+
+    if browser_ok:
+        backends.append("browser")
+        reasons.append(browser_reason)
+    else:
+        reasons.append(f"browser unavailable: {browser_reason}")
 
     if terminal_ok:
         backends.append("terminal")
@@ -130,6 +172,28 @@ def _evaluate_readiness() -> tuple[list[str], list[str], bool, bool, bool, bool,
 
     semantic_ok = atspi_ok or uia_ok or ax_ok or browser_ok or terminal_ok
     return backends, reasons, semantic_ok, atspi_ok, uia_ok, ax_ok, browser_ok, xdotool_ok, terminal_ok
+
+
+def _pointer_fallback_for_host(
+    *,
+    host,
+    display: str | None,
+    xdotool_ok: bool,
+    reasons: list[str],
+) -> bool:
+    from .descriptors import HostEnvironmentKind
+
+    if xdotool_ok and host == HostEnvironmentKind.LINUX_X11:
+        return True
+    if xdotool_ok and host == HostEnvironmentKind.LINUX_WAYLAND:
+        from .scoring import _xwayland_reachable
+
+        xwayland_ok, xwayland_reason = _xwayland_reachable(display)
+        if xwayland_ok:
+            reasons.append(f"pointer fallback via XWayland ({xwayland_reason})")
+            return True
+        reasons.append(f"pointer fallback blocked on linux_wayland ({xwayland_reason})")
+    return False
 
 
 def assess_control_capability(*, display: str | None = None) -> ControlCapabilityContract:
@@ -151,16 +215,12 @@ def assess_control_capability(*, display: str | None = None) -> ControlCapabilit
 
     resolve_host_display(display or os.environ.get("DISPLAY"))
 
-    pointer_fallback = xdotool_ok and host == HostEnvironmentKind.LINUX_X11
-    if xdotool_ok and host == HostEnvironmentKind.LINUX_WAYLAND:
-        from .scoring import _xwayland_reachable
-
-        xwayland_ok, xwayland_reason = _xwayland_reachable(display)
-        if xwayland_ok:
-            pointer_fallback = True
-            reasons.append(f"pointer fallback via XWayland ({xwayland_reason})")
-        else:
-            reasons.append(f"pointer fallback blocked on linux_wayland ({xwayland_reason})")
+    pointer_fallback = _pointer_fallback_for_host(
+        host=host,
+        display=display,
+        xdotool_ok=xdotool_ok,
+        reasons=reasons,
+    )
 
     desktop_a11y = atspi_ok or uia_ok or ax_ok
     return ControlCapabilityContract(

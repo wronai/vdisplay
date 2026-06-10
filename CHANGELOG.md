@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.10] - 2026-06-10
+
+### Fixed
+- Fix unused-imports issues (ticket-0c1eb72e)
+- Fix magic-numbers issues (ticket-6a84c34d)
+- Fix unused-imports issues (ticket-0c0af9db)
+- Fix magic-numbers issues (ticket-9869f3ea)
+- Fix relative-imports issues (ticket-cf1b1ad1)
+- Fix unused-imports issues (ticket-556083c7)
+- Fix relative-imports issues (ticket-8396f03d)
+
 ## [Unreleased]
 
 ### Added
@@ -21,6 +32,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.13] - 2026-06-10
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update TODO.md
+- Update docs/guides/README.md
+- Update docs/guides/agent-broker.md
+- Update docs/guides/browser-control.md
+- Update docs/guides/gui-map-pack.md
+- Update docs/guides/terminal-control.md
+- Update docs/guides/vision-fallback.md
+- Update docs/guides/wayland-control.md
+- ... and 10 more files
+
+### Other
+- Update planfile.yaml
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/evolution.toon.yaml
+- Update project/flow.mmd
+- Update project/map.toon.yaml
+- Update project/mermaid.export
+- ... and 1 more files
 
 ## [0.1.10] - 2026-06-09
 

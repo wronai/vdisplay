@@ -93,33 +93,38 @@ class ControlSelector:
         if self.index:
             fields.add("index")
 
-        env_map = {
-            "browser": ("dom_css", "dom_xpath", "text", "text_contains", "role", "name"),
-            "terminal": ("terminal_line", "terminal_col", "session_id", "text", "text_contains"),
-            "vision": (
-                "vision_anchor",
-                "vision_template",
-                "vision_anchor_rel",
-                "vision_target",
-                "vision_min_confidence",
-                "text",
-                "text_contains",
-            ),
-        }
-        
-        env_match = self.environment
-        if not env_match:
-            if self.dom_css or self.dom_xpath:
-                env_match = "browser"
-            elif self.terminal_line is not None:
-                env_match = "terminal"
-            elif self.vision_anchor or self.vision_template or self.vision_anchor_rel:
-                env_match = "vision"
-                
-        if env_match in env_map:
-            return fields | {k for k in env_map[env_match] if getattr(self, k, None)}
-            
+        env_match = _infer_selector_environment(self)
+        if env_match in _ENV_FIELD_HINTS:
+            return fields | {k for k in _ENV_FIELD_HINTS[env_match] if getattr(self, k, None)}
+
         return fields
+
+
+_ENV_FIELD_HINTS = {
+    "browser": ("dom_css", "dom_xpath", "text", "text_contains", "role", "name"),
+    "terminal": ("terminal_line", "terminal_col", "session_id", "text", "text_contains"),
+    "vision": (
+        "vision_anchor",
+        "vision_template",
+        "vision_anchor_rel",
+        "vision_target",
+        "vision_min_confidence",
+        "text",
+        "text_contains",
+    ),
+}
+
+
+def _infer_selector_environment(selector: ControlSelector) -> str | None:
+    if selector.environment:
+        return selector.environment
+    if selector.dom_css or selector.dom_xpath:
+        return "browser"
+    if selector.terminal_line is not None:
+        return "terminal"
+    if selector.vision_anchor or selector.vision_template or selector.vision_anchor_rel:
+        return "vision"
+    return None
 
 
 def _normalize(value: str | None) -> str:

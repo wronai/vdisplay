@@ -55,6 +55,34 @@ def _route_control_command(verb: CommandVerb, body: dict[str, Any]) -> tuple[str
     return "POST", "/control/set-value", body
 
 
+def _route_terminal_open(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
+    body: dict[str, Any] = {
+        "rows": cmd.terminal_rows,
+        "cols": cmd.terminal_cols,
+    }
+    if cmd.terminal_session_id:
+        body["session_id"] = cmd.terminal_session_id
+    if cmd.terminal_command:
+        body["command"] = cmd.terminal_command
+    if cmd.terminal_title:
+        body["title"] = cmd.terminal_title
+    return "POST", "/session/terminal/open", body
+
+
+def _route_browser_open(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
+    body: dict[str, Any] = {
+        "url": cmd.browser_url,
+        "headless": cmd.browser_headless,
+    }
+    if cmd.browser_session_id:
+        body["session_id"] = cmd.browser_session_id
+    if cmd.browser_title:
+        body["title"] = cmd.browser_title
+    if cmd.browser_engine:
+        body["engine"] = cmd.browser_engine
+    return "POST", "/session/browser/open", body
+
+
 def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None]:
     """Map CommandRequest to broker HTTP (method, path, body)."""
     verb = cmd.verb
@@ -73,29 +101,9 @@ def _route_command(cmd: CommandRequest) -> tuple[str, str, dict[str, Any] | None
             {"width": cmd.width, "height": cmd.height, "display": cmd.vd_display},
         )
     if verb == CommandVerb.TERMINAL_OPEN:
-        body: dict[str, Any] = {
-            "rows": cmd.terminal_rows,
-            "cols": cmd.terminal_cols,
-        }
-        if cmd.terminal_session_id:
-            body["session_id"] = cmd.terminal_session_id
-        if cmd.terminal_command:
-            body["command"] = cmd.terminal_command
-        if cmd.terminal_title:
-            body["title"] = cmd.terminal_title
-        return "POST", "/session/terminal/open", body
+        return _route_terminal_open(cmd)
     if verb == CommandVerb.BROWSER_OPEN:
-        body = {
-            "url": cmd.browser_url,
-            "headless": cmd.browser_headless,
-        }
-        if cmd.browser_session_id:
-            body["session_id"] = cmd.browser_session_id
-        if cmd.browser_title:
-            body["title"] = cmd.browser_title
-        if cmd.browser_engine:
-            body["engine"] = cmd.browser_engine
-        return "POST", "/session/browser/open", body
+        return _route_browser_open(cmd)
     if verb == CommandVerb.DIAGNOSE_CONTROL:
         suffix = f"?display={cmd.display}" if cmd.display else ""
         return "GET", f"/diagnostics/control{suffix}", None

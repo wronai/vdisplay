@@ -93,6 +93,33 @@ def _box_matches(box: OcrTextBox, needle: str, *, exact: bool) -> bool:
     return target in haystack
 
 
+def _match_by_vision_anchor(
+    boxes: list[OcrTextBox],
+    selector: ControlSelector,
+    *,
+    fuzzy: bool,
+) -> list[OcrTextBox]:
+    exact = not fuzzy
+    matches = [box for box in boxes if _box_matches(box, selector.vision_anchor, exact=exact)]
+    if not matches and fuzzy:
+        pattern = re.escape(selector.vision_anchor.strip())
+        regex = re.compile(pattern, re.IGNORECASE)
+        matches = [box for box in boxes if regex.search(box.text)]
+    return matches
+
+
+def _match_by_text_fields(boxes: list[OcrTextBox], selector: ControlSelector) -> list[OcrTextBox]:
+    if selector.text:
+        return [box for box in boxes if _box_matches(box, selector.text, exact=True)]
+    if selector.text_contains:
+        return [box for box in boxes if _box_matches(box, selector.text_contains, exact=False)]
+    if selector.name:
+        return [box for box in boxes if _box_matches(box, selector.name, exact=True)]
+    if selector.name_contains:
+        return [box for box in boxes if _box_matches(box, selector.name_contains, exact=False)]
+    return []
+
+
 def match_selector_boxes(
     boxes: list[OcrTextBox],
     selector: ControlSelector,
@@ -104,23 +131,10 @@ def match_selector_boxes(
     Priority: vision_anchor → text (exact) → text_contains → name → name_contains.
     When ``fuzzy`` is True, vision_anchor also matches substring (case-insensitive).
     """
-    matches: list[OcrTextBox] = []
-
     if selector.vision_anchor:
-        exact = not fuzzy
-        matches = [box for box in boxes if _box_matches(box, selector.vision_anchor, exact=exact)]
-        if not matches and fuzzy:
-            pattern = re.escape(selector.vision_anchor.strip())
-            regex = re.compile(pattern, re.IGNORECASE)
-            matches = [box for box in boxes if regex.search(box.text)]
-    elif selector.text:
-        matches = [box for box in boxes if _box_matches(box, selector.text, exact=True)]
-    elif selector.text_contains:
-        matches = [box for box in boxes if _box_matches(box, selector.text_contains, exact=False)]
-    elif selector.name:
-        matches = [box for box in boxes if _box_matches(box, selector.name, exact=True)]
-    elif selector.name_contains:
-        matches = [box for box in boxes if _box_matches(box, selector.name_contains, exact=False)]
+        matches = _match_by_vision_anchor(boxes, selector, fuzzy=fuzzy)
+    else:
+        matches = _match_by_text_fields(boxes, selector)
 
     matches.sort(key=lambda item: item.confidence, reverse=True)
     return matches

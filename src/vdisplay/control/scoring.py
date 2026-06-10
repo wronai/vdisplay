@@ -480,46 +480,53 @@ def _score_browser_provider(
     return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, supports_visual_verify
 
 
-def _score_x11_provider(
-    context: dict[str, Any],
+def _x11_linux_eligibility(
+    host,
     display: str | None,
-) -> tuple[float, list[str], list[str], bool, bool, bool, bool]:
+) -> tuple[bool, list[str], list[str]]:
     from .descriptors import HostEnvironmentKind
 
-    score = 0.0
     reasons: list[str] = []
     missing: list[str] = []
-    eligible = True
-    supports_native_invoke = False
-    supports_visual_verify = False
-
-    host = context.get("host_environment")
     if host not in (HostEnvironmentKind.LINUX_X11, HostEnvironmentKind.LINUX_WAYLAND):
-        eligible = False
         missing.append(f"x11 pointer fallback requires Linux host (host={host})")
         reasons.append("x11 limited to linux desktop hosts")
-    elif host == HostEnvironmentKind.LINUX_WAYLAND:
+        return False, reasons, missing
+    if host == HostEnvironmentKind.LINUX_WAYLAND:
         xwayland_ok, xwayland_reason = _xwayland_reachable(display)
         if xwayland_ok:
             reasons.append(f"Wayland host: {xwayland_reason} (XWayland clients only)")
-        else:
-            eligible = False
-            missing.append(f"xdotool ineffective on Wayland host ({xwayland_reason})")
-            reasons.append("host=linux_wayland blocks pointer fallback")
+            return True, reasons, missing
+        missing.append(f"xdotool ineffective on Wayland host ({xwayland_reason})")
+        reasons.append("host=linux_wayland blocks pointer fallback")
+        return False, reasons, missing
+    return True, reasons, missing
 
+
+def _x11_invoke_capabilities(
+    *,
+    eligible: bool,
+    display: str | None,
+) -> tuple[bool, list[str], list[str], bool, bool]:
+    reasons: list[str] = []
+    missing: list[str] = []
     ready, ready_reason = _xdotool_ready()
     display_ok = bool((display or os.environ.get("DISPLAY") or "").strip())
     if eligible and ready and display_ok:
         reasons.append(ready_reason)
-        supports_native_invoke = True
-        supports_visual_verify = True
-    elif eligible:
-        eligible = False
-        if not ready:
-            missing.append(ready_reason)
-        if not display_ok:
-            missing.append("DISPLAY is not set")
+        return True, reasons, missing, True, True
+    if not eligible:
+        return False, reasons, missing, False, False
+    if not ready:
+        missing.append(ready_reason)
+    if not display_ok:
+        missing.append("DISPLAY is not set")
+    return False, reasons, missing, False, False
 
+
+def _x11_context_score(context: dict[str, Any]) -> tuple[float, list[str]]:
+    score = 0.0
+    reasons: list[str] = []
     if context["desktop"] and not context["terminal"] and not context["browser"]:
         score += 10
         reasons.append("desktop fallback context")
@@ -529,7 +536,21 @@ def _score_x11_provider(
     if context["browser"] or context["terminal"]:
         score -= 30
         reasons.append("semantic context prefers non-x11 providers")
+    return score, reasons
 
+
+def _score_x11_provider(
+    context: dict[str, Any],
+    display: str | None,
+) -> tuple[float, list[str], list[str], bool, bool, bool, bool]:
+    host = context.get("host_environment")
+    eligible, host_reasons, host_missing = _x11_linux_eligibility(host, display)
+    eligible, invoke_reasons, invoke_missing, supports_native_invoke, supports_visual_verify = (
+        _x11_invoke_capabilities(eligible=eligible, display=display)
+    )
+    score, context_reasons = _x11_context_score(context)
+    reasons = host_reasons + invoke_reasons + context_reasons
+    missing = host_missing + invoke_missing
     return score, reasons, missing, eligible, False, supports_native_invoke, supports_visual_verify
 
 
@@ -607,6 +628,33 @@ def _score_plugin_provider(
     return score, reasons, missing, eligible, supports_semantic_find, supports_native_invoke, supports_visual_verify
 
 
+def _apply_routing_boosts(
+    provider: str,
+    score: float,
+    reasons: list[str],
+    *,
+    context: dict[str, Any],
+) -> tuple[float, list[str]]:
+    if context["vision"] and provider != "vision":
+        score += 20
+        reasons.append("vision selector prefers actionable fallback providers")
+
+    if forced := context.get("forced_provider"):
+        if provider == forced:
+            score += 500
+            reasons.append("selector.backend forces provider")
+
+    profile = context.get("application_profile")
+    if profile is not None:
+        from .profile_inference import profile_provider_boost
+
+        boost, boost_reasons = profile_provider_boost(provider, profile)
+        if boost:
+            score += boost
+            reasons.extend(boost_reasons)
+    return score, reasons
+
+
 def score_provider(
     provider: str,
     *,
@@ -636,24 +684,7 @@ def score_provider(
     _builtin = ("atspi", "uia", "ax", "terminal", "browser", "x11", "vision")
     score = (base if provider in _builtin else 0.0) + p_score
     reasons = [f"base score {base}"] + p_reasons if provider in _builtin else p_reasons
-
-    if context["vision"] and provider != "vision":
-        score += 20
-        reasons.append("vision selector prefers actionable fallback providers")
-
-    if forced := context.get("forced_provider"):
-        if provider == forced:
-            score += 500
-            reasons.append("selector.backend forces provider")
-
-    profile = context.get("application_profile")
-    if profile is not None:
-        from .profile_inference import profile_provider_boost
-
-        boost, boost_reasons = profile_provider_boost(provider, profile)
-        if boost:
-            score += boost
-            reasons.extend(boost_reasons)
+    score, reasons = _apply_routing_boosts(provider, score, reasons, context=context)
 
     return ProviderScore(
         provider=provider,

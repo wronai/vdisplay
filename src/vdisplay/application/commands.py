@@ -89,6 +89,44 @@ _CONTROL_ACTIONS = {
 }
 
 
+def _control_session_id_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> str | None:
+    if verb in {CommandVerb.TERMINAL_OPEN, CommandVerb.BROWSER_OPEN}:
+        return None
+    return cmd.get("session_id")
+
+
+def _terminal_fields_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> dict[str, Any]:
+    if verb != CommandVerb.TERMINAL_OPEN:
+        return {
+            "terminal_session_id": None,
+            "terminal_command": None,
+            "terminal_title": None,
+        }
+    return {
+        "terminal_session_id": cmd.get("session_id"),
+        "terminal_command": cmd.get("command"),
+        "terminal_title": cmd.get("title"),
+    }
+
+
+def _browser_fields_from_dsl(cmd: dict[str, Any], verb: CommandVerb) -> dict[str, Any]:
+    if verb != CommandVerb.BROWSER_OPEN:
+        return {
+            "browser_session_id": None,
+            "browser_url": None,
+            "browser_headless": True,
+            "browser_title": None,
+            "browser_engine": None,
+        }
+    return {
+        "browser_session_id": cmd.get("session_id"),
+        "browser_url": cmd.get("url"),
+        "browser_headless": bool(cmd.get("headless", True)),
+        "browser_title": cmd.get("title"),
+        "browser_engine": _resolve_browser_engine_from_dsl(cmd),
+    }
+
+
 @dataclass
 class CommandRequest:
     verb: CommandVerb
@@ -165,6 +203,8 @@ class CommandRequest:
         except ValueError:
             verb = CommandVerb.HEALTH
         apps_only = bool(cmd.get("apps_only", False))
+        terminal_fields = _terminal_fields_from_dsl(cmd, verb)
+        browser_fields = _browser_fields_from_dsl(cmd, verb)
         return cls(
             verb=verb,
             line=line,
@@ -204,26 +244,12 @@ class CommandRequest:
             control_text_contains=cmd.get("text_contains"),
             control_terminal_line=int(cmd["terminal_line"]) if cmd.get("terminal_line") is not None else None,
             control_terminal_col=int(cmd["terminal_col"]) if cmd.get("terminal_col") is not None else None,
-            control_session_id=(
-                cmd.get("session_id")
-                if verb not in {CommandVerb.TERMINAL_OPEN, CommandVerb.BROWSER_OPEN}
-                else None
-            ),
-            terminal_session_id=cmd.get("session_id") if verb == CommandVerb.TERMINAL_OPEN else None,
-            terminal_command=cmd.get("command") if verb == CommandVerb.TERMINAL_OPEN else None,
+            control_session_id=_control_session_id_from_dsl(cmd, verb),
             terminal_rows=int(cmd.get("rows") or 24),
             terminal_cols=int(cmd.get("cols") or 80),
-            terminal_title=cmd.get("title") if verb == CommandVerb.TERMINAL_OPEN else None,
-            browser_session_id=cmd.get("session_id") if verb == CommandVerb.BROWSER_OPEN else None,
-            browser_url=cmd.get("url") if verb == CommandVerb.BROWSER_OPEN else None,
-            browser_headless=bool(cmd.get("headless", True)) if verb == CommandVerb.BROWSER_OPEN else True,
-            browser_title=cmd.get("title") if verb == CommandVerb.BROWSER_OPEN else None,
-            browser_engine=(
-                _resolve_browser_engine_from_dsl(cmd)
-                if verb == CommandVerb.BROWSER_OPEN
-                else None
-            ),
             extra={k: v for k, v in cmd.items() if k not in {"verb"}},
+            **terminal_fields,
+            **browser_fields,
         )
 
 

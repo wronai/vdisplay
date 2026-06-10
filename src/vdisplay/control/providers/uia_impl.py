@@ -81,13 +81,19 @@ def _rect_to_bounds(rect: Any) -> ControlBounds:
     )
 
 
-def _matches_selector(record: UiaElementRecord, selector: ControlSelector) -> bool:
-    if selector.role and record.role.value != selector.role.strip().lower():
-        return False
+def _matches_role(record: UiaElementRecord, role: str | None) -> bool:
+    return not role or record.role.value == role.strip().lower()
+
+
+def _matches_name_fields(record: UiaElementRecord, selector: ControlSelector) -> bool:
     if selector.name and record.name.lower() != selector.name.strip().lower():
         return False
     if selector.name_contains and selector.name_contains.lower() not in (record.name or "").lower():
         return False
+    return True
+
+
+def _matches_window_fields(record: UiaElementRecord, selector: ControlSelector) -> bool:
     if selector.accessibility_id and selector.accessibility_id != (record.automation_id or record.provider_ref):
         return False
     if selector.app and selector.app.lower() not in (record.app_label or "").lower():
@@ -95,6 +101,53 @@ def _matches_selector(record: UiaElementRecord, selector: ControlSelector) -> bo
     if selector.window_id and str(selector.window_id) != str(record.window_id or ""):
         return False
     if selector.window_title and selector.window_title.lower() not in (record.window_title or "").lower():
+        return False
+    return True
+
+
+def _matches_selector(record: UiaElementRecord, selector: ControlSelector) -> bool:
+    return (
+        _matches_role(record, selector.role)
+        and _matches_name_fields(record, selector)
+        and _matches_window_fields(record, selector)
+    )
+
+
+def _record_from_uia_element(element: Any, *, control_type: str) -> UiaElementRecord | None:
+    try:
+        name = str(element.CurrentName or "")
+        automation_id = str(element.CurrentAutomationId or "") or None
+        class_name = str(element.CurrentClassName or "")
+        runtime = tuple(int(x) for x in element.GetRuntimeId())
+        key = f"{'-'.join(str(x) for x in runtime)}"
+        bounds = _rect_to_bounds(element.CurrentBoundingRectangle)
+        app_label = str(element.CurrentProcessName or class_name or "")
+        window_title = name if "window" in control_type.lower() else None
+        return UiaElementRecord(
+            key=key,
+            name=name,
+            role=_role_from_uia(control_type),
+            bounds=bounds,
+            automation_id=automation_id,
+            app_label=app_label,
+            window_id=str(element.CurrentNativeWindowHandle or "") or None,
+            window_title=window_title,
+            provider_ref=automation_id,
+            raw=element,
+        )
+    except Exception:
+        return None
+
+
+def _passes_uia_filters(
+    record: UiaElementRecord,
+    *,
+    app: str | None,
+    window_id: str | None,
+) -> bool:
+    if app and app.lower() not in (record.app_label or "").lower():
+        return False
+    if window_id and str(window_id) != str(record.window_id or ""):
         return False
     return True
 
@@ -140,36 +193,14 @@ class ComtypesUiaBackend:
         count = int(elements.Length)
         for index in range(count):
             element = elements.GetElement(index)
-            try:
-                name = str(element.CurrentName or "")
-                automation_id = str(element.CurrentAutomationId or "") or None
-                class_name = str(element.CurrentClassName or "")
-                control_type = str(element.CurrentControlType)
-                runtime = tuple(int(x) for x in element.GetRuntimeId())
-                key = f"{'-'.join(str(x) for x in runtime)}"
-                bounds = _rect_to_bounds(element.CurrentBoundingRectangle)
-                app_label = str(element.CurrentProcessName or class_name or "")
-                window_title = name if "window" in control_type.lower() else None
-                record = UiaElementRecord(
-                    key=key,
-                    name=name,
-                    role=_role_from_uia(control_type),
-                    bounds=bounds,
-                    automation_id=automation_id,
-                    app_label=app_label,
-                    window_id=str(element.CurrentNativeWindowHandle or "") or None,
-                    window_title=window_title,
-                    provider_ref=automation_id,
-                    raw=element,
-                )
-            except Exception:
+            control_type = str(element.CurrentControlType)
+            record = _record_from_uia_element(element, control_type=control_type)
+            if record is None:
                 continue
-            if app and app.lower() not in (record.app_label or "").lower():
-                continue
-            if window_id and str(window_id) != str(record.window_id or ""):
+            if not _passes_uia_filters(record, app=app, window_id=window_id):
                 continue
             records.append(record)
-            self._element_by_key[key] = record
+            self._element_by_key[record.key] = record
             if len(records) >= 500:
                 break
         return records

@@ -5,22 +5,22 @@
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 191, json: 22, toml: 11, shell: 7, yaml: 5
+- **Languages**: python: 192, json: 19, toml: 11, shell: 7, yaml: 5
 - **Analysis Mode**: static
-- **Total Functions**: 1358
-- **Total Classes**: 127
-- **Modules**: 247
-- **Entry Points**: 746
+- **Total Functions**: 1433
+- **Total Classes**: 128
+- **Modules**: 245
+- **Entry Points**: 766
 
 ## Architecture by Module
 
 ### src.vdisplay.client
-- **Functions**: 38
+- **Functions**: 40
 - **Classes**: 1
 - **File**: `client.py`
 
 ### src.vdisplay.control.scoring
-- **Functions**: 34
+- **Functions**: 38
 - **Classes**: 2
 - **File**: `scoring.py`
 
@@ -39,6 +39,16 @@
 - **Classes**: 3
 - **File**: `api.py`
 
+### src.vdisplay.control.gui_map
+- **Functions**: 31
+- **Classes**: 6
+- **File**: `gui_map.py`
+
+### src.vdisplay.control.providers.vision.provider
+- **Functions**: 31
+- **Classes**: 1
+- **File**: `provider.py`
+
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30
 - **File**: `grammar.py`
@@ -48,30 +58,25 @@
 - **Classes**: 3
 - **File**: `browser_playwright.py`
 
-### src.vdisplay.control.providers.vision.provider
-- **Functions**: 26
-- **Classes**: 1
-- **File**: `provider.py`
+### src.vdisplay.control.providers.uia_impl
+- **Functions**: 29
+- **Classes**: 4
+- **File**: `uia_impl.py`
 
-### src.vdisplay.control.gui_map
-- **Functions**: 25
-- **Classes**: 6
-- **File**: `gui_map.py`
+### src.vdisplay.control.providers.ax_impl
+- **Functions**: 27
+- **Classes**: 4
+- **File**: `ax_impl.py`
 
 ### src.vdisplay.backends.linux_x11_relay
 - **Functions**: 24
 - **Classes**: 2
 - **File**: `linux_x11_relay.py`
 
-### src.vdisplay.control.providers.uia_impl
+### src.vdisplay.control.verifier
 - **Functions**: 24
-- **Classes**: 4
-- **File**: `uia_impl.py`
-
-### src.vdisplay.control.providers.ax_impl
-- **Functions**: 24
-- **Classes**: 4
-- **File**: `ax_impl.py`
+- **Classes**: 3
+- **File**: `verifier.py`
 
 ### src.vdisplay.application.handlers.agent
 - **Functions**: 22
@@ -97,15 +102,10 @@
 - **Functions**: 19
 - **File**: `atspi_impl.py`
 
-### src.vdisplay.backends.linux_x11_mirror
-- **Functions**: 17
-- **Classes**: 1
-- **File**: `linux_x11_mirror.py`
-
-### src.vdisplay.control.selector
-- **Functions**: 17
-- **Classes**: 1
-- **File**: `selector.py`
+### src.vdisplay.control.gui_map_diff
+- **Functions**: 18
+- **Classes**: 3
+- **File**: `gui_map_diff.py`
 
 ## Key Entry Points
 
@@ -115,7 +115,7 @@ Main execution flows into the system:
 - **Calls**: app.post, app.post, app.post, app.post, app.post, app.post, app.post, app.get
 
 ### src.vdisplay.application.commands.CommandRequest.from_dsl
-- **Calls**: None.upper, bool, cls, CommandVerb, cmd.get, str, cmd.get, cmd.get
+- **Calls**: None.upper, bool, src.vdisplay.application.commands._terminal_fields_from_dsl, src.vdisplay.application.commands._browser_fields_from_dsl, cls, CommandVerb, cmd.get, str
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
 - **Calls**: app.get, app.get, app.post, app.post, app.post, app.post, app.post, Header
@@ -129,14 +129,14 @@ Main execution flows into the system:
 ### examples.agent-broker.broker_demo.main
 - **Calls**: src.vdisplay.agent_config.resolve_agent_url, AgentClient, print, print, print, client.outputs, print, print
 
+### src.vdisplay.commands.map.register
+- **Calls**: sub.add_parser, parser.add_subparsers, map_sub.add_parser, build.add_argument, build.add_argument, build.add_argument, build.add_argument, build.add_argument
+
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
 - **Calls**: app.get, app.get, app.get, app.get, app.get, app.get, Header, check_auth
 
 ### examples.host-relay.relay_demo.main
 - **Calls**: os.environ.get, src.vdisplay.discovery.resolve_host_display, Path, output_dir.mkdir, print, examples.host-relay.relay_demo._capture_phase, WindowRelaySession.create, session.start
-
-### src.vdisplay.commands.map.register
-- **Calls**: sub.add_parser, parser.add_subparsers, map_sub.add_parser, build.add_argument, build.add_argument, build.add_argument, build.add_argument, build.add_argument
 
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
@@ -150,17 +150,11 @@ Main execution flows into the system:
 ### examples.host-mirror.mirror_demo.main
 - **Calls**: Path, output_dir.mkdir, os.environ.get, os.environ.get, src.vdisplay.discovery.diagnose_display, print, src.vdisplay.discovery.list_monitors, src.vdisplay.payloads.all_payload
 
-### src.vdisplay.commands.control.handle
-- **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, getattr, getattr
+### src.vdisplay.commands.map.handle
+- **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
 
 ### src.vdisplay.control.providers.x11.X11ControlProvider.snapshot
 - **Calls**: src.vdisplay.windows.query.find_windows, src.vdisplay.windows.query.pick_best_window, ControlBounds, ControlNode, ControlSnapshot, src.vdisplay.discovery.window_discovery_meta, VDisplayError, meta.get
-
-### src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend.collect_elements
-- **Calls**: self._automation.GetRootElement, self._automation.CreateTrueCondition, root.FindAll, self._element_by_key.clear, int, range, self.connect, elements.GetElement
-
-### src.vdisplay.commands.map.handle
-- **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes
 - **Calls**: app.get, app.get, app.post, app.post, Query, Query, Header, check_auth
@@ -201,6 +195,12 @@ Main execution flows into the system:
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes
 - **Calls**: app.post, app.post, app.get, Header, check_auth, Header, check_auth, Header
 
+### examples.headless-virtual.run_virtual.main
+- **Calls**: Path, output_dir.mkdir, int, int, os.environ.get, VirtualDisplaySession.create, session.start, os.environ.get
+
+### src.vdisplay.control.models.ElementCapabilities.from_dict
+- **Calls**: cls, cls, bool, bool, bool, bool, bool, bool
+
 ## Process Flows
 
 Key execution flows identified:
@@ -213,6 +213,9 @@ register_routes [packages.vdisplay-agent.src.vdisplay_agent.routes.session]
 ### Flow 2: from_dsl
 ```
 from_dsl [src.vdisplay.application.commands.CommandRequest]
+  └─ →> _terminal_fields_from_dsl
+  └─ →> _browser_fields_from_dsl
+      └─> _resolve_browser_engine_from_dsl
 ```
 
 ### Flow 3: register
@@ -261,12 +264,7 @@ snapshot [src.vdisplay.control.providers.x11.X11ControlProvider]
       └─ →> pick_largest
 ```
 
-### Flow 9: collect_elements
-```
-collect_elements [src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend]
-```
-
-### Flow 10: adopt_window
+### Flow 9: adopt_window
 ```
 adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
   └─ →> _window_geometry
@@ -277,6 +275,11 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
       └─> list_windows_enriched
           └─> scan_windows
           └─ →> require_command
+```
+
+### Flow 10: collect_elements
+```
+collect_elements [src.vdisplay.control.providers.ax_impl.PyobjcAxBackend]
 ```
 
 ## Key Classes
@@ -293,9 +296,13 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
 
 ### src.vdisplay.control.providers.vision.provider.VisionStubProvider
 > Canvas/game/stream surfaces — semantic tree unavailable; OCR/template + pointer invoke.
-- **Methods**: 26
+- **Methods**: 31
 - **Key Methods**: src.vdisplay.control.providers.vision.provider.VisionStubProvider.__init__, src.vdisplay.control.providers.vision.provider.VisionStubProvider.available, src.vdisplay.control.providers.vision.provider.VisionStubProvider._capture_png, src.vdisplay.control.providers.vision.provider.VisionStubProvider.last_capture, src.vdisplay.control.providers.vision.provider.VisionStubProvider.last_find_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider.enable_preview_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider._box_key, src.vdisplay.control.providers.vision.provider.VisionStubProvider._record_find_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider._node_from_ocr, src.vdisplay.control.providers.vision.provider.VisionStubProvider._node_from_template
 - **Inherits**: ControlProvider
+
+### src.vdisplay.control.verifier.VerifierPipeline
+- **Methods**: 15
+- **Key Methods**: src.vdisplay.control.verifier.VerifierPipeline._run_semantic_if_needed, src.vdisplay.control.verifier.VerifierPipeline._run_visual_if_needed, src.vdisplay.control.verifier.VerifierPipeline._maybe_ocr_rescue, src.vdisplay.control.verifier.VerifierPipeline._evaluate_runs, src.vdisplay.control.verifier.VerifierPipeline.verify_after_action, src.vdisplay.control.verifier.VerifierPipeline._verify_anchor_visible, src.vdisplay.control.verifier.VerifierPipeline._verify_ocr_contains, src.vdisplay.control.verifier.VerifierPipeline._verify_with_vision_rescue, src.vdisplay.control.verifier.VerifierPipeline._verify_combined, src.vdisplay.control.verifier.VerifierPipeline._run_semantic
 
 ### src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider
 - **Methods**: 12
@@ -374,11 +381,6 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
 ### src.vdisplay.api.MirrorSession
 - **Methods**: 8
 - **Key Methods**: src.vdisplay.api.MirrorSession.__init__, src.vdisplay.api.MirrorSession.create, src.vdisplay.api.MirrorSession.start, src.vdisplay.api.MirrorSession.stop, src.vdisplay.api.MirrorSession.screenshot_bytes, src.vdisplay.api.MirrorSession.save_screenshot, src.vdisplay.api.MirrorSession.info, src.vdisplay.api.MirrorSession.capabilities
-
-### src.vdisplay.control.providers.terminal_screen.ScreenBuffer
-> Mutable terminal screen fed by PTY output bytes.
-- **Methods**: 8
-- **Key Methods**: src.vdisplay.control.providers.terminal_screen.ScreenBuffer.__init__, src.vdisplay.control.providers.terminal_screen.ScreenBuffer._init_pyte, src.vdisplay.control.providers.terminal_screen.ScreenBuffer.resize, src.vdisplay.control.providers.terminal_screen.ScreenBuffer.feed, src.vdisplay.control.providers.terminal_screen.ScreenBuffer._sync_from_pyte, src.vdisplay.control.providers.terminal_screen.ScreenBuffer._feed_simple, src.vdisplay.control.providers.terminal_screen.ScreenBuffer.set_lines, src.vdisplay.control.providers.terminal_screen.ScreenBuffer.snapshot
 
 ## Data Transformation Functions
 
@@ -470,27 +472,23 @@ Key functions that process and transform data:
 Functions exposed as public API (no underscore prefix):
 
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes` - 74 calls
-- `src.vdisplay.application.commands.CommandRequest.from_dsl` - 70 calls
+- `src.vdisplay.application.commands.CommandRequest.from_dsl` - 63 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 53 calls
 - `src.vdisplay.commands.control.register` - 46 calls
-- `src.vdisplay.control.gui_map_diff.diff_gui_map` - 43 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
-- `src.vdisplay.input.coords.global_pointer_coords` - 37 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
+- `src.vdisplay.commands.map.register` - 35 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes` - 33 calls
 - `examples.host-relay.relay_demo.main` - 33 calls
-- `src.vdisplay.commands.map.register` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.agent.handle` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
+- `src.vdisplay.commands.map.handle` - 31 calls
 - `src.vdisplay.control.vision_template.match_template` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
-- `src.vdisplay.commands.control.handle` - 30 calls
 - `src.vdisplay.control.providers.x11.X11ControlProvider.snapshot` - 30 calls
-- `src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend.collect_elements` - 29 calls
-- `src.vdisplay.commands.map.handle` - 29 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
@@ -504,11 +502,15 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.control.providers.atspi_impl.snapshot_dict` - 26 calls
 - `src.vdisplay.control.vision_preview.render_match_overlay` - 25 calls
 - `src.vdisplay.commands.common.control_selector_kwargs_from_args` - 24 calls
-- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.capture.host.resolve_window_region` - 24 calls
-- `src.vdisplay.control.gui_map_diff.refresh_gui_map` - 24 calls
+- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.control.descriptors.detect_platform_profile` - 23 calls
 - `examples.common.validate_artifacts.validate_image_and_meta` - 22 calls
+- `src.vdisplay.commands.sampler.register` - 22 calls
+- `src.vdisplay.commands.virtual.register` - 22 calls
+- `examples.control-plane.control_demo.show_active_controls` - 21 calls
+- `src.vdisplay.commands.common.add_control_selector_args` - 21 calls
+- `src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open` - 21 calls
 
 ## System Interactions
 
@@ -519,9 +521,9 @@ graph TD
     register_routes --> post
     from_dsl --> upper
     from_dsl --> bool
+    from_dsl --> _terminal_fields_fro
+    from_dsl --> _browser_fields_from
     from_dsl --> cls
-    from_dsl --> CommandVerb
-    from_dsl --> get
     register_routes --> get
     register --> add_parser
     register --> add_subparsers

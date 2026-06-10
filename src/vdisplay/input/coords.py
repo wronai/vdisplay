@@ -21,84 +21,117 @@ def global_pointer_coords(
     region = meta.get("region") or {}
 
     if region:
-        origin_x = int(region.get("x") or 0)
-        origin_y = int(region.get("y") or 0)
-        region_w = int(region.get("width") or png_w or 1)
-        region_h = int(region.get("height") or png_h or 1)
-        rotation = meta.get("rotation") or _rotation_for_monitor(display, meta.get("monitor") or meta.get("source"))
-        rel_x, rel_y, scale_x, scale_y = _local_to_region_coords(
+        return _global_from_region(
             local_x,
             local_y,
+            meta=meta,
+            region=region,
             png_w=png_w,
             png_h=png_h,
-            region_w=region_w,
-            region_h=region_h,
-            rotation=rotation,
-            allow_1to1_fallback=False,
-        )
-        mapping = "screencast-stream" if meta.get("screencast_stream") else "region"
-        if rotation and rotation != "normal":
-            mapping = f"{mapping}+rotation-{rotation}"
-        return (
-            origin_x + rel_x,
-            origin_y + rel_y,
-            {
-                "mapping": mapping,
-                "origin_x": origin_x,
-                "origin_y": origin_y,
-                "scale_x": scale_x,
-                "scale_y": scale_y,
-                "rotation": rotation,
-                "local_x": local_x,
-                "local_y": local_y,
-                "region_rel_x": rel_x,
-                "region_rel_y": rel_y,
-            },
+            display=display,
         )
 
     source = str(meta.get("source") or meta.get("monitor_name") or "")
     if source:
         monitor = _monitor_by_name(display, source)
         if monitor is not None:
-            origin_x = int(monitor.get("x") or 0)
-            origin_y = int(monitor.get("y") or 0)
-            monitor_w = int(monitor.get("width") or png_w or 1)
-            monitor_h = int(monitor.get("height") or png_h or 1)
-            rotation = str(monitor.get("rotation") or "normal")
-            rel_x, rel_y, scale_x, scale_y = _local_to_region_coords(
-                local_x,
-                local_y,
-                png_w=png_w,
-                png_h=png_h,
-                region_w=monitor_w,
-                region_h=monitor_h,
-                rotation=rotation,
-                allow_1to1_fallback=True,
-            )
-            mapping = "monitor"
-            if rotation != "normal":
-                mapping = f"monitor+rotation-{rotation}"
-            elif _aspect_mismatch(monitor_w, monitor_h, png_w, png_h):
-                mapping = "monitor-1:1"
-            return (
-                origin_x + rel_x,
-                origin_y + rel_y,
-                {
-                    "mapping": mapping,
-                    "monitor": source,
-                    "origin_x": origin_x,
-                    "origin_y": origin_y,
-                    "scale_x": scale_x,
-                    "scale_y": scale_y,
-                    "rotation": rotation,
-                    "local_x": local_x,
-                    "local_y": local_y,
-                    "region_rel_x": rel_x,
-                    "region_rel_y": rel_y,
-                },
-            )
+            return _global_from_monitor(local_x, local_y, monitor=monitor, png_w=png_w, png_h=png_h)
 
     return local_x, local_y, {"mapping": "local"}
+
+
+def _global_from_region(
+    local_x: int,
+    local_y: int,
+    *,
+    meta: dict[str, Any],
+    region: dict[str, Any],
+    png_w: int,
+    png_h: int,
+    display: str | None,
+) -> tuple[int, int, dict[str, Any]]:
+    origin_x = int(region.get("x") or 0)
+    origin_y = int(region.get("y") or 0)
+    region_w = int(region.get("width") or png_w or 1)
+    region_h = int(region.get("height") or png_h or 1)
+    rotation = meta.get("rotation") or _rotation_for_monitor(display, meta.get("monitor") or meta.get("source"))
+    rel_x, rel_y, scale_x, scale_y = _local_to_region_coords(
+        local_x,
+        local_y,
+        png_w=png_w,
+        png_h=png_h,
+        region_w=region_w,
+        region_h=region_h,
+        rotation=rotation,
+        allow_1to1_fallback=False,
+    )
+    mapping = "screencast-stream" if meta.get("screencast_stream") else "region"
+    if rotation and rotation != "normal":
+        mapping = f"{mapping}+rotation-{rotation}"
+    return (
+        origin_x + rel_x,
+        origin_y + rel_y,
+        {
+            "mapping": mapping,
+            "origin_x": origin_x,
+            "origin_y": origin_y,
+            "scale_x": scale_x,
+            "scale_y": scale_y,
+            "rotation": rotation,
+            "local_x": local_x,
+            "local_y": local_y,
+            "region_rel_x": rel_x,
+            "region_rel_y": rel_y,
+        },
+    )
+
+
+def _global_from_monitor(
+    local_x: int,
+    local_y: int,
+    *,
+    monitor: dict[str, Any],
+    png_w: int,
+    png_h: int,
+) -> tuple[int, int, dict[str, Any]]:
+    origin_x = int(monitor.get("x") or 0)
+    origin_y = int(monitor.get("y") or 0)
+    monitor_w = int(monitor.get("width") or png_w or 1)
+    monitor_h = int(monitor.get("height") or png_h or 1)
+    rotation = str(monitor.get("rotation") or "normal")
+    rel_x, rel_y, scale_x, scale_y = _local_to_region_coords(
+        local_x,
+        local_y,
+        png_w=png_w,
+        png_h=png_h,
+        region_w=monitor_w,
+        region_h=monitor_h,
+        rotation=rotation,
+        allow_1to1_fallback=True,
+    )
+    mapping = "monitor"
+    if rotation != "normal":
+        mapping = f"monitor+rotation-{rotation}"
+    elif _aspect_mismatch(monitor_w, monitor_h, png_w, png_h):
+        mapping = "monitor-1:1"
+    source = str(monitor.get("name") or "")
+    return (
+        origin_x + rel_x,
+        origin_y + rel_y,
+        {
+            "mapping": mapping,
+            "monitor": source,
+            "origin_x": origin_x,
+            "origin_y": origin_y,
+            "scale_x": scale_x,
+            "scale_y": scale_y,
+            "rotation": rotation,
+            "local_x": local_x,
+            "local_y": local_y,
+            "region_rel_x": rel_x,
+            "region_rel_y": rel_y,
+        },
+    )
 
 
 def _local_to_region_coords(

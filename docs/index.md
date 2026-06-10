@@ -1,34 +1,69 @@
 # vdisplay documentation
 
-Cross-platform virtual display orchestration for Python agents, CI pipelines, and headless automation.
+**Start here:** [start-here.md](start-here.md) — install, local vs broker, first commands.
 
-## Quick links
+## Navigation
 
-| Resource | Description |
-|----------|-------------|
-| [README.md](../README.md) | Project overview, API summary, CLI reference |
-| [Installation](installation.md) | System dependencies and Python setup |
-| [Agent broker](agent-broker.md) | **vdisplay-agent** — install once, REST/MCP/DSL, ScreenCast |
-| [Control plane](control-plane.md) | AT-SPI / browser / terminal / X11 automation + plugins |
-| [Vision-only Wayland](vision-only-wayland.md) | PyCharm/canvas: map + OCR + ydotool on GNOME Wayland |
-| [RFC 001 — extensibility](rfc/001-extensibility-model.md) | Generic control extension model (accepted) |
-| [Architecture](architecture.md) | CommandRequest + executor (local vs agent routing) |
-| [Docker guide](docker-guide.md) | Running vdisplay in containers |
-| [Examples index](examples.md) | All usage examples by environment |
-| [Troubleshooting](troubleshooting.md) | Common CLI errors and fixes |
-| [packages/README.md](../packages/README.md) | Control layer (DSL, MCP, REST, NL) |
+### Getting started
 
-## Recommended desktop setup
+| Doc | Description |
+|-----|-------------|
+| [start-here.md](start-here.md) | **Entry point** — install, routing, choose your path |
+| [installation.md](installation.md) | System and Python dependencies |
+| [troubleshooting.md](troubleshooting.md) | Common errors and fixes |
+
+### Guides (how do I…?)
+
+| Guide | Question |
+|-------|----------|
+| [guides/agent-broker.md](guides/agent-broker.md) | Local vs broker? Screencast order? |
+| [guides/wayland-control.md](guides/wayland-control.md) | Native Wayland / PyCharm / canvas? |
+| [guides/gui-map-pack.md](guides/gui-map-pack.md) | Build and refresh GUI map? |
+| [guides/vision-fallback.md](guides/vision-fallback.md) | OCR verify + vision LLM? |
+| [guides/browser-control.md](guides/browser-control.md) | Playwright DOM control? |
+| [guides/terminal-control.md](guides/terminal-control.md) | PTY grid control? |
+
+### Reference (lookup)
+
+| Doc | Description |
+|-----|-------------|
+| [reference/env.md](reference/env.md) | Environment variables |
+| [reference/cli.md](reference/cli.md) | CLI command index |
+| [reference/api.md](reference/api.md) | CommandRequest / SDK |
+| [reference/dsl.md](reference/dsl.md) | DSL verbs |
+| [reference/rest.md](reference/rest.md) | REST adapter |
+| [reference/mcp.md](reference/mcp.md) | MCP tools |
+
+### Architecture & control
+
+| Doc | Description |
+|-----|-------------|
+| [architecture.md](architecture.md) | Executor routing, modules, extensibility |
+| [control-plane.md](control-plane.md) | Providers, selector, verifier, plugins |
+| [agent-broker.md](agent-broker.md) | Full broker HTTP API |
+| [vision-only-wayland.md](vision-only-wayland.md) | Vision-only profile deep dive |
+| [api-contract.md](api-contract.md) | Stable command/response contract |
+| [rfc/001-extensibility-model.md](rfc/001-extensibility-model.md) | Control extension model |
+
+### Examples & adapters
+
+| Doc | Description |
+|-----|-------------|
+| [examples.md](examples.md) | Example project index |
+| [docker-guide.md](docker-guide.md) | Containers |
+| [packages/README.md](../packages/README.md) | DSL, MCP, REST, NL packages |
+
+## Quick start (desktop)
 
 ```bash
 pip install -e ".[pillow,dev]"
 pip install -e "packages/vdisplay-agent[serve]"
 pip install -e packages/dsl2vdisplay packages/rest2vdisplay packages/mcp2vdisplay
+
 vdisplay-agent serve --port 8765
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+vdisplay monitors
 ```
-
-Try: [examples/agent-broker](../examples/agent-broker/) · [agent-broker.md](agent-broker.md) · [architecture.md](architecture.md)
 
 ## Modes
 
@@ -37,86 +72,27 @@ Try: [examples/agent-broker](../examples/agent-broker/) · [agent-broker.md](age
 | `virtual` | `VirtualDisplaySession` | Isolated headless display (Xvfb) |
 | `mirror` | `MirrorSession` | Duplicate an existing screen output |
 | `relay` | `WindowRelaySession` | Hide/restore a window on the same session |
-| `screencast` | Agent `POST /session/screencast/start` | Wayland host capture after one portal consent |
-
-See [README.md — Modes](../README.md#modes) for the capability matrix.
+| `screencast` | Agent `POST /session/screencast/start` | Wayland host capture after portal consent |
 
 ## Output objects (`nl`)
 
-Monitors and windows returned by the API, CLI, and control layer include **`nl`** — a natural-language description of their contents.
-
-| Object | Source | `nl` describes |
-|--------|--------|----------------|
-| Monitor | `vdisplay monitors`, `vdisplay all`, DSL `MONITORS` | resolution, rotation, primary, visible apps |
-| Window | `vdisplay windows`, `vdisplay all`, DSL `WINDOWS` | app label, size, monitor, process |
-| Adopted window | `vdisplay relay list`, `vdisplay all` | off-screen stashed windows |
-
-Example:
-
-```bash
-vdisplay all | jq '{monitors: .monitors[].nl, windows: .windows[].nl}'
-```
-
-## Examples by environment
-
-| Environment | Path | Docker | Host desktop |
-|-------------|------|--------|--------------|
-| **Agent broker** | [examples/agent-broker](../examples/agent-broker/) | No | Yes |
-| Headless virtual display | [examples/headless-virtual](../examples/headless-virtual/) | Yes | No |
-| CI / agent screenshot | [examples/ci-agent](../examples/ci-agent/) | Yes | No |
-| Dev workspace (mounted) | [examples/dev-workspace](../examples/dev-workspace/) | Yes | No |
-| Mirror host desktop | [examples/host-mirror](../examples/host-mirror/) | Optional | Yes |
-| Relay host windows | [examples/host-relay](../examples/host-relay/) | Optional | Yes |
-
-Details: [examples.md](examples.md)
+Monitors and windows include **`nl`** — a natural-language description. See [README.md](../README.md#output-objects-nl) for examples.
 
 ## Python API (minimal)
 
 ```python
 from vdisplay import VirtualDisplaySession
 from vdisplay.client import AgentClient
+from vdisplay.application.executor import execute
+from vdisplay.application.commands import CommandRequest
 
-# In-process virtual display
 vd = VirtualDisplaySession.create(width=1920, height=1080)
 vd.start()
 vd.save_screenshot("screen.png")
 vd.stop()
 
-# Via broker (when VDISPLAY_AGENT_URL is set)
 client = AgentClient("http://127.0.0.1:8765")
 client.outputs()
-client.start_virtual(width=1280, height=720, display=":99")
 ```
 
-Full API: [README.md](../README.md#python-api)
-
-## CLI (minimal)
-
-```bash
-export VDISPLAY_AGENT_URL=http://127.0.0.1:8765   # optional broker
-vdisplay monitors
-vdisplay virtual screenshot -o screen.png --display :99
-```
-
-Full CLI: [README.md](../README.md)
-
-## Control layer
-
-With broker (recommended on a desktop host):
-
-```bash
-vdisplay-agent serve --port 8765
-export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
-dsl2vdisplay -c 'MONITORS'    # CommandRequest → executor → agent
-rest2vdisplay serve --port 8216 --agent-url $VDISPLAY_AGENT_URL
-mcp2vdisplay serve
-```
-
-Without broker (in-process, tests, containers):
-
-```bash
-dsl2vdisplay -c 'MONITORS DISPLAY :0'
-nlp2vdisplay to-dsl "show windows on the primary monitor"
-```
-
-See [architecture.md](architecture.md), [packages/README.md](../packages/README.md), and [agent-broker.md](agent-broker.md).
+Full API: [reference/api.md](reference/api.md) · [README.md](../README.md)

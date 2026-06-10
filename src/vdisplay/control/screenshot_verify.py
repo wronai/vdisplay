@@ -40,7 +40,10 @@ def _resolve_screencast_stream_region() -> dict[str, int] | None:
     region = screencast_stream_region(get_active_screencast())
     if region is not None:
         return region
+    return _region_from_agent_screencast_status()
 
+
+def _region_from_agent_screencast_status() -> dict[str, int] | None:
     from ..agent_config import resolve_agent_url
     from ..client import AgentClient
 

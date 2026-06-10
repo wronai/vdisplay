@@ -88,13 +88,19 @@ def _ax_bounds(element: Any) -> ControlBounds:
     return ControlBounds(x=x, y=y, width=width, height=height)
 
 
-def _matches_selector(record: AxElementRecord, selector: ControlSelector) -> bool:
-    if selector.role and record.role.value != selector.role.strip().lower():
-        return False
+def _matches_role(record: AxElementRecord, role: str | None) -> bool:
+    return not role or record.role.value == role.strip().lower()
+
+
+def _matches_name_fields(record: AxElementRecord, selector: ControlSelector) -> bool:
     if selector.name and record.name.lower() != selector.name.strip().lower():
         return False
     if selector.name_contains and selector.name_contains.lower() not in (record.name or "").lower():
         return False
+    return True
+
+
+def _matches_window_fields(record: AxElementRecord, selector: ControlSelector) -> bool:
     if selector.accessibility_id and selector.accessibility_id != (record.automation_id or record.provider_ref):
         return False
     if selector.app and selector.app.lower() not in (record.app_label or "").lower():
@@ -102,6 +108,14 @@ def _matches_selector(record: AxElementRecord, selector: ControlSelector) -> boo
     if selector.window_title and selector.window_title.lower() not in (record.window_title or "").lower():
         return False
     return True
+
+
+def _matches_selector(record: AxElementRecord, selector: ControlSelector) -> bool:
+    return (
+        _matches_role(record, selector.role)
+        and _matches_name_fields(record, selector)
+        and _matches_window_fields(record, selector)
+    )
 
 
 def filter_records(records: list[AxElementRecord], selector: ControlSelector) -> list[AxElementRecord]:

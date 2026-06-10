@@ -350,18 +350,14 @@ def _boxes_in_scope_for_build(boxes: list[OcrTextBox], scope: GuiMapBounds) -> l
     return kept
 
 
-def build_gui_map_from_ocr(
+def _prepare_ocr_boxes_for_build(
     png: bytes,
     capture_meta: dict[str, Any],
     *,
-    monitor: str | None = None,
-    rotation: str | None = None,
-    region_id: str = "screen",
-    region_label: str | None = None,
-    min_confidence: float = 0.5,
-    scope_bounds: GuiMapBounds | None = None,
-    min_text_len: int = 2,
-) -> GuiMapPack:
+    scope_bounds: GuiMapBounds | None,
+    min_confidence: float,
+    min_text_len: int,
+) -> tuple[list[OcrTextBox], GuiMapBounds]:
     from .vision_ocr import ocr_png
 
     width = int(capture_meta.get("width") or 0)
@@ -382,7 +378,28 @@ def build_gui_map_from_ocr(
         for box in boxes
         if box.confidence >= min_confidence and len((box.text or "").strip()) >= min_text_len
     ]
-    boxes = _boxes_in_scope_for_build(boxes, scope)
+    return _boxes_in_scope_for_build(boxes, scope), scope
+
+
+def build_gui_map_from_ocr(
+    png: bytes,
+    capture_meta: dict[str, Any],
+    *,
+    monitor: str | None = None,
+    rotation: str | None = None,
+    region_id: str = "screen",
+    region_label: str | None = None,
+    min_confidence: float = 0.5,
+    scope_bounds: GuiMapBounds | None = None,
+    min_text_len: int = 2,
+) -> GuiMapPack:
+    boxes, scope = _prepare_ocr_boxes_for_build(
+        png,
+        capture_meta,
+        scope_bounds=scope_bounds,
+        min_confidence=min_confidence,
+        min_text_len=min_text_len,
+    )
     pack = GuiMapPack(monitor=monitor, rotation=rotation, capture_meta=dict(capture_meta))
     region = GuiMapRegion(
         id=region_id,
