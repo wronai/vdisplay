@@ -147,6 +147,160 @@ def step_recorded(
     )
 
 
+def _create_planned_event(
+    session_id: str | None,
+    request_id: str | None,
+    verb: str,
+    control: dict[str, Any],
+    routing: dict[str, Any] | None,
+) -> DomainEvent | None:
+    if isinstance(routing, dict) and routing.get("selected_provider"):
+        return DomainEvent(
+            event_id=_event_id(),
+            event_type="ControlActionPlanned",
+            occurred_at_ms=_now_ms(),
+            session_id=session_id,
+            request_id=request_id,
+            aggregate="control_action",
+            body={
+                "verb": verb,
+                "action_id": control.get("action_id"),
+                "attempt": control.get("attempt"),
+                "routing": routing,
+                "map": control.get("map"),
+                "target": control.get("target"),
+            },
+        )
+    if control.get("action") or control.get("target"):
+        return DomainEvent(
+            event_id=_event_id(),
+            event_type="ControlActionPlanned",
+            occurred_at_ms=_now_ms(),
+            session_id=session_id,
+            request_id=request_id,
+            aggregate="control_action",
+            body={
+                "verb": verb,
+                "action": control.get("action"),
+                "action_id": control.get("action_id"),
+                "target": control.get("target"),
+                "map": control.get("map"),
+            },
+        )
+    return None
+
+
+def _create_executed_event(
+    session_id: str | None,
+    request_id: str | None,
+    verb: str,
+    control: dict[str, Any],
+    ok: bool,
+) -> DomainEvent | None:
+    actuation = control.get("actuation")
+    if isinstance(actuation, dict) and actuation:
+        return DomainEvent(
+            event_id=_event_id(),
+            event_type="ControlActionExecuted",
+            occurred_at_ms=_now_ms(),
+            session_id=session_id,
+            request_id=request_id,
+            aggregate="control_action",
+            body={
+                "verb": verb,
+                "action_id": control.get("action_id"),
+                "actuation": actuation,
+            },
+        )
+    if control.get("action") and ok and verb in {"CONTROL_CLICK", "CONTROL_FOCUS", "CONTROL_SET_VALUE"}:
+        return DomainEvent(
+            event_id=_event_id(),
+            event_type="ControlActionExecuted",
+            occurred_at_ms=_now_ms(),
+            session_id=session_id,
+            request_id=request_id,
+            aggregate="control_action",
+            body={
+                "verb": verb,
+                "action": control.get("action"),
+                "action_id": control.get("action_id"),
+                "ok": ok,
+            },
+        )
+    return None
+
+
+def _create_verification_event(
+    session_id: str | None,
+    request_id: str | None,
+    verb: str,
+    verify: dict[str, Any] | None,
+    ok: bool,
+) -> DomainEvent | None:
+    if not isinstance(verify, dict) or not verify:
+        return None
+
+    verified = verify.get("verified")
+    event_type = "ControlVerificationPassed" if verified else "ControlVerificationFailed"
+    if ok and verified is None:
+        event_type = "ControlVerificationPassed" if ok else "ControlVerificationFailed"
+    return DomainEvent(
+        event_id=_event_id(),
+        event_type=event_type,
+        occurred_at_ms=_now_ms(),
+        session_id=session_id,
+        request_id=request_id,
+        aggregate="control_action",
+        body={"verb": verb, "verify": verify},
+    )
+
+
+def _create_retry_event(
+    session_id: str | None,
+    request_id: str | None,
+    verb: str,
+    control: dict[str, Any],
+) -> DomainEvent | None:
+    retry = control.get("retry") if isinstance(control.get("retry"), dict) else {}
+    if not retry.get("strategy"):
+        return None
+    return DomainEvent(
+        event_id=_event_id(),
+        event_type="ControlRetryScheduled",
+        occurred_at_ms=_now_ms(),
+        session_id=session_id,
+        request_id=request_id,
+        aggregate="control_action",
+        body={
+            "verb": verb,
+            "attempt": control.get("attempt"),
+            "strategy": retry.get("strategy"),
+            "next_backend": retry.get("next_backend"),
+            "reason": retry.get("reason"),
+        },
+    )
+
+
+def _create_recovery_event(
+    session_id: str | None,
+    request_id: str | None,
+    verb: str,
+    control: dict[str, Any],
+) -> DomainEvent | None:
+    recovery = control.get("recovery_failed") if isinstance(control.get("recovery_failed"), dict) else {}
+    if not recovery:
+        return None
+    return DomainEvent(
+        event_id=_event_id(),
+        event_type="ControlRecoveryFailed",
+        occurred_at_ms=_now_ms(),
+        session_id=session_id,
+        request_id=request_id,
+        aggregate="control_action",
+        body={"verb": verb, **recovery},
+    )
+
+
 def control_events_from_diagnostics(
     *,
     session_id: str | None,
@@ -163,129 +317,16 @@ def control_events_from_diagnostics(
     routing = control.get("routing") if isinstance(control.get("routing"), dict) else diagnostics.get("routing")
     verify = control.get("verify") if isinstance(control.get("verify"), dict) else diagnostics.get("verify")
 
-    if isinstance(routing, dict) and routing.get("selected_provider"):
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlActionPlanned",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={
-                    "verb": verb,
-                    "action_id": control.get("action_id"),
-                    "attempt": control.get("attempt"),
-                    "routing": routing,
-                    "map": control.get("map"),
-                    "target": control.get("target"),
-                },
-            )
-        )
-    elif control.get("action") or control.get("target"):
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlActionPlanned",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={
-                    "verb": verb,
-                    "action": control.get("action"),
-                    "action_id": control.get("action_id"),
-                    "target": control.get("target"),
-                    "map": control.get("map"),
-                },
-            )
-        )
-
-    actuation = control.get("actuation")
-    if isinstance(actuation, dict) and actuation:
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlActionExecuted",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={
-                    "verb": verb,
-                    "action_id": control.get("action_id"),
-                    "actuation": actuation,
-                },
-            )
-        )
-    elif control.get("action") and ok and verb in {"CONTROL_CLICK", "CONTROL_FOCUS", "CONTROL_SET_VALUE"}:
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlActionExecuted",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={
-                    "verb": verb,
-                    "action": control.get("action"),
-                    "action_id": control.get("action_id"),
-                    "ok": ok,
-                },
-            )
-        )
-
-    if isinstance(verify, dict) and verify:
-        verified = verify.get("verified")
-        event_type = "ControlVerificationPassed" if verified else "ControlVerificationFailed"
-        if ok and verified is None:
-            event_type = "ControlVerificationPassed" if ok else "ControlVerificationFailed"
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type=event_type,
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={"verb": verb, "verify": verify},
-            )
-        )
-
-    retry = control.get("retry") if isinstance(control.get("retry"), dict) else {}
-    if retry.get("strategy"):
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlRetryScheduled",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={
-                    "verb": verb,
-                    "attempt": control.get("attempt"),
-                    "strategy": retry.get("strategy"),
-                    "next_backend": retry.get("next_backend"),
-                    "reason": retry.get("reason"),
-                },
-            )
-        )
-
-    recovery = control.get("recovery_failed") if isinstance(control.get("recovery_failed"), dict) else {}
-    if recovery:
-        events.append(
-            DomainEvent(
-                event_id=_event_id(),
-                event_type="ControlRecoveryFailed",
-                occurred_at_ms=_now_ms(),
-                session_id=session_id,
-                request_id=request_id,
-                aggregate="control_action",
-                body={"verb": verb, **recovery},
-            )
-        )
+    if event := _create_planned_event(session_id, request_id, verb, control, routing):
+        events.append(event)
+    if event := _create_executed_event(session_id, request_id, verb, control, ok):
+        events.append(event)
+    if event := _create_verification_event(session_id, request_id, verb, verify, ok):
+        events.append(event)
+    if event := _create_retry_event(session_id, request_id, verb, control):
+        events.append(event)
+    if event := _create_recovery_event(session_id, request_id, verb, control):
+        events.append(event)
 
     return events
 

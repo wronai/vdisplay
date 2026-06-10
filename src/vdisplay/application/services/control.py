@@ -602,6 +602,45 @@ def _capture_before_state(
     return None, None
 
 
+def _build_actuation_dict(result: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: result[key]
+        for key in (
+            "ok",
+            "method",
+            "reason",
+            "x",
+            "y",
+            "local_x",
+            "local_y",
+            "backend",
+            "value",
+            "element_id",
+        )
+        if key in result
+    }
+
+
+def _build_map_block(result: dict[str, Any], selector_dict: dict[str, Any]) -> dict[str, Any] | None:
+    map_path = result.get("map_path")
+    map_target = result.get("map_target")
+    if map_path or map_target:
+        return {"path": map_path, "target": map_target}
+    extra = selector_dict.get("extra") or {}
+    if extra.get("map_path") or extra.get("map_target"):
+        return {"path": extra.get("map_path"), "target": extra.get("map_target")}
+    return None
+
+
+def _build_verify_phases(verification_dict: dict[str, Any]) -> list[dict[str, Any]]:
+    phases: list[dict[str, Any]] = []
+    for phase_name in ("semantic", "visual", "ocr", "vision_llm", "layout", "session"):
+        phase_payload = verification_dict.get(phase_name)
+        if phase_payload:
+            phases.append({"phase": phase_name, "payload": phase_payload})
+    return phases
+
+
 def _build_control_diagnostics(
     *,
     action: str,
@@ -619,38 +658,9 @@ def _build_control_diagnostics(
     selector_dict = selector.to_dict() if hasattr(selector, "to_dict") else dict(getattr(selector, "__dict__", {}) or {})
     target_dict = target.to_dict() if hasattr(target, "to_dict") else dict(target or {})
 
-    actuation = {
-        key: result[key]
-        for key in (
-            "ok",
-            "method",
-            "reason",
-            "x",
-            "y",
-            "local_x",
-            "local_y",
-            "backend",
-            "value",
-            "element_id",
-        )
-        if key in result
-    }
-
-    map_block: dict[str, Any] | None = None
-    map_path = result.get("map_path")
-    map_target = result.get("map_target")
-    if map_path or map_target:
-        map_block = {"path": map_path, "target": map_target}
-    else:
-        extra = selector_dict.get("extra") or {}
-        if extra.get("map_path") or extra.get("map_target"):
-            map_block = {"path": extra.get("map_path"), "target": extra.get("map_target")}
-
-    verify_phases: list[dict[str, Any]] = []
-    for phase_name in ("semantic", "visual", "ocr", "vision_llm", "layout", "session"):
-        phase_payload = verification_dict.get(phase_name)
-        if phase_payload:
-            verify_phases.append({"phase": phase_name, "payload": phase_payload})
+    actuation = _build_actuation_dict(result)
+    map_block = _build_map_block(result, selector_dict)
+    verify_phases = _build_verify_phases(verification_dict)
 
     lifecycle = state.to_dict() if isinstance(state, ControlActionState) else None
     required = required_phases_from_context(
@@ -908,6 +918,7 @@ def _execute_action(
     current_backend = backend
     current_screenshot_verify = screenshot_verify
     kwargs = dict(selector_kwargs)
+    kwargs.pop("backend", None)
     last_payload: dict[str, Any] | None = None
 
     for attempt in range(1, policy.max_attempts + 1):

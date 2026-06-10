@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import time
 
+from ..application.commands import CommandRequest, CommandResult, CommandVerb
+from ..application.errors import error_from_exception
+from ..application.session_context import enrich_command_request, ensure_audit_session_dir
+from ..application.session_recorder import record_execution, session_recording_enabled
 from ..desktop_apps import list_desktop_apps
 from ..exceptions import VDisplayError
 from ..ide_prompt import send_ide_prompt
@@ -51,23 +56,59 @@ def handle(args: argparse.Namespace) -> int:
         return 0
     if args.action == "prompt":
         try:
-            print_json(
-                send_ide_prompt(
-                    app_id=args.ide,
-                    text=args.text,
-                    display=getattr(args, "display", None),
-                    backend=getattr(args, "backend", None),
-                    open_app=bool(getattr(args, "open", False)),
-                    launch_variant=getattr(args, "variant", None),
-                    wait_window=not bool(getattr(args, "no_wait_window", False)),
-                    wait_timeout=float(getattr(args, "wait_timeout", 20.0)),
-                    submit=bool(getattr(args, "submit", False)),
-                    map_path=getattr(args, "map_path", None),
-                    map_scope=getattr(args, "map_scope", None),
-                    map_target=getattr(args, "map_target", None),
-                    verify=bool(getattr(args, "verify", False)),
-                )
+            started = time.perf_counter()
+            payload = send_ide_prompt(
+                app_id=args.ide,
+                text=args.text,
+                display=getattr(args, "display", None),
+                backend=getattr(args, "backend", None),
+                open_app=bool(getattr(args, "open", False)),
+                launch_variant=getattr(args, "variant", None),
+                wait_window=not bool(getattr(args, "no_wait_window", False)),
+                wait_timeout=float(getattr(args, "wait_timeout", 20.0)),
+                submit=bool(getattr(args, "submit", False)),
+                map_path=getattr(args, "map_path", None),
+                map_scope=getattr(args, "map_scope", None),
+                map_target=getattr(args, "map_target", None),
+                verify=bool(getattr(args, "verify", False)),
             )
+            duration_ms = int((time.perf_counter() - started) * 1000)
+            if session_recording_enabled():
+                cmd = enrich_command_request(
+                    CommandRequest(
+                        verb=CommandVerb.CONTROL_SET_VALUE,
+                        line=f"ide prompt --ide {args.ide}",
+                        control_value=args.text,
+                        control_app=args.ide,
+                        browser_engine=getattr(args, "backend", None),
+                        extra={
+                            "ide_prompt": True,
+                            "ide": args.ide,
+                            "submit": bool(getattr(args, "submit", False)),
+                            "map_path": getattr(args, "map_path", None),
+                        },
+                    )
+                )
+                ensure_audit_session_dir(cmd)
+                if payload.get("ok"):
+                    result = CommandResult.success(
+                        action="ide_prompt",
+                        data=payload,
+                        command=cmd.line,
+                    )
+                else:
+                    result = CommandResult.failure(
+                        action="ide_prompt",
+                        error=error_from_exception(
+                            VDisplayError(str(payload.get("message") or "ide prompt failed"))
+                        ),
+                        data=payload,
+                        command=cmd.line,
+                    )
+                session_dir = record_execution(cmd, result, route="local", duration_ms=duration_ms)
+                if session_dir is not None:
+                    payload["session_dir"] = str(session_dir)
+            print_json(payload)
         except KeyError as exc:
             raise VDisplayError(str(exc)) from exc
         return 0

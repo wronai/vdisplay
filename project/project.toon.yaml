@@ -1,22 +1,22 @@
-# vdisplay | 1712 func | 210f | 40768L | python | 2026-06-10
+# vdisplay | 1724 func | 211f | 40906L | python | 2026-06-10
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.8  critical=135 (limit:10)  dup=1  cycles=0
+  CC̄=3.8  critical=137 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      send_ide_prompt = 42 (limit:15)
   !!! cc_exceeded      build_map_health = 38 (limit:15)
   !!! high_fan_out     _start_screencast_impl = 38 (limit:10)
   !!! high_fan_out     reprocess_session_diagnostics = 38 (limit:10)
   !!! cc_exceeded      context_to_vql_program = 34 (limit:15)
-  !!! high_fan_out     send_ide_prompt = 34 (limit:10)
   !!! cc_exceeded      render_readme = 31 (limit:15)
   !!! high_fan_out     context_to_vql_program = 29 (limit:10)
   !!! cc_exceeded      _enrich_render_intent = 28 (limit:15)
   !!! cc_exceeded      _build_control_diagnostics = 26 (limit:15)
+  !!! high_fan_out     SessionRecorder.record = 26 (limit:10)
+  !!! high_fan_out     register_routes = 26 (limit:10)
 
-MODULES[292] (top by size):
+MODULES[295] (top by size):
   M[maps/pycharm-chat.json] 2503L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/application/session_recorder.py] 983L C:3 F:37 CC↑31 D:5 (python)
@@ -26,27 +26,27 @@ MODULES[292] (top by size):
   M[src/vdisplay/control/providers/vision/provider.py] 715L C:1 F:37 CC↑12 D:0 (python)
   M[src/vdisplay/control/verifier.py] 581L C:3 F:24 CC↑20 D:1 (python)
   M[src/vdisplay/capture/host.py] 555L C:0 F:15 CC↑14 D:6 (python)
-  M[src/vdisplay/application/commands.py] 548L C:4 F:13 CC↑25 D:0 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/control/gui_map_diff.py] 500L C:3 F:18 CC↑14 D:2 (python)
   M[src/vdisplay/control/verify.py] 498L C:0 F:21 CC↑12 D:1 (python)
   M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
   M[src/vdisplay/control/descriptors.py] 464L C:5 F:11 CC↑14 D:10 (python)
-  LANGS: python:230/json:23/toml:11/shell:7/other:5/yml:5/yaml:5/proto:4/txt:2
+  M[src/vdisplay/ide_prompt.py] 450L C:0 F:9 CC↑25 D:2 (python)
+  LANGS: python:233/json:23/toml:11/shell:7/other:5/yml:5/yaml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
   ★ _start_screencast_impl fan=38  // Orchestrates 38 calls
   ★ reprocess_session_diagnostics fan=38  // Analysis pipeline, 38 stages
-  ★ send_ide_prompt fan=34  // Orchestrates 34 calls
   ★ context_to_vql_program fan=29  // Build or merge a VQLProgram-compatible dict from ScreenContext.
+  ★ SessionRecorder.record fan=26  // Orchestrates 26 calls
   ★ register_routes fan=26  // Orchestrates 26 calls
 
 REFACTOR[15]:
-  [1] H/L Split send_ide_prompt (CC=42)
-  [2] H/L Split build_backend_scores (CC=25)
-  [3] H/L Split build_map_health (CC=38)
-  [4] H/L Split context_to_vql_program (CC=34)
-  [5] H/L Split _enrich_render_intent (CC=28)
+  [1] H/L Split _synthesize_control_block (CC=25)
+  [2] H/L Split render_readme (CC=31)
+  [3] H/L Split _build_control_diagnostics (CC=26)
+  [4] H/L Split build_map_health (CC=38)
+  [5] H/L Split context_to_vql_program (CC=34)
 
 EVOLUTION:
-  2026-06-10 CC̄=3.8 crit=135 40768L // Automated analysis
+  2026-06-10 CC̄=3.8 crit=137 40906L // Automated analysis

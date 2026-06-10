@@ -11,7 +11,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     map_sub = parser.add_subparsers(dest="action", required=True)
 
     build = map_sub.add_parser("build", help="Capture screen and build map.json from OCR")
-    build.add_argument("--output", required=True, help="Write map.json path")
+    build.add_argument("-o", "--output", required=True, help="Write map.json path")
     build.add_argument("--md", help="Optional operator markdown path")
     build.add_argument("--svg", help="Optional SVG atlas path")
     build.add_argument("--display", default=None, help="X11 display (default: auto)")

@@ -59,6 +59,11 @@ class DesktopApp:
         if not variant_id:
             return self.default_variant()
         normalized = variant_id.strip().lower()
+        if normalized == "xwayland":
+            for item in self.variants:
+                if item.variant_id.endswith("-xwayland"):
+                    return item
+            raise KeyError(f"no XWayland launch variant for app {self.app_id!r}")
         for item in self.variants:
             if item.variant_id == normalized:
                 return item

@@ -45,6 +45,13 @@ def test_launch_env_for_xwayland_unsets_wayland() -> None:
     assert env.get("DISPLAY") == ":0"
 
 
+def test_variant_xwayland_alias() -> None:
+    if "pycharm" not in DESKTOP_APPS:
+        pytest.skip("pycharm not installed on host")
+    app = get_desktop_app("pycharm")
+    assert app.variant("xwayland").variant_id.endswith("-xwayland")
+
+
 def test_unknown_app_raises() -> None:
     with pytest.raises(KeyError, match="unknown app"):
         get_desktop_app("not-a-real-app-id")

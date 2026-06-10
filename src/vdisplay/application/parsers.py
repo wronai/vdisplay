@@ -219,6 +219,46 @@ def parse_agent_control_body(
     )
 
 
+def _parse_terminal_open_from_agent(request: CommandRequest, body: dict[str, Any]) -> CommandRequest:
+    return replace(request, **_terminal_fields_from_dsl(body, CommandVerb.TERMINAL_OPEN))
+
+
+def _parse_browser_open_from_agent(request: CommandRequest, body: dict[str, Any]) -> CommandRequest:
+    mapped = dict(body)
+    if mapped.get("app") and not mapped.get("url"):
+        mapped["url"] = mapped["app"]
+    return replace(request, **_browser_fields_from_dsl(mapped, CommandVerb.BROWSER_OPEN))
+
+
+def _parse_virtual_start_from_agent(request: CommandRequest, body: dict[str, Any]) -> CommandRequest:
+    return replace(
+        request,
+        vd_display=str(body.get("display") or ":99"),
+        backend=str(body.get("backend") or "xvfb"),
+    )
+
+
+def _parse_adopt_release_from_agent(request: CommandRequest, body: dict[str, Any]) -> CommandRequest:
+    pid = body.get("match_pid", body.get("pid"))
+    return replace(
+        request,
+        match_title=body.get("match_title") or body.get("title"),
+        match_class=body.get("match_class") or body.get("wm_class") or body.get("class"),
+        match_pid=int(pid) if pid is not None else None,
+        match_app=body.get("match_app") or body.get("app"),
+        target=body.get("target") or request.target,
+    )
+
+
+_AGENT_VERB_PARSERS = {
+    CommandVerb.TERMINAL_OPEN: _parse_terminal_open_from_agent,
+    CommandVerb.BROWSER_OPEN: _parse_browser_open_from_agent,
+    CommandVerb.VIRTUAL_START: _parse_virtual_start_from_agent,
+    CommandVerb.ADOPT: _parse_adopt_release_from_agent,
+    CommandVerb.RELEASE: _parse_adopt_release_from_agent,
+}
+
+
 def parse_agent_body(
     verb: CommandVerb,
     body: dict[str, Any],
@@ -273,27 +313,8 @@ def parse_agent_body(
         terminal_cols=int(body.get("cols") or 80),
         extra={**passthrough, "agent_body": dict(body)},
     )
-    if verb == CommandVerb.TERMINAL_OPEN:
-        return replace(request, **_terminal_fields_from_dsl(body, verb))
-    if verb == CommandVerb.BROWSER_OPEN:
-        mapped = dict(body)
-        if mapped.get("app") and not mapped.get("url"):
-            mapped["url"] = mapped["app"]
-        return replace(request, **_browser_fields_from_dsl(mapped, verb))
-    if verb == CommandVerb.VIRTUAL_START:
-        return replace(
-            request,
-            vd_display=str(body.get("display") or ":99"),
-            backend=str(body.get("backend") or "xvfb"),
-        )
-    if verb in {CommandVerb.ADOPT, CommandVerb.RELEASE}:
-        pid = body.get("match_pid", body.get("pid"))
-        return replace(
-            request,
-            match_title=body.get("match_title") or body.get("title"),
-            match_class=body.get("match_class") or body.get("wm_class") or body.get("class"),
-            match_pid=int(pid) if pid is not None else None,
-            match_app=body.get("match_app") or body.get("app"),
-            target=body.get("target") or request.target,
-        )
+
+    if verb in _AGENT_VERB_PARSERS:
+        return _AGENT_VERB_PARSERS[verb](request, body)
+
     return request

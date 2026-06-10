@@ -112,6 +112,19 @@ def _find_map_target(
                 "map_target": target,
                 "selected": node.to_dict(),
             }
+    lowered_targets = [target.lower() for target in targets]
+    for element_id, element in pack.elements.items():
+        anchor = (element.identity.anchor_text or element.identity.name or "").lower()
+        if any(token in anchor or token in element_id.lower() for token in lowered_targets):
+            node = map_element_to_node(element)
+            return element_id, {
+                "ok": True,
+                "count": 1,
+                "map": map_path,
+                "map_target": element_id,
+                "selected": node.to_dict(),
+                "matched_by": "anchor_fuzzy",
+            }
     return None, {
         "ok": False,
         "map_path": map_path,
@@ -187,10 +200,13 @@ def _handle_wait_window(
     display: str | None,
     wait_timeout: float,
     result: dict[str, Any],
+    *,
+    open_app: bool = False,
 ) -> str | None:
     focus_error: str | None = None
+    effective_timeout = wait_timeout if (not resolved_map or open_app) else min(wait_timeout, 3.0)
     if not resolved_map:
-        wait_result = wait_for_app_window(app.app_id, display=display, timeout_seconds=wait_timeout)
+        wait_result = wait_for_app_window(app.app_id, display=display, timeout_seconds=effective_timeout)
         result["wait_window"] = wait_result
         if not wait_result.get("ok"):
             focus_error = str(wait_result.get("error") or "window not ready")
@@ -201,7 +217,7 @@ def _handle_wait_window(
             )
     else:
         wait_result = wait_for_app_window(
-            app.app_id, display=display, timeout_seconds=min(wait_timeout, 3.0)
+            app.app_id, display=display, timeout_seconds=effective_timeout
         )
         result["wait_window"] = wait_result
         if not wait_result.get("ok"):
@@ -328,7 +344,9 @@ def send_ide_prompt(
         result["launch"] = open_desktop_app(app.app_id, variant=launch_variant, wait_seconds=1.0)
 
     if wait_window:
-        focus_error = _handle_wait_window(app, resolved_map, display, wait_timeout, result)
+        focus_error = _handle_wait_window(
+            app, resolved_map, display, wait_timeout, result, open_app=open_app
+        )
     else:
         focus_error = _handle_focus_window(app, display)
 
@@ -386,11 +404,12 @@ def send_ide_prompt(
             }
         )
     else:
+        selector_payload = {key: value for key, value in selector.items() if key != "backend"}
         write_kwargs.update(
             {
                 "app": app.app_hint,
                 "window_title": app.window_title_contains,
-                **selector,
+                **selector_payload,
             }
         )
 

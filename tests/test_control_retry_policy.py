@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from vdisplay.control.action_state import ControlActionPhase, ControlActionState
-from vdisplay.control.retry_policy import RetryPolicy, next_action
+from vdisplay.control.retry_policy import RetryDecision, RetryPolicy, apply_retry_decision, next_action
 
 
 def test_next_action_fallback_backend() -> None:
@@ -62,3 +62,20 @@ def test_next_action_exhausted() -> None:
     decision = next_action(state, {"ok": False}, policy=RetryPolicy(max_attempts=3))
     assert decision.should_retry is False
     assert decision.reason == "max_attempts_exhausted"
+
+
+def test_apply_retry_decision_does_not_duplicate_backend_kwarg() -> None:
+    decision = RetryDecision(
+        should_retry=True,
+        strategy="fallback_backend",
+        next_backend="vision",
+    )
+    backend, kwargs, screenshot_verify = apply_retry_decision(
+        decision,
+        backend="atspi",
+        selector_kwargs={"map_path": "maps/pycharm-chat.json", "map_target": "ask"},
+        screenshot_verify=False,
+    )
+    assert backend == "vision"
+    assert "backend" not in kwargs
+    assert screenshot_verify is False

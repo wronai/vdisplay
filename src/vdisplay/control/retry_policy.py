@@ -123,7 +123,6 @@ def apply_retry_decision(
 
     if decision.next_backend:
         new_backend = decision.next_backend
-        kwargs["backend"] = decision.next_backend
 
     if decision.strategy == "retry_scope":
         new_screenshot_verify = True

@@ -509,34 +509,35 @@ def extract_diagnostics(result: CommandResult) -> dict[str, Any]:
     return diagnostics
 
 
-def _synthesize_control_block(data: dict[str, Any]) -> dict[str, Any]:
-    """Build diagnostics.control from flat handler payloads (mocks, legacy paths)."""
-    block: dict[str, Any] = {}
-
+def _add_base_fields(data: dict[str, Any], block: dict[str, Any]) -> None:
     action = data.get("action")
     if isinstance(action, str) and action:
         block["action"] = action
-
     for key in ("action_id", "phase", "attempt", "target", "selector"):
         if key in data and data[key] is not None:
             block[key] = data[key]
 
+
+def _add_map_block(data: dict[str, Any], block: dict[str, Any]) -> None:
     if data.get("map_path") or data.get("map_target"):
         block["map"] = {
             "path": data.get("map_path"),
             "target": data.get("map_target"),
         }
 
+
+def _add_routing_block(data: dict[str, Any], block: dict[str, Any]) -> None:
     routing = data.get("routing")
     if isinstance(routing, dict):
         block["routing"] = routing
-
     control_probe = data.get("control")
     if isinstance(control_probe, dict) and control_probe.get("backend"):
         block.setdefault("routing", {})
         if isinstance(block["routing"], dict):
             block["routing"].setdefault("selected_provider", control_probe["backend"])
 
+
+def _add_verification_block(data: dict[str, Any], block: dict[str, Any]) -> None:
     verification = data.get("verification")
     if isinstance(verification, dict):
         block["verify"] = _verification_to_verify_block(verification)
@@ -548,11 +549,14 @@ def _synthesize_control_block(data: dict[str, Any]) -> dict[str, Any]:
         if verify:
             block["verify"] = verify
 
+
+def _add_actuation_block(data: dict[str, Any], block: dict[str, Any]) -> None:
     actuation = {
         key: data[key]
         for key in ("method", "reason", "backend", "x", "y", "local_x", "local_y", "value", "element_id")
         if key in data
     }
+    action = data.get("action")
     if "ok" in data and (
         actuation
         or (isinstance(action, str) and action in {"invoke", "click", "focus", "set_value", "press"})
@@ -561,10 +565,22 @@ def _synthesize_control_block(data: dict[str, Any]) -> dict[str, Any]:
     if actuation:
         block["actuation"] = actuation
 
+
+def _add_lifecycle_blocks(data: dict[str, Any], block: dict[str, Any]) -> None:
     for key in ("retry", "recovery_failed", "lifecycle"):
         if isinstance(data.get(key), dict):
             block[key] = data[key]
 
+
+def _synthesize_control_block(data: dict[str, Any]) -> dict[str, Any]:
+    """Build diagnostics.control from flat handler payloads (mocks, legacy paths)."""
+    block: dict[str, Any] = {}
+    _add_base_fields(data, block)
+    _add_map_block(data, block)
+    _add_routing_block(data, block)
+    _add_verification_block(data, block)
+    _add_actuation_block(data, block)
+    _add_lifecycle_blocks(data, block)
     return block
 
 
@@ -709,23 +725,11 @@ def archive_map_artifacts(
     return entries
 
 
-def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
-    """Re-extract diagnostics from stored step results and refresh session artifacts."""
+def _reprocess_steps(doc: SessionDocument, session_dir: Path) -> tuple[dict[str, dict[str, Any]], int]:
     from .commands import CommandResult
-    from .event_store import read_events
-    from .events import DomainEvent, control_events_from_diagnostics, map_events_from_diagnostics
-    from .projections import refresh_projections
 
-    session_dir = session_dir.expanduser()
-    if not session_dir.is_absolute():
-        session_dir = Path.cwd() / session_dir
-    if not (session_dir / "session.json").is_file():
-        raise FileNotFoundError(f"not a session directory: {session_dir}")
-
-    doc = load_session_document(session_dir)
     diagnostics_by_request: dict[str, dict[str, Any]] = {}
     updated_steps = 0
-
     for step in doc.steps:
         result_path = session_dir / step.result_path
         if not result_path.is_file():
@@ -749,7 +753,74 @@ def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
             json.dumps(diagnostics, indent=2, ensure_ascii=False) + "\n",
             encoding="utf-8",
         )
+    return diagnostics_by_request, updated_steps
 
+
+def _reprocess_events(
+    doc: SessionDocument,
+    session_dir: Path,
+    diagnostics_by_request: dict[str, dict[str, Any]],
+) -> tuple[int, int]:
+    from .event_store import read_events
+    from .events import DomainEvent, control_events_from_diagnostics, map_events_from_diagnostics
+
+    added_control_events = 0
+    added_map_events = 0
+    index_path = session_dir / "index.jsonl"
+    if not index_path.is_file():
+        return 0, 0
+
+    events = read_events(session_dir)
+    patched: list[DomainEvent] = []
+    for event in events:
+        if event.event_type.startswith("Control") or event.event_type.startswith("GuiMap"):
+            continue
+        if event.request_id in diagnostics_by_request and event.event_type in {
+            "StepRecorded",
+            "CommandCompleted",
+        }:
+            body = dict(event.body)
+            body["diagnostics"] = diagnostics_by_request[event.request_id]
+            event = DomainEvent(
+                event_id=event.event_id,
+                event_type=event.event_type,
+                occurred_at_ms=event.occurred_at_ms,
+                session_id=event.session_id,
+                request_id=event.request_id,
+                aggregate=event.aggregate,
+                body=body,
+            )
+        patched.append(event)
+        if event.event_type == "StepRecorded" and event.request_id:
+            step = next((item for item in doc.steps if item.request_id == event.request_id), None)
+            if step is None:
+                continue
+            diagnostics = diagnostics_by_request.get(step.request_id, {})
+            control_events = control_events_from_diagnostics(
+                session_id=doc.session_id,
+                request_id=step.request_id,
+                verb=step.verb,
+                diagnostics=diagnostics,
+                ok=step.ok,
+            )
+            patched.extend(control_events)
+            added_control_events += len(control_events)
+            map_events = map_events_from_diagnostics(
+                session_id=doc.session_id,
+                request_id=step.request_id,
+                diagnostics=diagnostics,
+            )
+            patched.extend(map_events)
+            added_map_events += len(map_events)
+
+    index_path.write_text(
+        "\n".join(json.dumps(event.to_dict(), ensure_ascii=False) for event in patched) + "\n",
+        encoding="utf-8",
+    )
+    return added_control_events, added_map_events
+
+
+def _update_session_files(doc: SessionDocument, session_dir: Path) -> None:
     doc.summary = _build_summary(doc.steps)
     (session_dir / "session.json").write_text(
         json.dumps(doc.to_dict(), indent=2, ensure_ascii=False) + "\n",
@@ -757,57 +828,21 @@ def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
     )
     (session_dir / "README.md").write_text(render_readme(doc), encoding="utf-8")
 
-    added_control_events = 0
-    added_map_events = 0
-    index_path = session_dir / "index.jsonl"
-    if index_path.is_file():
-        events = read_events(session_dir)
-        patched: list[DomainEvent] = []
-        for event in events:
-            if event.event_type.startswith("Control") or event.event_type.startswith("GuiMap"):
-                continue
-            if event.request_id in diagnostics_by_request and event.event_type in {
-                "StepRecorded",
-                "CommandCompleted",
-            }:
-                body = dict(event.body)
-                body["diagnostics"] = diagnostics_by_request[event.request_id]
-                event = DomainEvent(
-                    event_id=event.event_id,
-                    event_type=event.event_type,
-                    occurred_at_ms=event.occurred_at_ms,
-                    session_id=event.session_id,
-                    request_id=event.request_id,
-                    aggregate=event.aggregate,
-                    body=body,
-                )
-            patched.append(event)
-            if event.event_type == "StepRecorded" and event.request_id:
-                step = next((item for item in doc.steps if item.request_id == event.request_id), None)
-                if step is None:
-                    continue
-                diagnostics = diagnostics_by_request.get(step.request_id, {})
-                control_events = control_events_from_diagnostics(
-                    session_id=doc.session_id,
-                    request_id=step.request_id,
-                    verb=step.verb,
-                    diagnostics=diagnostics,
-                    ok=step.ok,
-                )
-                patched.extend(control_events)
-                added_control_events += len(control_events)
-                map_events = map_events_from_diagnostics(
-                    session_id=doc.session_id,
-                    request_id=step.request_id,
-                    diagnostics=diagnostics,
-                )
-                patched.extend(map_events)
-                added_map_events += len(map_events)
 
-        index_path.write_text(
-            "\n".join(json.dumps(event.to_dict(), ensure_ascii=False) for event in patched) + "\n",
-            encoding="utf-8",
-        )
+def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
+    """Re-extract diagnostics from stored step results and refresh session artifacts."""
+    from .projections import refresh_projections
+
+    session_dir = session_dir.expanduser()
+    if not session_dir.is_absolute():
+        session_dir = Path.cwd() / session_dir
+    if not (session_dir / "session.json").is_file():
+        raise FileNotFoundError(f"not a session directory: {session_dir}")
+
+    doc = load_session_document(session_dir)
+    diagnostics_by_request, updated_steps = _reprocess_steps(doc, session_dir)
+    _update_session_files(doc, session_dir)
+    added_control_events, added_map_events = _reprocess_events(doc, session_dir, diagnostics_by_request)
 
     refresh_projections(session_dir)
     return {

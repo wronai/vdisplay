@@ -60,6 +60,24 @@ def _routing_from_event(event: DomainEvent) -> tuple[str | None, str | None, dic
     return profile, str(provider), verify if isinstance(verify, dict) else None
 
 
+def _handle_backend_score_updated(event: DomainEvent, scores: dict[str, dict[str, dict[str, int]]]) -> None:
+    profile = str(event.body.get("application_profile") or event.body.get("app_profile") or "default")
+    provider = str(event.body.get("provider") or "")
+    if not provider:
+        return
+    bucket = _score_bucket(scores, profile=profile, provider=provider)
+    delta = event.body.get("delta")
+    if isinstance(delta, dict):
+        bucket["success"] += int(delta.get("success") or 0)
+        bucket["fail"] += int(delta.get("fail") or 0)
+    elif event.body.get("success") is True:
+        bucket["success"] += 1
+    elif event.body.get("success") is False:
+        bucket["fail"] += 1
+    total = bucket["success"] + bucket["fail"]
+    bucket["score"] = int(round(100 * bucket["success"] / total)) if total else 50
+
+
 def build_backend_scores(events: list[DomainEvent]) -> dict[str, Any]:
     scores: dict[str, dict[str, dict[str, int]]] = {}
     for event in events:
@@ -67,21 +85,7 @@ def build_backend_scores(events: list[DomainEvent]) -> dict[str, Any]:
             continue
 
         if event.event_type == "BackendScoreUpdated":
-            profile = str(event.body.get("application_profile") or event.body.get("app_profile") or "default")
-            provider = str(event.body.get("provider") or "")
-            if not provider:
-                continue
-            bucket = _score_bucket(scores, profile=profile, provider=provider)
-            delta = event.body.get("delta")
-            if isinstance(delta, dict):
-                bucket["success"] += int(delta.get("success") or 0)
-                bucket["fail"] += int(delta.get("fail") or 0)
-            elif event.body.get("success") is True:
-                bucket["success"] += 1
-            elif event.body.get("success") is False:
-                bucket["fail"] += 1
-            total = bucket["success"] + bucket["fail"]
-            bucket["score"] = int(round(100 * bucket["success"] / total)) if total else 50
+            _handle_backend_score_updated(event, scores)
             continue
 
         profile, provider, verify = _routing_from_event(event)

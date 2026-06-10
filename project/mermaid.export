@@ -214,6 +214,9 @@ flowchart TD
         packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids("stop_pids CC=13")
         packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free["ensure_broker_port_free"]
         packages__vdisplay_agent__src__vdisplay_agent__server__create_app["create_app"]
+        packages__vdisplay_agent__src__vdisplay_agent__audit_context__audit_context_from_headers["audit_context_from_headers"]
+        packages__vdisplay_agent__src__vdisplay_agent__audit_context__audit_context_from_fastapi_headers["audit_context_from_fastapi_headers"]
+        packages__vdisplay_agent__src__vdisplay_agent__audit_context__apply_audit_env["apply_audit_env"]
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__register["register"]
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__get["get"]
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__pop["pop"]
@@ -228,15 +231,44 @@ flowchart TD
         packages__vdisplay_agent__src__vdisplay_agent__envelope__json_error["json_error"]
         packages__vdisplay_agent__src__vdisplay_agent__envelope__strip_ok["strip_ok"]
         packages__vdisplay_agent__src__vdisplay_agent__envelope__flatten_envelope["flatten_envelope"]
-        packages__vdisplay_agent__src__vdisplay_agent__task_store___utcnow["_utcnow"]
-        packages__vdisplay_agent__src__vdisplay_agent__task_store__default_task_db_path["default_task_db_path"]
-        packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict["task_to_dict"]
     end
     subgraph src__vdisplay
+        src__vdisplay__client_routes___route_outputs_query["_route_outputs_query"]
+        src__vdisplay__client_routes___route_windows_query["_route_windows_query"]
+        src__vdisplay__client_routes___route_control_command["_route_control_command"]
+        src__vdisplay__client_routes___route_terminal_open["_route_terminal_open"]
+        src__vdisplay__client_routes___route_browser_open["_route_browser_open"]
+        src__vdisplay__client_routes__route_command["route_command"]
         src__vdisplay__agent_dispatch__agent_client["agent_client"]
         src__vdisplay__agent_dispatch__dispatch_via_agent["dispatch_via_agent"]
         src__vdisplay__cli__build_parser["build_parser"]
         src__vdisplay__cli__main["main"]
+        src__vdisplay__client_api__AgentClientApiMixin__health["health"]
+        src__vdisplay__client_api__AgentClientApiMixin__capabilities["capabilities"]
+        src__vdisplay__client_api__AgentClientApiMixin__diagnostics["diagnostics"]
+        src__vdisplay__client_api__AgentClientApiMixin__outputs["outputs"]
+        src__vdisplay__client_api__AgentClientApiMixin__windows["windows"]
+        src__vdisplay__client_api__AgentClientApiMixin__start_virtual["start_virtual"]
+        src__vdisplay__client_api__AgentClientApiMixin__start_mirror["start_mirror"]
+        src__vdisplay__client_api__AgentClientApiMixin__start_relay["start_relay"]
+        src__vdisplay__client_api__AgentClientApiMixin__browser_open["browser_open"]
+        src__vdisplay__client_api__AgentClientApiMixin__start_screencast["start_screencast"]
+        src__vdisplay__client_api__AgentClientApiMixin__stop_screencast["stop_screencast"]
+        src__vdisplay__client_api__AgentClientApiMixin__screencast_status["screencast_status"]
+        src__vdisplay__client_api__AgentClientApiMixin__stop_session["stop_session"]
+        src__vdisplay__client_api__AgentClientApiMixin__sampler_start["sampler_start"]
+        src__vdisplay__client_api__AgentClientApiMixin__sampler_stop["sampler_stop"]
+        src__vdisplay__client_api__AgentClientApiMixin__sampler_status["sampler_status"]
+        src__vdisplay__client_api__AgentClientApiMixin__diagnose_control["diagnose_control"]
+        src__vdisplay__client_api__AgentClientApiMixin__list_controls["list_controls"]
+        src__vdisplay__client_api__AgentClientApiMixin__find_controls["find_controls"]
+        src__vdisplay__client_api__AgentClientApiMixin__invoke_control["invoke_control"]
+        src__vdisplay__client_api__AgentClientApiMixin__focus_control["focus_control"]
+        src__vdisplay__client_api__AgentClientApiMixin__set_control_value["set_control_value"]
+        src__vdisplay__client_api__AgentClientApiMixin__capture_frame["capture_frame"]
+        src__vdisplay__client_api__AgentClientApiMixin__capture_png_bytes["capture_png_bytes"]
+        src__vdisplay__client_api__AgentClientApiMixin__adopt_window["adopt_window"]
+        src__vdisplay__client_api__AgentClientApiMixin__release_window["release_window"]
         src__vdisplay__agent_envelope__flatten_agent_envelope["flatten_agent_envelope"]
         src__vdisplay__nl__describe_window_nl("describe_window_nl CC=14")
         src__vdisplay__nl___user_visible_app_labels("_user_visible_app_labels CC=9")
@@ -246,53 +278,21 @@ flowchart TD
         src__vdisplay__nl__find_monitor_for_window["find_monitor_for_window"]
         src__vdisplay__nl__assign_windows_to_monitors["assign_windows_to_monitors"]
         src__vdisplay__nl__enrich_outputs_nl["enrich_outputs_nl"]
-        src__vdisplay__api___default_virtual_backend["_default_virtual_backend"]
-        src__vdisplay__api___default_mirror_backend["_default_mirror_backend"]
-        src__vdisplay__api___default_relay_backend["_default_relay_backend"]
-        src__vdisplay__api__VirtualDisplaySession____init__["__init__"]
-        src__vdisplay__api__VirtualDisplaySession__create["create"]
-        src__vdisplay__api__VirtualDisplaySession__start["start"]
-        src__vdisplay__api__VirtualDisplaySession__stop["stop"]
-        src__vdisplay__api__VirtualDisplaySession__launch["launch"]
-        src__vdisplay__api__VirtualDisplaySession__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__api__VirtualDisplaySession__save_screenshot["save_screenshot"]
-        src__vdisplay__api__VirtualDisplaySession__adopt_window["adopt_window"]
-        src__vdisplay__api__VirtualDisplaySession__release_window["release_window"]
-        src__vdisplay__api__VirtualDisplaySession__info["info"]
-        src__vdisplay__api__VirtualDisplaySession__capabilities["capabilities"]
-        src__vdisplay__api__MirrorSession____init__["__init__"]
-        src__vdisplay__api__MirrorSession__create["create"]
-        src__vdisplay__api__MirrorSession__start["start"]
-        src__vdisplay__api__MirrorSession__stop["stop"]
-        src__vdisplay__api__MirrorSession__screenshot_bytes["screenshot_bytes"]
-        src__vdisplay__api__MirrorSession__save_screenshot["save_screenshot"]
-        src__vdisplay__api__MirrorSession__info["info"]
-        src__vdisplay__api__MirrorSession__capabilities["capabilities"]
-        src__vdisplay__api__WindowRelaySession____init__["__init__"]
-        src__vdisplay__api__WindowRelaySession__create["create"]
-        src__vdisplay__api__WindowRelaySession__start["start"]
-        src__vdisplay__api__WindowRelaySession__stop["stop"]
-        src__vdisplay__api__WindowRelaySession__adopt_window["adopt_window"]
-        src__vdisplay__api__WindowRelaySession__release_window["release_window"]
-        src__vdisplay__api__WindowRelaySession__list_adopted["list_adopted"]
-        src__vdisplay__api__WindowRelaySession__info["info"]
-        src__vdisplay__api__WindowRelaySession__capabilities["capabilities"]
-        src__vdisplay__api__platform_summary["platform_summary"]
-        src__vdisplay__payloads__monitors_payload["monitors_payload"]
-        src__vdisplay__payloads__local_windows_payload["local_windows_payload"]
-        src__vdisplay__payloads__windows_payload["windows_payload"]
-        src__vdisplay__payloads__adopted_payload["adopted_payload"]
-        src__vdisplay__payloads__all_payload["all_payload"]
-        src__vdisplay__cli_handlers__print_json["print_json"]
-        src__vdisplay__cli_handlers__monitors_payload["monitors_payload"]
-        src__vdisplay__cli_handlers__windows_payload["windows_payload"]
-        src__vdisplay__cli_handlers__all_payload["all_payload"]
-        src__vdisplay__cli_handlers__screenshot_payload["screenshot_payload"]
-        src__vdisplay__cli_handlers__dispatch_cli["dispatch_cli"]
-        src__vdisplay__utils__require_command["require_command"]
-        src__vdisplay__utils__run_command["run_command"]
-        src__vdisplay__utils__run_command_bytes["run_command_bytes"]
-        src__vdisplay__utils__auto_install_package["auto_install_package"]
+        src__vdisplay__desktop_apps__LaunchVariant__to_dict["to_dict"]
+        src__vdisplay__desktop_apps__DesktopApp__to_dict["to_dict"]
+        src__vdisplay__desktop_apps__DesktopApp__default_variant["default_variant"]
+        src__vdisplay__desktop_apps__DesktopApp__variant["variant"]
+        src__vdisplay__desktop_apps___desktop_launch["_desktop_launch"]
+        src__vdisplay__desktop_apps___binary_launch["_binary_launch"]
+        src__vdisplay__desktop_apps___xwayland_variant["_xwayland_variant"]
+        src__vdisplay__desktop_apps___variants_for("_variants_for CC=9")
+        src__vdisplay__desktop_apps___template_path["_template_path"]
+        src__vdisplay__desktop_apps___expand_variants["_expand_variants"]
+        src__vdisplay__desktop_apps___build_registry("_build_registry CC=8")
+        src__vdisplay__desktop_apps__list_desktop_apps["list_desktop_apps"]
+        src__vdisplay__desktop_apps__get_desktop_app["get_desktop_app"]
+        src__vdisplay__desktop_apps__ide_hints_for["ide_hints_for"]
+        src__vdisplay__desktop_apps__chat_selectors_for["chat_selectors_for"]
     end
     packages__mcp2vdisplay__src__mcp2vdisplay__cli__main --> packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server
     packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server --> src__vdisplay__agent_config__resolve_agent_url
@@ -371,6 +371,7 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free --> packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids
     packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free --> src__vdisplay__agent_config__reset_agent_probe_cache
     packages__vdisplay_agent__src__vdisplay_agent__server__create_app --> packages__vdisplay_agent__src__vdisplay_agent__routes__register_all_routes
+    packages__vdisplay_agent__src__vdisplay_agent__audit_context__audit_context_from_fastapi_headers --> src__vdisplay__application__session_context__audit_context_from_mapping
     packages__vdisplay_agent__src__vdisplay_agent__envelope__success --> packages__vdisplay_agent__src__vdisplay_agent__envelope__agent_meta
     packages__vdisplay_agent__src__vdisplay_agent__envelope__failure --> packages__vdisplay_agent__src__vdisplay_agent__envelope__agent_meta
     packages__vdisplay_agent__src__vdisplay_agent__envelope__from_runtime --> packages__vdisplay_agent__src__vdisplay_agent__envelope__success
@@ -411,6 +412,16 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> src__vdisplay__discovery__resolve_host_display
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> src__vdisplay__discovery__diagnose_display
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__platform_capabilities
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__list_tasks --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__get_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__heartbeat_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__stop_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__register_session_task --> src__vdisplay__control__session__parse_session_kind
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks__end_sampler_task
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks__end_screencast_task
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks__unregister_session_task
+    packages__vdisplay_agent__src__vdisplay_agent__services__outputs__list_outputs_payload --> src__vdisplay__discovery__resolve_host_display
+    packages__vdisplay_agent__src__vdisplay_agent__services__outputs__list_outputs_payload --> src__vdisplay__discovery__list_outputs
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler___capture_virtual_persistent --> packages__vdisplay_agent__src__vdisplay_agent__services__sampler___ensure_virtual_session
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler___recover_screencast --> src__vdisplay__capture__portal_screencast__invalidate_screencast_session
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler___recover_screencast --> src__vdisplay__capture__portal_screencast__get_active_screencast
@@ -418,14 +429,33 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> packages__vdisplay_agent__src__vdisplay_agent__services__sampler___config_from_body
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> src__vdisplay__capture__host__capture_host_to_file
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> packages__vdisplay_agent__src__vdisplay_agent__services__sampler___capture_virtual_persistent
+    packages__vdisplay_agent__src__vdisplay_agent__services__control__find_controls --> packages__vdisplay_agent__src__vdisplay_agent__services__control___selector_kwargs
+    packages__vdisplay_agent__src__vdisplay_agent__services__control__invoke_control --> packages__vdisplay_agent__src__vdisplay_agent__services__control___selector_kwargs
+    packages__vdisplay_agent__src__vdisplay_agent__services__control__focus_control --> packages__vdisplay_agent__src__vdisplay_agent__services__control___selector_kwargs
+    packages__vdisplay_agent__src__vdisplay_agent__services__control__set_control_value --> packages__vdisplay_agent__src__vdisplay_agent__services__control___selector_kwargs
+    packages__vdisplay_agent__src__vdisplay_agent__routes__capture__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_headers__read_audit_headers --> packages__vdisplay_agent__src__vdisplay_agent__audit_context__audit_context_from_headers
     packages__vdisplay_agent__src__vdisplay_agent__routes__register_all_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes__auth__make_check_auth
     packages__vdisplay_agent__src__vdisplay_agent__routes__register_all_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes__auth__expected_token
     packages__vdisplay_agent__src__vdisplay_agent__routes__health__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__success
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audit_route --> packages__vdisplay_agent__src__vdisplay_agent__audit_context__apply_audit_env
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audit_route --> packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audit_route --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_from_runtime
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audit_route --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_error
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> packages__vdisplay_agent__src__vdisplay_agent__audit_context__apply_audit_env
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> src__vdisplay__application__session_recorder__extract_diagnostics
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> src__vdisplay__application__session_recorder__record_execution
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_from_runtime
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_error
+    packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result --> packages__vdisplay_agent__src__vdisplay_agent__envelope__from_runtime
     packages__vdisplay_agent__src__vdisplay_agent__routes__tasks__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__success
     packages__vdisplay_agent__src__vdisplay_agent__routes__sampler__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__success
     packages__vdisplay_agent__src__vdisplay_agent__routes__sampler__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_from_runtime
     packages__vdisplay_agent__src__vdisplay_agent__routes__sampler__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__strip_ok
     packages__vdisplay_agent__src__vdisplay_agent__routes__sampler__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_error
+    packages__vdisplay_agent__src__vdisplay_agent__routes__control__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__success
+    packages__vdisplay_agent__src__vdisplay_agent__routes__windows__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audit_route
     examples__host_mirror__mirror_demo__main --> src__vdisplay__discovery__diagnose_display
     examples__host_mirror__mirror_demo__main --> src__vdisplay__discovery__list_monitors
     examples__host_mirror__mirror_demo__main --> src__vdisplay__payloads__all_payload
@@ -466,6 +496,12 @@ flowchart TD
     examples__control_plugin_ax__src__vdisplay_example_ax_plugin__provider__ExampleAxProvider____init__ --> examples__control_plugin_uia__src__vdisplay_example_uia_plugin__provider___demo_backend
     examples__control_plugin_ax__src__vdisplay_example_ax_plugin__provider__build_example_ax --> examples__control_plugin_ax__src__vdisplay_example_ax_plugin__provider___use_mock_backend
     examples__control_plugin_ax__src__vdisplay_example_ax_plugin__provider__build_example_ax --> examples__control_plugin_ax__src__vdisplay_example_ax_plugin__provider___demo_backend
+    src__vdisplay__client_routes__route_command --> src__vdisplay__client_routes___route_outputs_query
+    src__vdisplay__client_routes__route_command --> src__vdisplay__client_routes___route_windows_query
+    src__vdisplay__client_routes__route_command --> src__vdisplay__client_routes___route_terminal_open
+    src__vdisplay__client_routes__route_command --> src__vdisplay__client_routes___route_browser_open
+    src__vdisplay__client_routes__route_command --> src__vdisplay__application__handlers__control__control_request_body
+    src__vdisplay__client_routes__route_command --> src__vdisplay__client_routes___route_control_command
     src__vdisplay__agent_dispatch__agent_client --> src__vdisplay__agent_config__resolve_agent_url
     src__vdisplay__agent_dispatch__dispatch_via_agent --> src__vdisplay__application__executor__execute
     src__vdisplay__cli__build_parser --> src__vdisplay__commands__session__add_root_session_args
@@ -479,13 +515,40 @@ flowchart TD
     src__vdisplay__nl__assign_windows_to_monitors --> src__vdisplay__nl__describe_window_nl
     src__vdisplay__nl__enrich_outputs_nl --> src__vdisplay__nl__describe_output_nl
     src__vdisplay__nl__enrich_outputs_nl --> src__vdisplay__nl__window_center_on_output
+    src__vdisplay__desktop_apps___variants_for --> src__vdisplay__desktop_apps___desktop_launch
+    src__vdisplay__desktop_apps___variants_for --> src__vdisplay__desktop_apps___binary_launch
+    src__vdisplay__desktop_apps___expand_variants --> src__vdisplay__desktop_apps___xwayland_variant
+    src__vdisplay__desktop_apps___build_registry --> src__vdisplay__desktop_apps___variants_for
+    src__vdisplay__desktop_apps___build_registry --> src__vdisplay__desktop_apps___expand_variants
+    src__vdisplay__desktop_apps___build_registry --> src__vdisplay__desktop_apps___template_path
+    src__vdisplay__desktop_apps__ide_hints_for --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__chat_selectors_for --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__submit_selectors_for --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__map_manifest_path --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps___default_map_candidates --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__resolve_map_path --> src__vdisplay__desktop_apps___default_map_candidates
+    src__vdisplay__desktop_apps__resolve_map_path --> src__vdisplay__desktop_apps___is_gui_map_file
+    src__vdisplay__desktop_apps__map_input_target_candidates --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__map_submit_target_candidates --> src__vdisplay__desktop_apps__get_desktop_app
+    src__vdisplay__desktop_apps__map_target_candidates --> src__vdisplay__desktop_apps__map_input_target_candidates
+    src__vdisplay__client__AgentClient__request --> src__vdisplay__client_routes__route_command
+    src__vdisplay__client__AgentClient__request --> src__vdisplay__application__errors__error_from_exception
     src__vdisplay__api__VirtualDisplaySession__create --> src__vdisplay__api___default_virtual_backend
     src__vdisplay__api__MirrorSession__create --> src__vdisplay__api___default_mirror_backend
     src__vdisplay__api__WindowRelaySession__create --> src__vdisplay__api___default_relay_backend
     src__vdisplay__api__platform_summary --> src__vdisplay__api___default_virtual_backend
     src__vdisplay__api__platform_summary --> src__vdisplay__api___default_mirror_backend
     src__vdisplay__api__platform_summary --> src__vdisplay__api___default_relay_backend
+    src__vdisplay__client_http__AgentHttpTransport____init__ --> src__vdisplay__agent_config__resolve_agent_token
+    src__vdisplay__client_http__AgentHttpTransport__build_request --> src__vdisplay__application__session_context__current_audit_headers
+    src__vdisplay__client_http__AgentHttpTransport__normalize_payload --> src__vdisplay__agent_envelope__flatten_agent_envelope
     src__vdisplay__utils__run_command_bytes --> src__vdisplay__utils__run_command
+    src__vdisplay__agent_config___probe_agent_url --> src__vdisplay__agent_config___is_vdisplay_agent_health
+    src__vdisplay__agent_config___probe_default_agent --> src__vdisplay__agent_config___probe_agent_url
+    src__vdisplay__agent_config___probe_default_agent --> src__vdisplay__agent_config___default_agent_base
+    src__vdisplay__agent_config__resolve_agent_url --> src__vdisplay__agent_config___probe_default_agent
+    src__vdisplay__agent_config__resolve_agent_url --> src__vdisplay__agent_config__agent_auto_enabled
+    src__vdisplay__agent_config__use_agent --> src__vdisplay__agent_config__resolve_agent_url
     src__vdisplay__nlp___default_display_suffix --> src__vdisplay__nlp___display_suffix
     src__vdisplay__nlp___default_all --> src__vdisplay__nlp___default_display_suffix
     src__vdisplay__nlp___default_monitors --> src__vdisplay__nlp___default_display_suffix
@@ -523,6 +586,10 @@ flowchart TD
     src__vdisplay__discovery__diagnose_display --> src__vdisplay__agent_config__resolve_agent_url
     src__vdisplay__discovery___display_hint --> src__vdisplay__discovery___looks_like_xvfb_only
     src__vdisplay__discovery__list_monitors --> src__vdisplay__discovery__list_outputs
+    src__vdisplay__commands__observe__handle_observe --> src__vdisplay__application__executor__execute
+    src__vdisplay__commands__observe__handle_observe --> src__vdisplay__integrations__pipeline__observe_screen
+    src__vdisplay__commands__observe__handle_observe --> src__vdisplay__integrations__vql_bridge__reverse_generation_descriptor
+    src__vdisplay__commands__observe__handle_observe --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__mirror__handle --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__common__add_window_filter_args --> src__vdisplay__commands__common__add_all_arg
     src__vdisplay__commands__common__control_selector_kwargs_for_service --> src__vdisplay__commands__common__control_selector_kwargs_from_args
@@ -535,7 +602,30 @@ flowchart TD
     src__vdisplay__commands__all_cmd__register_outputs --> src__vdisplay__commands__common__add_display_arg
     src__vdisplay__commands__all_cmd__register_outputs --> src__vdisplay__commands__common__add_window_filter_args
     src__vdisplay__commands__all_cmd__handle_outputs --> src__vdisplay__commands__all_cmd__handle
+    src__vdisplay__commands__app__handle --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__app__handle --> src__vdisplay__desktop_apps__list_desktop_apps
+    src__vdisplay__commands__app__handle --> src__vdisplay__ide_prompt__open_desktop_app
+    src__vdisplay__commands__app__handle --> src__vdisplay__desktop_apps__get_desktop_app
     src__vdisplay__commands__map__handle --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__register_all --> packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__register
+    src__vdisplay__commands__ide__register --> src__vdisplay__commands__common__add_display_arg
+    src__vdisplay__commands__ide__handle --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__ide__handle --> src__vdisplay__desktop_apps__list_desktop_apps
+    src__vdisplay__commands__ide__handle --> src__vdisplay__ide_prompt__send_ide_prompt
+    src__vdisplay__commands__session__command_request_from_control_args --> src__vdisplay__commands__common__control_selector_kwargs_from_args
+    src__vdisplay__commands__session___resolve_session_dir --> src__vdisplay__application__session_recorder__discover_session_dirs
+    src__vdisplay__commands__session__handle_list --> src__vdisplay__application__session_recorder__discover_session_dirs
+    src__vdisplay__commands__session__handle_list --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__session__handle_list --> src__vdisplay__application__session_recorder__load_session_document
+    src__vdisplay__commands__session__handle_show --> src__vdisplay__commands__session___resolve_session_dir
+    src__vdisplay__commands__session__handle_show --> src__vdisplay__application__session_recorder__load_session_document
+    src__vdisplay__commands__session__handle_show --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__session__handle_show --> src__vdisplay__application__session_recorder__render_readme
+    src__vdisplay__commands__session__handle_export --> src__vdisplay__application__session_recorder__export_session_zip
+    src__vdisplay__commands__session__handle_export --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__session__handle_reprocess --> src__vdisplay__commands__session___resolve_session_dir
+    src__vdisplay__commands__session__handle_reprocess --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__session__handle_reprocess --> src__vdisplay__application__session_recorder__reprocess_session_diagnostics
     src__vdisplay__commands__screenshot__register --> src__vdisplay__commands__common__add_display_arg
     src__vdisplay__commands__screenshot__handle --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__monitors__register --> src__vdisplay__commands__common__add_display_arg
@@ -659,6 +749,30 @@ flowchart TD
     src__vdisplay__backends__linux_x11_relay___screen_geometry --> src__vdisplay__utils__run_command
     src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__utils__run_command
     src__vdisplay__backends__linux_x11_relay___output_origin --> src__vdisplay__backends__linux_x11_relay___offscreen_coordinates
+    src__vdisplay__control__vision_ocr__ocr_png --> src__vdisplay__control__vision_ocr___ocr_from_screen_context_cache
+    src__vdisplay__control__vision_ocr__ocr_png --> src__vdisplay__control__vision_ocr___ocr_png_local
+    src__vdisplay__control__vision_ocr___ocr_from_screen_context_cache --> src__vdisplay__integrations__observe_cache__ocr_boxes_from_cached_context
+    src__vdisplay__control__vision_ocr___ocr_png_local --> src__vdisplay__control__vision_ocr__ocr_available
+    src__vdisplay__control__vision_ocr___box_matches --> src__vdisplay__control__vision_ocr___normalize
+    src__vdisplay__control__vision_ocr___match_by_vision_anchor --> src__vdisplay__control__vision_ocr___box_matches
+    src__vdisplay__control__vision_ocr___match_by_text_fields --> src__vdisplay__control__vision_ocr___box_matches
+    src__vdisplay__control__vision_ocr__match_selector_boxes --> src__vdisplay__control__vision_ocr___match_by_vision_anchor
+    src__vdisplay__control__vision_ocr__match_selector_boxes --> src__vdisplay__control__vision_ocr___match_by_text_fields
+    src__vdisplay__control__vision_ocr__ocr_find_selector --> src__vdisplay__control__vision_ocr__ocr_png
+    src__vdisplay__control__vision_ocr__ocr_find_selector --> src__vdisplay__control__vision_ocr__match_selector_boxes
+    src__vdisplay__control__vision_ocr__anchor_spatial_relation --> src__vdisplay__control__vision_ocr___vertical_overlap
+    src__vdisplay__control__vision_ocr__anchor_spatial_relation --> src__vdisplay__control__vision_ocr___horizontal_overlap
+    src__vdisplay__control__vision_ocr___find_anchor_boxes --> src__vdisplay__control__vision_ocr__match_selector_boxes
+    src__vdisplay__control__vision_ocr__anchor_spatial_find --> src__vdisplay__control__vision_ocr___find_anchor_boxes
+    src__vdisplay__control__vision_ocr__anchor_spatial_find --> src__vdisplay__control__vision_ocr__anchor_spatial_relation
+    src__vdisplay__control__vision_ocr__anchor_spatial_find --> src__vdisplay__control__vision_ocr___box_matches
+    src__vdisplay__control__vision_ocr__anchor_based_find --> src__vdisplay__control__vision_ocr__anchor_spatial_find
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_ocr__ocr_png
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_ocr__anchor_spatial_find
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_disambiguate__filter_by_confidence
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_template__template_anchor_find
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_template__match_template_bounds
+    src__vdisplay__control__vision_ocr__ocr_anchor_combined_find --> src__vdisplay__control__vision_template__load_template_png
     src__vdisplay__control__gui_map_export__render_map_svg --> src__vdisplay__control__gui_map_export___element_svg
     src__vdisplay__control__gui_map_export__render_map_svg --> src__vdisplay__control__gui_map_export___png_b64
     src__vdisplay__control__gui_map_export__write_map_artifacts --> src__vdisplay__control__gui_map__save_gui_map
@@ -682,6 +796,21 @@ flowchart TD
     src__vdisplay__control__browser_engine__browser_engine_profile --> src__vdisplay__control__browser_engine__engine_profile_id
     src__vdisplay__control__browser_engine__resolve_session_browser_engine --> src__vdisplay__control__browser_engine__normalize_browser_engine
     src__vdisplay__control__browser_engine__resolve_session_browser_engine --> src__vdisplay__control__providers__terminal_session__default_registry
+    src__vdisplay__control__vision_preview__preview_matches_from_nodes --> src__vdisplay__control__vision_disambiguate__item_confidence
+    src__vdisplay__control__vision_preview__preview_matches_from_nodes --> src__vdisplay__control__vision_preview___match_kind
+    src__vdisplay__control__vision_preview___prefer_imgl_annotate --> src__vdisplay__control__vision_preview__preview_backend
+    src__vdisplay__control__vision_preview___prefer_imgl_annotate --> src__vdisplay__integrations__vision_backend__prefer_imgl_backend
+    src__vdisplay__control__vision_preview___render_match_overlay_imgl_annotate --> src__vdisplay__control__vision_preview___preview_matches_to_catalog
+    src__vdisplay__control__vision_preview__render_match_overlay --> src__vdisplay__control__vision_preview___prefer_imgl_annotate
+    src__vdisplay__control__vision_preview__render_match_overlay --> src__vdisplay__control__vision_preview___render_match_overlay_local
+    src__vdisplay__control__vision_preview__render_match_overlay --> src__vdisplay__control__vision_preview___render_match_overlay_imgl_annotate
+    src__vdisplay__control__vision_preview__render_match_overlay --> src__vdisplay__control__vision_preview__preview_backend
+    src__vdisplay__control__vision_preview___render_match_overlay_local --> src__vdisplay__control__vision_preview__preview_available
+    src__vdisplay__control__vision_preview___render_match_overlay_local --> src__vdisplay__control__vision_preview__confidence_color
+    src__vdisplay__control__vision_preview__build_vision_preview --> src__vdisplay__control__vision_preview__action_pick_index
+    src__vdisplay__control__vision_preview__build_vision_preview --> src__vdisplay__control__vision_preview__preview_matches_from_nodes
+    src__vdisplay__control__vision_preview__build_vision_preview --> src__vdisplay__control__vision_preview__render_match_overlay
+    src__vdisplay__control__vision_preview__build_vision_preview --> src__vdisplay__control__vision_disambiguate__pick_by_index
     src__vdisplay__control__plugins___bootstrap_builtin_registry --> src__vdisplay__control__plugins___register_plugin
     src__vdisplay__control__plugins__load_entry_point_plugins --> src__vdisplay__control__plugins___register_plugin
     src__vdisplay__control__plugins__get_provider_registry --> src__vdisplay__control__plugins___bootstrap_builtin_registry
@@ -698,204 +827,75 @@ flowchart TD
     src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__control__gui_map_build___maybe_crop_png
     src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__control__gui_map_build___translate_ocr_boxes
     src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__control__gui_map_build___filter_ocr_boxes
-    src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__integrations__vision_backend__ocr_png
+    src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__control__vision_ocr__ocr_png
     src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build --> src__vdisplay__control__gui_map_build___boxes_in_scope_for_build
     src__vdisplay__control__gui_map_build___maybe_crop_png --> src__vdisplay__control__gui_map_build__crop_png_bounds
     src__vdisplay__control__gui_map_build__build_gui_map_from_ocr --> src__vdisplay__control__gui_map_build___prepare_ocr_boxes_for_build
     src__vdisplay__control__gui_map_build__build_gui_map_from_ocr --> src__vdisplay__control__gui_map_build___slug
     src__vdisplay__control__gui_map_build__build_gui_map_from_ocr --> src__vdisplay__control__gui_map_build__element_from_ocr_box
     src__vdisplay__control__gui_map_build__build_gui_map_from_ocr --> src__vdisplay__control__gui_map_build__tile_fingerprint
+    src__vdisplay__control__scoring___all_provider_names --> src__vdisplay__control__plugins__iter_provider_names
+    src__vdisplay__control__scoring___base_score --> src__vdisplay__control__descriptors__descriptor_for
+    src__vdisplay__control__scoring___uia_ready --> src__vdisplay__control__providers__uia_impl__uia_deps_available
+    src__vdisplay__control__scoring___ax_ready --> src__vdisplay__control__providers__ax_impl__ax_deps_available
+    src__vdisplay__control__scoring___browser_ready --> src__vdisplay__control__providers__browser_playwright___playwright_available
+    src__vdisplay__control__scoring___browser_session_ready --> src__vdisplay__control__providers__terminal_session__default_registry
+    src__vdisplay__control__scoring___browser_session_ready --> src__vdisplay__control__browser_session_store__session_available
+    src__vdisplay__control__scoring___vision_ready --> src__vdisplay__control__vision_ocr__ocr_available
+    src__vdisplay__control__scoring___vision_ready --> src__vdisplay__control__vision_template__template_available
+    src__vdisplay__control__scoring___terminal_session_ready --> src__vdisplay__control__providers__terminal_session__default_registry
+    src__vdisplay__control__scoring__selector_context --> src__vdisplay__control__scoring___is_terminal_context
+    src__vdisplay__control__scoring__selector_context --> src__vdisplay__control__scoring___is_browser_context
+    src__vdisplay__control__scoring__selector_context --> src__vdisplay__control__scoring___is_desktop_context
+    src__vdisplay__control__scoring___score_atspi_provider --> src__vdisplay__control__scoring___atspi_ready
+    src__vdisplay__control__scoring___score_atspi_provider --> src__vdisplay__control__scoring___linux_desktop_hosts
+    src__vdisplay__control__scoring___score_uia_provider --> src__vdisplay__control__scoring___uia_ready
+    src__vdisplay__control__scoring___score_ax_provider --> src__vdisplay__control__scoring___ax_ready
+    src__vdisplay__control__scoring___score_terminal_provider --> src__vdisplay__control__scoring___terminal_ready
+    src__vdisplay__control__scoring___score_terminal_provider --> src__vdisplay__control__scoring___terminal_session_ready
+    src__vdisplay__control__scoring___score_browser_provider --> src__vdisplay__control__scoring___browser_ready
+    src__vdisplay__control__scoring___score_browser_provider --> src__vdisplay__control__scoring___browser_context_score
+    src__vdisplay__control__scoring___score_browser_provider --> src__vdisplay__control__scoring___browser_session_check
+    src__vdisplay__control__scoring___browser_session_check --> src__vdisplay__control__scoring___browser_session_ready
+    src__vdisplay__control__scoring___x11_linux_eligibility --> src__vdisplay__control__scoring___xwayland_reachable
+    src__vdisplay__control__scoring___x11_invoke_capabilities --> src__vdisplay__control__scoring___xdotool_ready
+    src__vdisplay__control__scoring___score_x11_provider --> src__vdisplay__control__scoring___x11_linux_eligibility
+    src__vdisplay__control__scoring___score_x11_provider --> src__vdisplay__control__scoring___x11_invoke_capabilities
+    src__vdisplay__control__scoring___score_x11_provider --> src__vdisplay__control__scoring___x11_context_score
+    src__vdisplay__control__scoring___score_vision_provider --> src__vdisplay__control__scoring___vision_ready
+    src__vdisplay__control__scoring___score_vision_provider --> src__vdisplay__control__vision_ocr__ocr_available
+    src__vdisplay__control__scoring___score_plugin_provider --> src__vdisplay__control__descriptors__descriptor_for
+    src__vdisplay__control__scoring___apply_routing_boosts --> src__vdisplay__application__projections__backend_scores__provider_score_prior
+    src__vdisplay__control__scoring___apply_routing_boosts --> src__vdisplay__control__profile_inference__profile_provider_boost
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___base_score
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___apply_routing_boosts
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_atspi_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_uia_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_ax_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_terminal_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_browser_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_x11_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_vision_provider
+    src__vdisplay__control__scoring__score_provider --> src__vdisplay__control__scoring___score_plugin_provider
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__descriptors__detect_platform_profile
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__routing_semantics__build_routing_semantics
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__scoring__selector_context
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__browser_engine__resolve_session_browser_engine
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__profile_inference__infer_application_profile
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__profile_inference__profile_for
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__scoring__normalize_backend
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__scoring__score_provider
+    src__vdisplay__control__scoring__rank_providers --> src__vdisplay__control__scoring___all_provider_names
+    src__vdisplay__control__scoring__select_verify_provider --> src__vdisplay__control__scoring___verify_screenshot_only
+    src__vdisplay__control__scoring__select_verify_provider --> src__vdisplay__control__scoring___verify_hybrid
     src__vdisplay__control__registry__ProviderRegistry__register --> src__vdisplay__control__scoring__normalize_backend
     src__vdisplay__control__registry__ProviderRegistry__get_descriptor --> src__vdisplay__control__scoring__normalize_backend
     src__vdisplay__control__registry__ProviderRegistry__get_descriptor --> src__vdisplay__control__descriptors__descriptor_for
     src__vdisplay__control__registry__ProviderRegistry__build --> src__vdisplay__control__scoring__normalize_backend
     src__vdisplay__control__registry__default_provider_registry --> src__vdisplay__control__plugins__get_provider_registry
-    src__vdisplay__control__gui_map_diff___distance --> src__vdisplay__control__gui_map_diff___center
-    src__vdisplay__control__gui_map_diff___labels_match --> src__vdisplay__control__gui_map_diff___normalize_label
-    src__vdisplay__control__gui_map_diff___boxes_in_scope --> src__vdisplay__control__gui_map_diff___box_to_bounds
-    src__vdisplay__control__gui_map_diff__match_ocr_box_for_element --> src__vdisplay__control__gui_map_diff___distance
-    src__vdisplay__control__gui_map_diff__match_ocr_box_for_element --> src__vdisplay__control__gui_map_diff___labels_match
-    src__vdisplay__control__gui_map_diff__match_ocr_box_for_element --> src__vdisplay__control__gui_map_diff___box_to_bounds
-    src__vdisplay__control__gui_map_diff___classify_element_drift --> src__vdisplay__control__gui_map_diff___box_to_bounds
-    src__vdisplay__control__gui_map_diff___classify_element_drift --> src__vdisplay__control__gui_map_diff___distance
-    src__vdisplay__control__gui_map_diff___classify_element_drift --> src__vdisplay__control__gui_map_build__tile_fingerprint
-    src__vdisplay__control__gui_map_diff___region_drifts_for --> src__vdisplay__control__gui_map_build__tile_fingerprint
-    src__vdisplay__control__gui_map_diff___new_ocr_labels --> src__vdisplay__control__gui_map_diff___normalize_label
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff___region_drifts_for
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff___new_ocr_labels
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff__assess_map_drift
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff___boxes_in_scope
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff__match_ocr_box_for_element
-    src__vdisplay__control__gui_map_diff__diff_gui_map --> src__vdisplay__control__gui_map_diff___classify_element_drift
-    src__vdisplay__control__gui_map_diff___refresh_known_elements --> src__vdisplay__control__gui_map_diff__match_ocr_box_for_element
-    src__vdisplay__control__gui_map_diff___refresh_known_elements --> src__vdisplay__control__gui_map_build__element_from_ocr_box
-    src__vdisplay__control__gui_map_diff___append_new_elements --> src__vdisplay__control__gui_map_diff___normalize_label
-    src__vdisplay__control__gui_map_diff___append_new_elements --> src__vdisplay__control__gui_map_build___slug
-    src__vdisplay__control__gui_map_diff___append_new_elements --> src__vdisplay__control__gui_map_build__element_from_ocr_box
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__control__gui_map_diff__diff_gui_map
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__control__gui_map_diff___refresh_known_elements
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__control__gui_map_diff___boxes_in_scope
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__control__gui_map_build__tile_fingerprint
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__control__gui_map_diff___append_new_elements
-    src__vdisplay__control__gui_map_diff__refresh_gui_map --> src__vdisplay__integrations__vision_backend__ocr_png
-    src__vdisplay__control__session___safe_info --> src__vdisplay__api__VirtualDisplaySession__info
-    src__vdisplay__control__session__metadata_from_agent_record --> src__vdisplay__control__session__parse_session_kind
-    src__vdisplay__control__session__metadata_from_agent_record --> src__vdisplay__control__session___safe_capabilities
-    src__vdisplay__control__session__metadata_from_agent_record --> src__vdisplay__control__session___safe_info
-    src__vdisplay__control__session__build_catalog_from_agent_store --> src__vdisplay__control__session__metadata_from_agent_record
-    src__vdisplay__control__session__build_catalog_local --> src__vdisplay__control__session__metadata_from_terminal_session
-    src__vdisplay__control__session__build_catalog_local --> src__vdisplay__control__session__metadata_from_browser_session
-    src__vdisplay__control__vision_disambiguate__filter_by_confidence --> src__vdisplay__control__vision_disambiguate__item_confidence
-    src__vdisplay__control__vision_disambiguate__resolve_vision_matches --> src__vdisplay__control__vision_disambiguate__filter_by_confidence
-    src__vdisplay__control__vision_disambiguate__resolve_vision_matches --> src__vdisplay__control__vision_disambiguate__pick_by_index
-    src__vdisplay__control__vision_disambiguate__resolve_vision_matches --> src__vdisplay__control__vision_disambiguate__item_confidence
-    src__vdisplay__control__policy__evaluate_provider_routing --> src__vdisplay__control__router__default_router
-    src__vdisplay__control__policy___evaluate_pointer_fallback --> src__vdisplay__control__scoring___xwayland_reachable
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___atspi_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___uia_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___ax_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___browser_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___xdotool_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__scoring___terminal_ready
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__policy___evaluate_platform_backends
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__policy___evaluate_pointer_fallback
-    src__vdisplay__control__policy___evaluate_readiness --> src__vdisplay__control__descriptors__detect_platform_profile
-    src__vdisplay__control__policy___pointer_fallback_for_host --> src__vdisplay__control__scoring___xwayland_reachable
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__control__policy___evaluate_readiness
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__control__descriptors__detect_platform_profile
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__control__routing_semantics__host_environment_constraints
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__control__policy___append_accessibility_env_vars
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__discovery__resolve_host_display
-    src__vdisplay__control__policy__assess_control_capability --> src__vdisplay__control__policy___pointer_fallback_for_host
-    src__vdisplay__control__router___eligible_for_profile --> src__vdisplay__control__profile_inference__profile_for
-    src__vdisplay__control__router___select_winner --> src__vdisplay__control__scoring__normalize_backend
-    src__vdisplay__control__router___select_winner --> src__vdisplay__control__router___eligible_for_profile
-    src__vdisplay__control__router__ControlRouter____init__ --> src__vdisplay__control__registry__default_provider_registry
-    src__vdisplay__control__router__ControlRouter__evaluate --> src__vdisplay__control__scoring__rank_providers
-    src__vdisplay__control__router__ControlRouter__evaluate --> src__vdisplay__control__routing_semantics__build_routing_semantics
-    src__vdisplay__control__router__ControlRouter__route --> src__vdisplay__control__contracts__provider_score_from_dataclass
-    src__vdisplay__control__router__ControlRouter__route_command --> src__vdisplay__control__contracts__control_route_request_from_command
-    src__vdisplay__control__router__ControlRouter___build_decision --> src__vdisplay__control__scoring__normalize_backend
-    src__vdisplay__control__router__ControlRouter___build_decision --> src__vdisplay__control__router___select_winner
-    src__vdisplay__control__router__ControlRouter___build_decision --> src__vdisplay__control__scoring__select_verify_provider
-    src__vdisplay__control__browser_session_store__save_meta --> src__vdisplay__control__browser_session_store__meta_path
-    src__vdisplay__control__browser_session_store__load_meta --> src__vdisplay__control__browser_session_store__meta_path
-    src__vdisplay__control__browser_session_store__remove_meta --> src__vdisplay__control__browser_session_store__meta_path
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__load_meta
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__find_free_port
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__profile_dir
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store___chromium_executable
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__save_meta
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__detached_sessions_enabled
-    src__vdisplay__control__browser_session_store__launch_detached_chromium --> src__vdisplay__control__browser_session_store__process_alive
-    src__vdisplay__control__browser_session_store__stop_detached --> src__vdisplay__control__browser_session_store__load_meta
-    src__vdisplay__control__browser_session_store__stop_detached --> src__vdisplay__control__browser_session_store__process_alive
-    src__vdisplay__control__browser_session_store__stop_detached --> src__vdisplay__control__browser_session_store__remove_meta
-    src__vdisplay__control__browser_session_store__stop_detached --> src__vdisplay__control__browser_session_store__profile_dir
-    src__vdisplay__control__browser_session_store__session_available --> src__vdisplay__control__browser_session_store__load_meta
-    src__vdisplay__control__browser_session_store__session_available --> src__vdisplay__control__browser_session_store__process_alive
-    src__vdisplay__control__browser_session_store__session_available --> src__vdisplay__control__browser_session_store__remove_meta
-    src__vdisplay__control__profile_inference__ProfileInference__to_dict --> src__vdisplay__control__profile_inference__profile_for
-    src__vdisplay__control__profile_inference___score_browser_engine --> src__vdisplay__control__browser_engine__resolve_session_browser_engine
-    src__vdisplay__control__profile_inference___score_browser_engine --> src__vdisplay__control__browser_engine__normalize_browser_engine
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_vision_only_surface
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_browser_engine
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_web_spa
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__browser_engine__resolve_session_browser_engine
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_terminal_pty
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_electron_desktop
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__profile_inference___score_native_desktop
-    src__vdisplay__control__profile_inference___score_candidate --> src__vdisplay__control__descriptors__detect_platform_profile
-    src__vdisplay__control__profile_inference__infer_application_profile --> src__vdisplay__control__profile_inference___score_candidate
-    src__vdisplay__control__action_bounds__click_point_for_vision --> src__vdisplay__control__action_bounds__action_bounds_for_vision
-    src__vdisplay__control__gui_map_resolve__scoped_capture_region --> src__vdisplay__control__gui_map_resolve__resolve_map_region
-    src__vdisplay__control__gui_map_resolve__resolve_map_verify_mode --> src__vdisplay__control__gui_map_resolve___normalize_verify_mode
-    src__vdisplay__control__gui_map_resolve__resolve_map_verify_mode --> src__vdisplay__control__gui_map_resolve___identity_region_verify_mode
-    src__vdisplay__control__gui_map_resolve__resolve_map_verify_mode --> src__vdisplay__control__gui_map_resolve___direct_verify_mode
-    src__vdisplay__control__vision_llm__vision_llm_settings --> src__vdisplay__control__vision_llm___truthy
-    src__vdisplay__control__vision_llm__vision_llm_settings --> src__vdisplay__control__vision_llm___normalize_model
-    src__vdisplay__control__vision_llm__vision_llm_available --> src__vdisplay__control__vision_llm__vision_llm_settings
-    src__vdisplay__control__vision_llm__vision_llm_fallback_enabled --> src__vdisplay__control__vision_llm__vision_llm_settings
-    src__vdisplay__control__vision_llm__vision_llm_enrich_enabled --> src__vdisplay__control__vision_llm__vision_llm_settings
-    src__vdisplay__control__vision_llm__query_vision_llm --> src__vdisplay__control__vision_llm__vision_llm_settings
-    src__vdisplay__control__vision_llm__query_vision_llm --> src__vdisplay__control__gui_map_build__crop_png_bounds
-    src__vdisplay__control__vision_llm__query_vision_llm --> src__vdisplay__control__vision_llm___png_to_data_url
-    src__vdisplay__control__vision_llm__verify_text_in_region --> src__vdisplay__control__vision_llm__query_vision_llm
-    src__vdisplay__control__vision_llm__verify_text_in_region --> src__vdisplay__control__vision_llm___parse_yes_no
-    src__vdisplay__control__vision_llm__verify_text_in_region --> src__vdisplay__control__vision_llm___tokenize_expected
-    src__vdisplay__control__vision_llm__summarize_region --> src__vdisplay__control__vision_llm__query_vision_llm
-    src__vdisplay__control__routing_semantics__infer_target_environment --> src__vdisplay__control__scoring__selector_context
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__descriptors__detect_platform_profile
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__routing_semantics__infer_target_environment
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__routing_semantics__session_kind_for_target
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__routing_semantics__host_environment_constraints
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__routing_semantics__requires_open_session
-    src__vdisplay__control__routing_semantics__build_routing_semantics --> src__vdisplay__control__routing_semantics__legal_verify_modes_for_target
-    src__vdisplay__control__verify___node_changes --> src__vdisplay__control__verify___display_text
-    src__vdisplay__control__verify___nodes_by_match_key --> src__vdisplay__control__verify___structural_key
-    src__vdisplay__control__verify___nodes_by_match_key --> src__vdisplay__control__verify___node_key
-    src__vdisplay__control__verify__diff_snapshots --> src__vdisplay__control__verify___nodes_by_match_key
-    src__vdisplay__control__verify__diff_snapshots --> src__vdisplay__control__verify___node_changes
-    src__vdisplay__control__verify__diff_snapshots --> src__vdisplay__control__verify___subtree_ids
-    src__vdisplay__control__verify__snapshot_diff --> src__vdisplay__control__verify__diff_snapshots
-    src__vdisplay__control__verify___label_prefix_changes --> src__vdisplay__control__verify___nodes_by_match_key
-    src__vdisplay__control__verify___label_prefix_changes --> src__vdisplay__control__verify___subtree_ids
-    src__vdisplay__control__verify___label_prefix_changes --> src__vdisplay__control__verify___display_text
-    src__vdisplay__control__verify___label_prefix_changes_by_identity --> src__vdisplay__control__verify___subtree_ids
-    src__vdisplay__control__verify___label_prefix_changes_by_identity --> src__vdisplay__control__verify___display_text
-    src__vdisplay__control__verify___selector_change --> src__vdisplay__control__selector__pick_match
-    src__vdisplay__control__verify___selector_change --> src__vdisplay__control__verify___display_text
-    src__vdisplay__control__verify___handle_selector_verification --> src__vdisplay__control__verify___selector_change
-    src__vdisplay__control__verify___handle_selector_verification --> src__vdisplay__control__selector__parse_selector
-    src__vdisplay__control__verify___handle_label_verification --> src__vdisplay__control__verify___label_prefix_changes
-    src__vdisplay__control__verify___handle_label_verification --> src__vdisplay__control__verify___label_prefix_changes_by_identity
-    src__vdisplay__control__verify___handle_set_value_verification --> src__vdisplay__control__selector__pick_match
-    src__vdisplay__control__verify___handle_set_value_verification --> src__vdisplay__control__verify___subtree_ids
-    src__vdisplay__control__verify___handle_set_value_verification --> src__vdisplay__control__verify___display_text
-    src__vdisplay__control__verify___handle_invoke_verification --> src__vdisplay__control__selector__find_matches
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___scope_root_id
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify__diff_snapshots
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify__collect_changed_nodes
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___is_verified
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___handle_selector_verification
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___handle_label_verification
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___add_diff_nodes
-    src__vdisplay__control__verify__verify_action_result --> src__vdisplay__control__verify___handle_set_value_verification
-    src__vdisplay__control__contracts__provider_score_from_dataclass --> src__vdisplay__control__scoring__score_to_confidence
-    src__vdisplay__control__contracts__control_route_request_from_command --> src__vdisplay__control__selector__parse_selector
-    src__vdisplay__control__selector__ControlSelector__active_fields --> src__vdisplay__control__selector___infer_selector_environment
-    src__vdisplay__control__selector___role_matches --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector___app_matches --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector___window_title_matches --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector___name_matches --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector___text_matches --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector___score --> src__vdisplay__control__selector___app_matches
-    src__vdisplay__control__selector___score --> src__vdisplay__control__selector___window_title_matches
-    src__vdisplay__control__selector___score --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___role_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___name_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___text_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___app_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___window_title_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___terminal_line_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___terminal_col_matches
-    src__vdisplay__control__selector__find_matches --> src__vdisplay__control__selector___score
-    src__vdisplay__control__selector__pick_match --> src__vdisplay__control__selector__find_matches
-    src__vdisplay__control__selector__parse_role --> src__vdisplay__control__selector___normalize
-    src__vdisplay__control__providers__terminal_session__TerminalSessionRegistry__open_mock --> src__vdisplay__control__providers__terminal_screen__new_session_id
-    src__vdisplay__control__providers__terminal_session__TerminalSessionRegistry__open_process --> src__vdisplay__control__providers__terminal_screen__new_session_id
-    src__vdisplay__control__providers__terminal_session__TerminalSessionRegistry__open_pexpect --> src__vdisplay__control__providers__terminal_screen__new_session_id
-    src__vdisplay__control__providers__terminal_session__TerminalSessionRegistry__open_pexpect --> src__vdisplay__utils__auto_install_package
-    src__vdisplay__control__providers__uia__UiaControlProvider____init__ --> src__vdisplay__control__providers__uia_impl__create_uia_backend
-    src__vdisplay__control__providers__uia__UiaControlProvider__available --> src__vdisplay__control__providers__uia_impl__uia_deps_available
-    src__vdisplay__control__providers__uia__UiaControlProvider__find --> src__vdisplay__control__providers__uia_impl__filter_records
-    src__vdisplay__control__providers__uia__UiaControlProvider__find --> src__vdisplay__control__selector__find_matches
-    src__vdisplay__control__providers__x11__X11ControlProvider____init__ --> src__vdisplay__discovery__resolve_host_display
-    src__vdisplay__control__providers__x11__X11ControlProvider__available --> src__vdisplay__utils__require_command
-    src__vdisplay__control__providers__x11__X11ControlProvider__snapshot --> src__vdisplay__windows__query__find_windows
-    src__vdisplay__control__providers__x11__X11ControlProvider__snapshot --> src__vdisplay__windows__query__pick_best_window
+    src__vdisplay__control__retry_policy__next_action --> src__vdisplay__control__retry_policy___routing_dict
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class src__vdisplay__control__verify_policy__required_phases,src__vdisplay__application__events__control_events_from_diagnostics,src__vdisplay__ide_prompt__send_ide_prompt,src__vdisplay__application__services__img2nl_enrich___nl_from_imgl_scene,src__vdisplay__application__projections__backend_scores__build_backend_scores,src__vdisplay__application__projections__map_health___apply_drift_payload,src__vdisplay__application__projections__map_health__build_map_health,src__vdisplay__integrations__vql_bridge__context_to_vql_program,src__vdisplay__integrations__vql_bridge___enrich_render_intent,src__vdisplay__integrations__imgl_bridge__attach_imgl_to_context,src__vdisplay__integrations__imgl_bridge__ocr_boxes_from_imgl,src__vdisplay__integrations__observe_cache__map_drift_blocks_cache,src__vdisplay__integrations__observe_cache__ocr_boxes_from_cached_context,brain__scratch_find_pycharm_chat__dump_tree,src__vdisplay__application__services__control___build_control_diagnostics,src__vdisplay__application__commands__CommandRequest__from_agent_body,src__vdisplay__application__session_recorder___synthesize_control_block,src__vdisplay__application__session_recorder__reprocess_session_diagnostics,src__vdisplay__application__session_recorder__render_readme,src__vdisplay__integrations__pipeline__observe_screen,src__vdisplay__control__verifier__VerifierPipeline___run_ocr highCC
-    class packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_control_common,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_browser_open,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___browser_open_to_text,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___control_to_text,packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids,packages__vdisplay_agent__src__vdisplay_agent__services__capture___region_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__sampler___config_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__windows__list_windows,examples__agent_broker__broker_demo__main,examples__host_relay__relay_demo__main,examples__common__validate_artifacts__validate_image_and_meta,examples__common__screenshot_meta__describe_screenshot_nl,src__vdisplay__nl__describe_window_nl,src__vdisplay__nl___user_visible_app_labels,src__vdisplay__nl__describe_output_nl,src__vdisplay__nlp__parse_display,src__vdisplay__discovery__resolve_host_display,src__vdisplay__discovery__list_outputs,src__vdisplay__discovery___parse_xrandr_query,src__vdisplay__discovery__diagnose_display,src__vdisplay__commands__sampler___wait_for_sampler,src__vdisplay__backends__linux_x11_mirror___resolve_output,src__vdisplay__backends__linux_xvfb__LinuxXvfbBackend___acquire_display,src__vdisplay__backends__linux_x11_relay__LinuxX11RelayBackend__adopt_window,src__vdisplay__backends__linux_x11_relay___state_matches,src__vdisplay__backends__linux_x11_relay___find_window_id,src__vdisplay__backends__linux_x11_relay___output_origin medCC
+    class src__vdisplay__control__verifier__VerifierPipeline___run_ocr,src__vdisplay__application__session_recorder___synthesize_control_block,src__vdisplay__application__session_recorder__reprocess_session_diagnostics,src__vdisplay__application__session_recorder__render_readme,src__vdisplay__application__services__img2nl_enrich___nl_from_imgl_scene,src__vdisplay__application__services__control___build_control_diagnostics,src__vdisplay__application__projections__map_health___apply_drift_payload,src__vdisplay__application__projections__map_health__build_map_health,src__vdisplay__integrations__vql_bridge__context_to_vql_program,src__vdisplay__integrations__vql_bridge___enrich_render_intent,src__vdisplay__integrations__observe_cache__map_drift_blocks_cache,src__vdisplay__integrations__observe_cache__ocr_boxes_from_cached_context,src__vdisplay__integrations__pipeline__observe_screen,src__vdisplay__integrations__imgl_bridge__attach_imgl_to_context,src__vdisplay__integrations__imgl_bridge__ocr_boxes_from_imgl,brain__scratch_find_pycharm_chat__dump_tree,src__vdisplay__ide_prompt__send_ide_prompt,src__vdisplay__application__parsers__parse_agent_body,src__vdisplay__application__projections__backend_scores__build_backend_scores highCC
+    class packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_control_common,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_browser_open,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___browser_open_to_text,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___control_to_text,packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids,packages__vdisplay_agent__src__vdisplay_agent__services__capture___region_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__sampler___config_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__windows__list_windows,packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result,examples__agent_broker__broker_demo__main,examples__host_relay__relay_demo__main,examples__common__validate_artifacts__validate_image_and_meta,examples__common__screenshot_meta__describe_screenshot_nl,src__vdisplay__nl__describe_window_nl,src__vdisplay__nl___user_visible_app_labels,src__vdisplay__nl__describe_output_nl,src__vdisplay__desktop_apps___variants_for,src__vdisplay__desktop_apps___build_registry,src__vdisplay__nlp__parse_display,src__vdisplay__discovery__resolve_host_display,src__vdisplay__discovery__list_outputs,src__vdisplay__discovery___parse_xrandr_query,src__vdisplay__discovery__diagnose_display,src__vdisplay__commands__observe__handle_observe,src__vdisplay__commands__session__command_request_from_control_args,src__vdisplay__commands__session___resolve_session_dir,src__vdisplay__commands__session__handle_show medCC
