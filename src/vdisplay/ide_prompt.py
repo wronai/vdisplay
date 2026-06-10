@@ -168,17 +168,30 @@ def _find_first_selector(
 
 def _submit_via_keyboard(*, app_id: str) -> dict[str, Any]:
     key = "ctrl+Return" if app_id in {"pycharm", "jetbrains"} else "Return"
+    injector_error = ""
     try:
-        from ..input.linux_ydotool import LinuxYdotoolInput
+        from gillm.injection.injector import Injector
 
-        injector = LinuxYdotoolInput()
+        Injector().press_key(key)
+        return {"ok": True, "method": "injector-key", "key": key}
+    except Exception as exc:
+        injector_error = str(exc)
+    try:
+        from vdisplay.input.linux_ydotool import LinuxYdotoolInput
+
+        yinput = LinuxYdotoolInput()
         if key == "ctrl+Return":
-            injector.hotkey("ctrl", "Return")
+            yinput.hotkey("29:1", "28:1", "28:0", "29:0")
         else:
-            injector.hotkey("Return")
+            yinput.hotkey("28:1", "28:0")
         return {"ok": True, "method": "ydotool-key", "key": key}
     except Exception as exc:
-        return {"ok": False, "method": "ydotool-key", "key": key, "error": str(exc)}
+        return {
+            "ok": False,
+            "method": "ydotool-key",
+            "key": key,
+            "error": f"{injector_error}; ydotool: {exc}",
+        }
 
 
 def _handle_wait_window(

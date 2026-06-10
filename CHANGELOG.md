@@ -65,6 +65,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.20] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update project/README.md
+
+### Test
+- Update tests/test_hmi_watch.py
+
+### Other
+- Update project/calls.png
+- Update project/duplication.toon.yaml
+- Update project/index.html
+- Update project/planfile-tickets.yaml
+- Update project/project.toon.yaml
+- Update project/prompt.txt
+
 ## [0.1.19] - 2026-06-10
 
 ### Docs

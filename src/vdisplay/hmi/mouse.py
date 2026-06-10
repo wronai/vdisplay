@@ -51,7 +51,8 @@ def _parse_device_blocks(devices_path: Path) -> list[dict[str, object]]:
 
 def _mouse_device_paths(*, devices_path: Path | None = None) -> list[Path]:
     devices = devices_path or Path("/proc/bus/input/devices")
-    paths: list[Path] = []
+    primary: list[Path] = []
+    fallback: list[Path] = []
     seen: set[str] = set()
     for block in _parse_device_blocks(devices):
         name = str(block.get("name") or "")
@@ -59,12 +60,9 @@ def _mouse_device_paths(*, devices_path: Path | None = None) -> list[Path]:
         has_rel = bool(block.get("has_rel"))
         tokens = handlers.split()
         lowered = name.lower()
-        is_pointer = (
-            has_rel
-            or "mouse" in tokens
-            or any(token in lowered for token in ("mouse", "pointer", "trackball", "touchpad", "trackpoint"))
-        )
-        if not is_pointer:
+        has_mouse_handler = any(token.startswith("mouse") for token in tokens)
+        is_pointer_name = any(token in lowered for token in ("mouse", "pointer", "trackball", "touchpad", "trackpoint"))
+        if not has_mouse_handler and not (has_rel and is_pointer_name):
             continue
         for token in tokens:
             if not token.startswith("event"):
@@ -73,8 +71,8 @@ def _mouse_device_paths(*, devices_path: Path | None = None) -> list[Path]:
             if path in seen:
                 continue
             seen.add(path)
-            paths.append(Path(path))
-    return paths
+            (primary if has_mouse_handler else fallback).append(Path(path))
+    return primary or fallback
 
 
 class MouseWatcher:

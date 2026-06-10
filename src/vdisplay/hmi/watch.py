@@ -9,18 +9,25 @@ from dataclasses import asdict
 from datetime import datetime
 from typing import Any, TextIO
 
+from .context import WindowContextResolver
 from .keyboard import KeyEvent, KeyboardWatcher
 from .mouse import MouseMove, MouseWatcher
-from .pointer import PointerSample, is_wayland_session, probe_gtk_subprocess, sample_pointer
+from .pointer import (
+    PointerSample,
+    is_wayland_session,
+    pointer_probe_errors,
+    probe_absolute_pointer,
+    sample_pointer,
+)
 
 
 def _ts() -> str:
     return datetime.now().strftime("%H:%M:%S")
 
 
-def _format_monitor(monitor: dict[str, Any] | None) -> str:
+def _format_screen(monitor: dict[str, Any] | None) -> str:
     if not monitor:
-        return "-"
+        return "?"
     name = str(monitor.get("name") or monitor.get("label") or "?")
     left = monitor.get("x")
     top = monitor.get("y")
@@ -29,15 +36,25 @@ def _format_monitor(monitor: dict[str, Any] | None) -> str:
     return name
 
 
+def _truncate(text: str, limit: int = 48) -> str:
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+
 def _print_pointer_line(sample: PointerSample, *, typed: str, stream: TextIO) -> None:
-    mon = _format_monitor(sample.monitor)
-    win = sample.window_title or sample.window_id or "-"
-    if len(win) > 48:
-        win = win[:45] + "..."
+    screen = _format_screen(sample.monitor)
+    app = sample.app_label or sample.process_name or "?"
+    window = sample.window_title or sample.window_id or "?"
+    if isinstance(window, str):
+        window = _truncate(window)
     typed_show = typed if typed else ""
     err = f"  ! {sample.error}" if sample.error else ""
+    ctx = ""
+    if sample.context_source and sample.context_x is not None and sample.context_y is not None:
+        ctx = f"  ctx={sample.context_source}@({sample.context_x},{sample.context_y})"
     print(
-        f"[{_ts()}] ptr {sample.primary_label()}  mon={mon}  win={win}  typed={typed_show!r}{err}",
+        f"[{_ts()}] ptr {sample.primary_label()}  screen={screen}  app={app}  window={window!r}{ctx}  typed={typed_show!r}{err}",
         flush=True,
         file=stream,
     )
@@ -63,15 +80,33 @@ def _print_mouse_move(move: MouseMove, stream: TextIO) -> None:
     )
 
 
-def _seed_mouse(mouse_watcher: MouseWatcher, *, display: str | None, err: TextIO) -> str | None:
-    gtk = probe_gtk_subprocess()
-    if gtk is not None:
-        mouse_watcher.seed(*gtk)
-        return None
+def _seed_mouse(
+    mouse_watcher: MouseWatcher,
+    *,
+    display: str | None,
+    seed_xy: tuple[int, int] | None,
+) -> list[str]:
+    warnings: list[str] = []
+    if seed_xy is not None:
+        mouse_watcher.seed(*seed_xy)
+        return warnings
+
+    absolute = probe_absolute_pointer(display=display, use_gtk=True)
+    if absolute is not None:
+        source, xy = absolute
+        mouse_watcher.seed(*xy)
+        warnings.append(f"seeded evdev from {source}=({xy[0]},{xy[1]})")
+        return warnings
+
     if is_wayland_session():
-        return "GTK pointer seed failed — move mouse after start; evdev relative tracking needs initial seed"
-    xdotool_only = "waiting for first mouse motion via evdev"
-    return xdotool_only
+        warnings.append(
+            "absolute pointer seed failed (gnome/gtk unavailable) — move mouse to start evdev-rel tracking"
+        )
+        errors = pointer_probe_errors()
+        detail = "; ".join(f"{k}={v}" for k, v in errors.items() if v)
+        if detail:
+            warnings.append(detail)
+    return warnings
 
 
 def run_hmi_watch(
@@ -82,6 +117,7 @@ def run_hmi_watch(
     gtk_every: int | None = None,
     keyboard: bool = True,
     mouse: bool = True,
+    seed_xy: tuple[int, int] | None = None,
     jsonl: bool = False,
     stream: TextIO | None = None,
     stop_after: float | None = None,
@@ -105,14 +141,16 @@ def run_hmi_watch(
     mouse_error: str | None = None
     if mouse:
         mouse_error = mouse_watcher.start()
-        seed_error = _seed_mouse(mouse_watcher, display=display, err=err)
-        if seed_error and not jsonl:
-            print(f"warning: {seed_error}", flush=True, file=err)
+        for warning in _seed_mouse(mouse_watcher, display=display, seed_xy=seed_xy):
+            if not jsonl:
+                prefix = "info" if warning.startswith("seeded ") else "warning"
+                print(f"{prefix}: {warning}", flush=True, file=err)
 
     source_history: dict[str, list[tuple[int, int]]] = {}
-    pointer_mode = "evdev+gtk" if wayland and mouse else ("xdotool+gtk" if use_gtk else "xdotool")
+    window_resolver = WindowContextResolver(display=display)
+    pointer_mode = "evdev+gnome+gtk" if wayland else "xdotool+gtk"
     if wayland:
-        pointer_mode = f"{pointer_mode} (Wayland: evdev/gtk, not xdotool)"
+        pointer_mode += " (Wayland: ignore stale xdotool)"
 
     if not jsonl:
         print(
@@ -162,10 +200,11 @@ def run_hmi_watch(
                 if not jsonl:
                     _print_mouse_move(item, stream=out)
 
-            if mouse and use_gtk and wayland and time.monotonic() - last_resync >= 2.0:
-                gtk = probe_gtk_subprocess()
-                if gtk is not None and mouse_watcher.move_count == 0:
-                    mouse_watcher.seed(*gtk)
+            if mouse and time.monotonic() - last_resync >= 2.0:
+                if mouse_watcher.relative_only or mouse_watcher.position is None:
+                    absolute = probe_absolute_pointer(display=display, use_gtk=use_gtk)
+                    if absolute is not None:
+                        mouse_watcher.seed(*absolute[1])
                 last_resync = time.monotonic()
 
             sample = sample_pointer(
@@ -174,7 +213,9 @@ def run_hmi_watch(
                 gtk_every=gtk_every,
                 tick=tick,
                 evdev_xy=mouse_watcher.position if mouse else None,
+                evdev_relative_only=mouse_watcher.relative_only if mouse else False,
                 source_history=source_history,
+                window_resolver=window_resolver,
             )
             if jsonl:
                 payload = {
@@ -185,9 +226,15 @@ def run_hmi_watch(
                     "primary": sample.primary,
                     "sources": {k: list(v) for k, v in sample.sources.items()},
                     "stale_sources": list(sample.stale_sources),
-                    "monitor": sample.monitor.get("name") if sample.monitor else None,
+                    "context_x": sample.context_x,
+                    "context_y": sample.context_y,
+                    "context_source": sample.context_source,
+                    "screen": sample.monitor.get("name") if sample.monitor else None,
+                    "monitor": sample.monitor,
                     "window_id": sample.window_id,
                     "window_title": sample.window_title,
+                    "app": sample.app_label,
+                    "process_name": sample.process_name,
                     "typed": keyboard_watcher.typed_buffer,
                     "error": sample.error,
                 }
