@@ -52,6 +52,7 @@ class VerificationResult:
     semantic: dict[str, Any] | None = None
     visual: dict[str, Any] | None = None
     ocr: dict[str, Any] | None = None
+    vision_llm: dict[str, Any] | None = None
     reasons: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
@@ -62,6 +63,7 @@ class VerificationResult:
             "semantic": self.semantic,
             "visual": self.visual,
             "ocr": self.ocr,
+            "vision_llm": self.vision_llm,
             "reasons": list(self.reasons),
         }
 
@@ -80,8 +82,16 @@ def verify_spec_from_flags(
         mode = "hybrid"
     elif verify_screenshot:
         mode = "screenshot_diff"
-    elif verify_mode in {"semantic", "hybrid", "dom", "anchor_visible", "ocr_contains"}:
-        mode = verify_mode
+    elif verify_mode in {
+        "semantic",
+        "hybrid",
+        "dom",
+        "anchor_visible",
+        "ocr_contains",
+        "screenshot_diff",
+        "identity+region",
+    }:
+        mode = "ocr_contains" if verify_mode == "identity+region" else verify_mode
     else:
         mode = "semantic"
     min_change_ratio = 0.00005 if verify_screenshot else 0.02
@@ -147,13 +157,64 @@ class VerifierPipeline:
         if spec.mode == "anchor_visible":
             anchor_payload = self._run_anchor_visible(ctx, spec)
             verified = bool(anchor_payload.get("verified"))
-            confidence = float(anchor_payload.get("confidence") or (0.9 if verified else 0.0))
+            vision_llm_payload = None
+            if not verified:
+                vision_llm_payload = self._maybe_vision_llm_fallback(
+                    ctx,
+                    spec,
+                    expected_text=spec.expected_text or ctx.selector.vision_anchor or ctx.verify_label,
+                    anchor_label=spec.expected_text or ctx.selector.vision_anchor or ctx.verify_label,
+                )
+                if vision_llm_payload and vision_llm_payload.get("verified"):
+                    verified = True
+            confidence = float(
+                (vision_llm_payload or {}).get("confidence")
+                or anchor_payload.get("confidence")
+                or (0.9 if verified else 0.0)
+            )
+            reason = str(
+                (vision_llm_payload or {}).get("reason")
+                or anchor_payload.get("reason")
+                or ("anchor visible" if verified else "anchor not visible")
+            )
             return VerificationResult(
                 verified=verified,
                 mode=spec.mode,
                 confidence=confidence,
                 visual=anchor_payload,
-                reasons=[str(anchor_payload.get("reason") or ("anchor visible" if verified else "anchor not visible"))],
+                vision_llm=vision_llm_payload,
+                reasons=[reason],
+            )
+
+        if spec.mode == "ocr_contains":
+            ocr_payload = self._run_ocr(ctx, spec, {})
+            verified = bool(ocr_payload and ocr_payload.get("verified"))
+            vision_llm_payload = None
+            if not verified:
+                vision_llm_payload = self._maybe_vision_llm_fallback(
+                    ctx,
+                    spec,
+                    expected_text=spec.expected_text,
+                )
+                if vision_llm_payload and vision_llm_payload.get("verified"):
+                    verified = True
+            confidence = float(
+                (vision_llm_payload or {}).get("confidence")
+                or (ocr_payload or {}).get("confidence")
+                or (0.9 if verified else 0.0)
+            )
+            reason = str(
+                (vision_llm_payload or {}).get("reason")
+                or (ocr_payload or {}).get("reason")
+                or ("ocr text matched" if verified else "ocr text missing")
+            )
+            return VerificationResult(
+                verified=verified,
+                mode=spec.mode,
+                confidence=confidence,
+                ocr=ocr_payload,
+                vision_llm=vision_llm_payload,
+                reasons=[reason],
             )
 
         semantic_payload, semantic_ok, visual_payload, visual_ok, ocr_payload = self._evaluate_runs(ctx, spec)
@@ -251,11 +312,16 @@ class VerifierPipeline:
             target=ctx.target,
             capture_fn=ctx.capture_fn,
         )
-        if spec.region is not None:
+        region = spec.region
+        if region is None and ctx.map_element is not None:
+            bounds = ctx.map_element.action_bounds.to_control_bounds()
+            if bounds.width > 0 and bounds.height > 0:
+                region = _region_from_bounds(bounds)
+        if region is not None:
             from PIL import Image
 
             image = Image.open(io.BytesIO(after_png))
-            x, y, w, h = spec.region
+            x, y, w, h = region
             buf = io.BytesIO()
             image.crop((x, y, x + w, y + h)).save(buf, format="PNG")
             after_png = buf.getvalue()
@@ -263,7 +329,11 @@ class VerifierPipeline:
         boxes = ocr_png(after_png)
         text = " ".join(box.text for box in boxes)
         expected = spec.expected_text or ""
-        found = expected.lower() in text.lower()
+        if expected and len(expected) > 24 and "-" in expected:
+            tokens = [part for part in expected.replace("_", "-").split("-") if len(part) >= 3]
+            found = all(token.lower() in text.lower() for token in tokens) if tokens else expected.lower() in text.lower()
+        else:
+            found = expected.lower() in text.lower()
         confidence = 0.9 if found else 0.0
         return {
             "verified": found and confidence >= spec.min_confidence,
@@ -273,6 +343,37 @@ class VerifierPipeline:
             "confidence": confidence,
             "boxes": [box.to_dict() for box in boxes[:20]],
         }
+
+    def _maybe_vision_llm_fallback(
+        self,
+        ctx: VerifyContext,
+        spec: VerifySpec,
+        *,
+        expected_text: str | None = None,
+        anchor_label: str | None = None,
+    ) -> dict[str, Any] | None:
+        from .vision_llm import verify_text_in_region, vision_llm_fallback_enabled
+
+        if not vision_llm_fallback_enabled():
+            return None
+
+        after_png, _after_meta = capture_control_screenshot(
+            display=ctx.display,
+            target=ctx.target,
+            capture_fn=ctx.capture_fn,
+        )
+        region = spec.region
+        if region is None and ctx.map_element is not None:
+            bounds = ctx.map_element.action_bounds.to_control_bounds()
+            if bounds.width > 0 and bounds.height > 0:
+                region = _region_from_bounds(bounds)
+
+        return verify_text_in_region(
+            after_png,
+            expected_text or "",
+            region=region,
+            anchor_label=anchor_label,
+        )
 
     def _run_anchor_visible(self, ctx: VerifyContext, spec: VerifySpec) -> dict[str, Any]:
         """PR-22 — confirm template PNG or OCR anchor label is still visible after action."""
