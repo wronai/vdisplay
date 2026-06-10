@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `_execute_map_action` no longer hardcodes `verify_mode=semantic` for vision-only maps
 - Verifier primary path for `ocr_contains` with region-scoped OCR and hyphen-token matching
 
+### Added (vision LLM cold path)
+- `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
+- Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
+- Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
 ## [0.1.10] - 2026-06-09
 
 ### Fixed
