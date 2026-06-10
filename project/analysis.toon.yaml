@@ -1,8 +1,8 @@
-# code2llm | 247f 31265L | python:191,json:22,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
-# generated in 0.07s
-# CC̅=3.5 | critical:19/1358 | dups:0 | cycles:0
+# code2llm | 249f 60128L | python:192,json:23,toml:11,shell:7,yaml:5,yml:5,txt:1 | 2026-06-10
+# generated in 0.08s
+# CC̅=3.6 | critical:22/1384 | dups:0 | cycles:0
 
-HEALTH[19]:
+HEALTH[20]:
   🟡 CC    _route_command CC=17 (limit:15)
   🟡 CC    handle CC=15 (limit:15)
   🟡 CC    match_selector_boxes CC=20 (limit:15)
@@ -11,7 +11,6 @@ HEALTH[19]:
   🟡 CC    _resolve_screencast_stream_region CC=15 (limit:15)
   🟡 CC    _evaluate_readiness CC=18 (limit:15)
   🟡 CC    assess_control_capability CC=19 (limit:15)
-  🟡 CC    _evaluate_runs CC=16 (limit:15)
   🟡 CC    active_fields CC=16 (limit:15)
   🟡 CC    snapshot CC=15 (limit:15)
   🟡 CC    _matches_selector CC=20 (limit:15)
@@ -19,14 +18,16 @@ HEALTH[19]:
   🟡 CC    _matches_selector CC=17 (limit:15)
   🟡 CC    from_dsl CC=23 (limit:15)
   🟡 CC    global_pointer_coords CC=30 (limit:15)
+  🟡 CC    build_gui_map_from_ocr CC=19 (limit:15)
   🟡 CC    diff_gui_map CC=23 (limit:15)
   🟡 CC    refresh_gui_map CC=24 (limit:15)
-  🟡 CC    _find_nodes CC=19 (limit:15)
+  🟡 CC    _evaluate_runs CC=16 (limit:15)
+  🟡 CC    verify_after_action CC=34 (limit:15)
 
 REFACTOR[1]:
-  1. split 19 high-CC methods  (CC>15)
+  1. split 20 high-CC methods  (CC>15)
 
-PIPELINES[648]:
+PIPELINES[654]:
   [1] Src [main]: main → create_server
       PURITY: 100% pure
   [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url
@@ -129,20 +130,20 @@ PIPELINES[648]:
       PURITY: 100% pure
 
 LAYERS:
-  src/                            CC̄=3.7    ←in:0  →out:0
+  src/                            CC̄=3.8    ←in:0  →out:0
   │ !! portal_screencast          779L  1C   34m  CC=11     ←6
   │ !! scoring                    750L  2C   34m  CC=18     ←6
-  │ !! control                    678L  0C   21m  CC=14     ←0
-  │ !! provider                   578L  1C   26m  CC=19     ←0
+  │ !! control                    706L  0C   21m  CC=14     ←0
+  │ !! provider                   661L  1C   30m  CC=19     ←0
   │ !! host                       555L  0C   15m  CC=14     ←6
+  │ !! gui_map                    499L  6C   30m  CC=19     ←6
+  │ !! verifier                   494L  3C   14m  CC=34     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ verify                     475L  0C   20m  CC=13     ←1
   │ descriptors                464L  5C   11m  CC=14     ←9
+  │ !! gui_map_diff               436L  3C   13m  CC=24     ←1
+  │ atspi_impl                 419L  0C   19m  CC=9      ←1
   │ !! client                     407L  1C   38m  CC=17     ←0
-  │ atspi_impl                 407L  0C   19m  CC=8      ←1
-  │ gui_map                    394L  6C   25m  CC=11     ←5
-  │ !! verifier                   393L  3C   13m  CC=16     ←1
-  │ !! gui_map_diff               385L  3C   12m  CC=24     ←1
   │ discovery                  363L  0C   14m  CC=11     ←21
   │ !! selector                   342L  1C   17m  CC=16     ←9
   │ browser_playwright         339L  3C   30m  CC=14     ←2
@@ -152,6 +153,7 @@ LAYERS:
   │ !! commands                   292L  3C    6m  CC=23     ←0
   │ local                      283L  0C   21m  CC=4      ←1
   │ sampler_loop               280L  3C   12m  CC=10     ←1
+  │ map                        275L  0C    9m  CC=7      ←0
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ !! uia_impl                   268L  4C   24m  CC=22     ←3
@@ -165,11 +167,11 @@ LAYERS:
   │ atspi                      240L  1C   15m  CC=8      ←0
   │ discovery                  239L  0C   11m  CC=4      ←0
   │ vision_preview             238L  2C   11m  CC=10     ←1
+  │ vision_llm                 236L  1C   12m  CC=12     ←2
   │ terminal_session           227L  2C   16m  CC=7      ←6
   │ portal                     221L  1C    7m  CC=11     ←1
   │ session                    216L  3C   11m  CC=11     ←2
   │ query                      209L  0C    6m  CC=9      ←4
-  │ map                        197L  0C    7m  CC=6      ←0
   │ browser_session_store      196L  1C   14m  CC=7      ←2
   │ api                        193L  3C   32m  CC=6      ←4
   │ models                     187L  9C    7m  CC=4      ←0
@@ -193,23 +195,23 @@ LAYERS:
   │ common                     137L  0C    9m  CC=2      ←8
   │ sampler                    132L  0C    8m  CC=9      ←0
   │ !! x11                        132L  1C   10m  CC=15     ←0
+  │ img2nl_enrich              124L  0C    6m  CC=12     ←0
   │ registry                   117L  1C   14m  CC=3      ←2
+  │ linux_ydotool              114L  1C    9m  CC=8      ←0
   │ relay                      110L  0C    3m  CC=5      ←0
   │ scan                       110L  0C    7m  CC=6      ←2
   │ sampler                    109L  1C    3m  CC=5      ←1
   │ normalize                  103L  0C    7m  CC=14     ←1
-  │ img2nl_enrich              102L  0C    5m  CC=10     ←0
   │ engine                      99L  0C    6m  CC=11     ←4
-  │ linux_ydotool               97L  1C    9m  CC=8      ←0
+  │ map                         98L  0C    2m  CC=7      ←0
   │ drm                         92L  1C    5m  CC=11     ←0
-  │ map                         91L  0C    2m  CC=7      ←0
   │ payloads                    86L  0C    5m  CC=1      ←2
   │ runtime                     86L  1C    7m  CC=6      ←3
   │ virtual                     81L  0C    2m  CC=6      ←0
   │ vision_disambiguate         78L  1C    6m  CC=4      ←4
   │ fbdev                       77L  1C    5m  CC=7      ←0
   │ capabilities                76L  1C    1m  CC=1      ←0
-  │ agent_config                71L  0C    8m  CC=6      ←15
+  │ agent_config                71L  0C    8m  CC=6      ←16
   │ base                        69L  1C   10m  CC=2      ←0
   │ __init__                    69L  0C    0m  CC=0.0    ←0
   │ utils                       68L  0C    4m  CC=4      ←15
@@ -388,6 +390,9 @@ LAYERS:
   testql-scenarios/               CC̄=0.0    ←in:0  →out:0
   │ generated-cli-tests.testql.toon.yaml    20L  0C    0m  CC=0.0    ←0
   │
+  maps/                           CC̄=0.0    ←in:0  →out:0
+  │ !! pycharm-dp2.json         28123L  0C    0m  CC=0.0    ←0
+  │
 
 COUPLING:
                                               src.vdisplay      packages.vdisplay-agent        packages.dsl2vdisplay              examples.common       packages.rest2vdisplay        packages.mcp2vdisplay         examples.host-mirror          examples.host-relay   examples.control-plugin-ax  examples.control-plugin-uia            examples.ci-agent      examples.control-plugin    examples.headless-virtual        packages.cli2vdisplay        packages.nlp2vdisplay
@@ -407,11 +412,11 @@ COUPLING:
         packages.cli2vdisplay                                                                                      2                                                                                                                                                                                                                                                                                                                             ──                             
         packages.nlp2vdisplay                            1                                                                                                                                               ←1                                                                                                                                                                                                                                                                   ──
   CYCLES: none
-  HUB: src.vdisplay/ (fan-in=53)
   HUB: packages.dsl2vdisplay/ (fan-in=15)
+  HUB: src.vdisplay/ (fan-in=53)
   HUB: examples.common/ (fan-in=10)
-  SMELL: src.vdisplay/ fan-out=12 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=29 → split needed
+  SMELL: src.vdisplay/ fan-out=12 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

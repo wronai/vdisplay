@@ -225,9 +225,8 @@ class VisionStubProvider(ControlProvider):
     def _find_nodes(self, selector: ControlSelector) -> list[ControlNode]:
         """Priority cascade: OCR → template → anchor → stub."""
         # Fast path: pure stub anchor when OCR/template are unavailable
-        if selector.vision_anchor and not selector.vision_anchor_rel and not selector.vision_template:
-            if not ocr_available()[0]:
-                return self._stub_anchor_node(selector.vision_anchor)
+        if selector.vision_anchor and not selector.vision_anchor_rel and not selector.vision_template and not ocr_available()[0]:
+            return self._stub_anchor_node(selector.vision_anchor)
 
         png: bytes | None = None
         capture_meta: dict[str, Any] = {}
@@ -239,15 +238,13 @@ class VisionStubProvider(ControlProvider):
                 return nodes
 
         if selector.vision_template and template_available()[0]:
-            if png is None:
-                png, capture_meta = self._capture_png()
+            png, capture_meta = self._ensure_png(png, capture_meta)
             nodes = self._template_nodes_from_png(selector, png, capture_meta)
             if nodes:
                 return nodes
 
         if selector.vision_anchor_rel and selector.vision_anchor:
-            if png is None:
-                png, capture_meta = self._capture_png()
+            png, capture_meta = self._ensure_png(png, capture_meta)
             nodes = self._anchor_nodes_from_png(selector, png, capture_meta)
             if nodes:
                 return nodes
@@ -255,6 +252,12 @@ class VisionStubProvider(ControlProvider):
         if selector.vision_anchor and not ocr_available()[0] and not selector.vision_template:
             return self._stub_anchor_node(selector.vision_anchor)
         return []
+
+    def _ensure_png(self, png: bytes | None, capture_meta: dict[str, Any]) -> tuple[bytes, dict[str, Any]]:
+        """Return cached PNG or capture a fresh one."""
+        if png is not None:
+            return png, capture_meta
+        return self._capture_png()
 
     def _template_nodes_from_png(
         self,
@@ -416,6 +419,92 @@ class VisionStubProvider(ControlProvider):
             )
         return node
 
+    def _click_node(self, node: ControlNode) -> dict[str, Any]:
+        if node.bounds is None:
+            return {"ok": False, "element_id": node.id, "reason": "no bounds for vision target"}
+        capture_meta = (node.state or {}).get("capture")
+        click_point_payload = (node.state or {}).get("click_point")
+        click_point = None
+        if isinstance(click_point_payload, dict):
+            click_point = (int(click_point_payload.get("x") or 0), int(click_point_payload.get("y") or 0))
+        click = self._pointer_click_at(
+            node.bounds,
+            capture_meta=capture_meta,
+            click_point=click_point,
+        )
+        return {
+            **click,
+            "element_id": node.id,
+            "backend": self.name,
+            "action": "invoke",
+        }
+
+    def invoke_map_node(self, node: ControlNode) -> dict[str, Any]:
+        return self._click_node(node)
+
+    def focus_map_node(self, node: ControlNode) -> dict[str, Any]:
+        result = self._click_node(node)
+        result["method"] = "focus-click"
+        return result
+
+    def set_value_map_node(self, node: ControlNode, value: str) -> dict[str, Any]:
+        focus = self.focus_map_node(node)
+        if not focus.get("ok"):
+            return {**focus, "value": value, "action": "set_value"}
+        if self._pointer_type is not None:
+            self._pointer_type(value)
+            return {
+                "ok": True,
+                "element_id": node.id,
+                "value": value,
+                "method": "injected-type",
+                "action": "set_value",
+            }
+        try:
+            from ....input.resolve import resolve_pointer_input
+
+            _inp, method = resolve_pointer_input(display=self.display)
+            time.sleep(0.2)
+            _can_type = getattr(_inp, "can_type", None)
+            if _can_type is None or _can_type():
+                _inp.type_text(value)
+                return {
+                    "ok": True,
+                    "element_id": node.id,
+                    "value": value,
+                    "method": f"{method}-type",
+                    "action": "set_value",
+                }
+            _can_paste = getattr(_inp, "can_paste", None)
+            if _can_paste is not None and _can_paste():
+                _paste_ok, _paste_reason = self._paste_value(value, _inp, method)
+                if _paste_ok:
+                    return {
+                        "ok": True,
+                        "element_id": node.id,
+                        "value": value,
+                        "method": f"{method}-paste",
+                        "action": "set_value",
+                    }
+                _paste_err = f"; paste fallback failed: {_paste_reason}"
+            else:
+                _paste_err = "; paste fallback not available (can_paste=False)"
+            return {
+                "ok": False,
+                "element_id": node.id,
+                "value": value,
+                "reason": f"typing not available on this host ({method} can_type=False){_paste_err}",
+                "action": "set_value",
+            }
+        except Exception as exc:
+            return {
+                "ok": False,
+                "element_id": node.id,
+                "value": value,
+                "reason": f"type failed ({exc})",
+                "action": "set_value",
+            }
+
     def _pointer_click_at(
         self,
         bounds: ControlBounds,
@@ -524,11 +613,14 @@ class VisionStubProvider(ControlProvider):
                         "value": value,
                         "method": f"{method}-paste",
                     }
+                _paste_err = f"; paste fallback failed: {_paste_reason}"
+            else:
+                _paste_err = "; paste fallback not available (can_paste=False)"
             return {
                 "ok": False,
                 "element_id": element_id,
                 "value": value,
-                "reason": f"typing not available on this host ({method} can_type=False)",
+                "reason": f"typing not available on this host ({method} can_type=False){_paste_err}",
             }
         except Exception as exc:
             return {
@@ -562,10 +654,7 @@ class VisionStubProvider(ControlProvider):
         else:
             return False, "no clipboard utility (wl-copy or xclip)"
         try:
-            if method == "ydotool":
-                _inp.hotkey("ctrl+v")
-            else:
-                _inp.hotkey("ctrl+v")
+            _inp.hotkey("ctrl+v")
             return True, "pasted"
         except Exception as exc:
             return False, f"paste hotkey failed: {exc}"

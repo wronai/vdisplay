@@ -13,6 +13,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 - Docs: [vision-only-wayland.md](docs/vision-only-wayland.md) cold-path env configuration
 
+## [0.1.13] - 2026-06-10
+
+### Docs
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/troubleshooting.md
+- Update examples/control-plane/gui-map-pack.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_gui_map.py
+- Update tests/test_gui_map_diff.py
+
+### Other
+- Update DP-1.png
+- Update DP-2.png
+- Update app.doql.less
+- Update maps/pycharm-dp2-refreshed.json
+- Update maps/pycharm-dp2.json
+- Update planfile.yaml
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- ... and 14 more files
+
 ## [0.1.10] - 2026-06-10
 
 ### Fixed

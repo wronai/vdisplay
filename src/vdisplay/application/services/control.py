@@ -173,6 +173,20 @@ def _execute_map_action(
     hints = verify_hints_from_map_element(element)
     verify_label = verify_label or hints.get("verify_label")
     verify_selector = verify_selector or hints.get("verify_selector")
+    from ...control.gui_map import resolve_map_verify_mode
+
+    resolved_verify_mode = resolve_map_verify_mode(element, action=action, value=value)
+    verify_semantic = verify and resolved_verify_mode in {
+        "semantic",
+        "hybrid",
+        "dom",
+        "ocr_contains",
+        "anchor_visible",
+    }
+    effective_screenshot_verify = screenshot_verify or (
+        verify and resolved_verify_mode in {"screenshot_diff", "hybrid"}
+    )
+    expected_verify_text = value or verify_label or element.identity.anchor_text
 
     from ...control.providers.vision import VisionStubProvider
 
@@ -182,8 +196,8 @@ def _execute_map_action(
         display=display,
         target=target,
         verify=verify,
-        screenshot_verify=screenshot_verify,
-        verify_mode=hints.get("verify_mode") or "semantic",
+        screenshot_verify=effective_screenshot_verify,
+        verify_mode=resolved_verify_mode,
         capture_fn=capture_fn,
     )
     result = _perform_action(provider, action, target, value)
@@ -200,15 +214,15 @@ def _execute_map_action(
             action=action,
             selector=selector,
             value=value,
-            verify_label=verify_label,
+            verify_label=verify_label or expected_verify_text,
             verify_selector=verify_selector,
             display=display,
             capture_fn=capture_fn,
             before_png=before_png,
             before_capture_meta=screenshot_capture_meta,
-            verify_semantic=verify,
-            verify_screenshot=screenshot_verify,
-            verify_mode="semantic",
+            verify_semantic=verify_semantic,
+            verify_screenshot=effective_screenshot_verify,
+            verify_mode=resolved_verify_mode,
             map_element=element,
         )
     )
@@ -504,6 +518,18 @@ def control_set_value(
 
 
 def _perform_action(provider, action, target, value):
+    if (target.state or {}).get("map"):
+        if action == "invoke":
+            if hasattr(provider, "invoke_map_node"):
+                return provider.invoke_map_node(target)
+        if action == "focus":
+            if hasattr(provider, "focus_map_node"):
+                return provider.focus_map_node(target)
+        if action == "set_value":
+            if value is None:
+                raise VDisplayError("set_value requires value")
+            if hasattr(provider, "set_value_map_node"):
+                return provider.set_value_map_node(target, value)
     if action == "invoke":
         return provider.invoke(target.id)
     if action == "focus":
@@ -523,7 +549,9 @@ def _capture_before_state(
     verify_mode: str | None,
     capture_fn: Any | None,
 ) -> tuple[bytes | None, dict[str, Any] | None]:
-    need_capture = screenshot_verify or (verify and verify_mode == "hybrid")
+    need_capture = screenshot_verify or (
+        verify and verify_mode in {"hybrid", "screenshot_diff", "screenshot"}
+    )
     if need_capture:
         return capture_control_screenshot(
             display=display,

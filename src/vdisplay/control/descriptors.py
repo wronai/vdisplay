@@ -370,8 +370,8 @@ BUILTIN_APPLICATION_PROFILES: tuple[ApplicationProfile, ...] = (
         preferred_providers=["x11"],
         fallback_providers=["vision"],
         selector_extensions=["vision"],
-        verify_strategies=["screenshot", "ocr"],
-        notes="Canvas, games, remote streams — x11 pointer fallback; vision stub for verify",
+        verify_strategies=["screenshot", "ocr", "anchor_visible"],
+        notes="Canvas, games, remote streams — map/bounds actions; OCR/anchor verify",
     ),
 )
 

@@ -149,6 +149,48 @@ export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 vdisplay virtual screenshot -o screen.png --display :99
 ```
 
+## GUI Map Pack / vision-only (PyCharm, Wayland)
+
+### `map diff` shows many `missing` / `refresh_required`
+
+Usually caused by a **full-monitor map** (400+ OCR elements) or UI scroll/layout change. Terminal/status-bar labels (`info`, `http_1_1`, `200`) drift independently of chat targets.
+
+1. Check `recommendation` and `key_targets` in diff JSON:
+   ```bash
+   vdisplay map diff --map maps/pycharm-dp2.json --scope pycharm.ai_chat | jq '{recommendation, actionable, key_targets, summary}'
+   ```
+2. Refresh scoped region:
+   ```bash
+   vdisplay map refresh --map maps/pycharm-dp2.json --scope pycharm.ai_chat --output maps/pycharm-dp2.json
+   ```
+3. Rebuild with **scoped crop** (fewer false anchors):
+   ```bash
+   vdisplay map build --monitor DP-2 --crop-bounds X,Y,W,H \
+     --region-id pycharm.ai_chat --output maps/pycharm-chat.json --min-text-len 3
+   ```
+
+`fingerprint`-only drift (bounds stable) is often cosmetic — safe to ignore if `key_targets` are `ok`.
+
+### `set-value` fails without `--map`
+
+On GNOME Wayland, OCR-target `set-value` may fail with `can_type=False`. Prefer map targets (uses ydotool-paste):
+
+```bash
+vdisplay control set-value --map maps/pycharm-dp2.json --target message --value "test"
+```
+
+### Screencast / map capture 400
+
+Start agent **before** screencast, and screencast **after** agent is running:
+
+```bash
+vdisplay-agent serve &
+sleep 2
+vdisplay agent screencast start
+```
+
+Full guide: [vision-only-wayland.md](vision-only-wayland.md) · [gui-map-pack.md](../examples/control-plane/gui-map-pack.md)
+
 ### REST `POST /v1/dsl` returns 422
 
 Ensure `rest2vdisplay` is up to date. Route expects raw DSL body (`text/plain`) or JSON `{"verb":"MONITORS"}`. Check broker first:

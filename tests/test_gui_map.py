@@ -15,6 +15,7 @@ from vdisplay.control.gui_map import (
     load_gui_map,
     map_element_to_node,
     resolve_map_element,
+    resolve_map_verify_mode,
     save_gui_map,
     verify_hints_from_map_element,
 )
@@ -128,6 +129,137 @@ def test_verify_hints_from_map_element() -> None:
     )
     hints = verify_hints_from_map_element(element)
     assert hints["verify_label"] == "Count: 0"
+
+
+def test_resolve_map_verify_mode_prefers_vision_only_paths() -> None:
+    anchor_box = OcrTextBox("Chat", ControlBounds(x=1, y=2, width=40, height=20), 0.9)
+    anchor_el = element_from_ocr_box(
+        anchor_box,
+        element_id="chat",
+        region_id="panel",
+        capture_meta={},
+        monitor=None,
+        rotation=None,
+    )
+    assert resolve_map_verify_mode(anchor_el, action="invoke") == "anchor_visible"
+
+    message_box = OcrTextBox("Ask anything", ControlBounds(x=1, y=2, width=80, height=20), 0.9)
+    message_el = element_from_ocr_box(
+        message_box,
+        element_id="message",
+        region_id="panel",
+        capture_meta={},
+        monitor=None,
+        rotation=None,
+    )
+    assert (
+        resolve_map_verify_mode(
+            message_el,
+            action="set_value",
+            value="test-message-from-vdisplay",
+        )
+        == "ocr_contains"
+    )
+
+
+def test_map_action_verify_uses_resolved_mode_not_semantic(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from vdisplay.application.services.control import control_set_value
+
+    box = OcrTextBox("Ask anything", ControlBounds(x=10, y=20, width=80, height=18), 0.91)
+    element = element_from_ocr_box(
+        box,
+        element_id="message",
+        region_id="chat",
+        capture_meta={"width": 400, "height": 200},
+        monitor="DP-2",
+        rotation="left",
+    )
+    from vdisplay.control.gui_map import GuiMapPack, GuiMapRegion, save_gui_map
+
+    pack = GuiMapPack(
+        monitor="DP-2",
+        rotation="left",
+        elements={"message": element},
+        regions={
+            "chat": GuiMapRegion(
+                id="chat",
+                label="chat",
+                scope_bounds=GuiMapBounds(x=0, y=0, width=400, height=200),
+                elements=["message"],
+            )
+        },
+    )
+    path = tmp_path / "map.json"
+    save_gui_map(path, pack)
+
+    captured: dict[str, str] = {}
+
+    class FakeVision:
+        name = "vision"
+
+        def snapshot(self, **kwargs):
+            from vdisplay.control.models import ControlSnapshot
+
+            return ControlSnapshot(backend="vision", window_id=None, app_label=None, nodes={}, root_ids=[])
+
+        def set_value_map_node(self, node, value: str):
+            return {"ok": True, "value": value, "method": "test-paste"}
+
+    class FakeRouting:
+        verify_mode = "ocr_contains"
+        verify_provider = "vision"
+
+        def to_dict(self):
+            return {"selected_provider": "vision", "verify_mode": "ocr_contains"}
+
+    def _capture_verify(self, ctx):
+        captured["verify_mode"] = ctx.verify_mode
+        captured["verify_semantic"] = str(ctx.verify_semantic)
+        return type(
+            "VR",
+            (),
+            {
+                "verified": True,
+                "confidence": 0.9,
+                "mode": ctx.verify_mode,
+                "reasons": ["ocr text matched"],
+                "semantic": None,
+                "visual": None,
+                "ocr": {"verified": True},
+                "to_dict": lambda self: {"mode": ctx.verify_mode},
+            },
+        )()
+
+    monkeypatch.setattr(
+        "vdisplay.application.services.control.evaluate_provider_routing",
+        lambda *args, **kwargs: FakeRouting(),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.providers.vision.VisionStubProvider",
+        lambda **kwargs: FakeVision(),
+    )
+    monkeypatch.setattr(
+        "vdisplay.application.services.control._capture_before_state",
+        lambda **_k: (None, None),
+    )
+    monkeypatch.setattr(
+        "vdisplay.control.verifier.VerifierPipeline.verify_after_action",
+        _capture_verify,
+    )
+
+    payload = control_set_value(
+        backend="vision",
+        map_path=str(path),
+        map_target="message",
+        value="test-message-from-vdisplay",
+        verify=True,
+    )
+    assert payload["ok"] is True
+    assert captured["verify_mode"] == "ocr_contains"
+    assert payload["verify_mode"] == "ocr_contains"
 
 
 def test_map_based_control_click_uses_stored_click_point(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.12-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$6.79-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-8.1h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.13-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$7.65-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-9.4h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $6.7899 (11 commits)
-- 👤 **Human dev:** ~$815 (8.1h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $7.6497 (15 commits)
+- 👤 **Human dev:** ~$937 (9.4h @ $100/h, 30min dedup)
 
 Generated on 2026-06-10 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -1085,26 +1085,26 @@ Decode preview from JSON: `jq -r '.preview.preview_png_base64' | base64 -d > pre
 
 Full guide: [examples/control-plane/vision-preview.md](examples/control-plane/vision-preview.md)
 
-### GUI Map Pack + scoped verify (PR-26)
+### GUI Map Pack + scoped verify (PR-26/27/28)
 
-Build a persistent atlas once, then drive clicks/types from stored **action bounds** (not raw OCR boxes):
-
-```bash
-vdisplay map build --monitor DP-2 --output dp2-map.json --md dp2-map.md --svg dp2-map.svg
-vdisplay control click --backend vision --map dp2-map.json --target ask_anything
-vdisplay control set-value --backend vision --map dp2-map.json --target ask_anything --value "test" --verify
-```
-
-Each map element stores `raw_bounds`, `action_bounds`, `click_point`, `identity`, and optional `tile_fingerprint`. Verify uses identity fallback when AT-SPI structure shifts.
-
-Full guide: [examples/control-plane/gui-map-pack.md](examples/control-plane/gui-map-pack.md)
-
-Detect UI drift before automation runs stale:
+Build a **scoped** atlas once (avoid full-monitor OCR — ~460 noisy elements), then drive clicks/types from stored **action bounds**:
 
 ```bash
-vdisplay map diff --map dp2-map.json --scope pycharm.ai_chat   # exit 1 if drift
-vdisplay map refresh --map dp2-map.json --output dp2-map.json  # update bounds/fingerprints
+vdisplay-agent serve & && sleep 2 && vdisplay agent screencast start
+vdisplay map build --monitor DP-2 --crop-bounds X,Y,W,H \
+  --output maps/chat.json --region-id pycharm.ai_chat --min-text-len 3
+vdisplay control click --backend vision --map maps/chat.json --target chat
+vdisplay control set-value --backend vision --map maps/chat.json --target message --value "test" --verify
 ```
+
+Drift before automation — check `recommendation` / `key_targets`:
+
+```bash
+vdisplay map diff --map maps/chat.json --scope pycharm.ai_chat   # exit 1 if drift
+vdisplay map refresh --map maps/chat.json --scope pycharm.ai_chat  # update bounds
+```
+
+Full guide: [examples/control-plane/gui-map-pack.md](examples/control-plane/gui-map-pack.md) · [docs/vision-only-wayland.md](docs/vision-only-wayland.md)
 
 ### GNOME backend picker
 

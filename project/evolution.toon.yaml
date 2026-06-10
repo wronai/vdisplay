@@ -1,58 +1,58 @@
-# code2llm/evolution | 1296 func | 154f | 2026-06-10
-# generated in 0.01s
+# code2llm/evolution | 1322 func | 155f | 2026-06-10
+# generated in 0.00s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           src/vdisplay/control/scoring.py
-      WHY: 750L, 2 classes, max CC=18
-      EFFORT: ~4h  IMPACT: 13500
-
-  [2] !! SPLIT           src/vdisplay/capture/portal_screencast.py
+  [1] !! SPLIT           src/vdisplay/capture/portal_screencast.py
       WHY: 779L, 1 classes, max CC=11
       EFFORT: ~4h  IMPACT: 8569
 
-  [3] !  SPLIT-FUNC      diff_gui_map  CC=23  fan=25
+  [2] !  SPLIT-FUNC      diff_gui_map  CC=23  fan=26
       WHY: CC=23 exceeds 15
-      EFFORT: ~1h  IMPACT: 575
+      EFFORT: ~1h  IMPACT: 598
 
-  [4] !  SPLIT-FUNC      refresh_gui_map  CC=24  fan=22
+  [3] !  SPLIT-FUNC      refresh_gui_map  CC=24  fan=22
       WHY: CC=24 exceeds 15
       EFFORT: ~1h  IMPACT: 528
 
-  [5] !  SPLIT-FUNC      ComtypesUiaBackend.collect_elements  CC=22  fan=20
+  [4] !  SPLIT-FUNC      VerifierPipeline._run_ocr  CC=22  fan=22
+      WHY: CC=22 exceeds 15
+      EFFORT: ~1h  IMPACT: 484
+
+  [5] !! SPLIT-FUNC      VerifierPipeline.verify_after_action  CC=34  fan=14
+      WHY: CC=34 exceeds 15
+      EFFORT: ~1h  IMPACT: 476
+
+  [6] !  SPLIT-FUNC      ComtypesUiaBackend.collect_elements  CC=22  fan=20
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 440
 
-  [6] !! SPLIT-FUNC      global_pointer_coords  CC=30  fan=11
+  [7] !  SPLIT-FUNC      build_gui_map_from_ocr  CC=19  fan=19
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 361
+
+  [8] !! SPLIT-FUNC      global_pointer_coords  CC=30  fan=11
       WHY: CC=30 exceeds 15
       EFFORT: ~1h  IMPACT: 330
 
-  [7] !  SPLIT-FUNC      handle  CC=15  fan=19
+  [9] !  SPLIT-FUNC      handle  CC=15  fan=19
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 285
 
-  [8] !  SPLIT-FUNC      score_provider  CC=16  fan=15
+  [10] !  SPLIT-FUNC      score_provider  CC=16  fan=15
       WHY: CC=16 exceeds 15
       EFFORT: ~1h  IMPACT: 240
 
-  [9] !  SPLIT-FUNC      CommandRequest.from_dsl  CC=23  fan=9
-      WHY: CC=23 exceeds 15
-      EFFORT: ~1h  IMPACT: 207
-
-  [10] !  SPLIT-FUNC      _resolve_screencast_stream_region  CC=15  fan=12
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 180
-
 
 RISKS[3]:
+  ⚠ Splitting maps/pycharm-dp2.json may break 0 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
   ⚠ Splitting src/vdisplay/capture/portal_screencast.py may break 34 import paths
-  ⚠ Splitting src/vdisplay/control/scoring.py may break 34 import paths
 
 METRICS-TARGET:
-  CC̄:          3.6 → ≤2.5
-  max-CC:      30 → ≤15
-  god-modules: 7 → 0
-  high-CC(≥15): 19 → ≤9
+  CC̄:          3.7 → ≤2.6
+  max-CC:      34 → ≤17
+  god-modules: 8 → 0
+  high-CC(≥15): 22 → ≤11
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.5 → now CC̄=3.6
+  prev CC̄=3.6 → now CC̄=3.7

@@ -1,16 +1,16 @@
 # System Architecture Analysis
-<!-- generated in 0.01s -->
+<!-- generated in 0.00s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 191, json: 22, toml: 11, shell: 7, yaml: 5
+- **Languages**: python: 192, json: 23, toml: 11, shell: 7, yaml: 5
 - **Analysis Mode**: static
-- **Total Functions**: 1358
-- **Total Classes**: 127
-- **Modules**: 247
-- **Entry Points**: 746
+- **Total Functions**: 1384
+- **Total Classes**: 128
+- **Modules**: 249
+- **Entry Points**: 752
 
 ## Architecture by Module
 
@@ -48,15 +48,15 @@
 - **Classes**: 3
 - **File**: `browser_playwright.py`
 
-### src.vdisplay.control.providers.vision.provider
-- **Functions**: 26
-- **Classes**: 1
-- **File**: `provider.py`
-
 ### src.vdisplay.control.gui_map
-- **Functions**: 25
+- **Functions**: 30
 - **Classes**: 6
 - **File**: `gui_map.py`
+
+### src.vdisplay.control.providers.vision.provider
+- **Functions**: 30
+- **Classes**: 1
+- **File**: `provider.py`
 
 ### src.vdisplay.backends.linux_x11_relay
 - **Functions**: 24
@@ -81,13 +81,13 @@
 - **Functions**: 21
 - **File**: `linux_xwd.py`
 
-### src.vdisplay.application.services.control
-- **Functions**: 21
-- **File**: `control.py`
-
 ### src.vdisplay.application.handlers.local
 - **Functions**: 21
 - **File**: `local.py`
+
+### src.vdisplay.application.services.control
+- **Functions**: 21
+- **File**: `control.py`
 
 ### src.vdisplay.control.verify
 - **Functions**: 20
@@ -129,14 +129,14 @@ Main execution flows into the system:
 ### examples.agent-broker.broker_demo.main
 - **Calls**: src.vdisplay.agent_config.resolve_agent_url, AgentClient, print, print, print, client.outputs, print, print
 
+### src.vdisplay.commands.map.register
+- **Calls**: sub.add_parser, parser.add_subparsers, map_sub.add_parser, build.add_argument, build.add_argument, build.add_argument, build.add_argument, build.add_argument
+
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
 - **Calls**: app.get, app.get, app.get, app.get, app.get, app.get, Header, check_auth
 
 ### examples.host-relay.relay_demo.main
 - **Calls**: os.environ.get, src.vdisplay.discovery.resolve_host_display, Path, output_dir.mkdir, print, examples.host-relay.relay_demo._capture_phase, WindowRelaySession.create, session.start
-
-### src.vdisplay.commands.map.register
-- **Calls**: sub.add_parser, parser.add_subparsers, map_sub.add_parser, build.add_argument, build.add_argument, build.add_argument, build.add_argument, build.add_argument
 
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
@@ -150,6 +150,9 @@ Main execution flows into the system:
 ### examples.host-mirror.mirror_demo.main
 - **Calls**: Path, output_dir.mkdir, os.environ.get, os.environ.get, src.vdisplay.discovery.diagnose_display, print, src.vdisplay.discovery.list_monitors, src.vdisplay.payloads.all_payload
 
+### src.vdisplay.commands.map.handle
+- **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
+
 ### src.vdisplay.commands.control.handle
 - **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, getattr, getattr
 
@@ -159,8 +162,8 @@ Main execution flows into the system:
 ### src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend.collect_elements
 - **Calls**: self._automation.GetRootElement, self._automation.CreateTrueCondition, root.FindAll, self._element_by_key.clear, int, range, self.connect, elements.GetElement
 
-### src.vdisplay.commands.map.handle
-- **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
+### src.vdisplay.control.verifier.VerifierPipeline.verify_after_action
+- **Calls**: self._evaluate_runs, self._aggregate, VerificationResult, src.vdisplay.control.verifier.verify_spec_from_flags, VerificationResult, self._run_anchor_visible, bool, float
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes
 - **Calls**: app.get, app.get, app.post, app.post, Query, Query, Header, check_auth
@@ -173,6 +176,9 @@ Main execution flows into the system:
 
 ### src.vdisplay.control.providers.ax_impl.PyobjcAxBackend.collect_elements
 - **Calls**: self.connect, self._element_by_key.clear, NSWorkspace.sharedWorkspace, workspace.runningApplications, str, int, AXUIElementCreateApplication, walk
+
+### src.vdisplay.control.verifier.VerifierPipeline._run_ocr
+- **Calls**: None.get, src.vdisplay.control.vision_ocr.ocr_available, src.vdisplay.control.screenshot_verify.capture_control_screenshot, src.vdisplay.control.vision_ocr.ocr_png, None.join, ctx.map_element.action_bounds.to_control_bounds, Image.open, io.BytesIO
 
 ### src.vdisplay.commands.agent.register
 - **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
@@ -194,12 +200,6 @@ Main execution flows into the system:
 
 ### src.vdisplay.capture.providers.drm.DrmProvider._capture
 - **Calls**: src.vdisplay.utils.require_command, src.vdisplay.capture.providers.drm._drm_devices, VDisplayError, VDisplayError, tempfile.NamedTemporaryFile, Path, args.extend, subprocess.run
-
-### packages.vdisplay-agent.src.vdisplay_agent.cli.main
-- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, print
-
-### packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes
-- **Calls**: app.post, app.post, app.get, Header, check_auth, Header, check_auth, Header
 
 ## Process Flows
 
@@ -266,17 +266,10 @@ snapshot [src.vdisplay.control.providers.x11.X11ControlProvider]
 collect_elements [src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend]
 ```
 
-### Flow 10: adopt_window
+### Flow 10: verify_after_action
 ```
-adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
-  └─ →> _window_geometry
-      └─ →> run_command
-  └─ →> _move_window
-      └─ →> run_command
-  └─ →> find_companion_frames
-      └─> list_windows_enriched
-          └─> scan_windows
-          └─ →> require_command
+verify_after_action [src.vdisplay.control.verifier.VerifierPipeline]
+  └─ →> verify_spec_from_flags
 ```
 
 ## Key Classes
@@ -293,7 +286,7 @@ adopt_window [src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend]
 
 ### src.vdisplay.control.providers.vision.provider.VisionStubProvider
 > Canvas/game/stream surfaces — semantic tree unavailable; OCR/template + pointer invoke.
-- **Methods**: 26
+- **Methods**: 30
 - **Key Methods**: src.vdisplay.control.providers.vision.provider.VisionStubProvider.__init__, src.vdisplay.control.providers.vision.provider.VisionStubProvider.available, src.vdisplay.control.providers.vision.provider.VisionStubProvider._capture_png, src.vdisplay.control.providers.vision.provider.VisionStubProvider.last_capture, src.vdisplay.control.providers.vision.provider.VisionStubProvider.last_find_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider.enable_preview_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider._box_key, src.vdisplay.control.providers.vision.provider.VisionStubProvider._record_find_debug, src.vdisplay.control.providers.vision.provider.VisionStubProvider._node_from_ocr, src.vdisplay.control.providers.vision.provider.VisionStubProvider._node_from_template
 - **Inherits**: ControlProvider
 
@@ -473,24 +466,25 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.application.commands.CommandRequest.from_dsl` - 70 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 53 calls
 - `src.vdisplay.commands.control.register` - 46 calls
-- `src.vdisplay.control.gui_map_diff.diff_gui_map` - 43 calls
+- `src.vdisplay.control.gui_map_diff.diff_gui_map` - 44 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
 - `src.vdisplay.input.coords.global_pointer_coords` - 37 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
+- `src.vdisplay.commands.map.register` - 35 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes` - 33 calls
 - `examples.host-relay.relay_demo.main` - 33 calls
-- `src.vdisplay.commands.map.register` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.agent.handle` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.control.vision_template.match_template` - 31 calls
+- `src.vdisplay.commands.map.handle` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
 - `src.vdisplay.commands.control.handle` - 30 calls
 - `src.vdisplay.control.providers.x11.X11ControlProvider.snapshot` - 30 calls
 - `src.vdisplay.control.providers.uia_impl.ComtypesUiaBackend.collect_elements` - 29 calls
-- `src.vdisplay.commands.map.handle` - 29 calls
+- `src.vdisplay.control.verifier.VerifierPipeline.verify_after_action` - 29 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
@@ -504,11 +498,10 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.control.providers.atspi_impl.snapshot_dict` - 26 calls
 - `src.vdisplay.control.vision_preview.render_match_overlay` - 25 calls
 - `src.vdisplay.commands.common.control_selector_kwargs_from_args` - 24 calls
-- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.capture.host.resolve_window_region` - 24 calls
+- `src.vdisplay.control.gui_map.GuiMapElement.from_dict` - 24 calls
 - `src.vdisplay.control.gui_map_diff.refresh_gui_map` - 24 calls
 - `src.vdisplay.control.descriptors.detect_platform_profile` - 23 calls
-- `examples.common.validate_artifacts.validate_image_and_meta` - 22 calls
 
 ## System Interactions
 

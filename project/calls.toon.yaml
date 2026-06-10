@@ -1,7 +1,7 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.24s
-# nodes: 461 | edges: 500 | modules: 113
-# CC̄=3.5
+# generated in 0.22s
+# nodes: 461 | edges: 500 | modules: 112
+# CC̄=3.6
 
 HUBS[20]:
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
@@ -12,38 +12,38 @@ HUBS[20]:
     CC=1  in:0  out:46  total:46
   packages.rest2vdisplay.src.rest2vdisplay.app.create_app
     CC=2  in:3  out:38  total:41
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-    CC=14  in:13  out:27  total:40
   src.vdisplay.cli_handlers.print_json
     CC=1  in:39  out:1  total:40
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+    CC=14  in:13  out:27  total:40
   src.vdisplay.utils.run_command
     CC=2  in:33  out:4  total:37
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  examples.host-relay.relay_demo.main
-    CC=11  in:0  out:33  total:33
   packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
     CC=1  in:0  out:33  total:33
+  examples.host-relay.relay_demo.main
+    CC=11  in:0  out:33  total:33
   src.vdisplay.discovery.resolve_host_display
-    CC=11  in:25  out:7  total:32
+    CC=11  in:26  out:7  total:33
   src.vdisplay.commands.agent.handle
     CC=15  in:0  out:32  total:32
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  examples.control-plane.control_demo.run_browser_demo
-    CC=6  in:1  out:30  total:31
   src.vdisplay.control.descriptors.detect_platform_profile
     CC=14  in:8  out:23  total:31
   examples.host-mirror.mirror_demo.main
     CC=7  in:0  out:31  total:31
+  examples.control-plane.control_demo.run_browser_demo
+    CC=6  in:1  out:30  total:31
   src.vdisplay.commands.control.handle
     CC=8  in:0  out:30  total:30
   packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
     CC=5  in:21  out:8  total:29
-  src.vdisplay.control.policy._evaluate_readiness
-    CC=18  in:1  out:27  total:28
+  src.vdisplay.agent_config.resolve_agent_url
+    CC=6  in:24  out:5  total:29
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -167,8 +167,6 @@ MODULES:
     register_routes  CC=1  out:27
   packages.vdisplay-agent.src.vdisplay_agent.routes.windows  [1 funcs]
     register_routes  CC=1  out:12
-  packages.vdisplay-agent.src.vdisplay_agent.runtime  [1 funcs]
-    list_control_plugins  CC=1  out:1
   packages.vdisplay-agent.src.vdisplay_agent.serve_port  [8 funcs]
     _parse_ss_pids  CC=2  out:4
     _pid_alive  CC=3  out:1
@@ -387,9 +385,6 @@ MODULES:
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
-  src.vdisplay.control.action_bounds  [2 funcs]
-    action_bounds_for_vision  CC=2  out:4
-    click_point_for_vision  CC=1  out:1
   src.vdisplay.control.base  [3 funcs]
     capabilities  CC=2  out:2
     session_kind  CC=2  out:1
@@ -399,33 +394,34 @@ MODULES:
     engine_profile_id  CC=2  out:3
     normalize_browser_engine  CC=3  out:6
     resolve_session_browser_engine  CC=3  out:4
-  src.vdisplay.control.browser_session_store  [1 funcs]
+  src.vdisplay.control.browser_session_store  [9 funcs]
+    _chromium_executable  CC=2  out:4
+    find_free_port  CC=1  out:4
+    launch_detached_chromium  CC=7  out:17
+    load_meta  CC=5  out:14
+    meta_path  CC=1  out:0
+    profile_dir  CC=1  out:0
+    remove_meta  CC=2  out:3
+    save_meta  CC=1  out:5
     session_available  CC=3  out:3
-  src.vdisplay.control.descriptors  [5 funcs]
-    all_provider_descriptors  CC=1  out:2
-    all_selector_extensions  CC=1  out:0
+  src.vdisplay.control.contracts  [2 funcs]
+    control_route_request_from_command  CC=4  out:27
+    provider_score_from_dataclass  CC=4  out:4
+  src.vdisplay.control.descriptors  [2 funcs]
     descriptor_for  CC=1  out:1
     detect_platform_profile  CC=14  out:23
-    extension_catalog  CC=8  out:10
   src.vdisplay.control.engine  [3 funcs]
     resolve_provider  CC=1  out:1
     resolve_provider_routing  CC=2  out:2
     resolve_route  CC=2  out:2
-  src.vdisplay.control.gui_map  [7 funcs]
-    _slug  CC=2  out:4
-    build_gui_map_from_ocr  CC=11  out:16
-    element_from_ocr_box  CC=9  out:11
-    resolve_map_region  CC=2  out:2
+  src.vdisplay.control.gui_map  [1 funcs]
     save_gui_map  CC=1  out:4
-    scoped_capture_region  CC=2  out:1
-    tile_fingerprint  CC=4  out:13
   src.vdisplay.control.gui_map_export  [1 funcs]
     write_map_artifacts  CC=4  out:14
-  src.vdisplay.control.plugins  [10 funcs]
+  src.vdisplay.control.plugins  [9 funcs]
     _bootstrap_builtin_registry  CC=3  out:3
     _register_plugin  CC=1  out:2
     get_provider_registry  CC=3  out:3
-    get_registered_descriptor  CC=5  out:3
     iter_provider_names  CC=1  out:2
     list_control_plugins  CC=2  out:3
     load_entry_point_plugins  CC=8  out:12
@@ -455,9 +451,12 @@ MODULES:
     get_descriptor  CC=2  out:2
     register  CC=2  out:1
     default_provider_registry  CC=1  out:1
-  src.vdisplay.control.router  [5 funcs]
+  src.vdisplay.control.router  [8 funcs]
     __init__  CC=2  out:1
+    _build_decision  CC=7  out:9
     evaluate  CC=2  out:5
+    route  CC=4  out:5
+    route_command  CC=1  out:2
     _eligible_for_profile  CC=8  out:2
     _select_winner  CC=9  out:9
     default_router  CC=2  out:1

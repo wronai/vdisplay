@@ -71,11 +71,17 @@ class GuiMapDiff:
     regions: list[RegionDrift] = field(default_factory=list)
     new_ocr_labels: list[str] = field(default_factory=list)
     summary: dict[str, int] = field(default_factory=dict)
+    recommendation: str = "stable"
+    actionable: bool = False
+    key_targets: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "ok": self.ok,
             "drifted": self.drifted,
+            "recommendation": self.recommendation,
+            "actionable": self.actionable,
+            "key_targets": dict(self.key_targets),
             "summary": dict(self.summary),
             "elements": [item.to_dict() for item in self.elements],
             "regions": [item.to_dict() for item in self.regions],
@@ -146,6 +152,46 @@ def match_ocr_box_for_element(
     if _distance(stored, _box_to_bounds(best)) > max_distance_px and anchor:
         return None
     return best
+
+
+def assess_map_drift(
+    diff: GuiMapDiff,
+    *,
+    refresh_ratio: float = 0.25,
+    key_target_ids: tuple[str, ...] = ("chat", "message", "ask_anything"),
+) -> tuple[str, bool, dict[str, str]]:
+    """Return (recommendation, actionable, key_target_statuses)."""
+    total = sum(diff.summary.values())
+    if total == 0:
+        return "stable", False, {}
+
+    missing = diff.summary.get("missing", 0)
+    bounds = diff.summary.get("bounds", 0)
+    fingerprint = diff.summary.get("fingerprint", 0)
+    problematic = missing + bounds
+    ratio = problematic / total if total else 0.0
+    region_drift = any(item.status != "ok" for item in diff.regions)
+
+    key_targets = {
+        item.element_id: item.status
+        for item in diff.elements
+        if item.element_id in key_target_ids
+    }
+    key_bad = any(status in {"missing", "bounds"} for status in key_targets.values())
+
+    if key_bad or ratio >= refresh_ratio or missing > max(3, total // 3):
+        recommendation = "refresh_required"
+        actionable = True
+    elif problematic > 0 or region_drift:
+        recommendation = "refresh_recommended"
+        actionable = True
+    elif fingerprint > 0:
+        recommendation = "stable_with_cosmetic_drift"
+        actionable = False
+    else:
+        recommendation = "stable"
+        actionable = False
+    return recommendation, actionable, key_targets
 
 
 def diff_gui_map(
@@ -287,7 +333,7 @@ def diff_gui_map(
     ]
 
     drifted = any(item.status != "ok" for item in element_drifts + region_drifts)
-    return GuiMapDiff(
+    diff = GuiMapDiff(
         ok=not drifted,
         drifted=drifted,
         elements=element_drifts,
@@ -295,6 +341,11 @@ def diff_gui_map(
         new_ocr_labels=new_labels,
         summary=counts,
     )
+    recommendation, actionable, key_targets = assess_map_drift(diff)
+    diff.recommendation = recommendation
+    diff.actionable = actionable
+    diff.key_targets = key_targets
+    return diff
 
 
 def refresh_gui_map(

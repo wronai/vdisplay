@@ -187,7 +187,19 @@ def _node_capabilities(
     )
 
 
-def _node_bounds(accessible) -> ControlBounds | None:
+_BOUNDS_ROLES = {
+    ControlRole.BUTTON,
+    ControlRole.INPUT,
+    ControlRole.LABEL,
+    ControlRole.CHECKBOX,
+    ControlRole.COMBOBOX,
+    ControlRole.MENUITEM,
+}
+
+
+def _node_bounds(accessible, *, role: ControlRole | None = None) -> ControlBounds | None:
+    if role is not None and role not in _BOUNDS_ROLES:
+        return None
     component = _iface(accessible, "component")
     if component is None:
         return None
@@ -273,7 +285,7 @@ def snapshot_dict(
             role=role,
             name=name,
             description=accessible.description or None,
-            bounds=_node_bounds(accessible),
+            bounds=_node_bounds(accessible, role=role),
             window_id=window_id,
             app_label=app_name,
             window_title=current_window_title,
