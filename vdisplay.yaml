@@ -1,0 +1,218 @@
+# vdisplay project automation config
+# User overrides: .vdisplay/vdisplay.override.yaml (merged on top; see examples/dev-workflow/vdisplay.override.example.yaml)
+# Env defaults: .env (VDISPLAY_* UPPERCASE — see .env.example); yaml wins over .env for explicit keys
+# Runtime metadata / analysis artifacts: .vdisplay/
+
+version: "1"
+
+project:
+  name: vdisplay
+
+automation:
+  observe: true
+  observe_on_screenshot: true
+  verify_strict: true
+  reject_vision_stubs: true
+  post_act_verify: true
+  session: true
+  metadata_dir: .vdisplay
+  default_monitor: DP-1
+  planfile: examples/dev-workflow/planfile.yaml
+
+capture:
+  default_monitor: DP-1
+  observe_on_screenshot: true
+
+monitors:
+  - name: DP-1
+    role: dev-primary
+    default: true
+    notes: Cursor / terminals / browser — main automation target
+  - name: DP-2
+    role: primary-rotated
+    notes: Tall rotated monitor — Toolbox, grok
+  - name: HDMI-1
+    role: secondary
+    notes: Cross-monitor tests
+
+windows:
+  - app: cursor
+    title_contains: Cursor
+    preferred_monitor: DP-1
+  - app: jetbrains-toolbox
+    title_contains: Toolbox
+    preferred_monitor: DP-2
+
+actions:
+  cursor_chat:
+    app: cursor
+    monitor: DP-1
+    map: maps/cursor-chat.json
+    backend: vision
+    vision_anchor: Chat
+    vision_anchor_rel: below
+    observe: true
+    verify: true
+    notes: Native Wayland Cursor — vision OCR or map fallback (build map once)
+
+  cursor_ask:
+    app: cursor
+    monitor: DP-1
+    map: maps/cursor-chat.json
+    backend: vision
+    vision_anchor: Ask
+    vision_anchor_rel: below
+    observe: true
+
+  dev_screenshot_dp1:
+    monitor: DP-1
+    command: vdisplay screenshot -o .vdisplay/observe/dev-dp1.png --source DP-1
+
+  dev_preflight:
+    command: vdisplay agent preflight
+
+  pycharm_chat:
+    app: pycharm
+    monitor: DP-2
+    map: maps/pycharm-chat.json
+    backend: vision
+    vision_anchor: Ask
+    observe: true
+    notes: PyCharm AI chat on DP-2 — map primary path on native Wayland
+
+  jetbrains_koru_drive:
+    monitor: DP-2
+    notes: koru autopilot drive — set koru_instance jetbrains on planfile task
+
+  cursor_koru_drive:
+    monitor: DP-1
+    notes: koru autopilot drive — set koru_instance cursor on planfile task
+
+# User-extensible option catalogs (merged with .vdisplay/vdisplay.override.yaml).
+# Replace a list to customize; extend task_priorities / vql.kind_priority via dict merge.
+options:
+  control_backends:
+    - auto
+    - atspi
+    - x11
+    - browser
+    - terminal
+    - vision
+  control_environments:
+    - desktop
+    - browser
+    - terminal
+    - vision
+  vision_anchor_relations:
+    - right_of
+    - below
+    - near
+    - left_of
+    - above
+  auto_sources:
+    - auto
+    - yaml
+    - tickets
+  runnable_task_statuses:
+    - todo
+    - open
+    - ready
+    - pending
+    - ""
+  task_priorities:
+    critical: 0
+    high: 1
+    normal: 2
+    medium: 3
+    low: 4
+  planfile_task_keys:
+    - automation
+    - automation_tasks
+    - control_tasks
+    - desktop_tasks
+    - tasks
+  control_actuation_markers:
+    - control click
+    - control focus
+    - control set-value
+    - control find
+    - control list
+    - ide prompt
+    - CONTROL_CLICK
+    - CONTROL_FOCUS
+    - CONTROL_SET_VALUE
+    - CONTROLS_FIND
+    - CONTROLS_LIST
+  vision_injection_commands:
+    - control find
+    - control focus
+    - control click
+    - control set-value
+    - controls_find
+  action_map_templates:
+    - "maps/{app}-chat.json"
+    - "maps/{id}.json"
+    - "maps/{id_dash}.json"
+  metadata_subdirs:
+    - runs
+    - observe
+    - vql
+    - context
+    - config
+  observe_sidecar_suffixes:
+    - .context.json
+    - .vql.json
+    - .vql.svg
+  ide_apps:
+    - cursor
+    - jetbrains
+    - pycharm
+    - vscode
+    - idea
+  vql:
+    target_limit: 32
+    layer_export_limit: 128
+    map_target_limit: 32
+    ocr_text_max_len: 48
+    kind_priority:
+      input: 0
+      button: 1
+      window: 2
+      element: 3
+      ocr: 4
+      panel: 5
+  control_list_formats:
+    - flat
+    - tree
+  observe_output_formats:
+    - json
+    - vql
+    - summary
+  sampler_capture_modes:
+    - desktop
+    - strict
+    - unattended
+    - best-effort
+  sampler_frame_formats:
+    - png
+    - webp
+    - jpeg
+  diagnose_modes:
+    - control
+    - unattended
+  browser_vendors:
+    - chromium
+    - firefox
+  session_export_formats:
+    - readme
+    - json
+    - summary
+  control_retry_strategies:
+    - retry_scope
+    - fallback_backend
+    - refresh_map
+  screenshot_sources:
+    - host
+    - mirror
+    - virtual
+    - relay

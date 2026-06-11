@@ -554,7 +554,7 @@ def archive_map_artifacts(
         )
     if entries:
         try:
-            from ..application.gui_map_events import record_gui_map_built
+            from ..gui_map_events import record_gui_map_built
             from ..control.gui_map import load_gui_map
 
             pack = load_gui_map(dest_json)
@@ -700,11 +700,9 @@ def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:
 
 
 def discover_session_dirs(*, root: Path | None = None) -> list[Path]:
-    base = root or (Path.cwd() / ".vdisplay")
-    if not base.is_dir():
-        return []
-    sessions = [path for path in base.iterdir() if path.is_dir() and (path / "session.json").is_file()]
-    return sorted(sessions, key=lambda path: path.stat().st_mtime, reverse=True)
+    from .history.loader import discover_session_dirs as _discover_all
+
+    return _discover_all(root=root)
 
 
 def load_session_document(session_dir: Path) -> SessionDocument:

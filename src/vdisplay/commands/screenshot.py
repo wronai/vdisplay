@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import argparse
 
+from ..application.config_options import get_runtime_options
 from ..application.services import capture
 from .common import add_display_arg
 from .io import print_json
 
 
 def register(sub: argparse._SubParsersAction) -> None:
+    opts = get_runtime_options()
     parser = sub.add_parser("screenshot", help="Capture monitor screenshot (mirror on multi-monitor host)")
     add_display_arg(parser)
     parser.add_argument("-o", "--output", help="Output PNG path")
@@ -18,7 +20,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     parser.add_argument("--all-monitors", action="store_true", help="Capture every connected monitor")
     parser.add_argument(
         "--mode",
-        choices=["host", "mirror", "virtual", "relay"],
+        choices=opts.screenshot_sources,
         default="host",
         help="Capture backend (default: host/mirror pipeline)",
     )

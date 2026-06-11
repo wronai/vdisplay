@@ -1,0 +1,136 @@
+automation:
+- id: cross-jb-vdisplay-prompt
+  title: JetBrains — vdisplay ide prompt via map
+  status: done
+  priority: critical
+  action_ref: pycharm_chat
+  monitor: DP-2
+  handler: vdisplay ide prompt --ide pycharm --target ai-chat-input --text "[cross-IDE]
+    JetBrains vdisplay map OK"
+  last_run_note: "{\n  \"ok\": true,\n  \"app_id\": \"pycharm\",\n  \"backend\": \"\
+    vision\",\n  \"chars\": 37,\n  \"submit\": false,\n  \"map_path\": \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\"\
+    ,\n  \"map_manifest\": \"/home/tom/github/wronai/vdisplay/maps/templates/pycharm-chat.manifest.json\"\
+    ,\n  \"wait_window\": {\n    \"ok\": false,\n    \"app_id\": \"pycharm\",\n  \
+    \  \"focused\": false,\n    \"error\": \"no control matched selector: ControlSelector(role='window',\
+    \ name=None, name_contains=None, app='pycharm', window_id=None, window_title='PyCharm',\
+    \ index=0, backend=None, environment=None, text=None, text_contains=None, value=None,\
+    \ accessibility_id=None, path=None, dom_css=None, dom_xpath=None, terminal_line=None,\
+    \ terminal_col=None, session_id=None, vision_anchor=None, vision_template=None,\
+    \ vision_anchor_rel=None, vision_target=None, vision_min_confidence=None, extra={})\"\
+    ,\n    \"timeout_seconds\": 3.0,\n    \"note\": \"continuing with GUI map (AT-SPI\
+    \ window focus not required)\"\n  },\n  \"message\": \"typed via vdisplay ide\
+    \ prompt\",\n  \"selector\": {\n    \"display\": null,\n    \"backend\": \"vision\"\
+    ,\n    \"app\": \"pycharm\",\n    \"window_title\": \"PyCharm\",\n    \"map_path\"\
+    : \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\",\n    \"map_scope\"\
+    : null,\n    \"map_target\": \"ai-chat-input\"\n  },\n  \"focus_error\": \"no\
+    \ control matched selector: ControlSelector(role='window', name=None, name_contains=None,\
+    \ app='pycharm', window_id=None, window_title='PyCharm', index=0, backend=None,\
+    \ environment=None, text=None, text_contains=None, value=None, accessibility_id=None,\
+    \ path=None, dom_css=None, dom_xpath=None, terminal_line=None, terminal_col=None,\
+    \ session_id=None, vision_anchor=None, vision_template=None, vision_anchor_rel=None,\
+    \ vision_target=None, vision_min_confidence=None, extra={})\",\n  \"typed\": {\n\
+    \    \"ok\": true,\n    \"element_id\": \"map:ai-chat-input\",\n    \"value\"\
+    : \"[cross-IDE] JetBrains vdisplay map OK\",\n    \"method\": \"ydotool-paste\"\
+    ,\n    \"action\": \"set_value\",\n    \"map_path\": \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\"\
+    ,\n    \"map_target\": \"ai-chat-input\",\n    \"selector\": {\n      \"role\"\
+    : null,\n      \"name\": null,\n      \"name_contains\": null,\n      \"app\"\
+    : null,\n      \"window_id\": null,\n      \"window_title\": null,\n      \"index\"\
+    : 0,\n      \"backend\": \"vision\",\n      \"environment\": null,\n      \"text\"\
+    : null,\n      \"text_contains\": null,\n      \"value\": null,\n      \"accessibility_id\"\
+    : null,\n      \"path\": null,\n      \"dom_css\": null,\n      \"dom_xpath\"\
+    : null,\n      \"terminal_line\": null,\n      \"terminal_col\": null,\n     \
+    \ \"session_id\": null,\n      \"vision_anchor\": \"Ask\",\n      \"vision_template\"\
+    : null,\n      \"vision_anchor_rel\": null,\n      \"vision_target\": null,\n\
+    \      \"vision_min_confidence\": null,\n      \"extra\": {\n        \"map_path\"\
+    : \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\",\n        \"map_target\"\
+    : \"ai-chat-input\"\n      }\n    },\n    \"target\": {\n      \"id\": \"map:ai-chat-input\"\
+    ,\n      \"backend\": \"vision\",\n      \"role\": \"input\",\n      \"name\"\
+    : \"ai-chat-input\",\n      \"description\": null,\n      \"window_id\": null,\n\
+    \      \"app_label\": null,\n      \"window_title\": null,\n      \"provider_ref\"\
+    : null,\n      \"state\": {\n        \"map\": true,\n        \"map_element_id\"\
+    : \"ai-chat-input\",\n        \"raw_bounds\": {\n          \"x\": 1540,\n    \
+    \      \"y\": 1617,\n          \"width\": 720,\n          \"height\": 24\n   \
+    \     },\n        \"action_bounds\": {\n          \"x\": 1540,\n          \"y\"\
+    : 1605,\n          \"width\": 720,\n          \"height\": 48\n        },\n   \
+    \     \"click_point\": {\n          \"x\": 1900,\n          \"y\": 1629\n    \
+    \    },\n        \"anchor\": \"Ask\",\n        \"capture\": {\n          \"bytes\"\
+    : 663827,\n          \"display\": \":0\",\n          \"height\": 1600,\n     \
+    \     \"method\": \"portal-screencast\",\n          \"monitor\": 1,\n        \
+    \  \"monitor_name\": \"DP-2\",\n          \"ok\": true,\n          \"path\": \"\
+    /tmp/vdisplay-map-lflci9zu/frame.png\",\n          \"region\": {\n           \
+    \ \"height\": 1280,\n            \"width\": 2048,\n            \"x\": 0,\n   \
+    \         \"y\": 1932\n          },\n          \"rotation\": \"left\",\n     \
+    \     \"screencast_full_frame\": true,\n "
+- id: cross-jb-koru-drive
+  title: JetBrains — koru autopilot drive
+  status: done
+  priority: critical
+  koru_instance: jetbrains
+  monitor: DP-2
+  handler: koru autopilot drive --ide jetbrains --no-submit --prompt "[cross-IDE]
+    JetBrains koru OK"
+  last_run_note: "{\n  \"backend\": \"os_injector\",\n  \"id\": \"cli-drive\",\n \
+    \ \"ide\": {\n    \"exe\": \"/home/tom/.local/share/JetBrains/Toolbox/apps/pycharm-2/bin/pycharm\"\
+    ,\n    \"id\": \"jetbrains\",\n    \"label\": \"JetBrains IDE\",\n    \"pid\"\
+    : 913362\n  },\n  \"ok\": true,\n  \"submitted\": false,\n  \"tool_id\": \"jetbrains\"\
+    ,\n  \"type\": \"ack\"\n}"
+- id: cross-jb-vdisplay-find
+  title: JetBrains — vdisplay control find map target
+  status: done
+  priority: high
+  action_ref: pycharm_chat
+  monitor: DP-2
+  handler: vdisplay control find --target ai-chat-input
+  last_run_note: "{\n  \"matches\": [\n    {\n      \"id\": \"vision:Ask\",\n    \
+    \  \"backend\": \"vision\",\n      \"role\": \"unknown\",\n      \"name\": \"\
+    Ask\",\n      \"description\": null,\n      \"window_id\": null,\n      \"app_label\"\
+    : null,\n      \"window_title\": null,\n      \"provider_ref\": null,\n      \"\
+    state\": {\n        \"stub\": true,\n        \"anchor\": \"Ask\"\n      },\n \
+    \     \"actions\": [],\n      \"text_value\": null,\n      \"parent_id\": null,\n\
+    \      \"children_ids\": [],\n      \"bounds\": {\n        \"x\": 0,\n       \
+    \ \"y\": 0,\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ],\n\
+    \  \"selected\": {\n    \"id\": \"vision:Ask\",\n    \"backend\": \"vision\",\n\
+    \    \"role\": \"unknown\",\n    \"name\": \"Ask\",\n    \"description\": null,\n\
+    \    \"window_id\": null,\n    \"app_label\": null,\n    \"window_title\": null,\n\
+    \    \"provider_ref\": null,\n    \"state\": {\n      \"stub\": true,\n      \"\
+    anchor\": \"Ask\"\n    },\n    \"actions\": [],\n    \"text_value\": null,\n \
+    \   \"parent_id\": null,\n    \"children_ids\": [],\n    \"bounds\": {\n     \
+    \ \"x\": 0,\n      \"y\": 0,\n      \"width\": 0,\n      \"height\": 0\n    }\n\
+    \  },\n  \"count\": 1\n}"
+- id: cross-cursor-koru-drive
+  title: Cursor — koru autopilot drive
+  status: done
+  priority: critical
+  koru_instance: cursor
+  monitor: DP-1
+  handler: koru autopilot drive --ide cursor --no-submit --prompt "[cross-IDE] Cursor
+    koru OK"
+  last_run_note: "{\n  \"backend\": \"os_injector\",\n  \"id\": \"cli-drive\",\n \
+    \ \"ide\": {\n    \"exe\": \"/tmp/.mount_cursorObnJFC/usr/share/cursor/cursor\"\
+    ,\n    \"id\": \"cursor\",\n    \"label\": \"Cursor\",\n    \"pid\": 51388\n \
+    \ },\n  \"ok\": true,\n  \"submitted\": false,\n  \"tool_id\": \"cursor\",\n \
+    \ \"type\": \"ack\"\n}"
+- id: cross-cursor-vdisplay-find
+  title: Cursor — vdisplay vision find Ask
+  status: done
+  priority: high
+  action_ref: cursor_ask
+  monitor: DP-1
+  observe: true
+  handler: vdisplay control find --backend vision
+  last_run_note: "{\n  \"matches\": [\n    {\n      \"id\": \"vision:Ask\",\n    \
+    \  \"backend\": \"vision\",\n      \"role\": \"unknown\",\n      \"name\": \"\
+    Ask\",\n      \"description\": null,\n      \"window_id\": null,\n      \"app_label\"\
+    : null,\n      \"window_title\": null,\n      \"provider_ref\": null,\n      \"\
+    state\": {\n        \"stub\": true,\n        \"anchor\": \"Ask\"\n      },\n \
+    \     \"actions\": [],\n      \"text_value\": null,\n      \"parent_id\": null,\n\
+    \      \"children_ids\": [],\n      \"bounds\": {\n        \"x\": 0,\n       \
+    \ \"y\": 0,\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ],\n\
+    \  \"selected\": {\n    \"id\": \"vision:Ask\",\n    \"backend\": \"vision\",\n\
+    \    \"role\": \"unknown\",\n    \"name\": \"Ask\",\n    \"description\": null,\n\
+    \    \"window_id\": null,\n    \"app_label\": null,\n    \"window_title\": null,\n\
+    \    \"provider_ref\": null,\n    \"state\": {\n      \"stub\": true,\n      \"\
+    anchor\": \"Ask\"\n    },\n    \"actions\": [],\n    \"text_value\": null,\n \
+    \   \"parent_id\": null,\n    \"children_ids\": [],\n    \"bounds\": {\n     \
+    \ \"x\": 0,\n      \"y\": 0,\n      \"width\": 0,\n      \"height\": 0\n    }\n\
+    \  },\n  \"count\": 1\n}"

@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
-import os
 from typing import Any
+
+from ..application.env_defaults import vision_backend_name
 
 
 def vision_backend() -> str:
-    return os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower() or "auto"
+    return vision_backend_name()
 
 
 def prefer_imgl_backend() -> bool:

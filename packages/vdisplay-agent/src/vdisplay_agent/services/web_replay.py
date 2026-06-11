@@ -7,11 +7,12 @@ import os
 from pathlib import Path
 from typing import Any
 
+from vdisplay.application.env_defaults import env_value
 from vdisplay.exceptions import VDisplayError
 
 
 def list_replay_sessions(root: Path | None = None) -> list[dict[str, Any]]:
-    base = root or Path(os.environ.get("VDISPLAY_SESSION_BASE", ".vdisplay")).expanduser()
+    base = root or Path(env_value("VDISPLAY_SESSION_BASE")).expanduser()
     if not base.is_dir():
         return []
     sessions: list[dict[str, Any]] = []

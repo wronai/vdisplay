@@ -92,7 +92,9 @@ class EventStore:
         return events
 
     def _maybe_refresh_projections(self) -> None:
-        if os.environ.get("VDISPLAY_PROJECTIONS", "1").strip().lower() in {"0", "false", "no"}:
+        from .env_defaults import env_flag
+
+        if not env_flag("VDISPLAY_PROJECTIONS", default=True):
             return
         try:
             from .projections import refresh_projections

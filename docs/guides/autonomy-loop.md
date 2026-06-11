@@ -36,6 +36,19 @@ Single control actions already loop internally (`control.py` → VerifierPipelin
 - Browser control via `_run_on_browser_thread` (agent) — never sync Playwright on asyncio thread
 - Test: `vdisplay control find --backend vision --vision-anchor Ask` on Cursor after `vdisplay app open cursor`
 
+### Project config (`vdisplay.yaml`)
+
+Each project using vdisplay should have **`vdisplay.yaml`** at the repo root with monitors, windows, actions, and automation defaults. Optional user overrides: **`.vdisplay/vdisplay.override.yaml`**.
+
+All runtime metadata (observe PNG, VQL, context, auto run logs) goes under **`.vdisplay/`**.
+
+```bash
+vdisplay config --project .
+vdisplay auto --project . --planfile examples/dev-workflow/planfile-autonomy.yaml --source yaml run
+```
+
+See [vdisplay.yaml](../../vdisplay.yaml) and [examples/dev-workflow/vdisplay.override.example.yaml](../../examples/dev-workflow/vdisplay.override.example.yaml).
+
 ### Faza 1 — Zamknięta pętla auto (milestone)
 
 **Implemented (prototype):**
@@ -58,7 +71,29 @@ vdisplay auto --project . \
 
 - NLP → planfile task generation with observe flags
 - Task-level retry on keeper stale / AT-SPI timeout
-- Post-act screenshot verify task auto-appended
+
+**Implemented (this iteration):**
+
+- `post_act_verify: true` — auto screenshot after successful act+verify → `.vdisplay/observe/{task-id}-post-verify.png`
+- `preflight_actuation` — fail fast when vision actuation has no OCR and no map file
+- `decision_data` in task feedback (action_ref, map/OCR readiness, data_locations)
+- `bash examples/dev-workflow/setup-autonomy.sh` — vision deps + optional `--build-map`
+- `bash examples/dev-workflow/run-dev-automation.sh --autonomy --setup-vision --reset`
+
+### Cross-IDE smoke (JetBrains → Cursor)
+
+Validates **koru + vdisplay** paths independently per IDE:
+
+| IDE | vdisplay | koru |
+|-----|----------|------|
+| PyCharm (DP-2) | `ide prompt` + map | `autopilot drive --ide jetbrains` |
+| Cursor (DP-1) | `control find` vision OCR | `autopilot drive --ide cursor` |
+
+```bash
+bash examples/dev-workflow/run-dev-automation.sh --cross-ide --reset
+```
+
+Planfile: [examples/dev-workflow/planfile-cross-ide.yaml](../../examples/dev-workflow/planfile-cross-ide.yaml). Planfile tasks may set `koru_instance: jetbrains|cursor` — auto runner scopes `KORU_AUTOPILOT_*` env.
 
 ### Faza 2 — Stan i replanning
 

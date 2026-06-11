@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from ..application.config_options import get_runtime_options
 from ..application.commands import CommandRequest, CommandVerb
 from .common import control_selector_kwargs_from_args
 from .io import print_json
@@ -53,7 +54,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     )
     show_parser.add_argument(
         "--format",
-        choices=("readme", "json", "summary"),
+        choices=tuple(get_runtime_options().session_export_formats),
         default="readme",
         help="Output format (default: readme)",
     )

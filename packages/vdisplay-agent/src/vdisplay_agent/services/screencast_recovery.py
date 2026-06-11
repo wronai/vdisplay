@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-import os
 import time
 
+from vdisplay.application.env_defaults import env_float_value
 from vdisplay.exceptions import VDisplayError
 
 from ..session_store import SessionStore
 
 _LAST_RECOVERY_ATTEMPT_MONO: float = 0.0
-_RECOVERY_COOLDOWN_S = max(
-    30.0,
-    float(os.environ.get("VDISPLAY_SCREENCAST_RECOVERY_COOLDOWN_S", "300")),
-)
+
+
+def _recovery_cooldown_s() -> float:
+    return max(30.0, env_float_value("VDISPLAY_SCREENCAST_RECOVERY_COOLDOWN_S", default=300.0))
 
 
 def is_recoverable_screencast_error(exc: VDisplayError) -> bool:
@@ -35,7 +35,7 @@ def is_recoverable_screencast_error(exc: VDisplayError) -> bool:
 def screencast_recovery_cooldown_remaining() -> float:
     """Seconds until another automatic screencast recovery is allowed."""
     elapsed = time.monotonic() - _LAST_RECOVERY_ATTEMPT_MONO
-    return max(0.0, _RECOVERY_COOLDOWN_S - elapsed)
+    return max(0.0, _recovery_cooldown_s() - elapsed)
 
 
 def _mark_recovery_attempt() -> None:

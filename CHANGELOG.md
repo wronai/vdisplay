@@ -92,6 +92,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.26] - 2026-06-11
+
+### Docs
+- Update README.md
+- Update docs/control.md
+- Update docs/guides/autonomy-loop.md
+- Update examples/dev-workflow/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_auto_feedback.py
+- Update tests/test_env_config.py
+- Update tests/test_env_registry.py
+- Update tests/test_history.py
+- Update tests/test_imgl_bridge.py
+- Update tests/test_project_config.py
+- Update tests/test_screencast_recovery.py
+- Update tests/test_vql_bridge.py
+- Update tests/test_vql_empty_layers_warn.py
+- Update tests/test_vql_img2nl_scene.py
+
+### Other
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update .koru/project.json
+- Update .planfile/.store.lock
+- Update .planfile/config.yaml
+- Update .planfile/sprints/current.yaml
+- Update examples/dev-workflow/koru-drive-photo-vql.sh
+- Update examples/dev-workflow/koru-photo-vql.sh
+- Update examples/dev-workflow/planfile-autonomy.yaml
+- Update examples/dev-workflow/planfile-cross-ide.yaml
+- ... and 26 more files
+
 ## [0.1.25] - 2026-06-11
 
 ### Docs

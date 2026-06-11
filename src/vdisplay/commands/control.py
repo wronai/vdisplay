@@ -12,11 +12,13 @@ from .common import (
     add_preview_args,
     control_selector_kwargs_for_service,
 )
+from ..application.config_options import get_runtime_options
 from .io import print_json
 from .session import command_request_from_control_args
 
 
 def register(sub: argparse._SubParsersAction) -> None:
+    opts = get_runtime_options()
     parser = sub.add_parser("control", help="Accessibility-first UI control (AT-SPI / x11 fallback)")
     control_sub = parser.add_subparsers(dest="action", required=True)
 
@@ -27,10 +29,10 @@ def register(sub: argparse._SubParsersAction) -> None:
     listing.add_argument(
         "--backend",
         default="auto",
-        choices=["auto", "atspi", "x11", "browser", "terminal", "vision"],
+        choices=get_runtime_options().control_backends,
     )
     listing.add_argument("--session-id", help="Terminal or browser session id")
-    listing.add_argument("--format", default="flat", choices=["flat", "tree"])
+    listing.add_argument("--format", default="flat", choices=opts.control_list_formats)
     listing.add_argument("--max-depth", type=int, default=8)
     listing.set_defaults(func=handle)
 
@@ -70,7 +72,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     browser_open.add_argument("--url", required=True, help="Initial page URL")
     browser_open.add_argument("--session-id", required=True, help="Session id for later control commands")
     browser_open.add_argument("--headed", action="store_true", help="Show browser window (default: headless)")
-    browser_open.add_argument("--vendor", choices=["chromium", "firefox"], help="Browser engine vendor")
+    browser_open.add_argument("--vendor", choices=opts.browser_vendors, help="Browser engine vendor")
     browser_open.add_argument("--engine", help="Alias for --vendor (chromium, firefox, chrome)")
     browser_open.set_defaults(func=handle)
 

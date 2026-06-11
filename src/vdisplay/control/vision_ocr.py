@@ -41,13 +41,13 @@ def ocr_available() -> tuple[bool, str]:
 
 def ocr_png(png: bytes, *, min_confidence: float = 30.0) -> list[OcrTextBox]:
     """Run OCR and return text boxes with pixel bounds."""
-    import os
+    from ..application.env_defaults import vision_backend_name
 
     cached_boxes = _ocr_from_screen_context_cache(min_confidence=min_confidence)
     if cached_boxes is not None:
         return cached_boxes
 
-    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    backend = vision_backend_name()
     if backend != "local":
         try:
             from ..integrations.vision_backend import ocr_png as delegated_ocr
@@ -60,19 +60,19 @@ def ocr_png(png: bytes, *, min_confidence: float = 30.0) -> list[OcrTextBox]:
 
 
 def _ocr_from_screen_context_cache(*, min_confidence: float) -> list[OcrTextBox] | None:
-    import os
+    from ..application.env_defaults import env_flag, env_optional
 
-    if os.environ.get("VDISPLAY_OCR_CACHE", "1").strip().lower() in {"0", "false", "no", "off"}:
+    if not env_flag("VDISPLAY_OCR_CACHE", default=True):
         return None
     try:
         from ..integrations.observe_cache import ocr_boxes_from_cached_context
         from ..integrations.screen_context import ScreenContext
 
-        payload = os.environ.get("VDISPLAY_SCREEN_CONTEXT_JSON", "").strip()
+        payload = env_optional("VDISPLAY_SCREEN_CONTEXT_JSON")
         if payload:
             ctx = ScreenContext.from_dict(json.loads(payload))
         else:
-            path = os.environ.get("VDISPLAY_SCREEN_CONTEXT_PATH", "").strip()
+            path = env_optional("VDISPLAY_SCREEN_CONTEXT_PATH")
             if not path:
                 return None
             sidecar = Path(path).expanduser()

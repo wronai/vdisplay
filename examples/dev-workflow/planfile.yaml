@@ -12,7 +12,7 @@ automation:
     \    \"wayland_display\": \"wayland-0\",\n    \"xdg_runtime_dir\": \"/run/user/1000\"\
     \n  },\n  \"screencast\": {\n    \"supported\": true,\n    \"active\": true,\n\
     \    \"ready\": true\n  },\n  \"keeper\": {\n    \"running\": true,\n    \"capture_ready\"\
-    : true,\n    \"pid\": 1495860,\n    \"socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
+    : true,\n    \"pid\": 1663300,\n    \"socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
     \n  },\n  \"next\": \"vdisplay agent screencast probe --source DP-1\"\n}"
 - id: dev-screencast-status
   title: Screencast session status
@@ -20,21 +20,21 @@ automation:
   priority: high
   handler: vdisplay agent screencast status
   last_run_note: "{\n  \"active\": true,\n  \"ready\": true,\n  \"session_path\":\
-    \ \"/org/freedesktop/portal/desktop/session/1_46859/vdisplay_sc_90250c30\",\n\
-    \  \"node_ids\": [\n    86,\n    133,\n    100\n  ],\n  \"streams\": [\n    {\n\
-    \      \"node_id\": 86,\n      \"properties\": {\n        \"id\": \"2\",\n   \
-    \     \"source_type\": 1,\n        \"position\": [\n          0,\n          652\n\
+    \ \"/org/freedesktop/portal/desktop/session/1_47669/vdisplay_sc_847ed4fd\",\n\
+    \  \"node_ids\": [\n    100,\n    126,\n    119\n  ],\n  \"streams\": [\n    {\n\
+    \      \"node_id\": 100,\n      \"properties\": {\n        \"id\": \"2\",\n  \
+    \      \"source_type\": 1,\n        \"position\": [\n          0,\n          652\n\
     \        ],\n        \"size\": [\n          2048,\n          1280\n        ]\n\
-    \      }\n    },\n    {\n      \"node_id\": 133,\n      \"properties\": {\n  \
+    \      }\n    },\n    {\n      \"node_id\": 126,\n      \"properties\": {\n  \
     \      \"id\": \"1\",\n        \"source_type\": 1,\n        \"position\": [\n\
     \          0,\n          1932\n        ],\n        \"size\": [\n          2048,\n\
-    \          1280\n        ]\n      }\n    },\n    {\n      \"node_id\": 100,\n\
+    \          1280\n        ]\n      }\n    },\n    {\n      \"node_id\": 119,\n\
     \      \"properties\": {\n        \"id\": \"0\",\n        \"source_type\": 1,\n\
     \        \"position\": [\n          2048,\n          0\n        ],\n        \"\
     size\": [\n          2160,\n          3840\n        ]\n      }\n    }\n  ],\n\
     \  \"source\": \"xdg-portal-screencast\",\n  \"has_pipewire_fd\": true,\n  \"\
     keeper_managed\": true,\n  \"keeper_socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
-    ,\n  \"keeper_pid\": 1495860,\n  \"ok\": true\n}"
+    ,\n  \"keeper_pid\": 1663300,\n  \"ok\": true\n}"
 - id: dev-monitors
   title: List monitors (NL)
   status: done
@@ -105,45 +105,45 @@ automation:
     \  \"argv\": [\n            \"gtk-launch\",\n            \"cursor.desktop\"\n\
     \          ],\n          \"env\": {},\n          \"cwd\": null\n        },\n \
     \       {\n          \"variant_id\": \"default\",\n          \"label\": \"cursor\"\
-    ,\n          \"argv\": [\n            \"/tmp/.mount_cursorObnJFC/usr/bin/cursor\"\
-    \n          ],\n          \"env\": {},\n          \"cwd\": null\n        },\n\
-    \        {\n          \"variant_id\": \"desktop-xwayland\",\n          \"label\"\
-    : \"gtk-launch cursor.desktop (XWayland)\",\n          \"argv\": [\n         \
-    \   \"gtk-launch\",\n            \"cursor.desktop\"\n          ],\n          \"\
-    env\": {\n            \"WAYLAND_DISPLAY\": \"\",\n            \"XDG_SESSION_TYPE\"\
-    : \"\",\n            \"DISPLAY\": \":0\",\n            \"GDK_BACKEND\": \"x11\"\
-    \n          },\n          \"cwd\": null\n        },\n        {\n          \"variant_id\"\
-    : \"default-xwayland\",\n          \"label\": \"cursor (XWayland)\",\n       \
-    \   \"argv\": [\n            \"/tmp/.mount_cursorObnJFC/usr/bin/cursor\"\n   \
-    \       ],\n          \"env\": {\n            \"WAYLAND_DISPLAY\": \"\",\n   \
-    \         \"XDG_SESSION_TYPE\": \"\",\n            \"DISPLAY\": \":0\",\n    \
-    \        \"GDK_BACKEND\": \"x11\"\n          },\n          \"cwd\": null\n   \
-    \     }\n      ],\n      \"app_hint\": \"Cursor\",\n      \"window_title_contains\"\
-    : \"Cursor\",\n      \"preferred_backend\": \"vision\",\n      \"chat_selectors\"\
-    : [\n        {\n          \"environment\": \"vision\",\n          \"vision_anchor\"\
-    : \"Ask\",\n          \"vision_anchor_rel\": \"below\"\n        },\n        {\n\
-    \          \"environment\": \"vision\",\n          \"vision_anchor\": \"Chat\"\
-    ,\n          \"vision_anchor_rel\": \"below\"\n        },\n        {\n       \
-    \   \"environment\": \"vision\",\n          \"vision_anchor\": \"Composer\",\n\
-    \          \"vision_anchor_rel\": \"below\"\n        },\n        {\n         \
-    \ \"role\": \"input\",\n          \"name_contains\": \"Chat\"\n        },\n  \
-    \      {\n          \"role\": \"input\",\n          \"name_contains\": \"chat\"\
-    \n        },\n        {\n          \"role\": \"input\",\n          \"name_contains\"\
-    : \"Ask\"\n        },\n        {\n          \"role\": \"input\",\n          \"\
-    name_contains\": \"Composer\"\n        },\n        {\n          \"role\": \"input\"\
-    ,\n          \"name_contains\": \"Message\"\n        },\n        {\n         \
-    \ \"role\": \"input\",\n          \"name_contains\": \"Prompt\"\n        },\n\
-    \        {\n          \"role\": \"entry\",\n          \"name_contains\": \"Chat\"\
-    \n        },\n        {\n          \"role\": \"entry\",\n          \"name_contains\"\
-    : \"chat\"\n        },\n        {\n          \"role\": \"text\",\n          \"\
-    name_contains\": \"Chat\"\n        },\n        {\n          \"role\": \"input\"\
-    \n        },\n        {\n          \"role\": \"entry\"\n        }\n      ],\n\
-    \      \"submit_selectors\": [\n        {\n          \"role\": \"button\",\n \
-    \         \"name_contains\": \"Send\"\n        },\n        {\n          \"role\"\
-    : \"button\",\n          \"name_contains\": \"Submit\"\n        },\n        {\n\
-    \          \"role\": \"button\",\n          \"name_contains\": \"Run\"\n     \
-    \   }\n      ],\n      \"map_template\": \"/home/tom/github/wronai/vdisplay/maps/templates/cursor-chat.manifest.json\"\
-    ,\n      \"map_targets\": {\n        \"chat\": \"chat-focus\",\n        \"message\"\
+    ,\n          \"argv\": [\n            \"/usr/bin/cursor\"\n          ],\n    \
+    \      \"env\": {},\n          \"cwd\": null\n        },\n        {\n        \
+    \  \"variant_id\": \"desktop-xwayland\",\n          \"label\": \"gtk-launch cursor.desktop\
+    \ (XWayland)\",\n          \"argv\": [\n            \"gtk-launch\",\n        \
+    \    \"cursor.desktop\"\n          ],\n          \"env\": {\n            \"WAYLAND_DISPLAY\"\
+    : \"\",\n            \"XDG_SESSION_TYPE\": \"\",\n            \"DISPLAY\": \"\
+    :0\",\n            \"GDK_BACKEND\": \"x11\"\n          },\n          \"cwd\":\
+    \ null\n        },\n        {\n          \"variant_id\": \"default-xwayland\"\
+    ,\n          \"label\": \"cursor (XWayland)\",\n          \"argv\": [\n      \
+    \      \"/usr/bin/cursor\"\n          ],\n          \"env\": {\n            \"\
+    WAYLAND_DISPLAY\": \"\",\n            \"XDG_SESSION_TYPE\": \"\",\n          \
+    \  \"DISPLAY\": \":0\",\n            \"GDK_BACKEND\": \"x11\"\n          },\n\
+    \          \"cwd\": null\n        }\n      ],\n      \"app_hint\": \"Cursor\"\
+    ,\n      \"window_title_contains\": \"Cursor\",\n      \"preferred_backend\":\
+    \ \"vision\",\n      \"chat_selectors\": [\n        {\n          \"environment\"\
+    : \"vision\",\n          \"vision_anchor\": \"Ask\",\n          \"vision_anchor_rel\"\
+    : \"below\"\n        },\n        {\n          \"environment\": \"vision\",\n \
+    \         \"vision_anchor\": \"Chat\",\n          \"vision_anchor_rel\": \"below\"\
+    \n        },\n        {\n          \"environment\": \"vision\",\n          \"\
+    vision_anchor\": \"Composer\",\n          \"vision_anchor_rel\": \"below\"\n \
+    \       },\n        {\n          \"role\": \"input\",\n          \"name_contains\"\
+    : \"Chat\"\n        },\n        {\n          \"role\": \"input\",\n          \"\
+    name_contains\": \"chat\"\n        },\n        {\n          \"role\": \"input\"\
+    ,\n          \"name_contains\": \"Ask\"\n        },\n        {\n          \"role\"\
+    : \"input\",\n          \"name_contains\": \"Composer\"\n        },\n        {\n\
+    \          \"role\": \"input\",\n          \"name_contains\": \"Message\"\n  \
+    \      },\n        {\n          \"role\": \"input\",\n          \"name_contains\"\
+    : \"Prompt\"\n        },\n        {\n          \"role\": \"entry\",\n        \
+    \  \"name_contains\": \"Chat\"\n        },\n        {\n          \"role\": \"\
+    entry\",\n          \"name_contains\": \"chat\"\n        },\n        {\n     \
+    \     \"role\": \"text\",\n          \"name_contains\": \"Chat\"\n        },\n\
+    \        {\n          \"role\": \"input\"\n        },\n        {\n          \"\
+    role\": \"entry\"\n        }\n      ],\n      \"submit_selectors\": [\n      \
+    \  {\n          \"role\": \"button\",\n          \"name_contains\": \"Send\"\n\
+    \        },\n        {\n          \"role\": \"button\",\n          \"name_contains\"\
+    : \"Submit\"\n        },\n        {\n          \"role\": \"button\",\n       \
+    \   \"name_contains\": \"Run\"\n        }\n      ],\n      \"map_template\": \"\
+    /home/tom/github/wronai/vdisplay/maps/templates/cursor-chat.manifest.json\",\n\
+    \      \"map_targets\": {\n        \"chat\": \"chat-focus\",\n        \"message\"\
     : \"chat-input\",\n        \"send\": \"chat-send\"\n      },\n      \"notes\"\
     : \"Native Wayland chat is not in AT-SPI; prefer koru plugin or vision+map.\"\n\
     \    },\n    {\n      \"app_id\": \"pycharm\",\n      \"label\": \"PyCharm\",\n\
@@ -155,17 +155,18 @@ automation:
     ,\n          \"argv\": [\n            \"/snap/bin/pycharm-professional\"\n   \
     \       ],\n          \"env\": {},\n          \"cwd\": null\n        },\n    \
     \    {\n          \"variant_id\": \"desktop-xwayland\",\n          \"label\":\
-    \ \"gtk-launch jetbrains-pycharm-professional"
+    \ \"gtk-launch jetbrains-pycharm-professional.desktop (XWayland)\",\n        \
+    \  \"argv\": [\n      "
 - id: dev-probe-dp1
   title: Probe DP-1 capture
   status: done
   priority: high
   monitor: DP-1
   handler: vdisplay agent screencast probe --source DP-1
-  last_run_note: "{\n  \"ok\": true,\n  \"via\": \"keeper\",\n  \"bytes\": 380117,\n\
+  last_run_note: "{\n  \"ok\": true,\n  \"via\": \"keeper\",\n  \"bytes\": 461016,\n\
     \  \"width\": 2048,\n  \"height\": 1280,\n  \"source\": \"DP-1\",\n  \"stream_index\"\
-    : 0,\n  \"node_id\": 86,\n  \"portal_stream_id\": \"2\",\n  \"target_object\"\
-    : \"2\",\n  \"keeper_pid\": 1495860,\n  \"tried_indices\": [\n    0\n  ]\n}"
+    : 0,\n  \"node_id\": 100,\n  \"portal_stream_id\": \"2\",\n  \"target_object\"\
+    : \"2\",\n  \"keeper_pid\": 1663300,\n  \"tried_indices\": [\n    0\n  ]\n}"
 - id: dev-screenshot-dp1
   title: Screenshot DP-1
   status: done
@@ -174,23 +175,23 @@ automation:
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp1.png --source DP-1
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-1\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
+    : [\n    100,\n    126,\n    119\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n\
     \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
     \  \"monitor_name\": \"DP-1\",\n  \"path\": \"/tmp/vdisplay-dev-dp1.png\",\n \
-    \ \"bytes\": 404879,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    \ \"bytes\": 453190,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~904 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
-    \ 255). Widoczny szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\\
+    \ 2048\\u00d71280 px. Widocznych ~674 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #141414, #000000, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
+    \ 255). Widoczny szum lub drobna tekstura. Wykryto 5 du\\u017cych region\\u00f3w/obiekt\\\
     u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
     llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
     \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
     \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
     : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
-    u00d71280 px. Widocznych ~904 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000,\
-    \ #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    u00d71280 px. Widocznych ~674 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #141414,\
+    \ #000000, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 5 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
     \n}"
 - id: dev-screenshot-dp2
   title: Screenshot DP-2
@@ -200,22 +201,24 @@ automation:
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp2.png --source DP-2
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-2\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 2,\n  \"\
+    : [\n    100,\n    126,\n    119\n  ],\n  \"screencast_stream_index\": 2,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 2048,\n    \"y\"\
     : 0,\n    \"width\": 2160,\n    \"height\": 3840\n  },\n  \"screencast_stream\"\
     : true,\n  \"monitor_name\": \"DP-2\",\n  \"path\": \"/tmp/vdisplay-dev-dp2.png\"\
-    ,\n  \"bytes\": 766559,\n  \"width\": 2160,\n  \"height\": 3840,\n  \"ok\": true,\n\
+    ,\n  \"bytes\": 664605,\n  \"width\": 2160,\n  \"height\": 3840,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2160\\u00d73840 px. Widocznych ~485 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #1C1B22, #300A24, #23222B. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki\
-    \ 255). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\",\n    \"locale\"\
-    : \"pl\",\n    \"scene_class\": \"general\",\n    \"llm_hint\": {\n      \"send_to_llm\"\
-    : true,\n      \"confidence\": 0.95,\n      \"reasons\": [\n        \"rich_palette\"\
-    ,\n        \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"\
-    recommendation\": \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\"\
-    : \"Obraz 2160\\u00d73840 px. Widocznych ~485 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #1C1B22, #300A24, #23222B. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki\
-    \ 255). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\n}"
+    \ 2160\\u00d73840 px. Widocznych ~489 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #1C1B22, #380C2A, #181818. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki\
+    \ 255). Widoczny szum lub drobna tekstura. Wykryto 5 du\\u017cych region\\u00f3w/obiekt\\\
+    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
+    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
+    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
+    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
+    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2160\\\
+    u00d73840 px. Widocznych ~489 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #1C1B22,\
+    \ #380C2A, #181818. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki 255). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 5 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \n}"
 - id: dev-screenshot-hdmi1
   title: Screenshot HDMI-1
   status: done
@@ -224,24 +227,22 @@ automation:
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-hdmi1.png --source HDMI-1
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"HDMI-1\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 1,\n  \"\
+    : [\n    100,\n    126,\n    119\n  ],\n  \"screencast_stream_index\": 1,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 1932,\n\
     \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
     \  \"monitor_name\": \"HDMI-1\",\n  \"path\": \"/tmp/vdisplay-dev-hdmi1.png\"\
-    ,\n  \"bytes\": 446966,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    ,\n  \"bytes\": 348401,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~724 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #191A1C, #141414, #18191B. Jasno\\u015b\\u0107 17\\u201379 (zakres dynamiki\
-    \ 238). Widoczny szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\\
-    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
-    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
-    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
-    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
-    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
-    u00d71280 px. Widocznych ~724 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #191A1C,\
-    \ #141414, #18191B. Jasno\\u015b\\u0107 17\\u201379 (zakres dynamiki 238). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
-    \n}"
+    \ 2048\\u00d71280 px. Widocznych ~594 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #191A1C, #141414, #131313. Jasno\\u015b\\u0107 17\\u201378 (zakres dynamiki\
+    \ 208). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\",\n    \"locale\"\
+    : \"pl\",\n    \"scene_class\": \"general\",\n    \"llm_hint\": {\n      \"send_to_llm\"\
+    : true,\n      \"confidence\": 0.95,\n      \"reasons\": [\n        \"rich_palette\"\
+    ,\n        \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"\
+    recommendation\": \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\"\
+    : \"Obraz 2048\\u00d71280 px. Widocznych ~594 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #191A1C, #141414, #131313. Jasno\\u015b\\u0107 17\\u201378 (zakres dynamiki\
+    \ 208). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\n}"
 - id: dev-pytest-screencast
   title: Screencast unit tests
   status: done
@@ -286,22 +287,14 @@ automation:
   title: LLM analyze screenshots + vision control in Cursor for self-dev
   status: done
   priority: high
+  action_ref: cursor_chat
   monitor: DP-1
-  handler: '# Use .env LLM to analyze latest /tmp/vdisplay-dev-dp1.png NL
-
-    # Then vdisplay control find --backend vision --vision-anchor "Chat"
-
-    # Set prompt in chat for vdisplay autonomy ideas, screenshot verify
-
-    echo "LLM analysis (from .env gemini-flash-image-preview): dark UI with 6 regions
-    on DP-1 suggests active Cursor dev session. Use vision to locate chat, prompt
-    for ''next autonomy fix: AT-SPI fallback''."
-
-    vdisplay control find --backend vision --vision-anchor "Chat"
-
-    vdisplay screenshot -o /tmp/vdisplay-dev-dp1-verify.png --source DP-1
-
-    '
+  observe: true
+  verify: true
+  handler: |
+    echo "LLM analysis: use .vdisplay/observe/ artifacts + vision/map for Cursor chat on DP-1"
+    vdisplay control find --backend vision
+    vdisplay screenshot -o .vdisplay/observe/dev-dp1-verify.png --source DP-1
   last_run_note: "LLM analysis (from .env gemini-flash-image-preview): dark UI with\
     \ 6 regions on DP-1 suggests active Cursor dev session. Use vision to locate chat,\
     \ prompt for 'next autonomy fix: AT-SPI fallback'.\n{\n  \"matches\": [\n    {\n\
@@ -321,22 +314,22 @@ automation:
     \    \"bounds\": {\n      \"x\": 0,\n      \"y\": 0,\n      \"width\": 0,\n  \
     \    \"height\": 0\n    }\n  },\n  \"count\": 1\n}\n{\n  \"display\": \":0\",\n\
     \  \"source\": \"DP-1\",\n  \"monitor\": 1,\n  \"method\": \"portal-screencast+stream\"\
-    ,\n  \"target\": null,\n  \"screencast_nodes\": [\n    86,\n    133,\n    100\n\
+    ,\n  \"target\": null,\n  \"screencast_nodes\": [\n    100,\n    126,\n    119\n\
     \  ],\n  \"screencast_stream_index\": 0,\n  \"screencast_multi_stream\": true,\n\
     \  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n    \"width\": 2048,\n    \"\
     height\": 1280\n  },\n  \"screencast_stream\": true,\n  \"monitor_name\": \"DP-1\"\
-    ,\n  \"path\": \"/tmp/vdisplay-dev-dp1-verify.png\",\n  \"bytes\": 456987,\n \
+    ,\n  \"path\": \"/tmp/vdisplay-dev-dp1-verify.png\",\n  \"bytes\": 371993,\n \
     \ \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n  \"mode\": \"host\"\
     ,\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz 2048\\u00d71280 px.\
-    \ Widocznych ~968 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000, #141414,\
+    \ Widocznych ~555 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #141414, #000000,\
     \ #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny szum\
-    \ lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \ lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
     ,\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"llm_hint\"\
     : {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n      \"reasons\"\
     : [\n        \"rich_palette\",\n        \"textured_noise\",\n        \"large_regions\"\
     ,\n        \"multiple_regions\"\n      ],\n      \"recommendation\": \"send\"\n\
     \    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\u00d71280 px.\
-    \ Widocznych ~968 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000, #141414,\
+    \ Widocznych ~555 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #141414, #000000,\
     \ #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny szum\
-    \ lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \ lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
     \n}"

@@ -1,21 +1,21 @@
 # System Architecture Analysis
-<!-- generated in 0.02s -->
+<!-- generated in 0.03s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 274, json: 26, toml: 11, yaml: 8, shell: 8
+- **Languages**: python: 288, json: 26, yaml: 11, toml: 11, shell: 9
 - **Analysis Mode**: static
-- **Total Functions**: 2182
-- **Total Classes**: 163
-- **Modules**: 343
-- **Entry Points**: 938
+- **Total Functions**: 2328
+- **Total Classes**: 176
+- **Modules**: 361
+- **Entry Points**: 972
 
 ## Architecture by Module
 
 ### src.vdisplay.capture.portal_screencast
-- **Functions**: 77
+- **Functions**: 79
 - **Classes**: 1
 - **File**: `portal_screencast.py`
 
@@ -66,10 +66,20 @@
 - **Functions**: 30
 - **File**: `grammar.py`
 
+### src.vdisplay.application.auto.tasks
+- **Functions**: 30
+- **Classes**: 1
+- **File**: `tasks.py`
+
 ### src.vdisplay.control.providers.uia_impl
 - **Functions**: 29
 - **Classes**: 4
 - **File**: `uia_impl.py`
+
+### src.vdisplay.application.auto.feedback
+- **Functions**: 28
+- **Classes**: 1
+- **File**: `feedback.py`
 
 ### src.vdisplay.client_api
 - **Functions**: 27
@@ -99,16 +109,6 @@
 - **Functions**: 23
 - **File**: `agent.py`
 
-### src.vdisplay.application.auto.tasks
-- **Functions**: 23
-- **Classes**: 1
-- **File**: `tasks.py`
-
-### src.vdisplay.control.providers.browser_session
-- **Functions**: 22
-- **Classes**: 2
-- **File**: `browser_session.py`
-
 ## Key Entry Points
 
 Main execution flows into the system:
@@ -126,7 +126,7 @@ Main execution flows into the system:
 - **Calls**: DBusGMainLoop, dbus.SessionBus, bus.get_object, dbus.Interface, GLib.MainLoop, None.replace, bus.add_signal_receiver, print
 
 ### src.vdisplay.commands.control.register
-- **Calls**: sub.add_parser, parser.add_subparsers, control_sub.add_parser, src.vdisplay.commands.common.add_display_arg, listing.add_argument, listing.add_argument, listing.add_argument, listing.add_argument
+- **Calls**: src.vdisplay.application.config_options.get_runtime_options, sub.add_parser, parser.add_subparsers, control_sub.add_parser, src.vdisplay.commands.common.add_display_arg, listing.add_argument, listing.add_argument, listing.add_argument
 
 ### src.vdisplay.commands.ide.handle
 - **Calls**: VDisplayError, src.vdisplay.cli_handlers.print_json, time.perf_counter, src.vdisplay.ide_prompt.send_ide_prompt, int, src.vdisplay.application.session_recorder.session_recording_enabled, src.vdisplay.cli_handlers.print_json, src.vdisplay.desktop_apps.list_desktop_apps
@@ -137,11 +137,14 @@ Main execution flows into the system:
 ### src.vdisplay.application.session_recorder.SessionRecorder._load_or_create_document
 - **Calls**: session_json.is_file, src.vdisplay.application.session_recorder._utc_now, SessionDocument, None.write_text, json.loads, SessionDocument, len, json.dumps
 
+### src.vdisplay.commands.agent.register
+- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
+
 ### src.vdisplay.commands.relay.register
 - **Calls**: sub.add_parser, parser.add_subparsers, relay_sub.add_parser, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument
 
-### src.vdisplay.commands.agent.register
-- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
+### src.vdisplay.application.commands.parsers.parse_dsl
+- **Calls**: None.upper, bool, src.vdisplay.application.commands.parsers._terminal_fields_from_dsl, src.vdisplay.application.commands.parsers._browser_fields_from_dsl, CommandRequest, CommandVerb, cmd.get, str
 
 ### src.vdisplay.application.session_recorder.SessionRecorder.record
 - **Calls**: step_dir.mkdir, src.vdisplay.application.session_recorder.request_to_dict, src.vdisplay.application.session_recorder.result_to_dict, None.write_text, None.write_text, src.vdisplay.application.session_recorder.collect_artifacts, src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics, None.write_text
@@ -170,6 +173,9 @@ Main execution flows into the system:
 ### src.vdisplay.commands.map.handle
 - **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
 
+### src.vdisplay.commands.history.register
+- **Calls**: sub.add_parser, parser.add_subparsers, history_sub.add_parser, list_parser.add_argument, list_parser.add_argument, list_parser.set_defaults, history_sub.add_parser, show_parser.add_argument
+
 ### src.vdisplay.integrations.screen_context.ScreenContext.from_dict
 - **Calls**: cls, int, str, dict, dict, dict, payload.get, dict
 
@@ -185,23 +191,17 @@ Main execution flows into the system:
 ### src.vdisplay.control.providers.ax_impl.PyobjcAxBackend.collect_elements
 - **Calls**: self.connect, self._element_by_key.clear, NSWorkspace.sharedWorkspace, workspace.runningApplications, str, int, AXUIElementCreateApplication, walk
 
+### src.vdisplay.application.config_options.ConfigOptions.from_mapping
+- **Calls**: dict, block.get, VqlOptions.from_mapping, cls, isinstance, src.vdisplay.application.config_options._list_from, src.vdisplay.application.config_options._list_from, src.vdisplay.application.config_options._list_from
+
+### src.vdisplay.application.commands.parsers.parse_agent_body
+- **Calls**: CommandRequest, src.vdisplay.application.commands.parsers.parse_agent_control_body, getattr, getattr, body.get, body.get, body.get, int
+
+### src.vdisplay.application.project_config.AutomationDefaults.from_mapping
+- **Calls**: dict, dict, auto.get, cap.get, cls, src.vdisplay.application.project_config._resolve_bool, src.vdisplay.application.project_config._resolve_bool, src.vdisplay.application.project_config._resolve_bool
+
 ### src.vdisplay.commands.observe.handle_observe
 - **Calls**: None.expanduser, src.vdisplay.application.executor.execute, src.vdisplay.integrations.pipeline.observe_screen, ctx.to_dict, src.vdisplay.integrations.vql_bridge.reverse_generation_descriptor, src.vdisplay.cli_handlers.print_json, output.is_absolute, CommandRequest
-
-### src.vdisplay.control.gui_map.GuiMapElement.from_dict
-- **Calls**: cls, str, str, GuiMapBounds.from_dict, GuiMapBounds.from_dict, GuiMapPoint.from_dict, GuiMapIdentity.from_dict, list
-
-### packages.vdisplay-agent.src.vdisplay_agent.cli.main
-- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, print
-
-### src.vdisplay.commands.sampler.register
-- **Calls**: sub.add_parser, parser.add_subparsers, subp.add_parser, src.vdisplay.commands.common.add_display_arg, start.add_argument, start.add_argument, start.add_argument, start.add_argument
-
-### src.vdisplay.commands.virtual.register
-- **Calls**: sub.add_parser, parser.add_subparsers, virtual_sub.add_parser, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.set_defaults
-
-### src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
-- **Calls**: src.vdisplay.capture.providers.fbdev._fb_info, io.BytesIO, image.save, buf.getvalue, VDisplayError, Image.frombuffer, max, max
 
 ## Process Flows
 
@@ -220,6 +220,10 @@ test_screencast [brain.scratch_test_screencast]
 ### Flow 3: register
 ```
 register [src.vdisplay.commands.control]
+  └─ →> get_runtime_options
+      └─ →> load_project_env
+      └─ →> load_project_config
+          └─> discover_config_paths
   └─ →> add_display_arg
 ```
 
@@ -245,14 +249,22 @@ _load_or_create_document [src.vdisplay.application.session_recorder.SessionRecor
   └─ →> _utc_now
 ```
 
-### Flow 7: record
+### Flow 7: parse_dsl
+```
+parse_dsl [src.vdisplay.application.commands.parsers]
+  └─> _terminal_fields_from_dsl
+  └─> _browser_fields_from_dsl
+      └─> _resolve_browser_engine_from_dsl
+```
+
+### Flow 8: record
 ```
 record [src.vdisplay.application.session_recorder.SessionRecorder]
   └─ →> request_to_dict
   └─ →> result_to_dict
 ```
 
-### Flow 8: main
+### Flow 9: main
 ```
 main [examples.agent-broker.broker_demo]
   └─ →> resolve_agent_url
@@ -261,14 +273,9 @@ main [examples.agent-broker.broker_demo]
           └─> _default_agent_base
 ```
 
-### Flow 9: create_server
+### Flow 10: create_server
 ```
 create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
-```
-
-### Flow 10: from_dict
-```
-from_dict [src.vdisplay.control.selector.ControlSelector]
 ```
 
 ## Key Classes
@@ -363,15 +370,15 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.__init__, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.list_ids, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.get, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.require, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_mock, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_process, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_pexpect, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.close, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.close_all
 
-### src.vdisplay.control.providers.atspi.AtspiControlProvider
-- **Methods**: 9
-- **Key Methods**: src.vdisplay.control.providers.atspi.AtspiControlProvider.__init__, src.vdisplay.control.providers.atspi.AtspiControlProvider.available, src.vdisplay.control.providers.atspi.AtspiControlProvider.probe_integration, src.vdisplay.control.providers.atspi.AtspiControlProvider.snapshot, src.vdisplay.control.providers.atspi.AtspiControlProvider.find, src.vdisplay.control.providers.atspi.AtspiControlProvider.invoke, src.vdisplay.control.providers.atspi.AtspiControlProvider.focus, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.bounds
-- **Inherits**: ControlProvider
-
 ### src.vdisplay.control.providers.terminal.TerminalControlProvider
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal.TerminalControlProvider.__init__, src.vdisplay.control.providers.terminal.TerminalControlProvider.available, src.vdisplay.control.providers.terminal.TerminalControlProvider._resolve_session_id, src.vdisplay.control.providers.terminal.TerminalControlProvider.snapshot, src.vdisplay.control.providers.terminal.TerminalControlProvider.find, src.vdisplay.control.providers.terminal.TerminalControlProvider.invoke, src.vdisplay.control.providers.terminal.TerminalControlProvider.focus, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.bounds
 - **Inherits**: ControlProvider
+
+### src.vdisplay.hmi.keyboard.KeyboardWatcher
+> Background evdev reader pushing :class:`KeyEvent` objects to a queue.
+- **Methods**: 9
+- **Key Methods**: src.vdisplay.hmi.keyboard.KeyboardWatcher.__init__, src.vdisplay.hmi.keyboard.KeyboardWatcher.typed_buffer, src.vdisplay.hmi.keyboard.KeyboardWatcher.start, src.vdisplay.hmi.keyboard.KeyboardWatcher.stop, src.vdisplay.hmi.keyboard.KeyboardWatcher.drain, src.vdisplay.hmi.keyboard.KeyboardWatcher._emit, src.vdisplay.hmi.keyboard.KeyboardWatcher._handle_key, src.vdisplay.hmi.keyboard.KeyboardWatcher._open_fds, src.vdisplay.hmi.keyboard.KeyboardWatcher._run
 
 ## Data Transformation Functions
 
@@ -448,8 +455,8 @@ Key functions that process and transform data:
 ### examples.common.validate_artifacts.validate_directory
 - **Output to**: sorted, root.glob, errors.extend, examples.common.validate_artifacts.validate_image_and_meta
 
-### src.vdisplay.cli.build_parser
-- **Output to**: argparse.ArgumentParser, src.vdisplay.commands.session.add_root_session_args, parser.add_subparsers, src.vdisplay.commands.register_all
+### src.vdisplay.nlp.parse_display
+- **Output to**: text.lower, re.search, re.search, match.group, match.group
 
 ## Behavioral Patterns
 
@@ -463,15 +470,20 @@ Key functions that process and transform data:
 - **Confidence**: 0.90
 - **Functions**: src.vdisplay.control.providers.atspi_impl._walk_atspi_node
 
+### recursion_dump_tree
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: brain.scratch_find_pycharm_chat.dump_tree
+
 ### recursion_enrich_screenshot_payload
 - **Type**: recursion
 - **Confidence**: 0.90
 - **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
 
-### recursion_dump_tree
+### recursion__deep_merge
 - **Type**: recursion
 - **Confidence**: 0.90
-- **Functions**: brain.scratch_find_pycharm_chat.dump_tree
+- **Functions**: src.vdisplay.application.project_config._deep_merge
 
 ### state_machine_ControlActionState
 - **Type**: state_machine
@@ -485,14 +497,16 @@ Functions exposed as public API (no underscore prefix):
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.web.register_routes` - 96 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes` - 74 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 68 calls
+- `src.vdisplay.application.history.analyze.analyze_history` - 59 calls
 - `brain.scratch_test_screencast.test_screencast` - 55 calls
-- `src.vdisplay.commands.control.register` - 46 calls
+- `src.vdisplay.commands.control.register` - 48 calls
 - `src.vdisplay.commands.ide.handle` - 45 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler` - 42 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
+- `src.vdisplay.commands.agent.register` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
-- `src.vdisplay.commands.agent.register` - 37 calls
 - `src.vdisplay.application.parsers.parse_dsl` - 37 calls
+- `src.vdisplay.application.commands.parsers.parse_dsl` - 37 calls
 - `src.vdisplay.application.events.map_events_from_diagnostics` - 36 calls
 - `src.vdisplay.application.session_recorder.SessionRecorder.record` - 36 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
@@ -502,26 +516,24 @@ Functions exposed as public API (no underscore prefix):
 - `examples.host-relay.relay_demo.main` - 33 calls
 - `src.vdisplay.application.artifacts.artifacts_from_control` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
-- `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `src.vdisplay.application.parsers.parse_agent_control_body` - 32 calls
+- `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
+- `src.vdisplay.application.commands.parsers.parse_agent_control_body` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.commands.map.handle` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
+- `src.vdisplay.commands.history.register` - 30 calls
 - `src.vdisplay.application.session_recorder.load_session_document` - 29 calls
 - `src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics` - 28 calls
-- `src.vdisplay.application.proto.codec.decode_event_envelope` - 28 calls
 - `src.vdisplay.integrations.screen_context.ScreenContext.from_dict` - 28 calls
+- `src.vdisplay.application.proto.codec.decode_event_envelope` - 28 calls
+- `src.vdisplay.application.history.loader.load_task_record` - 28 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
 - `src.vdisplay.discovery.list_outputs` - 27 calls
 - `src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window` - 27 calls
-- `src.vdisplay.control.contracts.control_route_request_from_command` - 27 calls
-- `src.vdisplay.control.selector.parse_selector` - 27 calls
-- `src.vdisplay.control.providers.ax_impl.PyobjcAxBackend.collect_elements` - 27 calls
-- `src.vdisplay.capture.screencast_keeper.stop_keeper` - 27 calls
-- `examples.control-plane.control_demo.run_terminal_demo` - 26 calls
 
 ## System Interactions
 
@@ -536,10 +548,10 @@ graph TD
     test_screencast --> get_object
     test_screencast --> Interface
     test_screencast --> MainLoop
+    register --> get_runtime_options
     register --> add_parser
     register --> add_subparsers
     register --> add_display_arg
-    register --> add_argument
     handle --> VDisplayError
     handle --> print_json
     handle --> perf_counter
@@ -555,10 +567,10 @@ graph TD
     _load_or_create_docu --> SessionDocument
     _load_or_create_docu --> write_text
     _load_or_create_docu --> loads
-    record --> mkdir
-    record --> request_to_dict
-    record --> result_to_dict
-    record --> write_text
+    register --> add_argument
+    parse_dsl --> upper
+    parse_dsl --> bool
+    parse_dsl --> _terminal_fields_fro
 ```
 
 ## Reverse Engineering Guidelines

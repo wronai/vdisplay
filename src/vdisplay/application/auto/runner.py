@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Iterator, Literal
 
 from ...exceptions import VDisplayError
+from ..project_config import ensure_metadata_layout, load_project_config
+from .defaults import apply_project_defaults, build_decision_data
 from .executor import ExecuteResult, execute_task_command
-from .feedback import finalize_result_ok, preflight_observe, prepare_command, task_execution_env
+from .feedback import (
+    attach_session_dir,
+    finalize_result_ok,
+    post_act_verify_screenshot,
+    preflight_actuation,
+    preflight_observe,
+    prepare_command,
+    task_execution_env,
+)
+from .metadata import persist_task_result, start_auto_run
 from .tasks import AutoSource, AutoTask, load_auto_tasks, next_auto_task, resolve_planfile_path, write_yaml_task_status
 
 AutoAction = Literal["run", "once", "list", "next"]
@@ -21,6 +33,8 @@ class AutoRunResult:
     executed: list[dict[str, Any]] = field(default_factory=list)
     pending: list[dict[str, Any]] = field(default_factory=list)
     error: str = ""
+    run_id: str = ""
+    metadata_dir: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -29,7 +43,22 @@ class AutoRunResult:
             "executed": self.executed,
             "pending": self.pending,
             "error": self.error,
+            "run_id": self.run_id,
+            "metadata_dir": self.metadata_dir,
         }
+
+
+@contextmanager
+def _auto_run_context(project: Path, *, dry_run: bool) -> Iterator[tuple[Any, str | None, Path | None]]:
+    config = load_project_config(project)
+    ensure_metadata_layout(project, config)
+    if dry_run or not config.automation.session:
+        yield config, None, None
+        return
+    run_id, run_dir = start_auto_run(project, config)
+    session_dir = run_dir / "session"
+    session_dir.mkdir(parents=True, exist_ok=True)
+    yield config, run_id, run_dir
 
 
 def run_auto_once(
@@ -41,19 +70,38 @@ def run_auto_once(
     assigned_to: str = "vdisplay-auto",
 ) -> AutoRunResult:
     root = Path(project).expanduser().resolve()
-    tasks = load_auto_tasks(project=root, planfile=planfile, source=source)
-    task = next_auto_task(tasks)
-    if task is None:
-        return AutoRunResult(ok=True, action="once", pending=[])
+    with _auto_run_context(root, dry_run=dry_run) as (config, run_id, run_dir):
+        tasks = _load_tasks_with_defaults(root, planfile=planfile, source=source, config=config)
+        task = next_auto_task(tasks, options=config.options)
+        if task is None:
+            return AutoRunResult(
+                ok=True,
+                action="once",
+                pending=[],
+                run_id=run_id or "",
+                metadata_dir=str(config.metadata_dir),
+            )
 
-    executed = [_execute_one(task, project=root, planfile=planfile, dry_run=dry_run, assigned_to=assigned_to)]
-    return AutoRunResult(
-        ok=bool(executed[0]["ok"]),
-        action="once",
-        executed=executed,
-        pending=[item.to_dict() for item in tasks if item.id != task.id],
-        error="" if executed[0]["ok"] else str(executed[0].get("error") or ""),
-    )
+        executed = [
+            _execute_one(
+                task,
+                project=root,
+                planfile=planfile,
+                dry_run=dry_run,
+                assigned_to=assigned_to,
+                config=config,
+                run_dir=run_dir,
+            )
+        ]
+        return AutoRunResult(
+            ok=bool(executed[0]["ok"]),
+            action="once",
+            executed=executed,
+            pending=[item.to_dict() for item in tasks if item.id != task.id],
+            error="" if executed[0]["ok"] else str(executed[0].get("error") or ""),
+            run_id=run_id or "",
+            metadata_dir=str(config.metadata_dir),
+        )
 
 
 def run_auto_loop(
@@ -66,44 +114,64 @@ def run_auto_loop(
     assigned_to: str = "vdisplay-auto",
 ) -> AutoRunResult:
     root = Path(project).expanduser().resolve()
-    executed: list[dict[str, Any]] = []
-    limit = max(0, int(max_tasks))
-    last_completed_id: str | None = None
+    with _auto_run_context(root, dry_run=dry_run) as (config, run_id, run_dir):
+        executed: list[dict[str, Any]] = []
+        limit = max(0, int(max_tasks))
+        last_completed_id: str | None = None
 
-    while True:
-        tasks = load_auto_tasks(project=root, planfile=planfile, source=source)
-        task = next_auto_task(tasks)
-        if task is None:
-            break
-        if limit and len(executed) >= limit:
-            break
-        if task.id == last_completed_id:
-            pending = [item.to_dict() for item in tasks]
-            return AutoRunResult(
-                ok=False,
-                action="run",
-                executed=executed,
-                pending=pending,
-                error=(
-                    f"task {task.id!r} did not advance after success "
-                    "(planfile status not updated — check write_yaml_task_status)"
-                ),
+        while True:
+            tasks = _load_tasks_with_defaults(root, planfile=planfile, source=source, config=config)
+            task = next_auto_task(tasks, options=config.options)
+            if task is None:
+                break
+            if limit and len(executed) >= limit:
+                break
+            if task.id == last_completed_id:
+                pending = [item.to_dict() for item in tasks]
+                return AutoRunResult(
+                    ok=False,
+                    action="run",
+                    executed=executed,
+                    pending=pending,
+                    error=(
+                        f"task {task.id!r} did not advance after success "
+                        "(planfile status not updated — check write_yaml_task_status)"
+                    ),
+                    run_id=run_id or "",
+                    metadata_dir=str(config.metadata_dir),
+                )
+            result = _execute_one(
+                task,
+                project=root,
+                planfile=planfile,
+                dry_run=dry_run,
+                assigned_to=assigned_to,
+                config=config,
+                run_dir=run_dir,
             )
-        result = _execute_one(task, project=root, planfile=planfile, dry_run=dry_run, assigned_to=assigned_to)
-        executed.append(result)
-        if not result["ok"]:
-            pending = [item.to_dict() for item in load_auto_tasks(project=root, planfile=planfile, source=source)]
-            return AutoRunResult(
-                ok=False,
-                action="run",
-                executed=executed,
-                pending=pending,
-                error=str(result.get("error") or "task failed"),
-            )
-        last_completed_id = task.id
+            executed.append(result)
+            if not result["ok"]:
+                pending = [item.to_dict() for item in _load_tasks_with_defaults(root, planfile=planfile, source=source, config=config)]
+                return AutoRunResult(
+                    ok=False,
+                    action="run",
+                    executed=executed,
+                    pending=pending,
+                    error=str(result.get("error") or "task failed"),
+                    run_id=run_id or "",
+                    metadata_dir=str(config.metadata_dir),
+                )
+            last_completed_id = task.id
 
-    pending = [item.to_dict() for item in load_auto_tasks(project=root, planfile=planfile, source=source)]
-    return AutoRunResult(ok=True, action="run", executed=executed, pending=pending)
+        pending = [item.to_dict() for item in _load_tasks_with_defaults(root, planfile=planfile, source=source, config=config)]
+        return AutoRunResult(
+            ok=True,
+            action="run",
+            executed=executed,
+            pending=pending,
+            run_id=run_id or "",
+            metadata_dir=str(config.metadata_dir),
+        )
 
 
 def list_auto_tasks(
@@ -112,13 +180,28 @@ def list_auto_tasks(
     planfile: str | Path | None = None,
     source: AutoSource = "auto",
 ) -> dict[str, Any]:
-    tasks = load_auto_tasks(project=project, planfile=planfile, source=source)
+    config = load_project_config(project)
+    tasks = _load_tasks_with_defaults(Path(project), planfile=planfile, source=source, config=config)
+    nxt = next_auto_task(tasks, options=config.options)
     return {
         "ok": True,
         "count": len(tasks),
         "tasks": [task.to_dict() for task in tasks],
-        "next": next_auto_task(tasks).to_dict() if next_auto_task(tasks) else None,
+        "next": nxt.to_dict() if nxt else None,
+        "config": config.to_dict(),
+        "metadata_dir": str(config.metadata_dir),
     }
+
+
+def _load_tasks_with_defaults(
+    project: Path,
+    *,
+    planfile: str | Path | None,
+    source: AutoSource,
+    config: Any,
+) -> list[AutoTask]:
+    tasks = load_auto_tasks(project=project, planfile=planfile, source=source)
+    return [apply_project_defaults(task, config) for task in tasks]
 
 
 def _update_task_status(
@@ -183,6 +266,69 @@ def _handle_execute_exception(
     }
 
 
+def _preflight_task(
+    task: AutoTask,
+    project: Path,
+    config: Any,
+    run_dir: Path | None,
+) -> tuple[str, Any, Path | None]:
+    session_dir = None
+    if run_dir is not None and config.automation.session:
+        session_dir = run_dir / "session"
+        session_dir.mkdir(parents=True, exist_ok=True)
+
+    observe_feedback = preflight_observe(
+        task,
+        project=str(project),
+        execute_fn=lambda cmd, **kwargs: execute_task_command(cmd, project=str(project), **kwargs),
+        config=config,
+    )
+    prepared, prep_feedback = prepare_command(task.command, task, config=config)
+    observe_feedback.prepared_command = prepared
+    observe_feedback.verify_requested = prep_feedback.verify_requested or observe_feedback.verify_requested
+    observe_feedback.decision_data = build_decision_data(
+        task,
+        config,
+        prepared_command=prepared,
+        vql_path=observe_feedback.vql_path,
+    )
+    attach_session_dir(observe_feedback, session_dir)
+    return prepared, observe_feedback, session_dir
+
+
+def _run_actuation(
+    task: AutoTask,
+    project: Path,
+    config: Any,
+    prepared: str,
+    observe_feedback: Any,
+    run_dir: Path | None,
+) -> tuple[ExecuteResult, list[str]]:
+    with task_execution_env(task, observe_feedback, config=config):
+        result = execute_task_command(prepared, project=str(project))
+    result.ok = finalize_result_ok(result, observe_feedback, config=config)
+    if not result.ok and observe_feedback.verify_passed is False:
+        result.error = (result.error or "verify failed").strip()
+    if not result.ok and observe_feedback.vision_stub:
+        result.error = (result.error or "vision stub — missing actuation coordinates").strip()
+
+    if result.ok:
+        post_act_verify_screenshot(
+            observe_feedback,
+            task,
+            config=config,
+            execute_fn=lambda cmd, **kwargs: execute_task_command(cmd, project=str(project), **kwargs),
+        )
+
+    observe_artifacts = list(observe_feedback.metadata_paths or [])
+    if observe_feedback.observe_path and observe_feedback.observe_path not in observe_artifacts:
+        observe_artifacts.append(observe_feedback.observe_path)
+    if observe_feedback.post_verify_path and observe_feedback.post_verify_path not in observe_artifacts:
+        observe_artifacts.append(observe_feedback.post_verify_path)
+
+    return result, observe_artifacts
+
+
 def _execute_one(
     task: AutoTask,
     *,
@@ -190,22 +336,18 @@ def _execute_one(
     planfile: str | Path | None,
     dry_run: bool,
     assigned_to: str,
+    config: Any,
+    run_dir: Path | None,
 ) -> dict[str, Any]:
     pf = _planfile_for_task(task, project, dry_run)
+    task = apply_project_defaults(task, config)
 
     try:
         if pf is not None:
             pf.claim_ticket(task.ticket_id, assigned_to=assigned_to)
             pf.start_ticket(task.ticket_id)
 
-        observe_feedback = preflight_observe(
-            task,
-            project=str(project),
-            execute_fn=lambda cmd, **kwargs: execute_task_command(cmd, project=str(project), **kwargs),
-        )
-        prepared, prep_feedback = prepare_command(task.command, task)
-        observe_feedback.prepared_command = prepared
-        observe_feedback.verify_requested = prep_feedback.verify_requested or observe_feedback.verify_requested
+        prepared, observe_feedback, session_dir = _preflight_task(task, project, config, run_dir)
 
         if dry_run:
             return _build_execute_payload(
@@ -214,13 +356,28 @@ def _execute_one(
                 observe_feedback,
             )
 
-        with task_execution_env(task, observe_feedback):
-            result = execute_task_command(prepared, project=str(project), task=task)
-        result.ok = finalize_result_ok(result, observe_feedback)
-        if not result.ok and observe_feedback.verify_passed is False:
-            result.error = (result.error or "verify failed").strip()
+        if not preflight_actuation(task, observe_feedback, prepared_command=prepared, config=config):
+            result = ExecuteResult(
+                ok=False,
+                method="preflight",
+                error="actuation preflight failed — install vision deps or build map (see feedback.notes)",
+            )
+            payload = _build_execute_payload(result, task, observe_feedback)
+            if run_dir is not None:
+                persist_task_result(run_dir, task_id=task.id, payload=payload)
+            _update_task_status(task, result, pf, project, planfile)
+            return payload
 
+        result, observe_artifacts = _run_actuation(task, project, config, prepared, observe_feedback, run_dir)
         payload = _build_execute_payload(result, task, observe_feedback)
+
+        if run_dir is not None:
+            persist_task_result(
+                run_dir,
+                task_id=task.id,
+                payload=payload,
+                observe_paths=observe_artifacts or None,
+            )
 
         _update_task_status(task, result, pf, project, planfile)
         return payload

@@ -10,9 +10,11 @@ from . import (
     all_cmd,
     app,
     auto,
+    config,
     control,
     diagnose,
     hmi,
+    history,
     ide,
     info,
     map as map_cmd,
@@ -24,6 +26,7 @@ from . import (
     sampler,
     screenshot,
     session,
+    history,
     virtual,
     windows,
 )
@@ -39,6 +42,7 @@ _COMMAND_MODULES: list[Callable[[argparse._SubParsersAction], None]] = [
     control.register,
     app.register,
     auto.register,
+    config.register,
     ide.register,
     map_cmd.register,
     diagnose.register,
@@ -50,6 +54,7 @@ _COMMAND_MODULES: list[Callable[[argparse._SubParsersAction], None]] = [
     agent.register,
     info.register,
     session.register,
+    history.register,
 ]
 
 

@@ -198,7 +198,11 @@ def diff_png_bytes(
     """Compare two PNG payloads and report whether they differ meaningfully."""
     import os
 
-    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    import os
+
+    from ..application.env_defaults import vision_backend_name
+
+    backend = vision_backend_name()
     if backend != "local":
         try:
             from ..integrations.vision_backend import diff_png_bytes as delegated

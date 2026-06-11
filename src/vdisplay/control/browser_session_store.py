@@ -32,8 +32,9 @@ class DetachedBrowserMeta:
 
 
 def detached_sessions_enabled() -> bool:
-    raw = os.environ.get("VDISPLAY_BROWSER_DETACHED", "1").strip().lower()
-    return raw not in {"0", "false", "no", "off"}
+    from ..application.env_defaults import env_flag
+
+    return env_flag("VDISPLAY_BROWSER_DETACHED", default=True)
 
 
 def meta_path(session_id: str) -> Path:

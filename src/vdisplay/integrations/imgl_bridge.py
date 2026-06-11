@@ -2,27 +2,62 @@
 
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from .screen_context import ScreenContext
+from ..application.env_defaults import env_flag, env_value
 
 
 def imgl_enabled() -> bool:
-    flag = os.environ.get("VDISPLAY_IMGL", "1").strip().lower()
-    return flag not in {"0", "false", "no", "off"}
+    return env_flag("VDISPLAY_IMGL", default=True)
+
+
+def _import_imgl_api() -> tuple[Any, Callable[..., Any], Callable[..., Any]] | None:
+    """Return (ImglConfig, analyze, scene_to_json) when IMGL is usable."""
+    try:
+        from imgl import ImglConfig, analyze, scene_to_json
+    except ImportError:
+        try:
+            from imgl.config import ImglConfig
+            from imgl.export import scene_to_json
+            from imgl.pipeline import analyze
+        except ImportError:
+            return None
+    return ImglConfig, analyze, scene_to_json
 
 
 def imgl_available() -> bool:
     if not imgl_enabled():
         return False
-    try:
-        import imgl  # noqa: F401
+    return _import_imgl_api() is not None
 
-        return True
-    except ImportError:
-        return False
+
+def _vql_sidecar_path(image_path: Path) -> Path:
+    return image_path.with_suffix(image_path.suffix + ".vql.json")
+
+
+def _build_imgl_config(ImglConfig: Any) -> Any:
+    skip_blank = env_flag("VDISPLAY_IMGL_SKIP_BLANK", default=False)
+    try:
+        return ImglConfig(skip_blank=skip_blank)
+    except TypeError:
+        return ImglConfig()
+
+
+def _scene_to_dict(scene: Any, scene_to_json: Callable[..., Any]) -> dict[str, Any]:
+    if hasattr(scene, "to_dict"):
+        payload = scene.to_dict()
+        return payload if isinstance(payload, dict) else {}
+    payload = scene_to_json(scene)
+    if isinstance(payload, dict):
+        return payload
+    if isinstance(payload, str):
+        loaded = json.loads(payload)
+        return loaded if isinstance(loaded, dict) else {}
+    return {}
 
 
 def analyze_with_imgl(
@@ -30,34 +65,36 @@ def analyze_with_imgl(
     *,
     lang: str | None = None,
     use_cache: bool = True,
+    vql_file: str | Path | None = None,
 ) -> dict[str, Any]:
     path = Path(image_path).expanduser()
     if not path.is_file():
         return {"ok": False, "error": f"image not found: {path}"}
-    if not imgl_available():
+    api = _import_imgl_api()
+    if api is None:
         return {"ok": False, "error": "imgl not installed (pip install imgl or imgl install vdisplay)"}
 
-    from imgl import ImglConfig, analyze, scene_to_json
-
-    try:
-        config = ImglConfig(
-            skip_blank_check=os.environ.get("VDISPLAY_IMGL_SKIP_BLANK", "").strip().lower() in {"1", "true", "yes"},
-        )
-    except TypeError:
-        config = ImglConfig()
-    lang_value = lang or os.environ.get("VDISPLAY_IMGL_LANG", "eng+pol")
+    ImglConfig, analyze, scene_to_json = api
+    config = _build_imgl_config(ImglConfig)
+    lang_value = lang or env_value("VDISPLAY_IMGL_LANG")
+    vql_path = Path(vql_file) if vql_file else _vql_sidecar_path(path)
 
     try:
         if use_cache:
             from imgl.scene_cache import load_or_analyze
 
-            scene = load_or_analyze(str(path), lang=lang_value, config=config)
+            scene = load_or_analyze(
+                str(path),
+                vql_file=str(vql_path),
+                lang=lang_value,
+                config=config,
+            )
         else:
             scene = analyze(str(path), lang=lang_value, config=config)
     except Exception as exc:
         return {"ok": False, "error": str(exc)}
 
-    scene_json = scene_to_json(scene)
+    scene_json = _scene_to_dict(scene, scene_to_json)
     return {
         "ok": True,
         "scene": scene_json,
@@ -65,6 +102,7 @@ def analyze_with_imgl(
         "window_count": len(scene_json.get("windows", []) or []),
         "ocr_count": len(scene_json.get("ocr_boxes", []) or []),
         "source": "imgl",
+        "vql_file": str(vql_path),
     }
 
 

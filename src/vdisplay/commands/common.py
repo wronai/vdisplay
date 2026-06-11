@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 
+from ..application.config_options import get_runtime_options
+
 
 def add_display_arg(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--display", default=None, help="X11 display (default: auto-resolve host :0)")
@@ -35,11 +37,13 @@ def include_all_from_args(args: argparse.Namespace) -> bool:
     return bool(getattr(args, "include_all", True) and not getattr(args, "apps_only", False))
 
 
-_CONTROL_BACKEND_CHOICES = ["auto", "atspi", "x11", "browser", "terminal", "vision"]
+def _cli_options():
+    return get_runtime_options()
 
 
 def add_control_selector_args(parser: argparse.ArgumentParser) -> None:
     """Selector/session flags shared by control and diagnose control."""
+    opts = _cli_options()
     parser.add_argument("--selector", help='e.g. #submit, button[name="Save"], line[3]')
     parser.add_argument("--name", help="Exact control name")
     parser.add_argument("--role", help="Control role (button, input, ...)")
@@ -50,9 +54,9 @@ def add_control_selector_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--backend",
         default="auto",
-        choices=_CONTROL_BACKEND_CHOICES,
+        choices=opts.control_backends,
     )
-    parser.add_argument("--environment", choices=["desktop", "browser", "terminal", "vision"])
+    parser.add_argument("--environment", choices=opts.control_environments)
     parser.add_argument("--text", help="Exact visible text match")
     parser.add_argument("--text-contains", help="Substring text match")
     parser.add_argument("--terminal-line", type=int, help="1-based terminal line number")
@@ -64,7 +68,7 @@ def add_control_selector_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--vision-template", help="Vision template PNG path or base64")
     parser.add_argument(
         "--vision-anchor-rel",
-        choices=["right_of", "below", "near", "left_of", "above"],
+        choices=_cli_options().vision_anchor_relations,
         help="Spatial relation from vision anchor to target",
     )
     parser.add_argument("--vision-target", help="Vision target text relative to anchor")

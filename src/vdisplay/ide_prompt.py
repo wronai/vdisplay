@@ -20,6 +20,7 @@ from .desktop_apps import (
     resolve_map_path,
     submit_selectors_for,
 )
+from .application.env_defaults import env_float_value
 from .exceptions import VDisplayError
 
 
@@ -30,11 +31,7 @@ def _is_wayland_session() -> bool:
 
 
 def _ide_find_timeout_seconds() -> float:
-    raw = os.environ.get("VDISPLAY_IDE_FIND_TIMEOUT_S", "20")
-    try:
-        return max(1.0, float(raw))
-    except ValueError:
-        return 20.0
+    return max(1.0, env_float_value("VDISPLAY_IDE_FIND_TIMEOUT_S", default=20.0))
 
 
 def _should_skip_window_wait(app_id: str, *, backend: str, map_path: str | None) -> str | None:

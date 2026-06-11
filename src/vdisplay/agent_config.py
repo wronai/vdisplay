@@ -6,17 +6,14 @@ import os
 import urllib.error
 import urllib.request
 
+from .application.env_defaults import env_flag, env_value
+
 _PROBE_SENTINEL = object()
 _probe_cache: str | None | object = _PROBE_SENTINEL
 
 
 def agent_auto_enabled() -> bool:
-    return os.environ.get("VDISPLAY_AGENT_AUTO", "1").strip().lower() not in {
-        "0",
-        "false",
-        "no",
-        "off",
-    }
+    return env_flag("VDISPLAY_AGENT_AUTO", default=True)
 
 
 def reset_agent_probe_cache() -> None:
@@ -25,8 +22,8 @@ def reset_agent_probe_cache() -> None:
 
 
 def _default_agent_base() -> str:
-    host = os.environ.get("VDISPLAY_AGENT_HOST", "127.0.0.1").strip() or "127.0.0.1"
-    port = os.environ.get("VDISPLAY_AGENT_PORT", "8765").strip() or "8765"
+    host = env_value("VDISPLAY_AGENT_HOST").strip() or "127.0.0.1"
+    port = env_value("VDISPLAY_AGENT_PORT").strip() or "8765"
     return f"http://{host}:{port}"
 
 
@@ -74,7 +71,7 @@ def _probe_default_agent() -> str | None:
 
 def resolve_agent_url(explicit: str | None = None, *, allow_auto: bool = False) -> str | None:
     """Return agent base URL when clients should use IPC instead of in-process capture."""
-    url = (explicit or os.environ.get("VDISPLAY_AGENT_URL") or "").strip()
+    url = (explicit or env_value("VDISPLAY_AGENT_URL") or "").strip()
     if url:
         return url.rstrip("/")
     if not allow_auto or not agent_auto_enabled():

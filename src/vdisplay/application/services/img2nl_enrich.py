@@ -2,22 +2,22 @@
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 from typing import Any
 
+from ..env_defaults import env_flag, env_str_lower, env_value
+
 
 def img2nl_enabled() -> bool:
-    flag = os.environ.get("VDISPLAY_IMG2NL", "1").strip().lower()
-    return flag not in {"0", "false", "no", "off"}
+    return env_flag("VDISPLAY_IMG2NL", default=True)
 
 
 def img2nl_locale() -> str:
-    return os.environ.get("VDISPLAY_IMG2NL_LOCALE", "pl").strip() or "pl"
+    return env_value("VDISPLAY_IMG2NL_LOCALE").strip() or "pl"
 
 
 def describe_backend() -> str:
-    return os.environ.get("VDISPLAY_DESCRIBE_BACKEND", "auto").strip().lower() or "auto"
+    return env_str_lower("VDISPLAY_DESCRIBE_BACKEND", "auto") or "auto"
 
 
 def _extract_window_titles(scene: dict[str, Any]) -> list[str]:

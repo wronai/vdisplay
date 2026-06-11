@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
+from ..application.env_defaults import env_int_value, env_str_lower, env_value
 from .action_state import ControlActionPhase, ControlActionState
 
 
@@ -35,21 +35,20 @@ class RetryPolicy:
 
     @classmethod
     def from_env(cls) -> RetryPolicy:
-        try:
-            max_attempts = int(os.environ.get("VDISPLAY_CONTROL_MAX_ATTEMPTS", "3"))
-        except ValueError:
-            max_attempts = 3
-        try:
-            delay_ms = int(os.environ.get("VDISPLAY_CONTROL_RETRY_DELAY_MS", "150"))
-        except ValueError:
-            delay_ms = 150
-        raw = os.environ.get("VDISPLAY_CONTROL_RETRY_STRATEGIES", "").strip()
-        strategies = tuple(item.strip() for item in raw.split(",") if item.strip()) or cls.strategies
-        return cls(max_attempts=max(1, max_attempts), strategies=strategies, delay_ms=max(0, delay_ms))
+        max_attempts = max(1, env_int_value("VDISPLAY_CONTROL_MAX_ATTEMPTS", default=3))
+        delay_ms = max(0, env_int_value("VDISPLAY_CONTROL_RETRY_DELAY_MS", default=150))
+        raw = env_value("VDISPLAY_CONTROL_RETRY_STRATEGIES").strip()
+        if raw:
+            strategies = tuple(item.strip() for item in raw.split(",") if item.strip())
+        else:
+            strategies = tuple(get_runtime_options().control_retry_strategies)
+        if not strategies:
+            strategies = cls.strategies
+        return cls(max_attempts=max_attempts, strategies=strategies, delay_ms=delay_ms)
 
 
 def retry_enabled(*, verify: bool, screenshot_verify: bool = False) -> bool:
-    flag = os.environ.get("VDISPLAY_CONTROL_RETRY", "auto").strip().lower()
+    flag = env_str_lower("VDISPLAY_CONTROL_RETRY", "auto")
     if flag in {"0", "false", "no", "off"}:
         return False
     if flag in {"1", "true", "yes", "on"}:

@@ -1,30 +1,42 @@
-# code2llm/evolution | 2120 func | 228f | 2026-06-11
-# generated in 0.04s
+# code2llm/evolution | 2265 func | 240f | 2026-06-11
+# generated in 0.02s
 
-NEXT[3] (ranked by impact):
+NEXT[6] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/capture/portal_screencast.py
-      WHY: 1586L, 1 classes, max CC=15
-      EFFORT: ~4h  IMPACT: 23790
+      WHY: 1602L, 1 classes, max CC=14
+      EFFORT: ~4h  IMPACT: 22428
 
-  [2] !! SPLIT           maps/pycharm-chat.json
+  [2] !! SPLIT-FUNC      analyze_history  CC=36  fan=32
+      WHY: CC=36 exceeds 15
+      EFFORT: ~1h  IMPACT: 1152
+
+  [3] !! SPLIT-FUNC      _build_imgl_layers  CC=34  fan=12
+      WHY: CC=34 exceeds 15
+      EFFORT: ~1h  IMPACT: 408
+
+  [4] !  SPLIT-FUNC      load_task_record  CC=15  fan=13
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 195
+
+  [5] !! SPLIT           maps/pycharm-chat.json
       WHY: 1588L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [3] !! SPLIT           planfile.yaml
+  [6] !! SPLIT           planfile.yaml
       WHY: 1319L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
+  ⚠ Splitting src/vdisplay/capture/portal_screencast.py may break 79 import paths
   ⚠ Splitting maps/pycharm-chat.json may break 0 import paths
-  ⚠ Splitting src/vdisplay/capture/portal_screencast.py may break 77 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          4.0 → ≤2.8
-  max-CC:      15 → ≤7
-  god-modules: 15 → 0
-  high-CC(≥15): 3 → ≤1
+  CC̄:          4.1 → ≤2.9
+  max-CC:      36 → ≤18
+  god-modules: 16 → 0
+  high-CC(≥15): 5 → ≤2
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -52,4 +64,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.0 → now CC̄=4.0
+  prev CC̄=4.0 → now CC̄=4.1

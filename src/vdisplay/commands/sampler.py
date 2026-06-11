@@ -5,6 +5,7 @@ import json
 import sys
 import time
 
+from ..application.config_options import get_runtime_options
 from ..application.services.sampler import SamplerConfig, run_sampler, start_sampler_via_agent
 from ..agent_config import resolve_agent_url
 from ..client import AgentClient
@@ -13,6 +14,7 @@ from .io import print_json
 
 
 def register(sub: argparse._SubParsersAction) -> None:
+    opts = get_runtime_options()
     parser = sub.add_parser(
         "sampler",
         help="Continuous screenshot loop — local or vdisplay-agent worker",
@@ -23,7 +25,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     add_display_arg(start)
     start.add_argument(
         "--mode",
-        choices=["desktop", "strict", "unattended", "best-effort"],
+        choices=opts.sampler_capture_modes,
         default="desktop",
     )
     start.add_argument("--interval", type=float, default=5.0)
@@ -33,7 +35,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     start.add_argument("--vd-display", default=":99")
     start.add_argument("--width", type=int, default=1280)
     start.add_argument("--height", type=int, default=720)
-    start.add_argument("--format", choices=["png", "webp", "jpeg"], default="png")
+    start.add_argument("--format", choices=opts.sampler_frame_formats, default="png")
     start.add_argument("--no-dedupe", action="store_true")
     start.add_argument("--progress", action="store_true")
     start.add_argument(

@@ -1,0 +1,26 @@
+# Optional user overrides — copy to .vdisplay/vdisplay.override.yaml (gitignored)
+# Merged on top of project vdisplay.yaml
+
+# automation:
+#   default_monitor: DP-2
+#   verify_strict: false
+
+# Extend option catalogs (full list replacement or dict merge for priorities):
+# options:
+#   control_backends:
+#     - auto
+#     - vision
+#     - my_custom_backend
+#   planfile_task_keys:
+#     - automation
+#     - my_custom_tasks
+#   task_priorities:
+#     urgent: -1
+#   vql:
+#     target_limit: 48
+#     kind_priority:
+#       panel: -1
+
+# actions:
+#   cursor_chat:
+#     map: maps/cursor-chat.json

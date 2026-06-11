@@ -6,6 +6,7 @@ import sys
 from .commands import register_all
 from .commands.session import add_root_session_args
 from .application.session_context import apply_cli_session_args
+from .application.env_loader import load_project_env
 from .exceptions import BackendNotAvailableError, VDisplayError
 
 
@@ -21,6 +22,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    load_project_env(".")
     parser = build_parser()
     args = parser.parse_args(argv)
     apply_cli_session_args(args)

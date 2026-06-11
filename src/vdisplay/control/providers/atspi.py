@@ -52,12 +52,10 @@ def _vdisplay_src_path() -> Path:
 
 
 def _run_subprocess(payload: dict[str, Any], *, timeout_s: float | None = None) -> dict[str, Any]:
+    from ...application.env_defaults import env_float_value
+
     if timeout_s is None:
-        raw = os.environ.get("VDISPLAY_ATSPI_TIMEOUT_S", "30")
-        try:
-            timeout_s = max(1.0, float(raw))
-        except ValueError:
-            timeout_s = 30.0
+        timeout_s = max(1.0, env_float_value("VDISPLAY_ATSPI_TIMEOUT_S", default=30.0))
     src_path = _vdisplay_src_path()
     env = os.environ.copy()
     env["PYTHONPATH"] = str(src_path) + os.pathsep + env.get("PYTHONPATH", "")

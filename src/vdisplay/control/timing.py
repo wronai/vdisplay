@@ -2,22 +2,14 @@
 
 from __future__ import annotations
 
-import os
+from ..application.env_defaults import env_int_value
 
 
 def control_focus_type_seconds() -> float:
     """Pause after click-to-focus before sending keystrokes (ms via env)."""
-    raw = os.environ.get("VDISPLAY_CONTROL_FOCUS_MS", "350")
-    try:
-        return max(0.0, int(raw)) / 1000.0
-    except ValueError:
-        return 0.35
+    return max(0.0, env_int_value("VDISPLAY_CONTROL_FOCUS_MS", default=350)) / 1000.0
 
 
 def control_pointer_settle_seconds() -> float:
     """Brief pause after pointer move/click so the compositor applies focus."""
-    raw = os.environ.get("VDISPLAY_CONTROL_POINTER_SETTLE_MS", "50")
-    try:
-        return max(0.0, int(raw)) / 1000.0
-    except ValueError:
-        return 0.05
+    return max(0.0, env_int_value("VDISPLAY_CONTROL_POINTER_SETTLE_MS", default=50)) / 1000.0

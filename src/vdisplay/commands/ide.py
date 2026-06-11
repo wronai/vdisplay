@@ -11,6 +11,7 @@ from ..desktop_apps import list_desktop_apps
 from ..exceptions import VDisplayError
 from ..ide_prompt import send_ide_prompt
 from .common import add_display_arg, add_map_args
+from ..application.config_options import get_runtime_options
 from .io import print_json
 
 
@@ -28,7 +29,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     prompt.add_argument(
         "--backend",
         default=None,
-        choices=["auto", "atspi", "x11", "browser", "terminal", "vision"],
+        choices=get_runtime_options().control_backends,
         help="Control backend override (default: app profile)",
     )
     prompt.add_argument("--open", action="store_true", help="Launch IDE before typing")

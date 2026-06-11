@@ -284,6 +284,7 @@ def capture_multimon(...) -> dict: ...
 - Loop: launch via vdisplay, observe DP-1 screenshot, vision find, run tests/automation, re-screenshot verify. LLM (.env) for decide: analyze NL to suggest control in Cursor for dev (e.g. prompt for vdisplay fixes).
 - Self-dev using PC via vdisplay: as programmer, use to launch Cursor on desktop, observe via DP-1, control vision, automate (pytest, script), "edit" docs (updates + verify screenshot), develop vdisplay by controlling its own interface.
 - Docs updated with status, examples, gaps.
+- VQL analysis added: metadata in VQL with coords for mouse nav (e.g. click_center for chat on DP-1), data locations (chat_input bounds from NL dark area, history regions from NL, decision_data from colors/brightness/texture for "dark theme active dev"). Previous wrong DP-1 metadata (tall region) led to bad mouse coords (e.g. 3124,1920 on tall instead 1024,1292), mislocated data, wrong decisions. Current VQL enables correct: mouse to DP-1 chat center, read NL data for prompt, act.
 - Next: integrate LLM call in script, hybrid vision+action, full loop test.
 
 **Current autonomy status (as of latest sequential testing):**

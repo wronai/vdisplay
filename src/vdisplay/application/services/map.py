@@ -82,7 +82,7 @@ def map_build(
         title=f"{monitor or 'screen'} / {region_id}",
     )
     try:
-        from ..application.gui_map_events import record_gui_map_built
+        from ..gui_map_events import record_gui_map_built
 
         record_gui_map_built(
             map_path=output,
@@ -143,7 +143,7 @@ def map_diff(
     payload = {"ok": diff.ok, "map": map_path, "scope": scope, **diff.to_dict()}
     if diff.drifted:
         try:
-            from ..application.gui_map_events import record_gui_map_drift
+            from ..gui_map_events import record_gui_map_drift
 
             record_gui_map_drift(map_path=map_path, drift=diff.to_dict(), scope_id=scope)
         except Exception:
@@ -191,13 +191,13 @@ def map_refresh(
     )
     if diff.drifted:
         try:
-            from ..application.gui_map_events import record_gui_map_drift
+            from ..gui_map_events import record_gui_map_drift
 
             record_gui_map_drift(map_path=map_path, drift=diff.to_dict(), scope_id=scope)
         except Exception:
             pass
     try:
-        from ..application.gui_map_events import record_gui_map_built
+        from ..gui_map_events import record_gui_map_built
 
         record_gui_map_built(
             map_path=out_path,

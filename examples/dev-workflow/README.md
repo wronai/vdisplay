@@ -17,9 +17,25 @@ export PYTHONPATH=src:packages/vdisplay-agent/src
 bash examples/dev-workflow/run-dev-automation.sh
 # ponowny run (zadania były już done):
 bash examples/dev-workflow/run-dev-automation.sh --reset
+# pętla autonomy (observe → find → act → verify):
+bash examples/dev-workflow/run-dev-automation.sh --autonomy --setup-vision --reset
+# cross-IDE smoke (JetBrains → Cursor, koru + vdisplay):
+bash examples/dev-workflow/run-dev-automation.sh --cross-ide --reset
 ```
 
-Dokumentacja: [docs/guides/gnome-wayland-screencast.md](../../docs/guides/gnome-wayland-screencast.md)
+Dokumentacja: [docs/guides/gnome-wayland-screencast.md](../../docs/guides/gnome-wayland-screencast.md) · [autonomy-loop.md](../../docs/guides/autonomy-loop.md)
+
+## Konfiguracja projektu
+
+- **`vdisplay.yaml`** (root repo) — monitory, okna, akcje, domyślne flagi automatyzacji
+- **`.vdisplay/vdisplay.override.yaml`** — opcjonalne nadpisania użytkownika (patrz `vdisplay.override.example.yaml`)
+- **`.vdisplay/`** — metadane runtime: `runs/`, `observe/`, `context/`, `vql/`, `config/vdisplay.effective.json`
+
+```bash
+vdisplay config --project .
+export VDISPLAY_OBSERVE=1
+vdisplay auto --project . --planfile examples/dev-workflow/planfile-autonomy.yaml --source yaml run
+```
 
 ## Prerequisites
 
@@ -27,6 +43,10 @@ Dokumentacja: [docs/guides/gnome-wayland-screencast.md](../../docs/guides/gnome-
 cd ~/github/wronai/vdisplay
 source .venv/bin/activate
 pip install -e ".[pillow,dev,auto]" -e "packages/vdisplay-agent[serve]"
+
+# Autonomy loop (vision OCR + optional map):
+bash examples/dev-workflow/setup-autonomy.sh
+# bash examples/dev-workflow/setup-autonomy.sh --build-map
 ```
 
 ## Run

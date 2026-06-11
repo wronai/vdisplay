@@ -133,6 +133,14 @@ def screen_context_from_capture(
         ctx.nl = str(payload["nl"])
     if payload.get("img2nl"):
         ctx.imgl["img2nl"] = payload["img2nl"]
+        img2nl = payload["img2nl"]
+        if isinstance(img2nl, dict) and img2nl.get("ok"):
+            meta = img2nl.get("metadata") or {}
+            scene = meta.get("scene") if isinstance(meta, dict) else None
+            if isinstance(scene, dict):
+                ctx.imgl.setdefault("ok", True)
+                ctx.imgl.setdefault("scene", scene)
+                ctx.imgl.setdefault("source", img2nl.get("source") or "imgl")
     if payload.get("vision_llm"):
         ctx.vision["llm"] = payload["vision_llm"]
     if payload.get("preview") and isinstance(payload["preview"], dict):

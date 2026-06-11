@@ -8,16 +8,17 @@ import time
 from pathlib import Path
 from typing import Any
 
+from vdisplay.application.env_defaults import env_float_value, env_value
 from vdisplay.capture.host import capture_all_monitors, capture_host_to_file
 from vdisplay.exceptions import VDisplayError
 
 from ..runtime import AgentRuntime
 
 _FRAME_CACHE: dict[str, tuple[float, Path, dict[str, Any]]] = {}
-_FRAME_CACHE_TTL_S = max(
-    0.5,
-    float(os.environ.get("VDISPLAY_WEB_FRAME_CACHE_TTL_S", "5.0")),
-)
+
+
+def _frame_cache_ttl_s() -> float:
+    return max(0.5, env_float_value("VDISPLAY_WEB_FRAME_CACHE_TTL_S", default=5.0))
 
 
 def _require_screencast(runtime: AgentRuntime) -> None:
@@ -36,7 +37,7 @@ def cache_get(key: str) -> tuple[Path, dict[str, Any]] | None:
     if hit is None:
         return None
     ts, path, meta = hit
-    if time.monotonic() - ts > _FRAME_CACHE_TTL_S:
+    if time.monotonic() - ts > _frame_cache_ttl_s():
         return None
     if path.is_file():
         return path, meta

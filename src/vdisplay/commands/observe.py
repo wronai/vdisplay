@@ -7,6 +7,7 @@ import json
 import sys
 from pathlib import Path
 
+from ..application.config_options import get_runtime_options
 from ..application.commands import CommandRequest, CommandVerb
 from ..application.executor import execute
 from ..integrations.pipeline import observe_screen
@@ -24,7 +25,8 @@ def register(sub: argparse._SubParsersAction) -> None:
     parser.add_argument("--map", dest="map_path", help="Attach GUI map pack for scope metadata")
     parser.add_argument("--vql", dest="vql_path", help="Write VQL program JSON")
     parser.add_argument("--svg", dest="svg_path", help="Render layout SVG from VQL program")
-    parser.add_argument("--format", choices=("json", "vql", "summary"), default="json")
+    opts = get_runtime_options()
+    parser.add_argument("--format", choices=tuple(opts.observe_output_formats), default="json")
     parser.add_argument("--no-imgl", action="store_true", help="Skip IMGL scene analysis")
     parser.add_argument("--no-vql", action="store_true", help="Skip VQL export")
     parser.add_argument("--no-sidecar", action="store_true", help="Do not write .context.json sidecar")

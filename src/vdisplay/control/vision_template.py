@@ -76,7 +76,9 @@ def match_template(
     """Find template occurrences in a screenshot using OpenCV matchTemplate."""
     import os
 
-    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    from ..application.env_defaults import vision_backend_name
+
+    backend = vision_backend_name()
     if backend != "local":
         try:
             from ..integrations.vision_backend import match_template as delegated

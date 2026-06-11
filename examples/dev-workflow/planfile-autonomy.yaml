@@ -1,78 +1,36 @@
 automation:
 - id: auto-observe-dp1
-  title: Observe DP-1 (screenshot + img2nl sidecar)
-  status: done
+  title: Observe DP-1 (screenshot + sidecar in .vdisplay)
+  status: todo
   priority: high
-  monitor: DP-1
-  handler: vdisplay screenshot -o /tmp/vdisplay-auto-loop-observe.png --source DP-1
-  last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-1\",\n  \"monitor\"\
-    : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
-    screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n\
-    \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
-    \  \"monitor_name\": \"DP-1\",\n  \"path\": \"/tmp/vdisplay-auto-loop-observe.png\"\
-    ,\n  \"bytes\": 346208,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
-    \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~511 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
-    \ 255). Widoczny szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\\
-    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
-    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
-    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
-    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
-    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
-    u00d71280 px. Widocznych ~511 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000,\
-    \ #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
-    \n}"
+  action_ref: dev_screenshot_dp1
+  observe: true
+  handler: vdisplay screenshot -o .vdisplay/observe/auto-loop-observe.png --source
+    DP-1
 - id: auto-vision-find-cursor
   title: Vision find — Cursor chat anchor
-  status: done
+  status: todo
   priority: high
-  monitor: DP-1
+  action_ref: cursor_ask
   observe: true
   handler: vdisplay control find --backend vision --vision-anchor Ask --preview --preview-output
-    /tmp/vdisplay-auto-find-preview.png
-  last_run_note: "{\n  \"matches\": [\n    {\n      \"id\": \"vision:Ask\",\n    \
-    \  \"backend\": \"vision\",\n      \"role\": \"unknown\",\n      \"name\": \"\
-    Ask\",\n      \"description\": null,\n      \"window_id\": null,\n      \"app_label\"\
-    : null,\n      \"window_title\": null,\n      \"provider_ref\": null,\n      \"\
-    state\": {\n        \"stub\": true,\n        \"anchor\": \"Ask\"\n      },\n \
-    \     \"actions\": [],\n      \"text_value\": null,\n      \"parent_id\": null,\n\
-    \      \"children_ids\": [],\n      \"bounds\": {\n        \"x\": 0,\n       \
-    \ \"y\": 0,\n        \"width\": 0,\n        \"height\": 0\n      }\n    }\n  ],\n\
-    \  \"selected\": {\n    \"id\": \"vision:Ask\",\n    \"backend\": \"vision\",\n\
-    \    \"role\": \"unknown\",\n    \"name\": \"Ask\",\n    \"description\": null,\n\
-    \    \"window_id\": null,\n    \"app_label\": null,\n    \"window_title\": null,\n\
-    \    \"provider_ref\": null,\n    \"state\": {\n      \"stub\": true,\n      \"\
-    anchor\": \"Ask\"\n    },\n    \"actions\": [],\n    \"text_value\": null,\n \
-    \   \"parent_id\": null,\n    \"children_ids\": [],\n    \"bounds\": {\n     \
-    \ \"x\": 0,\n      \"y\": 0,\n      \"width\": 0,\n      \"height\": 0\n    }\n\
-    \  },\n  \"count\": 1,\n  \"preview\": {\n    \"preview_available\": false,\n\
-    \    \"reason\": \"no vision screenshot captured\"\n  }\n}"
-- id: auto-verify-screenshot-dp1
-  title: Post-act verify screenshot DP-1
-  status: done
-  priority: normal
-  monitor: DP-1
-  handler: vdisplay screenshot -o /tmp/vdisplay-auto-loop-verify.png --source DP-1
-  last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-1\",\n  \"monitor\"\
-    : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
-    screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n\
-    \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
-    \  \"monitor_name\": \"DP-1\",\n  \"path\": \"/tmp/vdisplay-auto-loop-verify.png\"\
-    ,\n  \"bytes\": 388888,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
-    \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~717 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
-    \ 255). Widoczny szum lub drobna tekstura. Wykryto 3 du\\u017cych region\\u00f3w/obiekt\\\
-    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
-    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
-    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
-    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
-    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
-    u00d71280 px. Widocznych ~717 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000,\
-    \ #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 3 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
-    \n}"
+    .vdisplay/observe/auto-find-preview.png
+- id: auto-act-cursor-chat
+  title: Act — focus Cursor chat via vision (requires OCR or map)
+  status: failed
+  priority: high
+  action_ref: cursor_chat
+  observe: true
+  verify: true
+  handler: vdisplay control focus --backend vision
+  last_run_note: "{\n  \"ok\": false,\n  \"action\": \"control_focus\",\n  \"data\"\
+    : {},\n  \"meta\": {\n    \"route\": \"agent\",\n    \"agent_url\": \"http://127.0.0.1:8765\"\
+    ,\n    \"host_environment\": \"linux_wayland\",\n    \"session_dir\": \"/home/tom/github/wronai/vdisplay/.vdisplay/runs/2026-06-11T16-57-04Z/session\"\
+    ,\n    \"audit_delegated\": \"broker\"\n  },\n  \"artifacts\": [],\n  \"diagnostics\"\
+    : {},\n  \"request_id\": \"ec6c3c9d-5479-40a1-801f-40cbe9f21d3f\",\n  \"error\"\
+    : {\n    \"code\": \"invalid_request\",\n    \"message\": \"vdisplay-agent POST\
+    \ /control/focus: {'code': 'invalid_request', 'message': \\\"{'code': 'invalid_request',\
+    \ 'message': 'x11 fallback: no window matched for snapshot. Session is Wayland\
+    \ \\u2014 native apps like Firefox are invisible to xdotool; use --backend atspi,\
+    \ a browser session, or MOZ_ENABLE_WAYLAND=0 for X11 Firefox', 'details': {}}\\\
+    \", 'details': {}}\",\n    \"details\": {}\n  }\n}"

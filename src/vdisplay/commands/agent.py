@@ -4,6 +4,9 @@ import argparse
 import os
 from typing import Any, Callable
 
+from ..agent_config import resolve_agent_url
+from ..application.config_options import get_runtime_options
+from ..application.env_defaults import env_int_value, env_value
 from ..exceptions import VDisplayError
 from .io import print_json
 
@@ -94,7 +97,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     browser_open.add_argument("--url", required=True)
     browser_open.add_argument("--session-id", required=True)
     browser_open.add_argument("--headed", action="store_true")
-    browser_open.add_argument("--vendor", choices=["chromium", "firefox"])
+    browser_open.add_argument("--vendor", choices=get_runtime_options().browser_vendors)
     browser_open.add_argument("--engine", help="Alias for --vendor")
     browser_open.set_defaults(func=handle)
 
@@ -139,8 +142,8 @@ def _handle_serve(args: argparse.Namespace) -> int:
         ) from exc
     from vdisplay_agent.serve_port import ensure_broker_port_free
 
-    host = args.host or os.environ.get("VDISPLAY_AGENT_HOST", "127.0.0.1")
-    port = args.port or int(os.environ.get("VDISPLAY_AGENT_PORT", "8765"))
+    host = args.host or env_value("VDISPLAY_AGENT_HOST") or "127.0.0.1"
+    port = args.port or env_int_value("VDISPLAY_AGENT_PORT", default=8765)
     try:
         ensure_broker_port_free(host, port)
     except RuntimeError as exc:

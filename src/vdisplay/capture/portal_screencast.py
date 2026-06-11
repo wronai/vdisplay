@@ -522,21 +522,21 @@ def _is_retryable_screencast_error(error: str | None) -> bool:
 
 
 def _pipewire_capture_timeout_s() -> float:
-    raw = os.environ.get("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", "8")
-    try:
-        return max(2.0, min(30.0, float(raw)))
-    except ValueError:
-        return 8.0
+    from ..application.env_defaults import env_float_value
+
+    return max(2.0, min(30.0, env_float_value("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", default=8.0)))
 
 
 def _pipewire_force_caps() -> bool:
-    raw = os.environ.get("VDISPLAY_PIPEWIRE_FORCE_CAPS", "0").strip().lower()
-    return raw in {"1", "true", "yes"}
+    from ..application.env_defaults import env_flag
+
+    return env_flag("VDISPLAY_PIPEWIRE_FORCE_CAPS", default=False)
 
 
 def _gnome_screenshot_fallback_enabled() -> bool:
-    raw = os.environ.get("VDISPLAY_SCREENCAST_GNOME_FALLBACK", "1").strip().lower()
-    return raw not in {"0", "false", "no"}
+    from ..application.env_defaults import env_flag
+
+    return env_flag("VDISPLAY_SCREENCAST_GNOME_FALLBACK", default=True)
 
 
 def _capture_via_gnome_screenshot_region(properties: dict[str, Any]) -> bytes:
@@ -621,8 +621,9 @@ def _screencast_pipewire_fd(session: PortalScreenCastSession, *, fresh: bool = F
 
 
 def _pipewire_fresh_fd_enabled() -> bool:
-    raw = os.environ.get("VDISPLAY_PIPEWIRE_FRESH_FD", "0").strip().lower()
-    return raw in {"1", "true", "yes"}
+    from ..application.env_defaults import env_flag
+
+    return env_flag("VDISPLAY_PIPEWIRE_FRESH_FD", default=False)
 
 
 def _open_screencast_pipewire_fd(session_path: str) -> int:
@@ -750,24 +751,18 @@ def _rect_overlap_area(
     return max(0, ir - ix) * max(0, ib - iy)
 
 
-def screencast_stream_region_for_monitor(
-    session: PortalScreenCastSession | None,
-    monitor: dict[str, Any],
-) -> dict[str, int] | None:
-    """Best-matching portal stream region for a monitor (position + size overlap)."""
-    if session is None:
-        return None
-    streams = list(getattr(session, "streams", None) or [])
-    if not streams:
-        return None
-
-    mx = int(monitor.get("x") or 0)
-    my = int(monitor.get("y") or 0)
+def _monitor_bounds(monitor: dict[str, Any]) -> tuple[int, int, int, int] | None:
     mw = int(monitor.get("width") or 0)
     mh = int(monitor.get("height") or 0)
     if mw <= 0 or mh <= 0:
-        return screencast_stream_region(session)
+        return None
+    return int(monitor.get("x") or 0), int(monitor.get("y") or 0), mw, mh
 
+
+def _best_stream_region(
+    streams: list[Any],
+    mx: int, my: int, mw: int, mh: int,
+) -> dict[str, int] | None:
     best: dict[str, int] | None = None
     best_area = 0
     for stream in streams:
@@ -781,6 +776,23 @@ def screencast_stream_region_for_monitor(
         if area > best_area:
             best_area = area
             best = region
+    return best
+
+
+def screencast_stream_region_for_monitor(
+    session: PortalScreenCastSession | None,
+    monitor: dict[str, Any],
+) -> dict[str, int] | None:
+    """Best-matching portal stream region for a monitor (position + size overlap)."""
+    if session is None:
+        return None
+    streams = list(getattr(session, "streams", None) or [])
+    if not streams:
+        return None
+    bounds = _monitor_bounds(monitor)
+    if bounds is None:
+        return screencast_stream_region(session)
+    best = _best_stream_region(streams, *bounds)
     return best or screencast_stream_region(session)
 
 
@@ -922,6 +934,8 @@ def _start_screencast_impl(
     except ImportError as exc:
         return {"ok": False, "error": f"screencast needs python3-dbus and python3-gi: {exc}"}
 
+    from ..application.env_defaults import env_int_value
+
     state: dict[str, Any] = {"ok": False, "stage": "create", "session_path": ""}
     loop = GLib.MainLoop()
     token_counter = {"n": 0}
@@ -1005,7 +1019,9 @@ def _start_screencast_impl(
                 "handle_token": select_token,
                 "types": dbus.UInt32(1),
                 "multiple": dbus.Boolean(multiple),
-                "cursor_mode": dbus.UInt32(int(os.environ.get("VDISPLAY_SCREENCAST_CURSOR", "2"))),
+                "cursor_mode": dbus.UInt32(
+                    env_int_value("VDISPLAY_SCREENCAST_CURSOR", default=2)
+                ),
                 "persist_mode": dbus.UInt32(2),
             }
             saved_token = _load_restore_token()

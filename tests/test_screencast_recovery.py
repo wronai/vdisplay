@@ -11,7 +11,7 @@ def test_screencast_recovery_respects_cooldown(monkeypatch: pytest.MonkeyPatch) 
     from vdisplay_agent.services import screencast_recovery as mod
     from vdisplay_agent.session_store import SessionStore
 
-    monkeypatch.setattr(mod, "_RECOVERY_COOLDOWN_S", 60.0)
+    monkeypatch.setattr(mod, "_recovery_cooldown_s", lambda: 60.0)
     mod._LAST_RECOVERY_ATTEMPT_MONO = time.monotonic()
 
     store = SessionStore()

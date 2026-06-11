@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from .commands import CommandRequest
+from .env_defaults import env_flag
 
 HEADER_SESSION_ID = "X-VDisplay-Session-Id"
 HEADER_SESSION_DIR = "X-VDisplay-Session-Dir"
@@ -56,11 +57,7 @@ def enrich_command_request(cmd: CommandRequest) -> CommandRequest:
 
 def agent_audit_delegated() -> bool:
     """When true, agent-routed commands record on the broker instead of the client."""
-    return os.environ.get("VDISPLAY_AGENT_AUDIT_DELEGATE", "1").strip().lower() in {
-        "1",
-        "true",
-        "yes",
-    }
+    return env_flag("VDISPLAY_AGENT_AUDIT_DELEGATE", default=True)
 
 
 def ensure_audit_session_dir(cmd: CommandRequest) -> Path | None:

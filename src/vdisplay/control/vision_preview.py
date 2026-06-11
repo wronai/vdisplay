@@ -129,7 +129,9 @@ def confidence_color(confidence: float, *, selected: bool = False, rejected: boo
 
 
 def preview_backend() -> str:
-    return os.environ.get("VDISPLAY_VISION_PREVIEW", "auto").strip().lower() or "auto"
+    from ..application.env_defaults import env_str_lower
+
+    return env_str_lower("VDISPLAY_VISION_PREVIEW", "auto") or "auto"
 
 
 def _prefer_imgl_annotate() -> bool:
@@ -230,7 +232,9 @@ def render_match_overlay(
             if preview_backend() in {"imgl", "annotate"}:
                 raise
 
-    backend = os.environ.get("VDISPLAY_VISION_BACKEND", "auto").strip().lower()
+    from ..application.env_defaults import vision_backend_name
+
+    backend = vision_backend_name()
     if backend != "local":
         try:
             from ..integrations.vision_backend import render_match_overlay as delegated

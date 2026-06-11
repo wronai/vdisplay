@@ -2,18 +2,20 @@ from __future__ import annotations
 
 import argparse
 
+from ..application.config_options import get_runtime_options
 from ..application.services import discovery
 from .common import add_control_selector_args, add_display_arg, add_preview_args, control_selector_kwargs_for_service
 from .io import print_json
 
 
 def register(sub: argparse._SubParsersAction) -> None:
+    opts = get_runtime_options()
     parser = sub.add_parser("diagnose", help="Diagnose DISPLAY and monitor visibility")
     add_display_arg(parser)
     parser.add_argument(
         "aspect",
         nargs="?",
-        choices=["control", "unattended"],
+        choices=opts.diagnose_modes,
         help="Aspect to diagnose",
     )
     parser.add_argument(

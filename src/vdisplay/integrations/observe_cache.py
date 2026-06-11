@@ -7,12 +7,12 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ..application.env_defaults import env_flag, env_float_value, env_value
 from .screen_context import ScreenContext
 
 
 def observe_cache_enabled() -> bool:
-    flag = os.environ.get("VDISPLAY_OBSERVE_CACHE", "1").strip().lower()
-    return flag not in {"0", "false", "no", "off"}
+    return env_flag("VDISPLAY_OBSERVE_CACHE", default=True)
 
 
 def session_artifacts_root() -> Path | None:
@@ -29,7 +29,7 @@ def session_artifacts_root() -> Path | None:
         pass
     if os.environ.get("VDISPLAY_SESSION", "").strip().lower() not in {"1", "true", "yes"}:
         return None
-    base = Path(os.environ.get("VDISPLAY_SESSION_BASE", ".vdisplay")).expanduser()
+    base = Path(env_value("VDISPLAY_SESSION_BASE")).expanduser()
     if not base.is_dir():
         return None
     sessions = sorted(base.glob("*__*"), key=lambda item: item.stat().st_mtime, reverse=True)

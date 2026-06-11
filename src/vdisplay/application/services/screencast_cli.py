@@ -10,12 +10,10 @@ from typing import Any
 from ...capture.portal_screencast import portal_session_env_status
 from ...capture.screencast_keeper import keeper_capture_ready, read_keeper_state, spawn_keeper, stop_keeper
 from ...exceptions import VDisplayError
+from ..env_defaults import env_float_value
 
 _COOLDOWN_FILE = Path(os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}") / "vdisplay-screencast-last-start"
-_LOCAL_START_COOLDOWN_S = max(
-    30.0,
-    float(os.environ.get("VDISPLAY_SCREENCAST_LOCAL_START_COOLDOWN_S", "60")),
-)
+_LOCAL_START_COOLDOWN_S = max(30.0, env_float_value("VDISPLAY_SCREENCAST_LOCAL_START_COOLDOWN_S", default=60.0))
 
 
 def _local_start_cooldown_remaining() -> float:

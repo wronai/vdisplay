@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from ...exceptions import VDisplayError
+from ..config_options import ConfigOptions, get_runtime_options
 
 
 def _yaml():
@@ -46,8 +47,14 @@ def ensure_auto_dependencies(*, source: AutoSource = "auto") -> None:
                 ) from exc
 
 AutoSource = Literal["auto", "yaml", "tickets"]
-_RUNNABLE_STATUSES = frozenset({"todo", "open", "ready", "pending", ""})
-_PRIORITY_ORDER = {"critical": 0, "high": 1, "normal": 2, "medium": 3, "low": 4}
+
+
+def _task_options(project: Path) -> ConfigOptions:
+    return get_runtime_options(project)
+
+
+def _legacy_planfile_keys(options: ConfigOptions) -> list[str]:
+    return [key for key in options.planfile_task_keys if key != "tasks"]
 
 
 @dataclass
@@ -99,40 +106,46 @@ def load_auto_tasks(
 ) -> list[AutoTask]:
     root = Path(project).expanduser().resolve()
     yaml_path = resolve_planfile_path(root, planfile)
+    options = _task_options(root)
 
     yaml_tasks: list[AutoTask] = []
     if source in {"auto", "yaml"} and yaml_path.is_file():
-        yaml_tasks = _load_yaml_tasks(yaml_path)
+        yaml_tasks = _load_yaml_tasks(yaml_path, options)
 
     if source == "yaml":
-        return _sort_tasks(yaml_tasks)
+        return _sort_tasks(yaml_tasks, options)
 
     if yaml_tasks:
-        return _sort_tasks(yaml_tasks)
+        return _sort_tasks(yaml_tasks, options)
 
     if source in {"auto", "tickets"}:
-        return _sort_tasks(_load_ticket_tasks(root))
+        return _sort_tasks(_load_ticket_tasks(root, options), options)
     return []
 
 
-def next_auto_task(tasks: list[AutoTask]) -> AutoTask | None:
-    runnable = [task for task in tasks if task.status.lower() in _RUNNABLE_STATUSES and task.command.strip()]
+def next_auto_task(tasks: list[AutoTask], *, options: ConfigOptions | None = None) -> AutoTask | None:
+    opts = options or ConfigOptions.defaults()
+    runnable = [
+        task
+        for task in tasks
+        if task.status.lower() in opts.runnable_statuses() and task.command.strip()
+    ]
     if not runnable:
         return None
-    return _sort_tasks(runnable)[0]
+    return _sort_tasks(runnable, opts)[0]
 
 
-def _sort_tasks(tasks: list[AutoTask]) -> list[AutoTask]:
+def _sort_tasks(tasks: list[AutoTask], options: ConfigOptions) -> list[AutoTask]:
     return sorted(
         tasks,
         key=lambda task: (
-            _PRIORITY_ORDER.get(str(task.priority).lower(), 99),
+            options.priority_rank(task.priority),
             task.id,
         ),
     )
 
 
-def _load_yaml_tasks(path: Path) -> list[AutoTask]:
+def _load_yaml_tasks(path: Path, options: ConfigOptions) -> list[AutoTask]:
     data = _yaml().safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         raise VDisplayError(f"planfile YAML root must be a mapping: {path}")
@@ -147,7 +160,7 @@ def _load_yaml_tasks(path: Path) -> list[AutoTask]:
                 tasks.append(task)
         return tasks
 
-    for key in ("automation", "automation_tasks", "control_tasks", "desktop_tasks"):
+    for key in _legacy_planfile_keys(options):
         items = data.get(key)
         if isinstance(items, list):
             for index, item in enumerate(items):
@@ -159,7 +172,7 @@ def _load_yaml_tasks(path: Path) -> list[AutoTask]:
     return tasks
 
 
-def _load_ticket_tasks(root: Path) -> list[AutoTask]:
+def _load_ticket_tasks(root: Path, options: ConfigOptions) -> list[AutoTask]:
     if not (root / ".planfile").is_dir():
         return []
     try:
@@ -177,7 +190,7 @@ def _load_ticket_tasks(root: Path) -> list[AutoTask]:
         if not command:
             continue
         execution_state = (ticket.execution.state if ticket.execution else "") or ""
-        if execution_state not in _RUNNABLE_STATUSES:
+        if execution_state not in options.runnable_statuses():
             continue
         tasks.append(
             AutoTask(
@@ -277,24 +290,42 @@ def _validate_mapping_task(item: dict[str, Any], source: str) -> str | None:
     return command
 
 
+def _task_title(item: dict[str, Any], default_id: str) -> str:
+    return str(item.get("title") or item.get("name") or default_id)
+
+
+def _task_priority(item: dict[str, Any]) -> str:
+    return str(item.get("priority") or item.get("priority_label") or "normal")
+
+
+def _task_monitor(item: dict[str, Any]) -> str | None:
+    return str(item.get("monitor") or item.get("source") or "") or None
+
+
+def _task_map_path(item: dict[str, Any]) -> str | None:
+    return str(item.get("map") or item.get("map_path") or "") or None
+
+
+def _task_verify(item: dict[str, Any]) -> bool:
+    verify_raw = item.get("verify")
+    return verify_raw in {True, "true", "1", 1, "yes", "on"}
+
+
 def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) -> AutoTask | None:
     command = _validate_mapping_task(item, source)
     if not command:
         return None
-    status = str(item.get("status") or "todo").lower()
-    verify_raw = item.get("verify")
-    verify = verify_raw in {True, "true", "1", 1, "yes", "on"}
     return AutoTask(
         id=str(item.get("id") or default_id),
-        title=str(item.get("title") or item.get("name") or default_id),
+        title=_task_title(item, default_id),
         command=command,
         source=source,
-        priority=str(item.get("priority") or item.get("priority_label") or "normal"),
-        status=status,
+        priority=_task_priority(item),
+        status=str(item.get("status") or "todo").lower(),
         description=str(item.get("description") or ""),
-        monitor=str(item.get("monitor") or item.get("source") or "") or None,
-        map_path=str(item.get("map") or item.get("map_path") or "") or None,
-        verify=verify,
+        monitor=_task_monitor(item),
+        map_path=_task_map_path(item),
+        verify=_task_verify(item),
         raw=dict(item),
     )
 
@@ -330,8 +361,16 @@ def _update_task_list(items: list[Any], task_id: str, *, status: str, note: str)
     return False
 
 
-def write_yaml_task_status(path: Path, task_id: str, *, status: str, note: str = "") -> None:
+def write_yaml_task_status(
+    path: Path,
+    task_id: str,
+    *,
+    status: str,
+    note: str = "",
+    options: ConfigOptions | None = None,
+) -> None:
     yaml = _yaml()
+    opts = options or get_runtime_options(path.parent)
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         return
@@ -340,7 +379,7 @@ def write_yaml_task_status(path: Path, task_id: str, *, status: str, note: str =
     if isinstance(data.get("tasks"), list):
         updated = _update_task_list(data["tasks"], task_id, status=status, note=note)
 
-    for key in ("automation", "automation_tasks", "control_tasks", "desktop_tasks"):
+    for key in opts.planfile_task_keys:
         items = data.get(key)
         if isinstance(items, list) and _update_task_list(items, task_id, status=status, note=note):
             updated = True
@@ -349,19 +388,18 @@ def write_yaml_task_status(path: Path, task_id: str, *, status: str, note: str =
         path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
 
 
-_AUTOMATION_LIST_KEYS = ("automation", "automation_tasks", "control_tasks", "desktop_tasks", "tasks")
 
-
-def reset_yaml_automation_tasks(path: Path) -> int:
+def reset_yaml_automation_tasks(path: Path, *, options: ConfigOptions | None = None) -> int:
     """Reset all planfile automation tasks to todo (clears last_run_note)."""
     yaml = _yaml()
+    opts = options or get_runtime_options(path.parent)
     if not path.is_file():
         return 0
     data = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(data, dict):
         return 0
     count = 0
-    for key in _AUTOMATION_LIST_KEYS:
+    for key in opts.planfile_task_keys:
         items = data.get(key)
         if not isinstance(items, list):
             continue

@@ -363,10 +363,8 @@ def _request_payload(cmd: CommandRequest) -> dict[str, Any]:
 
 
 def _step_delay(step_delay_s: float | None) -> float:
+    from .env_defaults import env_float_value
+
     if step_delay_s is not None:
         return max(0.0, float(step_delay_s))
-    raw = os.environ.get("VDISPLAY_REPLAY_DELAY_S", "0.25").strip()
-    try:
-        return max(0.0, float(raw))
-    except ValueError:
-        return 0.25
+    return max(0.0, env_float_value("VDISPLAY_REPLAY_DELAY_S", default=0.25))

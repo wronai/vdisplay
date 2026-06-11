@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 
 from ..exceptions import VDisplayError
+from ..application.config_options import get_runtime_options
 from .io import print_json
 
 
@@ -23,7 +24,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     )
     parser.add_argument(
         "--source",
-        choices=["auto", "yaml", "tickets"],
+        choices=get_runtime_options().auto_sources,
         default="auto",
         help="Task source: planfile.yaml automation tasks, .planfile tickets, or auto",
     )

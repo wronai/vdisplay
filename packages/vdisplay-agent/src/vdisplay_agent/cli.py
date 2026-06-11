@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 import argparse
-import os
+
+from vdisplay.application.env_defaults import env_value
+from vdisplay.application.env_loader import load_project_env
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        load_project_env(".")
+    except Exception:
+        pass
     parser = argparse.ArgumentParser(prog="vdisplay-agent", description="Local vdisplay broker")
     sub = parser.add_subparsers(dest="command", required=True)
 
     serve = sub.add_parser("serve", help="Start localhost REST broker")
-    serve.add_argument("--host", default=os.environ.get("VDISPLAY_AGENT_HOST", "127.0.0.1"))
-    serve.add_argument("--port", type=int, default=int(os.environ.get("VDISPLAY_AGENT_PORT", "8765")))
+    serve.add_argument("--host", default=env_value("VDISPLAY_AGENT_HOST") or "127.0.0.1")
+    serve.add_argument("--port", type=int, default=int(env_value("VDISPLAY_AGENT_PORT") or "8765"))
     serve.add_argument("--reload", action="store_true")
 
     args = parser.parse_args(argv)

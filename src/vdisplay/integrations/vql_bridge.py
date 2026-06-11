@@ -7,13 +7,14 @@ import os
 from pathlib import Path
 from typing import Any
 
+from ..application.env_defaults import env_flag
 from .imgl_bridge import imgl_available
 from .screen_context import ScreenContext
+from ..application.config_options import get_runtime_options
 
 
 def vql_enabled() -> bool:
-    flag = os.environ.get("VDISPLAY_VQL", "1").strip().lower()
-    return flag not in {"0", "false", "no", "off"}
+    return env_flag("VDISPLAY_VQL", default=True)
 
 
 def vql_available() -> bool:
@@ -240,29 +241,179 @@ def _resolve_scene_class(imgl: dict[str, Any]) -> str:
     return ""
 
 
+def _bbox_center(bbox: dict[str, Any] | None) -> dict[str, int] | None:
+    try:
+        from imgl.export.actuation_layers import bbox_center
+
+        return bbox_center(bbox)
+    except ImportError:
+        pass
+    if not isinstance(bbox, dict):
+        return None
+    x = int(bbox.get("x") or 0)
+    y = int(bbox.get("y") or 0)
+    w = int(bbox.get("w") or bbox.get("width") or 0)
+    h = int(bbox.get("h") or bbox.get("height") or 0)
+    if w <= 0 or h <= 0:
+        return None
+    return {"x": x + w // 2, "y": y + h // 2}
+
+
+def _layer_from_bbox(
+    *,
+    kind: str,
+    layer_id: str | None = None,
+    text: str | None = None,
+    bbox: dict[str, Any] | None = None,
+    confidence: float | None = None,
+) -> dict[str, Any] | None:
+    try:
+        from imgl.export.actuation_layers import layer_from_bbox
+
+        return layer_from_bbox(
+            kind=kind,
+            layer_id=layer_id,
+            text=text,
+            bbox=bbox,
+            confidence=confidence,
+        )
+    except ImportError:
+        pass
+    if not isinstance(bbox, dict):
+        return None
+    center = _bbox_center(bbox)
+    if center is None:
+        return None
+    layer: dict[str, Any] = {
+        "kind": kind,
+        "id": layer_id,
+        "text": text,
+        "bbox": bbox,
+        "center": center,
+        "click_center": center,
+    }
+    if confidence is not None:
+        layer["confidence"] = confidence
+    return layer
+
+
+def _extract_imgl_scene(imgl: dict[str, Any]) -> dict[str, Any] | None:
+    """Normalize scene dict from ctx.imgl (analyze_with_imgl or img2nl describe path)."""
+    if not isinstance(imgl, dict):
+        return None
+    if imgl.get("ok") and isinstance(imgl.get("scene"), dict):
+        return imgl["scene"]
+    img2nl = imgl.get("img2nl")
+    if isinstance(img2nl, dict) and img2nl.get("ok"):
+        meta = img2nl.get("metadata") or {}
+        if isinstance(meta, dict) and isinstance(meta.get("scene"), dict):
+            return meta["scene"]
+    return None
+
+
 def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
-    layers: list[dict[str, Any]] = []
+    limit = get_runtime_options().vql.layer_export_limit
+    scene = _extract_imgl_scene(imgl)
+    if scene is not None:
+        try:
+            from imgl.export.actuation_layers import scene_to_actuation_layers
+
+            return scene_to_actuation_layers(scene, limit=limit)
+        except ImportError:
+            pass
+        imgl = {"ok": True, "scene": scene}
+    try:
+        from imgl.export.actuation_layers import imgl_result_to_actuation_layers
+
+        return imgl_result_to_actuation_layers(imgl, limit=limit)
+    except ImportError:
+        pass
     imgl_scene = imgl.get("scene") if imgl.get("ok") else None
     if not isinstance(imgl_scene, dict):
-        return layers
+        return []
+    layers: list[dict[str, Any]] = []
     for window in imgl_scene.get("windows") or []:
-        layers.append(
-            {
-                "kind": "window",
-                "id": window.get("id"),
-                "title": window.get("title"),
-                "bbox": window.get("bbox"),
-            }
+        if not isinstance(window, dict):
+            continue
+        window_layer = _layer_from_bbox(
+            kind="window",
+            layer_id=str(window.get("id") or ""),
+            text=window.get("title"),
+            bbox=window.get("bbox"),
         )
+        if window_layer:
+            layers.append(window_layer)
+        for element in window.get("elements") or []:
+            if not isinstance(element, dict):
+                continue
+            item = _layer_from_bbox(
+                kind=str(element.get("type") or element.get("role") or "element"),
+                layer_id=str(element.get("id") or ""),
+                text=element.get("text"),
+                bbox=element.get("bbox"),
+                confidence=float(element.get("confidence") or 0.0) or None,
+            )
+            if item:
+                layers.append(item)
     for element in imgl_scene.get("elements") or []:
-        layers.append(
-            {
-                "kind": element.get("role") or "element",
-                "text": element.get("text"),
-                "bbox": element.get("bbox"),
-            }
+        if not isinstance(element, dict):
+            continue
+        item = _layer_from_bbox(
+            kind=str(element.get("role") or element.get("type") or "element"),
+            layer_id=str(element.get("id") or ""),
+            text=element.get("text"),
+            bbox=element.get("bbox"),
+            confidence=float(element.get("confidence") or 0.0) or None,
         )
-    return layers
+        if item:
+            layers.append(item)
+    for ocr in imgl_scene.get("ocr_boxes") or []:
+        if not isinstance(ocr, dict):
+            continue
+        text = str(ocr.get("text") or "").strip()
+        if not text:
+            continue
+        item = _layer_from_bbox(
+            kind="ocr",
+            text=text,
+            bbox=ocr.get("bbox"),
+            confidence=float(ocr.get("confidence") or 0.0) or None,
+        )
+        if item:
+            layers.append(item)
+    return layers[:limit]
+
+
+def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> None:
+    """Warn when photo-VQL sidecar would have no click targets (missing imgl or empty scene)."""
+    import warnings
+
+    from .imgl_bridge import imgl_available, imgl_enabled
+
+    render = (program.get("metadata") or {}).get("render_intent") or {}
+    layers = render.get("layers") or []
+    if layers:
+        return
+    if not imgl_enabled():
+        return
+    if not imgl_available():
+        warnings.warn(
+            "VDISPLAY_IMGL=1 but imgl is not installed — VQL sidecar will have empty layers. "
+            "Install: pip install -e \".[observe]\" (requires system tesseract-ocr)",
+            stacklevel=2,
+        )
+        return
+    if _extract_imgl_scene(ctx.imgl) is None and not ctx.imgl.get("ok"):
+        warnings.warn(
+            "imgl installed but scene analysis failed or was skipped — VQL layers empty. "
+            f"imgl error={ctx.imgl.get('error') or 'unknown'}",
+            stacklevel=2,
+        )
+        return
+    warnings.warn(
+        "imgl scene produced zero actuation layers — photo VQL mouse targets unavailable",
+        stacklevel=2,
+    )
 
 
 def _maybe_add_map_targets(
@@ -277,7 +428,7 @@ def _maybe_add_map_targets(
             {"id": key, "label": (value or {}).get("label"), "role": (value or {}).get("role")}
             for key, value in elements.items()
             if isinstance(value, dict)
-        ][:32]
+        ][: get_runtime_options().vql.map_target_limit]
 
 
 def _maybe_add_routing_hint(
@@ -305,6 +456,19 @@ def _enrich_render_intent(ctx: ScreenContext, descriptor: dict[str, Any]) -> dic
     if not enriched.get("layers"):
         enriched["layers"] = _build_imgl_layers(ctx.imgl)
 
+    if enriched.get("layers") and not enriched.get("ui_elements"):
+        enriched["ui_elements"] = [
+            {
+                "id": layer.get("id"),
+                "role": layer.get("kind") or layer.get("role"),
+                "label": layer.get("text") or layer.get("label"),
+                "bounds": layer.get("bbox") or layer.get("bounds"),
+                "click_center": layer.get("click_center") or layer.get("center"),
+            }
+            for layer in enriched["layers"]
+            if isinstance(layer, dict)
+        ]
+
     _maybe_add_map_targets(enriched, ctx.map_pack)
     _maybe_add_routing_hint(enriched, ctx.environment)
     return enriched
@@ -320,6 +484,7 @@ def write_vql_artifacts(
     program = context_to_vql_program(ctx)
     ctx.vql["program"] = program
     ctx.vql["reverse"] = reverse_generation_descriptor(ctx)
+    _warn_empty_vql_layers(ctx, program)
 
     written: dict[str, str] = {}
     image = Path(ctx.image_path).expanduser()

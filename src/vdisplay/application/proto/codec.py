@@ -168,7 +168,9 @@ class ResultEnvelope:
 
 
 def event_format() -> str:
-    return os.environ.get("VDISPLAY_EVENT_FORMAT", "json").strip().lower() or "json"
+    from ..env_defaults import env_str_lower
+
+    return env_str_lower("VDISPLAY_EVENT_FORMAT", "json") or "json"
 
 
 def protobuf_events_enabled() -> bool:

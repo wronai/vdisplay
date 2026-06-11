@@ -1,12 +1,12 @@
-# redup/duplication | 53 groups | 271f 42260L | 2026-06-11
+# redup/duplication | 52 groups | 285f 45261L | 2026-06-11
 
 SUMMARY:
-  files_scanned: 271
-  total_lines:   42260
-  dup_groups:    53
-  dup_fragments: 124
-  saved_lines:   511
-  scan_ms:       3363
+  files_scanned: 285
+  total_lines:   45261
+  dup_groups:    52
+  dup_fragments: 121
+  saved_lines:   499
+  scan_ms:       4804
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.2%)
@@ -14,10 +14,10 @@ HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/providers/uia.py  dup=76L  groups=6  frags=6  (0.2%)
   src/vdisplay/payloads.py  dup=46L  groups=1  frags=2  (0.1%)
   packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py  dup=34L  groups=1  frags=2  (0.1%)
+  src/vdisplay/capture/portal_screencast.py  dup=30L  groups=4  frags=7  (0.1%)
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py  dup=30L  groups=2  frags=4  (0.1%)
-  src/vdisplay/control/registry.py  dup=28L  groups=3  frags=7  (0.1%)
 
-DUPLICATES[53] (ranked by impact):
+DUPLICATES[52] (ranked by impact):
   [920423ffadef7598] ! STRU  _score_uia_provider  L=35 N=2 saved=35 sim=1.00
       src/vdisplay/control/scoring.py:325-359  (_score_uia_provider)
       src/vdisplay/control/scoring.py:362-396  (_score_ax_provider)
@@ -56,8 +56,8 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/scoring.py:128-134  (_ax_ready)
       src/vdisplay/control/scoring.py:137-143  (_browser_ready)
   [1fe3c7539f2901fb]   STRU  _imgl_item_to_ocr_box  L=14 N=2 saved=14 sim=1.00
-      src/vdisplay/integrations/imgl_bridge.py:103-116  (_imgl_item_to_ocr_box)
-      src/vdisplay/integrations/observe_cache.py:190-203  (_item_to_ocr_box)
+      src/vdisplay/integrations/imgl_bridge.py:141-154  (_imgl_item_to_ocr_box)
+      src/vdisplay/integrations/observe_cache.py:200-213  (_item_to_ocr_box)
   [2daecba5919bff35]   STRU  enrich_screencast_stream_meta  L=13 N=2 saved=13 sim=1.00
       src/vdisplay/capture/screencast_stream_meta.py:42-54  (enrich_screencast_stream_meta)
       src/vdisplay/control/screenshot_verify.py:26-38  (enrich_screencast_stream_meta)
@@ -66,18 +66,17 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/contracts.py:55-58  (to_dict)
       src/vdisplay/control/contracts.py:70-73  (to_dict)
       src/vdisplay/control/contracts.py:84-87  (to_dict)
-  [2d7b9210c1b65241]   STRU  img2nl_enabled  L=3 N=5 saved=12 sim=1.00
-      src/vdisplay/application/services/img2nl_enrich.py:10-12  (img2nl_enabled)
-      src/vdisplay/control/browser_session_store.py:34-36  (detached_sessions_enabled)
-      src/vdisplay/integrations/imgl_bridge.py:12-14  (imgl_enabled)
-      src/vdisplay/integrations/observe_cache.py:13-15  (observe_cache_enabled)
-      src/vdisplay/integrations/vql_bridge.py:14-16  (vql_enabled)
+  [6575f9974dcbdb74]   STRU  _pipewire_force_caps  L=4 N=4 saved=12 sim=1.00
+      src/vdisplay/capture/portal_screencast.py:530-533  (_pipewire_force_caps)
+      src/vdisplay/capture/portal_screencast.py:536-539  (_gnome_screenshot_fallback_enabled)
+      src/vdisplay/capture/portal_screencast.py:623-626  (_pipewire_fresh_fd_enabled)
+      src/vdisplay/control/browser_session_store.py:34-37  (detached_sessions_enabled)
   [80f1f837300b8376]   STRU  _route_terminal_open  L=12 N=2 saved=12 sim=1.00
       src/vdisplay/client_routes.py:52-63  (_route_terminal_open)
       src/vdisplay/client_routes.py:66-77  (_route_browser_open)
   [69fb9fca8945007f]   STRU  _prefer_imgl_annotate  L=12 N=2 saved=12 sim=1.00
-      src/vdisplay/control/vision_preview.py:135-146  (_prefer_imgl_annotate)
-      src/vdisplay/integrations/vision_backend.py:13-24  (prefer_imgl_backend)
+      src/vdisplay/control/vision_preview.py:137-148  (_prefer_imgl_annotate)
+      src/vdisplay/integrations/vision_backend.py:14-25  (prefer_imgl_backend)
   [7168a023bfc45913]   EXAC  _system_python  L=5 N=3 saved=10 sim=1.00
       src/vdisplay/capture/portal.py:81-85  (_system_python)
       src/vdisplay/capture/portal_screencast.py:590-594  (_system_python)
@@ -95,9 +94,6 @@ DUPLICATES[53] (ranked by impact):
   [e4a4ab03a683f2c7]   STRU  build_example_ax  L=9 N=2 saved=9 sim=1.00
       examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py:85-93  (build_example_ax)
       examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py:86-94  (build_example_uia)
-  [81fae0599a2d525e]   STRU  imgl_available  L=9 N=2 saved=9 sim=1.00
-      src/vdisplay/integrations/imgl_bridge.py:17-25  (imgl_available)
-      src/vdisplay/integrations/vql_bridge.py:19-27  (vql_available)
   [b8e2782d68a777c3]   STRU  _default_virtual_backend  L=4 N=3 saved=8 sim=1.00
       src/vdisplay/api.py:13-16  (_default_virtual_backend)
       src/vdisplay/api.py:19-22  (_default_mirror_backend)
@@ -125,11 +121,8 @@ DUPLICATES[53] (ranked by impact):
   [93f796dd58175244]   STRU  _terminal_line_matches  L=7 N=2 saved=7 sim=1.00
       src/vdisplay/control/selector.py:183-189  (_terminal_line_matches)
       src/vdisplay/control/selector.py:192-198  (_terminal_col_matches)
-  [6fc9c2a6260f7dbb]   STRU  control_focus_type_seconds  L=7 N=2 saved=7 sim=1.00
-      src/vdisplay/control/timing.py:8-14  (control_focus_type_seconds)
-      src/vdisplay/control/timing.py:17-23  (control_pointer_settle_seconds)
   [1d15d7ed86dd4da6]   EXAC  find  L=6 N=2 saved=6 sim=1.00
-      src/vdisplay/control/providers/atspi.py:215-220  (find)
+      src/vdisplay/control/providers/atspi.py:213-218  (find)
       src/vdisplay/control/providers/x11.py:59-64  (find)
   [ab50b6c9821c38ed]   EXAC  bounds  L=6 N=2 saved=6 sim=1.00
       src/vdisplay/control/providers/ax.py:161-166  (bounds)
@@ -145,7 +138,7 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/providers/ax_impl.py:113-118  (_matches_selector)
       src/vdisplay/control/providers/uia_impl.py:108-113  (_matches_selector)
   [5177a541164fa53c]   EXAC  _vdisplay_src_path  L=5 N=2 saved=5 sim=1.00
-      src/vdisplay/capture/portal_screencast.py:1533-1537  (_vdisplay_src_path)
+      src/vdisplay/capture/portal_screencast.py:1549-1553  (_vdisplay_src_path)
       src/vdisplay/control/providers/atspi.py:47-51  (_vdisplay_src_path)
   [5fc23137774f78a9]   STRU  _get_name_safe  L=5 N=2 saved=5 sim=1.00
       brain/scratch_find_pycharm_chat.py:16-20  (_get_name_safe)
@@ -163,8 +156,11 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/integrations/observe_cache.py:39-43  (cache_dir)
       src/vdisplay/integrations/observe_cache.py:46-50  (vql_cache_dir)
   [084cc31ae50eea8e]   EXAC  bounds  L=4 N=2 saved=4 sim=1.00
-      src/vdisplay/control/providers/atspi.py:246-249  (bounds)
+      src/vdisplay/control/providers/atspi.py:244-247  (bounds)
       src/vdisplay/control/providers/terminal.py:124-127  (bounds)
+  [bb58aa06634d3e44]   STRU  event_format  L=4 N=2 saved=4 sim=1.00
+      src/vdisplay/application/proto/codec.py:170-173  (event_format)
+      src/vdisplay/control/vision_preview.py:131-134  (preview_backend)
   [1b4a3820cac967b7]   STRU  _remember_screencast_path  L=4 N=2 saved=4 sim=1.00
       src/vdisplay/capture/portal_screencast.py:24-27  (_remember_screencast_path)
       src/vdisplay/capture/portal_screencast.py:30-33  (_forget_screencast_path)
@@ -173,7 +169,7 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/providers/uia_impl.py:296-299  (create_uia_backend)
   [b0f54d48b543ed9a]   STRU  default_provider_registry  L=4 N=2 saved=4 sim=1.00
       src/vdisplay/control/registry.py:114-117  (default_provider_registry)
-      src/vdisplay/ide_prompt.py:26-29  (_is_wayland_session)
+      src/vdisplay/ide_prompt.py:27-30  (_is_wayland_session)
   [bd065add6cf51e32]   STRU  _vertical_overlap  L=4 N=2 saved=4 sim=1.00
       src/vdisplay/control/vision_ocr.py:209-212  (_vertical_overlap)
       src/vdisplay/control/vision_ocr.py:215-218  (_horizontal_overlap)
@@ -186,9 +182,9 @@ DUPLICATES[53] (ranked by impact):
   [7e769be7bd62da72]   EXAC  bounds  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/control/providers/vision/provider.py:719-721  (bounds)
       src/vdisplay/control/providers/x11.py:105-107  (bounds)
-  [86158c04b60bf77f]   STRU  _pipewire_force_caps  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/capture/portal_screencast.py:532-534  (_pipewire_force_caps)
-      src/vdisplay/capture/portal_screencast.py:623-625  (_pipewire_fresh_fd_enabled)
+  [008a139e77081bc2]   STRU  control_focus_type_seconds  L=3 N=2 saved=3 sim=1.00
+      src/vdisplay/control/timing.py:8-10  (control_focus_type_seconds)
+      src/vdisplay/control/timing.py:13-15  (control_pointer_settle_seconds)
   [2bae6c54b401ddd7]   STRU  vision_llm_fallback_enabled  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/control/vision_llm.py:73-75  (vision_llm_fallback_enabled)
       src/vdisplay/control/vision_llm.py:78-80  (vision_llm_enrich_enabled)
@@ -196,7 +192,7 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/windows/filter.py:8-10  (looks_like_internal_class)
       src/vdisplay/windows/filter.py:13-15  (looks_like_internal_name)
 
-REFACTOR[53] (ranked by priority):
+REFACTOR[52] (ranked by priority):
   [1] ○ extract_function   → src/vdisplay/control/utils/_score_uia_provider.py
       WHY: 2 occurrences of 35-line block across 1 files — saves 35 lines
       FILES: src/vdisplay/control/scoring.py
@@ -236,9 +232,9 @@ REFACTOR[53] (ranked by priority):
   [13] ○ extract_function   → src/vdisplay/control/utils/to_dict.py
       WHY: 4 occurrences of 4-line block across 1 files — saves 12 lines
       FILES: src/vdisplay/control/contracts.py
-  [14] ○ extract_function   → src/vdisplay/utils/img2nl_enabled.py
-      WHY: 5 occurrences of 3-line block across 5 files — saves 12 lines
-      FILES: src/vdisplay/application/services/img2nl_enrich.py, src/vdisplay/control/browser_session_store.py, src/vdisplay/integrations/imgl_bridge.py, src/vdisplay/integrations/observe_cache.py, src/vdisplay/integrations/vql_bridge.py
+  [14] ○ extract_function   → src/vdisplay/utils/_pipewire_force_caps.py
+      WHY: 4 occurrences of 4-line block across 2 files — saves 12 lines
+      FILES: src/vdisplay/capture/portal_screencast.py, src/vdisplay/control/browser_session_store.py
   [15] ○ extract_function   → src/vdisplay/utils/_route_terminal_open.py
       WHY: 2 occurrences of 12-line block across 1 files — saves 12 lines
       FILES: src/vdisplay/client_routes.py
@@ -260,104 +256,101 @@ REFACTOR[53] (ranked by priority):
   [21] ○ extract_function   → examples/utils/build_example_ax.py
       WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
       FILES: examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py, examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py
-  [22] ○ extract_function   → src/vdisplay/integrations/utils/imgl_available.py
-      WHY: 2 occurrences of 9-line block across 2 files — saves 9 lines
-      FILES: src/vdisplay/integrations/imgl_bridge.py, src/vdisplay/integrations/vql_bridge.py
-  [23] ○ extract_function   → src/vdisplay/utils/_default_virtual_backend.py
+  [22] ○ extract_function   → src/vdisplay/utils/_default_virtual_backend.py
       WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
       FILES: src/vdisplay/api.py
-  [24] ○ extract_function   → src/vdisplay/control/providers/utils/ax_deps_available.py
+  [23] ○ extract_function   → src/vdisplay/control/providers/utils/ax_deps_available.py
       WHY: 2 occurrences of 8-line block across 2 files — saves 8 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [25] ○ extract_function   → src/vdisplay/control/utils/_build_uia.py
+  [24] ○ extract_function   → src/vdisplay/control/utils/_build_uia.py
       WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
       FILES: src/vdisplay/control/registry.py
-  [26] ○ extract_function   → src/vdisplay/control/utils/_build_browser.py
+  [25] ○ extract_function   → src/vdisplay/control/utils/_build_browser.py
       WHY: 3 occurrences of 4-line block across 1 files — saves 8 lines
       FILES: src/vdisplay/control/registry.py
-  [27] ○ extract_function   → src/vdisplay/control/providers/utils/invoke.py
+  [26] ○ extract_function   → src/vdisplay/control/providers/utils/invoke.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: src/vdisplay/control/providers/ax.py, src/vdisplay/control/providers/uia.py
-  [28] ○ extract_function   → src/vdisplay/control/providers/utils/focus.py
+  [27] ○ extract_function   → src/vdisplay/control/providers/utils/focus.py
       WHY: 2 occurrences of 7-line block across 2 files — saves 7 lines
       FILES: src/vdisplay/control/providers/ax.py, src/vdisplay/control/providers/uia.py
-  [29] ○ extract_function   → src/vdisplay/control/utils/_atspi_ready.py
+  [28] ○ extract_function   → src/vdisplay/control/utils/_atspi_ready.py
       WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
       FILES: src/vdisplay/control/scoring.py
-  [30] ○ extract_function   → src/vdisplay/control/utils/_terminal_line_matches.py
+  [29] ○ extract_function   → src/vdisplay/control/utils/_terminal_line_matches.py
       WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
       FILES: src/vdisplay/control/selector.py
-  [31] ○ extract_function   → src/vdisplay/control/utils/control_focus_type_seconds.py
-      WHY: 2 occurrences of 7-line block across 1 files — saves 7 lines
-      FILES: src/vdisplay/control/timing.py
-  [32] ○ extract_function   → src/vdisplay/control/providers/utils/find.py
+  [30] ○ extract_function   → src/vdisplay/control/providers/utils/find.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/atspi.py, src/vdisplay/control/providers/x11.py
-  [33] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [31] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax.py, src/vdisplay/control/providers/uia.py
-  [34] ○ extract_function   → src/vdisplay/capture/utils/keeper_state_path.py
+  [32] ○ extract_function   → src/vdisplay/capture/utils/keeper_state_path.py
       WHY: 3 occurrences of 3-line block across 1 files — saves 6 lines
       FILES: src/vdisplay/capture/screencast_keeper.py
-  [35] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_name_fields.py
+  [33] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_name_fields.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [36] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_selector.py
+  [34] ○ extract_function   → src/vdisplay/control/providers/utils/_matches_selector.py
       WHY: 2 occurrences of 6-line block across 2 files — saves 6 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [37] ○ extract_function   → src/vdisplay/utils/_vdisplay_src_path.py
+  [35] ○ extract_function   → src/vdisplay/utils/_vdisplay_src_path.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: src/vdisplay/capture/portal_screencast.py, src/vdisplay/control/providers/atspi.py
-  [38] ○ extract_function   → brain/utils/_get_name_safe.py
+  [36] ○ extract_function   → brain/utils/_get_name_safe.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: brain/scratch_find_pycharm_chat.py
-  [39] ○ extract_function   → examples/utils/_use_mock_backend.py
+  [37] ○ extract_function   → examples/utils/_use_mock_backend.py
       WHY: 2 occurrences of 5-line block across 2 files — saves 5 lines
       FILES: examples/control-plugin-ax/src/vdisplay_example_ax_plugin/provider.py, examples/control-plugin-uia/src/vdisplay_example_uia_plugin/provider.py
-  [40] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_screenshot_to_text.py
+  [38] ○ extract_function   → packages/dsl2vdisplay/src/dsl2vdisplay/utils/_screenshot_to_text.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py
-  [41] ○ extract_function   → src/vdisplay/control/utils/resolve_map_element.py
+  [39] ○ extract_function   → src/vdisplay/control/utils/resolve_map_element.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: src/vdisplay/control/gui_map_resolve.py
-  [42] ○ extract_function   → src/vdisplay/integrations/utils/cache_dir.py
+  [40] ○ extract_function   → src/vdisplay/integrations/utils/cache_dir.py
       WHY: 2 occurrences of 5-line block across 1 files — saves 5 lines
       FILES: src/vdisplay/integrations/observe_cache.py
-  [43] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [41] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/providers/atspi.py, src/vdisplay/control/providers/terminal.py
-  [44] ○ extract_function   → src/vdisplay/capture/utils/_remember_screencast_path.py
+  [42] ○ extract_function   → src/vdisplay/utils/event_format.py
+      WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
+      FILES: src/vdisplay/application/proto/codec.py, src/vdisplay/control/vision_preview.py
+  [43] ○ extract_function   → src/vdisplay/capture/utils/_remember_screencast_path.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: src/vdisplay/capture/portal_screencast.py
-  [45] ○ extract_function   → src/vdisplay/control/providers/utils/create_ax_backend.py
+  [44] ○ extract_function   → src/vdisplay/control/providers/utils/create_ax_backend.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/providers/ax_impl.py, src/vdisplay/control/providers/uia_impl.py
-  [46] ○ extract_function   → src/vdisplay/utils/default_provider_registry.py
+  [45] ○ extract_function   → src/vdisplay/utils/default_provider_registry.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/control/registry.py, src/vdisplay/ide_prompt.py
-  [47] ○ extract_function   → src/vdisplay/control/utils/_vertical_overlap.py
+  [46] ○ extract_function   → src/vdisplay/control/utils/_vertical_overlap.py
       WHY: 2 occurrences of 4-line block across 1 files — saves 4 lines
       FILES: src/vdisplay/control/vision_ocr.py
-  [48] ○ extract_function   → src/vdisplay/input/utils/available.py
+  [47] ○ extract_function   → src/vdisplay/input/utils/available.py
       WHY: 2 occurrences of 4-line block across 2 files — saves 4 lines
       FILES: src/vdisplay/input/linux_xdotool.py, src/vdisplay/input/linux_ydotool.py
-  [49] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
+  [48] ○ extract_function   → src/vdisplay/control/providers/utils/close_all.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/browser_session.py, src/vdisplay/control/providers/terminal_session.py
-  [50] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
+  [49] ○ extract_function   → src/vdisplay/control/providers/utils/bounds.py
       WHY: 2 occurrences of 3-line block across 2 files — saves 3 lines
       FILES: src/vdisplay/control/providers/vision/provider.py, src/vdisplay/control/providers/x11.py
-  [51] ○ extract_function   → src/vdisplay/capture/utils/_pipewire_force_caps.py
+  [50] ○ extract_function   → src/vdisplay/control/utils/control_focus_type_seconds.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
-      FILES: src/vdisplay/capture/portal_screencast.py
-  [52] ○ extract_function   → src/vdisplay/control/utils/vision_llm_fallback_enabled.py
+      FILES: src/vdisplay/control/timing.py
+  [51] ○ extract_function   → src/vdisplay/control/utils/vision_llm_fallback_enabled.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/vdisplay/control/vision_llm.py
-  [53] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
+  [52] ○ extract_function   → src/vdisplay/windows/utils/looks_like_internal_class.py
       WHY: 2 occurrences of 3-line block across 1 files — saves 3 lines
       FILES: src/vdisplay/windows/filter.py
 
-QUICK_WINS[36] (low risk, high savings — do first):
+QUICK_WINS[34] (low risk, high savings — do first):
   [1] extract_function   saved=35L  → src/vdisplay/control/utils/_score_uia_provider.py
       FILES: scoring.py
   [2] extract_function   saved=33L  → examples/utils/_load_common.py
@@ -379,7 +372,7 @@ QUICK_WINS[36] (low risk, high savings — do first):
   [10] extract_function   saved=14L  → src/vdisplay/control/utils/_uia_ready.py
       FILES: scoring.py
 
-EFFORT_ESTIMATE (total ≈ 17.6h):
+EFFORT_ESTIMATE (total ≈ 17.2h):
   hard   _score_uia_provider                 saved=35L  ~105min
   medium _load_common                        saved=33L  ~66min
   medium local_windows_payload               saved=23L  ~46min
@@ -390,8 +383,8 @@ EFFORT_ESTIMATE (total ≈ 17.6h):
   medium handle_windows                      saved=17L  ~34min
   medium _controls_list                      saved=16L  ~32min
   easy   _uia_ready                          saved=14L  ~28min
-  ... +43 more (~598min)
+  ... +42 more (~574min)
 
 METRICS-TARGET:
-  dup_groups:  53 → 0
-  saved_lines: 511 lines recoverable
+  dup_groups:  52 → 0
+  saved_lines: 499 lines recoverable

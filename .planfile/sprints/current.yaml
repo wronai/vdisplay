@@ -459,7 +459,7 @@ sprint:
         attempt: 0
         max_attempts: 1
         queue: default
-        state: ready
+        state: waiting_input
       executor:
         kind: human
         mode: interactive
@@ -472,15 +472,32 @@ sprint:
           to verify.'
         source: koru task
         timestamp: '2026-06-10T07:24:18.157101+00:00'
+      - action: update
+        changes:
+        - execution
+        - inputs
+        - outputs
+        execution_state: waiting_input
+        previous_execution_state: ready
+        source: planfile.store
+        timestamp: '2026-06-11T16:55:55.431440+00:00'
+      - action: update
+        changes:
+        - outputs
+        source: planfile.store
+        timestamp: '2026-06-11T16:57:24.560305+00:00'
+      - action: update
+        changes:
+        - outputs
+        source: planfile.store
+        timestamp: '2026-06-11T17:00:45.408531+00:00'
       id: STARTER-006
       inputs:
         api_headers: {}
         api_method: GET
         api_timeout_seconds: 30.0
         env_keys: []
-        prompt: 'REFACTOR item from `project/analysis.toon.yaml`: **split 15 high-CC
-          methods** (CC>15). Execute this refactor step; re-run the source.context.evidence.regenerate_command
-          to verify.'
+        prompt: <input needed>
       labels:
       - koru
       - nl-task
@@ -491,7 +508,10 @@ sprint:
       name: 'code2llm refactor: split 15 high-CC methods'
       outputs:
         artifacts: []
-        notes: []
+        notes:
+        - <what was verified>
+        - <what was verified>
+        - <what was verified>
       priority: normal
       source:
         context:
@@ -520,7 +540,7 @@ sprint:
       sprint: current
       status: open
       sync: {}
-      updated_at: '2026-06-10T07:24:18.157101+00:00'
+      updated_at: '2026-06-11T17:00:45.408483+00:00'
     STARTER-007:
       blocked_by: []
       blocks: []
@@ -1039,3 +1059,1201 @@ sprint:
       status: done
       sync: {}
       updated_at: '2026-06-11T16:46:12.699316+00:00'
+    STARTER-012:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:44.572350Z'
+      description: 'code2llm reports `God Function: _decode_pixels` in `src/vdisplay/capture/linux_xwd.py:253`.
+
+
+        Function ''_decode_pixels'' is oversized: CC=12, fan-out=5, mutations=55.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/linux_xwd.py:253:God
+        Function: _decode_pixels'
+      files:
+      - src/vdisplay/capture/linux_xwd.py
+      history: []
+      id: STARTER-012
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _decode_pixels'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:44.566674Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:44.572357Z'
+    STARTER-013:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:45.085549Z'
+      description: 'code2llm reports `God Function: _evaluate_readiness` in `src/vdisplay/control/policy.py:132`.
+
+
+        Function ''_evaluate_readiness'' is oversized: CC=7, fan-out=13, mutations=42.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/policy.py:132:God
+        Function: _evaluate_readiness'
+      files:
+      - src/vdisplay/control/policy.py
+      history: []
+      id: STARTER-013
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _evaluate_readiness'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:45.080420Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:45.085553Z'
+    STARTER-014:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:45.599840Z'
+      description: 'code2llm reports `God Function: _execute_action` in `src/vdisplay/application/services/control.py:998`.
+
+
+        Function ''_execute_action'' is oversized: CC=10, fan-out=19, mutations=19.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:998:God
+        Function: _execute_action'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-014
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_action'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:45.588355Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:45.599845Z'
+    STARTER-015:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:46.119404Z'
+      description: 'code2llm reports `God Function: _execute_action_once` in `src/vdisplay/application/services/control.py:845`.
+
+
+        Function ''_execute_action_once'' is oversized: CC=9, fan-out=19, mutations=18.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:845:God
+        Function: _execute_action_once'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-015
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_action_once'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:46.116224Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:46.119408Z'
+    STARTER-016:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:46.627743Z'
+      description: 'code2llm reports `God Function: _execute_map_action` in `src/vdisplay/application/services/control.py:241`.
+
+
+        Function ''_execute_map_action'' is oversized: CC=6, fan-out=17, mutations=25.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:241:God
+        Function: _execute_map_action'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-016
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_map_action'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:46.616228Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:46.627750Z'
+    STARTER-017:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:47.122934Z'
+      description: 'code2llm reports `God Function: _match_template_local` in `src/vdisplay/control/vision_template.py:91`.
+
+
+        Function ''_match_template_local'' is oversized: CC=11, fan-out=17, mutations=30.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_template.py:91:God
+        Function: _match_template_local'
+      files:
+      - src/vdisplay/control/vision_template.py
+      history: []
+      id: STARTER-017
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _match_template_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:47.116809Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:47.122939Z'
+    STARTER-018:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:47.632740Z'
+      description: 'code2llm reports `God Function: _render_match_overlay_local` in
+        `src/vdisplay/control/vision_preview.py:255`.
+
+
+        Function ''_render_match_overlay_local'' is oversized: CC=10, fan-out=22,
+        mutations=32.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_preview.py:255:God
+        Function: _render_match_overlay_local'
+      files:
+      - src/vdisplay/control/vision_preview.py
+      history: []
+      id: STARTER-018
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _render_match_overlay_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:47.622519Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:47.632744Z'
+    STARTER-019:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:48.125106Z'
+      description: 'code2llm reports `God Function: _score_candidate` in `src/vdisplay/control/profile_inference.py:166`.
+
+
+        Function ''_score_candidate'' is oversized: CC=12, fan-out=11, mutations=35.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:166:God
+        Function: _score_candidate'
+      files:
+      - src/vdisplay/control/profile_inference.py
+      history: []
+      id: STARTER-019
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _score_candidate'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:48.113611Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:48.125112Z'
+    STARTER-020:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:48.627675Z'
+      description: 'code2llm reports `God Function: _start_screencast_impl` in `src/vdisplay/capture/portal_screencast.py:923`.
+
+
+        Function ''_start_screencast_impl'' is oversized: CC=11, fan-out=41, mutations=14.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/portal_screencast.py:923:God
+        Function: _start_screencast_impl'
+      files:
+      - src/vdisplay/capture/portal_screencast.py
+      history: []
+      id: STARTER-020
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _start_screencast_impl'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:48.615963Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:48.627682Z'
+    STARTER-021:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:49.135752Z'
+      description: 'code2llm reports `God Function: capture_host_png` in `src/vdisplay/capture/host.py:212`.
+
+
+        Function ''capture_host_png'' is oversized: CC=13, fan-out=13, mutations=31.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/host.py:212:God
+        Function: capture_host_png'
+      files:
+      - src/vdisplay/capture/host.py
+      history: []
+      id: STARTER-021
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: capture_host_png'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:49.124410Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:49.135757Z'
+    STARTER-022:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:49.646020Z'
+      description: 'code2llm reports `God Function: collect_pointer_sources` in `src/vdisplay/hmi/pointer_sampling.py:84`.
+
+
+        Function ''collect_pointer_sources'' is oversized: CC=14, fan-out=12, mutations=22.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/hmi/pointer_sampling.py:84:God
+        Function: collect_pointer_sources'
+      files:
+      - src/vdisplay/hmi/pointer_sampling.py
+      history: []
+      id: STARTER-022
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: collect_pointer_sources'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:49.640307Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:49.646027Z'
+    STARTER-023:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:50.139790Z'
+      description: 'code2llm reports `God Function: diff_gui_map` in `src/vdisplay/control/gui_map_diff.py:314`.
+
+
+        Function ''diff_gui_map'' is oversized: CC=9, fan-out=19, mutations=34.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/gui_map_diff.py:314:God
+        Function: diff_gui_map'
+      files:
+      - src/vdisplay/control/gui_map_diff.py
+      history: []
+      id: STARTER-023
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: diff_gui_map'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:50.136877Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:50.139794Z'
+    STARTER-024:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:50.673936Z'
+      description: 'code2llm reports `God Function: global_region_to_capture_local`
+        in `src/vdisplay/capture/coordinate_map.py:136`.
+
+
+        Function ''global_region_to_capture_local'' is oversized: CC=14, fan-out=10,
+        mutations=26.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/coordinate_map.py:136:God
+        Function: global_region_to_capture_local'
+      files:
+      - src/vdisplay/capture/coordinate_map.py
+      history: []
+      id: STARTER-024
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: global_region_to_capture_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:50.662536Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:50.673942Z'
+    STARTER-025:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:51.200008Z'
+      description: 'code2llm reports `God Function: preflight_observe` in `src/vdisplay/application/auto/feedback.py:256`.
+
+
+        Function ''preflight_observe'' is oversized: CC=13, fan-out=17, mutations=23.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/auto/feedback.py:256:God
+        Function: preflight_observe'
+      files:
+      - src/vdisplay/application/auto/feedback.py
+      history: []
+      id: STARTER-025
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: preflight_observe'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:51.188664Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:51.200013Z'
+    STARTER-026:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:51.732878Z'
+      description: 'code2llm reports `God Function: query_vision_llm` in `src/vdisplay/control/vision_llm.py:107`.
+
+
+        Function ''query_vision_llm'' is oversized: CC=9, fan-out=12, mutations=23.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_llm.py:107:God
+        Function: query_vision_llm'
+      files:
+      - src/vdisplay/control/vision_llm.py
+      history: []
+      id: STARTER-026
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: query_vision_llm'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:51.721163Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:51.732883Z'
+    STARTER-027:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:52.263285Z'
+      description: 'code2llm reports `God Function: register` in `src/vdisplay/commands/relay.py:12`.
+
+
+        Function ''register'' is oversized: CC=1, fan-out=14, mutations=42.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/commands/relay.py:12:God
+        Function: register'
+      files:
+      - src/vdisplay/commands/relay.py
+      history: []
+      id: STARTER-027
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: register'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:52.251447Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:52.263291Z'
+    STARTER-028:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T16:58:52.846986Z'
+      description: 'code2llm reports `God Function: register_routes` in `packages/vdisplay-agent/src/vdisplay_agent/routes/web.py:29`.
+
+
+        Function ''register_routes'' is oversized: CC=1, fan-out=33, mutations=14.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/routes/web.py:29:God
+        Function: register_routes'
+      files:
+      - packages/vdisplay-agent/src/vdisplay_agent/routes/web.py
+      history: []
+      id: STARTER-028
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: register_routes'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T16:58:52.841363Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T16:58:52.846991Z'
+    STARTER-029:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:54.074197Z'
+      description: 'code2llm reports `God Function: _decode_pixels` in `src/vdisplay/capture/linux_xwd.py:253`.
+
+
+        Function ''_decode_pixels'' is oversized: CC=12, fan-out=5, mutations=55.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/linux_xwd.py:253:God
+        Function: _decode_pixels'
+      files:
+      - src/vdisplay/capture/linux_xwd.py
+      history: []
+      id: STARTER-029
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _decode_pixels'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:54.070627Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:54.074203Z'
+    STARTER-030:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:54.767700Z'
+      description: 'code2llm reports `God Function: _evaluate_readiness` in `src/vdisplay/control/policy.py:132`.
+
+
+        Function ''_evaluate_readiness'' is oversized: CC=7, fan-out=13, mutations=42.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/policy.py:132:God
+        Function: _evaluate_readiness'
+      files:
+      - src/vdisplay/control/policy.py
+      history: []
+      id: STARTER-030
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _evaluate_readiness'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:54.755919Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:54.767709Z'
+    STARTER-031:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:55.332194Z'
+      description: 'code2llm reports `God Function: _execute_action` in `src/vdisplay/application/services/control.py:998`.
+
+
+        Function ''_execute_action'' is oversized: CC=10, fan-out=19, mutations=19.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:998:God
+        Function: _execute_action'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-031
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_action'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:55.320297Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:55.332202Z'
+    STARTER-032:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:55.870087Z'
+      description: 'code2llm reports `God Function: _execute_action_once` in `src/vdisplay/application/services/control.py:845`.
+
+
+        Function ''_execute_action_once'' is oversized: CC=9, fan-out=19, mutations=18.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:845:God
+        Function: _execute_action_once'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-032
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_action_once'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:55.858912Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:55.870092Z'
+    STARTER-033:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:56.395314Z'
+      description: 'code2llm reports `God Function: _execute_map_action` in `src/vdisplay/application/services/control.py:241`.
+
+
+        Function ''_execute_map_action'' is oversized: CC=6, fan-out=17, mutations=25.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/services/control.py:241:God
+        Function: _execute_map_action'
+      files:
+      - src/vdisplay/application/services/control.py
+      history: []
+      id: STARTER-033
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _execute_map_action'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:56.383670Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:56.395320Z'
+    STARTER-034:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:56.931339Z'
+      description: 'code2llm reports `God Function: _match_template_local` in `src/vdisplay/control/vision_template.py:91`.
+
+
+        Function ''_match_template_local'' is oversized: CC=11, fan-out=17, mutations=30.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_template.py:91:God
+        Function: _match_template_local'
+      files:
+      - src/vdisplay/control/vision_template.py
+      history: []
+      id: STARTER-034
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _match_template_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:56.919863Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:56.931344Z'
+    STARTER-035:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:57.462152Z'
+      description: 'code2llm reports `God Function: _render_match_overlay_local` in
+        `src/vdisplay/control/vision_preview.py:255`.
+
+
+        Function ''_render_match_overlay_local'' is oversized: CC=10, fan-out=22,
+        mutations=32.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_preview.py:255:God
+        Function: _render_match_overlay_local'
+      files:
+      - src/vdisplay/control/vision_preview.py
+      history: []
+      id: STARTER-035
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _render_match_overlay_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:57.450792Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:57.462157Z'
+    STARTER-036:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:57.983611Z'
+      description: 'code2llm reports `God Function: _score_candidate` in `src/vdisplay/control/profile_inference.py:166`.
+
+
+        Function ''_score_candidate'' is oversized: CC=12, fan-out=11, mutations=35.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/profile_inference.py:166:God
+        Function: _score_candidate'
+      files:
+      - src/vdisplay/control/profile_inference.py
+      history: []
+      id: STARTER-036
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _score_candidate'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:57.972204Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:57.983616Z'
+    STARTER-037:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:58.503119Z'
+      description: 'code2llm reports `God Function: _start_screencast_impl` in `src/vdisplay/capture/portal_screencast.py:923`.
+
+
+        Function ''_start_screencast_impl'' is oversized: CC=11, fan-out=41, mutations=14.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/portal_screencast.py:923:God
+        Function: _start_screencast_impl'
+      files:
+      - src/vdisplay/capture/portal_screencast.py
+      history: []
+      id: STARTER-037
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: _start_screencast_impl'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:58.498251Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:58.503124Z'
+    STARTER-038:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:59.010398Z'
+      description: 'code2llm reports `God Function: capture_host_png` in `src/vdisplay/capture/host.py:212`.
+
+
+        Function ''capture_host_png'' is oversized: CC=13, fan-out=13, mutations=31.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/host.py:212:God
+        Function: capture_host_png'
+      files:
+      - src/vdisplay/capture/host.py
+      history: []
+      id: STARTER-038
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: capture_host_png'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:59.006309Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:59.010402Z'
+    STARTER-039:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:02:59.537248Z'
+      description: 'code2llm reports `God Function: collect_pointer_sources` in `src/vdisplay/hmi/pointer_sampling.py:84`.
+
+
+        Function ''collect_pointer_sources'' is oversized: CC=14, fan-out=12, mutations=22.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/hmi/pointer_sampling.py:84:God
+        Function: collect_pointer_sources'
+      files:
+      - src/vdisplay/hmi/pointer_sampling.py
+      history: []
+      id: STARTER-039
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: collect_pointer_sources'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:02:59.525815Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:02:59.537254Z'
+    STARTER-040:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:00.096222Z'
+      description: 'code2llm reports `God Function: diff_gui_map` in `src/vdisplay/control/gui_map_diff.py:314`.
+
+
+        Function ''diff_gui_map'' is oversized: CC=9, fan-out=19, mutations=34.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/gui_map_diff.py:314:God
+        Function: diff_gui_map'
+      files:
+      - src/vdisplay/control/gui_map_diff.py
+      history: []
+      id: STARTER-040
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: diff_gui_map'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:00.084898Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:00.096229Z'
+    STARTER-041:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:00.635941Z'
+      description: 'code2llm reports `God Function: global_region_to_capture_local`
+        in `src/vdisplay/capture/coordinate_map.py:136`.
+
+
+        Function ''global_region_to_capture_local'' is oversized: CC=14, fan-out=10,
+        mutations=26.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/capture/coordinate_map.py:136:God
+        Function: global_region_to_capture_local'
+      files:
+      - src/vdisplay/capture/coordinate_map.py
+      history: []
+      id: STARTER-041
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: global_region_to_capture_local'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:00.624367Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:00.635947Z'
+    STARTER-042:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:01.174583Z'
+      description: 'code2llm reports `God Function: preflight_observe` in `src/vdisplay/application/auto/feedback.py:276`.
+
+
+        Function ''preflight_observe'' is oversized: CC=13, fan-out=17, mutations=23.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/application/auto/feedback.py:276:God
+        Function: preflight_observe'
+      files:
+      - src/vdisplay/application/auto/feedback.py
+      history: []
+      id: STARTER-042
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: preflight_observe'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:01.162911Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:01.174587Z'
+    STARTER-043:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:01.700755Z'
+      description: 'code2llm reports `God Function: query_vision_llm` in `src/vdisplay/control/vision_llm.py:107`.
+
+
+        Function ''query_vision_llm'' is oversized: CC=9, fan-out=12, mutations=23.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/control/vision_llm.py:107:God
+        Function: query_vision_llm'
+      files:
+      - src/vdisplay/control/vision_llm.py
+      history: []
+      id: STARTER-043
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: query_vision_llm'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:01.690074Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:01.700763Z'
+    STARTER-044:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:02.227617Z'
+      description: 'code2llm reports `God Function: register` in `src/vdisplay/commands/relay.py:12`.
+
+
+        Function ''register'' is oversized: CC=1, fan-out=14, mutations=42.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:src/vdisplay/commands/relay.py:12:God
+        Function: register'
+      files:
+      - src/vdisplay/commands/relay.py
+      history: []
+      id: STARTER-044
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: register'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:02.216404Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:02.227622Z'
+    STARTER-045:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-06-11T17:03:02.757701Z'
+      description: 'code2llm reports `God Function: register_routes` in `packages/vdisplay-agent/src/vdisplay_agent/routes/web.py:29`.
+
+
+        Function ''register_routes'' is oversized: CC=1, fan-out=33, mutations=14.
+
+
+        Make the smallest refactor that removes the smell and run local tests.
+
+
+        code2llm-dedupe: code2llm:smell:god_function:packages/vdisplay-agent/src/vdisplay_agent/routes/web.py:29:God
+        Function: register_routes'
+      files:
+      - packages/vdisplay-agent/src/vdisplay_agent/routes/web.py
+      history: []
+      id: STARTER-045
+      labels:
+      - llm-ready
+      - code2llm
+      - code-smell
+      - god-function
+      name: 'Address code smell: God Function: register_routes'
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-06-11T17:03:02.752543Z'
+        tool: koru-project-discovery
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-06-11T17:03:02.757705Z'

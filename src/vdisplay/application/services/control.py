@@ -52,13 +52,11 @@ def _resolve_verify_mode(
 
 def _control_settle_seconds(*, verify: bool, screenshot_verify: bool) -> float:
     """Pause after actuation so verify snapshots see settled UI (ms via env)."""
+    from ..env_defaults import env_int_value
+
     if not verify and not screenshot_verify:
         return 0.0
-    raw = os.environ.get("VDISPLAY_CONTROL_SETTLE_MS", "150")
-    try:
-        return max(0.0, int(raw)) / 1000.0
-    except ValueError:
-        return 0.15
+    return max(0.0, env_int_value("VDISPLAY_CONTROL_SETTLE_MS", default=150)) / 1000.0
 
 
 def _apply_selector_overrides(selector: ControlSelector, **kwargs: Any) -> ControlSelector:
