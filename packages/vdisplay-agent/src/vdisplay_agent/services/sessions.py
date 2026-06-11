@@ -183,12 +183,22 @@ def start_screencast(
     from vdisplay.capture.linux_xwd import is_blank_png
     from vdisplay.capture.portal_screencast import (
         _screencast_multiple,
+        ensure_portal_session_env,
         get_active_screencast,
+        portal_session_env_status,
         prepare_portal_screencast_start,
         start_screencast_session,
     )
 
     allow_multiple = _screencast_multiple(multiple)
+    ensure_portal_session_env()
+    portal_ok, portal_hint = portal_session_env_status()
+    if not portal_ok:
+        raise VDisplayError(
+            f"agent portal session unavailable: {portal_hint}. "
+            "Restart vdisplay-agent serve from a local GNOME terminal (not SSH/Cursor)."
+        )
+
     prepare_portal_screencast_start()
     existing = store.screencast or get_active_screencast()
     if existing is not None and existing.is_ready:
@@ -213,7 +223,7 @@ def start_screencast(
         timeout_s=timeout_s,
         multiple=allow_multiple,
     )
-    return _screencast_payload(
+    payload = _screencast_payload(
         store,
         session,
         allow_multiple=allow_multiple,
@@ -222,6 +232,19 @@ def start_screencast(
         interactive=interactive,
         timeout_s=timeout_s,
     )
+    try:
+        from ..broker_events import log_broker_event
+
+        log_broker_event(
+            "screencast_start",
+            ok=True,
+            ready=bool(payload.get("ready")),
+            session_path=payload.get("session_path"),
+            node_ids=payload.get("node_ids"),
+        )
+    except Exception:
+        pass
+    return payload
 
 
 def stop_screencast(store: SessionStore, *, task_store: TaskStore | None = None) -> dict[str, Any]:

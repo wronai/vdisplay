@@ -54,6 +54,7 @@ vdisplay map refresh --map maps/chat.json --scope pycharm.ai_chat
 |---------|-------|-----|
 | `map diff` many `missing` | full-screen OCR map, UI scrolled/changed | rebuild with `--crop-bounds`; `map refresh --scope` |
 | `set-value` fail, map OK | OCR path without map | use `--map --target message` (paste path) |
+| `set-value` / paste hangs | `wl-copy`/`xclip` hanging on pipe descriptors | Ensure `wl-clipboard` / `xclip` are installed. Subprocess calls are now protected with timeouts and DEVNULL redirection to avoid hangs. |
 | `find --text "long-string"` miss | OCR tokenization | `--text-contains "token"` |
 | capture 400 / black PNG | screencast not in agent | agent serve → screencast start (correct order) |
 | click wrong monitor | rotation / index drift | `map refresh`; check `--monitor DP-2` |

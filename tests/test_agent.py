@@ -57,6 +57,39 @@ def test_agent_capture_recovers_missing_screencast(
     assert out.is_file()
 
 
+def test_agent_capture_reraises_non_recoverable_screencast_error(
+    agent_client,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    client, runtime = agent_client
+    from vdisplay.capture.portal_screencast import PortalScreenCastSession
+
+    session = PortalScreenCastSession()
+    session.active = True
+    session.session_path = "/org/test/session"
+    session.node_ids = [1]
+    runtime.store.screencast = session
+
+    def fake_capture_host_to_file(path, **kwargs):
+        raise __import__("vdisplay.exceptions", fromlist=["VDisplayError"]).VDisplayError(
+            "portal-screencast capture failed: keeper socket missing"
+        )
+
+    monkeypatch.setattr("vdisplay_agent.services.capture.capture_host_to_file", fake_capture_host_to_file)
+
+    out = tmp_path / "host.png"
+    response = client.post(
+        "/capture/frame",
+        json={"output": str(out), "source": "DP-1", "monitor": 1},
+    )
+    assert response.status_code == 400
+    payload = response.json()
+    assert payload["ok"] is False
+    assert "keeper socket missing" in payload["error"]["message"]
+    assert not out.is_file()
+
+
 @pytest.mark.skipif(shutil.which("Xvfb") is None, reason="Xvfb not installed")
 @pytest.mark.skipif(shutil.which("xwd") is None, reason="xwd not installed")
 def test_agent_virtual_session_capture(agent_client, tmp_path) -> None:

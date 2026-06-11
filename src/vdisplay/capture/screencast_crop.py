@@ -14,6 +14,7 @@ from .portal_screencast import (
     screencast_stream_region,
     screencast_stream_region_for_monitor,
 )
+from .screencast_keeper import keeper_manages_session, request_keeper_capture
 from .screencast_stream_matching import (
     assign_screencast_streams_to_monitors,
     screencast_stream_index_for_monitor,
@@ -86,18 +87,50 @@ def _resolve_active_session(screencast_session: Any, errors: list[str]) -> Any |
     return session
 
 
-def _capture_screencast_png(session: Any, stream_idx: int, errors: list[str]) -> bytes | None:
+def _capture_screencast_png_via_keeper_or_direct(
+    session: Any, node_index: int, errors: list[str], timeout_s: float = 30.0
+) -> bytes | None:
+    """Capture frame preferring keeper delegation (when the interactive keeper owns the
+    portal session and its fd) to avoid the agent calling OpenPipeWireRemote itself
+    (which can fail with "Invalid session" / AccessDenied if the keeper is the creator).
+    Falls back to direct session.capture_png if no keeper is managing it.
+    """
+    spath = getattr(session, "session_path", None) or ""
+    if keeper_manages_session(spath):
+        try:
+            return request_keeper_capture(
+                node_index=node_index, session_path=spath or None, timeout_s=timeout_s
+            )
+        except VDisplayError as exc:
+            err_lower = str(exc).lower()
+            errors.append(f"keeper capture failed: {exc}")
+            if "invalid session" in err_lower or "access denied" in err_lower:
+                # Keeper's session became invalid; stop it so next ensure/start can create a fresh one.
+                try:
+                    from .screencast_keeper import stop_keeper
+                    stop_keeper()
+                except Exception:
+                    pass
+            # fall through to direct (will likely also fail with similar, but upper recoverable logic can recover)
     try:
-        return session.capture_png(node_index=stream_idx)
+        return session.capture_png(node_index=node_index)
     except VDisplayError as exc:
-        err_str = str(exc)
-        errors.append(f"portal-screencast capture failed: {exc}")
-        if "target not found" in err_str.lower():
+        errors.append(str(exc))
+        return None
+
+
+def _capture_screencast_png(session: Any, stream_idx: int, errors: list[str]) -> bytes | None:
+    png = _capture_screencast_png_via_keeper_or_direct(session, stream_idx, errors)
+    if png is None:
+        # the helper already appended to errors; also do the target-not-found invalidation
+        # if the last error was that (the direct or keeper may have reported it)
+        last_err = errors[-1] if errors else ""
+        if "target not found" in last_err.lower():
             invalidate_screencast_session(session)
             errors.append(
                 " (stale screencast session auto-invalidated — run `vdisplay agent screencast start` to refresh)"
             )
-        return None
+    return png
 
 
 def _maybe_crop_screencast_png(
@@ -249,10 +282,10 @@ def _capture_multi_stream_monitors(
     for index, monitor in enumerate(monitors, start=1):
         name = str(monitor.get("name") or f"monitor-{index}")
         stream_idx = stream_map.get(name, 0)
-        try:
-            png = screencast_session.capture_png(node_index=stream_idx)
-        except VDisplayError as exc:
-            warnings.append(f"{name}: {exc}")
+        png = _capture_screencast_png_via_keeper_or_direct(
+            screencast_session, stream_idx, warnings, timeout_s=30.0
+        )
+        if png is None:
             continue
         if is_blank_png(png):
             invalidate_screencast_session(screencast_session)
@@ -370,9 +403,10 @@ def _capture_single_stream_monitors(
     *,
     monitor_region_fn,
 ) -> tuple[list[dict[str, Any]], list[str]] | None:
-    try:
-        full_png = screencast_session.capture_png()
-    except VDisplayError:
+    full_png = _capture_screencast_png_via_keeper_or_direct(
+        screencast_session, 0, [], timeout_s=30.0
+    )
+    if full_png is None:
         return None
     if is_blank_png(full_png):
         invalidate_screencast_session(screencast_session)

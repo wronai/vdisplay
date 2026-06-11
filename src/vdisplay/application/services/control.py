@@ -191,6 +191,53 @@ def _map_find_payload(map_path: str, map_scope: str | None = None) -> dict[str, 
     }
 
 
+def _try_verify_provider_snapshot(
+    provider_name: str,
+    provider,
+    *,
+    display: str | None,
+    session_id: str | None = None,
+    snapshot_kwargs: dict[str, Any] | None = None,
+):
+    if provider_name == getattr(provider, "name", None):
+        return provider.snapshot(**(snapshot_kwargs or {}))
+    from ...control.registry import default_provider_registry
+    try:
+        build_kwargs: dict[str, Any] = {"display": display}
+        if session_id:
+            build_kwargs["session_id"] = session_id
+        verify_provider = default_provider_registry().build(provider_name, **build_kwargs)
+        return verify_provider.snapshot(**(snapshot_kwargs or {}))
+    except Exception:
+        return provider.snapshot(**(snapshot_kwargs or {}))
+
+
+def _resolve_map_verify_config(
+    element: GuiMapElement,
+    *,
+    action: str,
+    value: str | None,
+    verify: bool,
+    screenshot_verify: bool,
+    verify_label: str | None,
+) -> tuple[bool, bool, str | None, str]:
+    from ...control.gui_map import resolve_map_verify_mode
+
+    resolved_verify_mode = resolve_map_verify_mode(element, action=action, value=value)
+    verify_semantic = verify and resolved_verify_mode in {
+        "semantic",
+        "hybrid",
+        "dom",
+        "ocr_contains",
+        "anchor_visible",
+    }
+    effective_screenshot_verify = screenshot_verify or (
+        verify and resolved_verify_mode in {"screenshot_diff", "hybrid"}
+    )
+    expected_verify_text = value or verify_label or element.identity.anchor_text
+    return verify_semantic, effective_screenshot_verify, expected_verify_text, resolved_verify_mode
+
+
 def _execute_map_action(
     *,
     action: str,
@@ -209,26 +256,18 @@ def _execute_map_action(
     hints = verify_hints_from_map_element(element)
     verify_label = verify_label or hints.get("verify_label")
     verify_selector = verify_selector or hints.get("verify_selector")
-    from ...control.gui_map import resolve_map_verify_mode
-
-    resolved_verify_mode = resolve_map_verify_mode(element, action=action, value=value)
-    verify_semantic = verify and resolved_verify_mode in {
-        "semantic",
-        "hybrid",
-        "dom",
-        "ocr_contains",
-        "anchor_visible",
-    }
-    effective_screenshot_verify = screenshot_verify or (
-        verify and resolved_verify_mode in {"screenshot_diff", "hybrid"}
+    verify_semantic, effective_screenshot_verify, expected_verify_text, resolved_verify_mode = _resolve_map_verify_config(
+        element,
+        action=action,
+        value=value,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        verify_label=verify_label,
     )
-    expected_verify_text = value or verify_label or element.identity.anchor_text
 
     from ...control.providers.vision import VisionStubProvider
-    from ...control.registry import default_provider_registry
 
     provider = VisionStubProvider(display=display)
-    
     selector = ControlSelector(
         backend="vision",
         vision_anchor=element.identity.anchor_text,
@@ -242,18 +281,11 @@ def _execute_map_action(
         verify_screenshot=screenshot_verify,
     )
     verify_provider_name = routing.verify_provider or "vision"
-    
-    if verify_provider_name != "vision":
-        try:
-            verify_provider = default_provider_registry().build(
-                verify_provider_name,
-                display=display,
-            )
-            before_snapshot = verify_provider.snapshot()
-        except Exception:
-            before_snapshot = provider.snapshot()
-    else:
-        before_snapshot = provider.snapshot()
+    before_snapshot = _try_verify_provider_snapshot(
+        verify_provider_name,
+        provider,
+        display=display,
+    )
 
     before_png, screenshot_capture_meta = _capture_before_state(
         display=display,
@@ -849,29 +881,16 @@ def _execute_action_once(
         verify_semantic=verify,
         verify_screenshot=screenshot_verify,
     )
-    verify_provider_name = routing.verify_provider or provider.name
-    if verify_provider_name != provider.name:
-        from ...control.registry import default_provider_registry
-        try:
-            verify_provider = default_provider_registry().build(
-                verify_provider_name,
-                display=display,
-                session_id=session_id,
-            )
-            before_snapshot = verify_provider.snapshot(
-                app=selector.app or session_id,
-                window_id=selector.window_id or session_id,
-            )
-        except Exception:
-            before_snapshot = provider.snapshot(
-                app=selector.app or session_id,
-                window_id=selector.window_id or session_id,
-            )
-    else:
-        before_snapshot = provider.snapshot(
-            app=selector.app or session_id,
-            window_id=selector.window_id or session_id,
-        )
+    before_snapshot = _try_verify_provider_snapshot(
+        routing.verify_provider or provider.name,
+        provider,
+        display=display,
+        session_id=session_id,
+        snapshot_kwargs={
+            "app": selector.app or session_id,
+            "window_id": selector.window_id or session_id,
+        },
+    )
     target = _resolve_target(provider, before_snapshot, selector)
     if target is None:
         raise VDisplayError(f"no control matched selector: {selector}")
@@ -941,6 +960,41 @@ def _execute_action_once(
     )
 
 
+def _enrich_no_retry_payload(
+    last_payload: dict[str, Any],
+    state: ControlActionState,
+    decision,
+) -> dict[str, Any]:
+    state = state.advance(ControlActionPhase.RECOVERY_FAILED, retry={"reason": decision.reason})
+    control = (last_payload.get("diagnostics") or {}).get("control") or {}
+    last_payload.setdefault("diagnostics", {})["control"] = {
+        **control,
+        "phase": state.phase.value,
+        "recovery_failed": decision.to_dict(),
+    }
+    last_payload["phase"] = state.phase.value
+    return last_payload
+
+
+def _enrich_exhausted_payload(
+    last_payload: dict[str, Any],
+    state: ControlActionState,
+    max_attempts: int,
+) -> dict[str, Any]:
+    state = state.advance(
+        ControlActionPhase.RECOVERY_FAILED,
+        retry={"reason": "max_attempts_exhausted", "attempts": max_attempts},
+    )
+    control = (last_payload.get("diagnostics") or {}).get("control") or {}
+    last_payload.setdefault("diagnostics", {})["control"] = {
+        **control,
+        "phase": state.phase.value,
+        "recovery_failed": {"reason": "max_attempts_exhausted", "attempts": max_attempts},
+    }
+    last_payload["phase"] = state.phase.value
+    return last_payload
+
+
 def _execute_action(
     *,
     action: str,
@@ -1000,15 +1054,7 @@ def _execute_action(
 
         decision = next_action(state, last_payload, policy=policy)
         if not decision.should_retry:
-            state = state.advance(ControlActionPhase.RECOVERY_FAILED, retry={"reason": decision.reason})
-            control = (last_payload.get("diagnostics") or {}).get("control") or {}
-            last_payload.setdefault("diagnostics", {})["control"] = {
-                **control,
-                "phase": state.phase.value,
-                "recovery_failed": decision.to_dict(),
-            }
-            last_payload["phase"] = state.phase.value
-            return last_payload
+            return _enrich_no_retry_payload(last_payload, state, decision)
 
         state = attach_retry_metadata(state, decision)
         current_backend, kwargs, current_screenshot_verify = apply_retry_decision(
@@ -1022,18 +1068,7 @@ def _execute_action(
 
     if last_payload is None:
         raise VDisplayError("control action produced no result")
-    state = state.advance(
-        ControlActionPhase.RECOVERY_FAILED,
-        retry={"reason": "max_attempts_exhausted", "attempts": policy.max_attempts},
-    )
-    control = (last_payload.get("diagnostics") or {}).get("control") or {}
-    last_payload.setdefault("diagnostics", {})["control"] = {
-        **control,
-        "phase": state.phase.value,
-        "recovery_failed": {"reason": "max_attempts_exhausted", "attempts": policy.max_attempts},
-    }
-    last_payload["phase"] = state.phase.value
-    return last_payload
+    return _enrich_exhausted_payload(last_payload, state, policy.max_attempts)
 
 
 def _build_tree(snapshot) -> list[dict[str, Any]]:

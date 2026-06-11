@@ -103,6 +103,12 @@ def _capture_host(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
             if cooldown > 0:
                 hint += f" (next auto-retry in {int(cooldown)}s)"
             raise VDisplayError(f"{exc} — {hint}") from exc
+        # Non-recoverable case or recovery not taken: re-raise the original error.
+        # This prevents falling through to code that assumes 'meta' (or 'png')
+        # was assigned in the try block.
+        raise
+    # On success path only: capture_host_to_file wrote the PNG and returned meta
+    # (including "path"). We attach the wire fields here.
     png = Path(meta["path"]).read_bytes()
     meta["ok"] = True
     meta["png_base64"] = base64.b64encode(png).decode("ascii")

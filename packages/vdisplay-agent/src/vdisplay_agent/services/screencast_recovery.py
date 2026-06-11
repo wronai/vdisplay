@@ -26,6 +26,8 @@ def is_recoverable_screencast_error(exc: VDisplayError) -> bool:
             "no active session",
             "screencast capture blank",
             "target not found",
+            "invalid session",
+            "access denied",
         )
     )
 

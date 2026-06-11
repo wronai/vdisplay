@@ -5,17 +5,17 @@
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 269, json: 25, toml: 11, shell: 7, yaml: 6
+- **Languages**: python: 273, json: 26, toml: 11, shell: 7, yaml: 6
 - **Analysis Mode**: static
-- **Total Functions**: 2007
+- **Total Functions**: 2088
 - **Total Classes**: 162
-- **Modules**: 334
-- **Entry Points**: 904
+- **Modules**: 339
+- **Entry Points**: 921
 
 ## Architecture by Module
 
 ### src.vdisplay.capture.portal_screencast
-- **Functions**: 44
+- **Functions**: 56
 - **Classes**: 1
 - **File**: `portal_screencast.py`
 
@@ -34,15 +34,19 @@
 - **Classes**: 3
 - **File**: `browser_playwright.py`
 
+### packages.vdisplay-agent.src.vdisplay_agent.runtime
+- **Functions**: 34
+- **Classes**: 1
+- **File**: `runtime.py`
+
 ### src.vdisplay.application.session_recorder
 - **Functions**: 34
 - **Classes**: 3
 - **File**: `session_recorder.py`
 
-### packages.vdisplay-agent.src.vdisplay_agent.runtime
-- **Functions**: 33
-- **Classes**: 1
-- **File**: `runtime.py`
+### src.vdisplay.application.services.control
+- **Functions**: 34
+- **File**: `control.py`
 
 ### src.vdisplay.api
 - **Functions**: 32
@@ -58,24 +62,20 @@
 - **Classes**: 3
 - **File**: `verifier.py`
 
-### src.vdisplay.application.services.control
-- **Functions**: 30
-- **File**: `control.py`
-
 ### src.vdisplay.control.providers.uia_impl
 - **Functions**: 29
 - **Classes**: 4
 - **File**: `uia_impl.py`
 
+### src.vdisplay.client_api
+- **Functions**: 27
+- **Classes**: 1
+- **File**: `client_api.py`
+
 ### src.vdisplay.control.providers.ax_impl
 - **Functions**: 27
 - **Classes**: 4
 - **File**: `ax_impl.py`
-
-### src.vdisplay.client_api
-- **Functions**: 26
-- **Classes**: 1
-- **File**: `client_api.py`
 
 ### src.vdisplay.desktop_apps
 - **Functions**: 25
@@ -91,6 +91,15 @@
 - **Functions**: 23
 - **File**: `agent.py`
 
+### src.vdisplay.capture.screencast_keeper
+- **Functions**: 23
+- **File**: `screencast_keeper.py`
+
+### src.vdisplay.control.providers.browser_session
+- **Functions**: 22
+- **Classes**: 2
+- **File**: `browser_session.py`
+
 ### src.vdisplay.control.verify
 - **Functions**: 21
 - **File**: `verify.py`
@@ -98,15 +107,6 @@
 ### src.vdisplay.capture.linux_xwd
 - **Functions**: 21
 - **File**: `linux_xwd.py`
-
-### src.vdisplay.application.handlers.local
-- **Functions**: 21
-- **File**: `local.py`
-
-### src.vdisplay.application.auto.tasks
-- **Functions**: 21
-- **Classes**: 1
-- **File**: `tasks.py`
 
 ## Key Entry Points
 
@@ -116,7 +116,7 @@ Main execution flows into the system:
 - **Calls**: app.get, app.get, app.get, app.get, app.post, app.post, app.get, app.post
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes
-- **Calls**: app.post, app.post, app.post, app.post, app.post, app.post, app.post, app.get
+- **Calls**: app.post, app.post, app.post, app.post, app.post, app.post, app.post, app.post
 
 ### packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
 - **Calls**: app.get, app.get, app.post, app.post, app.post, app.post, app.post, Header
@@ -135,6 +135,10 @@ Main execution flows into the system:
 
 ### src.vdisplay.application.session_recorder.SessionRecorder._load_or_create_document
 - **Calls**: session_json.is_file, src.vdisplay.application.session_recorder._utc_now, SessionDocument, None.write_text, json.loads, SessionDocument, len, json.dumps
+
+### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload
+> Adopt an existing portal ScreenCast session opened in another process.
+- **Calls**: src.vdisplay.capture.portal_screencast.ensure_portal_session_env, src.vdisplay.capture.portal_screencast.portal_session_env_status, None.strip, cls, list, payload.get, bool, str
 
 ### src.vdisplay.commands.relay.register
 - **Calls**: sub.add_parser, parser.add_subparsers, relay_sub.add_parser, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument
@@ -157,6 +161,9 @@ Main execution flows into the system:
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
 
+### src.vdisplay.commands.agent.register
+- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
+
 ### src.vdisplay.control.selector.ControlSelector.from_dict
 - **Calls**: dict, extra.update, cls, cls.__dataclass_fields__.values, payload.get, payload.get, payload.get, payload.get
 
@@ -175,9 +182,6 @@ Main execution flows into the system:
 ### examples.ci-agent.agent.main
 - **Calls**: Path, output_dir.mkdir, int, int, int, os.environ.get, None.strip, VirtualDisplaySession.create
 
-### src.vdisplay.commands.agent.register
-- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
-
 ### src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window
 - **Calls**: src.vdisplay.backends.linux_x11_relay._window_geometry, src.vdisplay.backends.linux_x11_relay._move_window, WindowState, src.vdisplay.windows.query.find_companion_frames, src.vdisplay.backends.linux_x11_relay._save_stash, CapabilityError, src.vdisplay.backends.linux_x11_relay._window_metadata, src.vdisplay.backends.linux_x11_relay._find_window_id
 
@@ -190,17 +194,14 @@ Main execution flows into the system:
 ### src.vdisplay.control.gui_map.GuiMapElement.from_dict
 - **Calls**: cls, str, str, GuiMapBounds.from_dict, GuiMapBounds.from_dict, GuiMapPoint.from_dict, GuiMapIdentity.from_dict, list
 
+### packages.vdisplay-agent.src.vdisplay_agent.cli.main
+- **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, print
+
 ### src.vdisplay.commands.sampler.register
 - **Calls**: sub.add_parser, parser.add_subparsers, subp.add_parser, src.vdisplay.commands.common.add_display_arg, start.add_argument, start.add_argument, start.add_argument, start.add_argument
 
 ### src.vdisplay.commands.virtual.register
 - **Calls**: sub.add_parser, parser.add_subparsers, virtual_sub.add_parser, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.set_defaults
-
-### src.vdisplay.capture.providers.fbdev.FbdevProvider._capture
-- **Calls**: src.vdisplay.capture.providers.fbdev._fb_info, io.BytesIO, image.save, buf.getvalue, VDisplayError, Image.frombuffer, max, max
-
-### src.vdisplay.commands.session.handle_show
-- **Calls**: src.vdisplay.commands.session._resolve_session_dir, src.vdisplay.application.session_recorder.load_session_document, src.vdisplay.cli_handlers.print_json, sys.stdout.write, index_path.is_file, src.vdisplay.cli_handlers.print_json, doc.to_dict, readme.is_file
 
 ## Process Flows
 
@@ -244,14 +245,22 @@ _load_or_create_document [src.vdisplay.application.session_recorder.SessionRecor
   └─ →> _utc_now
 ```
 
-### Flow 7: record
+### Flow 7: from_portal_payload
+```
+from_portal_payload [src.vdisplay.capture.portal_screencast.PortalScreenCastSession]
+  └─ →> ensure_portal_session_env
+  └─ →> portal_session_env_status
+      └─> ensure_portal_session_env
+```
+
+### Flow 8: record
 ```
 record [src.vdisplay.application.session_recorder.SessionRecorder]
   └─ →> request_to_dict
   └─ →> result_to_dict
 ```
 
-### Flow 8: main
+### Flow 9: main
 ```
 main [examples.agent-broker.broker_demo]
   └─ →> resolve_agent_url
@@ -260,14 +269,9 @@ main [examples.agent-broker.broker_demo]
           └─> _default_agent_base
 ```
 
-### Flow 9: create_server
+### Flow 10: create_server
 ```
 create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
-```
-
-### Flow 10: from_dict
-```
-from_dict [src.vdisplay.control.selector.ControlSelector]
 ```
 
 ## Key Classes
@@ -280,12 +284,12 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 
 ### packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime
 > Privileged runtime: owns session store and broker services.
-- **Methods**: 35
+- **Methods**: 36
 - **Key Methods**: packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.sessions, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.relay, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.platform_capabilities, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.diagnostics, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.outputs, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.list_windows, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_virtual, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_mirror, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_relay, packages.vdisplay-agent.src.vdisplay_agent.runtime.AgentRuntime.start_terminal
 
 ### src.vdisplay.client_api.AgentClientApiMixin
 > Convenience methods mapping to broker REST endpoints.
-- **Methods**: 26
+- **Methods**: 27
 - **Key Methods**: src.vdisplay.client_api.AgentClientApiMixin.health, src.vdisplay.client_api.AgentClientApiMixin.capabilities, src.vdisplay.client_api.AgentClientApiMixin.diagnostics, src.vdisplay.client_api.AgentClientApiMixin.outputs, src.vdisplay.client_api.AgentClientApiMixin.windows, src.vdisplay.client_api.AgentClientApiMixin.start_virtual, src.vdisplay.client_api.AgentClientApiMixin.start_mirror, src.vdisplay.client_api.AgentClientApiMixin.start_relay, src.vdisplay.client_api.AgentClientApiMixin.browser_open, src.vdisplay.client_api.AgentClientApiMixin.start_screencast
 - **Inherits**: AgentHttpTransport
 
@@ -293,19 +297,19 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 - **Methods**: 20
 - **Key Methods**: src.vdisplay.control.verifier.VerifierPipeline._run_semantic_if_needed, src.vdisplay.control.verifier.VerifierPipeline._run_visual_if_needed, src.vdisplay.control.verifier.VerifierPipeline._maybe_ocr_rescue, src.vdisplay.control.verifier.VerifierPipeline._evaluate_runs, src.vdisplay.control.verifier.VerifierPipeline.verify_after_action, src.vdisplay.control.verifier.VerifierPipeline._verify_anchor_visible, src.vdisplay.control.verifier.VerifierPipeline._verify_ocr_contains, src.vdisplay.control.verifier.VerifierPipeline._verify_with_vision_rescue, src.vdisplay.control.verifier.VerifierPipeline._verify_combined, src.vdisplay.control.verifier.VerifierPipeline._run_semantic
 
+### src.vdisplay.control.providers.browser_session.BrowserSessionRegistry
+> Browser sessions — in-process registry with optional CDP reattach across CLI calls.
+- **Methods**: 19
+- **Key Methods**: src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.__init__, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._tracks_detached_sessions, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.list_ids, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.get, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.require, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._maybe_reuse_existing_session, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._create_mock_session, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._launch_playwright_sync, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._open
+
 ### src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider
 - **Methods**: 18
 - **Key Methods**: src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.__init__, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.available, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider._resolve_session_id, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider._page_for, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.snapshot, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider._snapshot, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.find, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider._find, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider._resolve_element, src.vdisplay.control.providers.browser_playwright.BrowserPlaywrightProvider.invoke
 - **Inherits**: ControlProvider
 
-### src.vdisplay.control.providers.browser_session.BrowserSessionRegistry
-> Browser sessions — in-process registry with optional CDP reattach across CLI calls.
-- **Methods**: 13
-- **Key Methods**: src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.__init__, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._tracks_detached_sessions, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.list_ids, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.get, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.require, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._open, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._attach, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry._attach_impl, src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open_mock
-
 ### src.vdisplay.hmi.mouse.MouseWatcher
 > Track pointer position from evdev relative/absolute motion events.
-- **Methods**: 12
+- **Methods**: 15
 - **Key Methods**: src.vdisplay.hmi.mouse.MouseWatcher.__init__, src.vdisplay.hmi.mouse.MouseWatcher.position, src.vdisplay.hmi.mouse.MouseWatcher.relative_only, src.vdisplay.hmi.mouse.MouseWatcher.move_count, src.vdisplay.hmi.mouse.MouseWatcher.seed, src.vdisplay.hmi.mouse.MouseWatcher.start, src.vdisplay.hmi.mouse.MouseWatcher.stop, src.vdisplay.hmi.mouse.MouseWatcher.drain, src.vdisplay.hmi.mouse.MouseWatcher._ensure_origin, src.vdisplay.hmi.mouse.MouseWatcher._apply_rel
 
 ### src.vdisplay.api.VirtualDisplaySession
@@ -343,6 +347,11 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 - **Key Methods**: src.vdisplay.control.providers.ax.AxControlProvider.__init__, src.vdisplay.control.providers.ax.AxControlProvider.available, src.vdisplay.control.providers.ax.AxControlProvider._records_to_nodes, src.vdisplay.control.providers.ax.AxControlProvider.snapshot, src.vdisplay.control.providers.ax.AxControlProvider.find, src.vdisplay.control.providers.ax.AxControlProvider._record_for, src.vdisplay.control.providers.ax.AxControlProvider.invoke, src.vdisplay.control.providers.ax.AxControlProvider.focus, src.vdisplay.control.providers.ax.AxControlProvider.set_value, src.vdisplay.control.providers.ax.AxControlProvider.bounds
 - **Inherits**: ControlProvider
 
+### src.vdisplay.capture.portal_screencast.PortalScreenCastSession
+> Hold an open portal ScreenCast session and grab PNG frames from PipeWire.
+- **Methods**: 10
+- **Key Methods**: src.vdisplay.capture.portal_screencast.PortalScreenCastSession.is_ready, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.start, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.detach_local, src.vdisplay.capture.portal_screencast.PortalScreenCastSession._parse_node_ids, src.vdisplay.capture.portal_screencast.PortalScreenCastSession._parse_stream_targets, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.status, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png_local, src.vdisplay.capture.portal_screencast.PortalScreenCastSession.stop
+
 ### src.vdisplay.api.WindowRelaySession
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.api.WindowRelaySession.__init__, src.vdisplay.api.WindowRelaySession.create, src.vdisplay.api.WindowRelaySession.start, src.vdisplay.api.WindowRelaySession.stop, src.vdisplay.api.WindowRelaySession.adopt_window, src.vdisplay.api.WindowRelaySession.release_window, src.vdisplay.api.WindowRelaySession.list_adopted, src.vdisplay.api.WindowRelaySession.info, src.vdisplay.api.WindowRelaySession.capabilities
@@ -361,10 +370,6 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal.TerminalControlProvider.__init__, src.vdisplay.control.providers.terminal.TerminalControlProvider.available, src.vdisplay.control.providers.terminal.TerminalControlProvider._resolve_session_id, src.vdisplay.control.providers.terminal.TerminalControlProvider.snapshot, src.vdisplay.control.providers.terminal.TerminalControlProvider.find, src.vdisplay.control.providers.terminal.TerminalControlProvider.invoke, src.vdisplay.control.providers.terminal.TerminalControlProvider.focus, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.bounds
 - **Inherits**: ControlProvider
-
-### src.vdisplay.input.linux_xdotool.LinuxXdotoolInput
-- **Methods**: 9
-- **Key Methods**: src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.__init__, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput._env, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.available, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.can_type, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.can_paste, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.move, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.click, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.type_text, src.vdisplay.input.linux_xdotool.LinuxXdotoolInput.hotkey
 
 ### src.vdisplay.hmi.keyboard.KeyboardWatcher
 > Background evdev reader pushing :class:`KeyEvent` objects to a queue.
@@ -451,6 +456,11 @@ Key functions that process and transform data:
 
 ## Behavioral Patterns
 
+### recursion_enrich_screenshot_payload
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
+
 ### recursion_dump_tree
 - **Type**: recursion
 - **Confidence**: 0.90
@@ -461,10 +471,10 @@ Key functions that process and transform data:
 - **Confidence**: 0.90
 - **Functions**: packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_host
 
-### recursion_enrich_screenshot_payload
+### recursion__walk_atspi_node
 - **Type**: recursion
 - **Confidence**: 0.90
-- **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
+- **Functions**: src.vdisplay.control.providers.atspi_impl._walk_atspi_node
 
 ### state_machine_ControlActionState
 - **Type**: state_machine
@@ -476,13 +486,16 @@ Key functions that process and transform data:
 Functions exposed as public API (no underscore prefix):
 
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.web.register_routes` - 96 calls
-- `packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes` - 68 calls
+- `packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes` - 74 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 68 calls
 - `brain.scratch_test_screencast.test_screencast` - 55 calls
 - `src.vdisplay.commands.control.register` - 46 calls
+- `src.vdisplay.application.services.screencast_cli.start_screencast_via_agent` - 46 calls
 - `src.vdisplay.commands.ide.handle` - 45 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler` - 42 calls
+- `src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload` - 40 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
+- `src.vdisplay.capture.screencast_keeper.request_keeper_capture` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
 - `src.vdisplay.application.parsers.parse_dsl` - 37 calls
 - `src.vdisplay.application.events.map_events_from_diagnostics` - 36 calls
@@ -495,14 +508,15 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.application.projections.map_health_handlers.apply_step_verify_drift` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
+- `src.vdisplay.commands.agent.register` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `src.vdisplay.application.parsers.parse_agent_control_body` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.commands.map.handle` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
 - `src.vdisplay.application.executor.execute` - 30 calls
+- `src.vdisplay.capture.screencast_keeper.run_keeper_daemon` - 30 calls
 - `src.vdisplay.application.session_recorder.load_session_document` - 29 calls
-- `src.vdisplay.application.replay.replay_session` - 29 calls
 - `src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics` - 28 calls
 - `src.vdisplay.application.proto.codec.decode_event_envelope` - 28 calls
 - `src.vdisplay.integrations.screen_context.ScreenContext.from_dict` - 28 calls
@@ -511,10 +525,6 @@ Functions exposed as public API (no underscore prefix):
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
 - `src.vdisplay.discovery.list_outputs` - 27 calls
-- `src.vdisplay.commands.agent.register` - 27 calls
-- `src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window` - 27 calls
-- `src.vdisplay.control.contracts.control_route_request_from_command` - 27 calls
-- `src.vdisplay.control.selector.parse_selector` - 27 calls
 
 ## System Interactions
 
@@ -548,10 +558,10 @@ graph TD
     _load_or_create_docu --> SessionDocument
     _load_or_create_docu --> write_text
     _load_or_create_docu --> loads
-    record --> mkdir
-    record --> request_to_dict
-    record --> result_to_dict
-    record --> write_text
+    from_portal_payload --> ensure_portal_sessio
+    from_portal_payload --> portal_session_env_s
+    from_portal_payload --> strip
+    from_portal_payload --> cls
 ```
 
 ## Reverse Engineering Guidelines

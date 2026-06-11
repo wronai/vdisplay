@@ -64,6 +64,18 @@ def json_error(action: str, exc: Exception) -> JSONResponse:
     else:
         error = error_from_exception(exc)
         status = 500 if error.code == ErrorCode.INTERNAL else 400
+    try:
+        from .broker_events import log_broker_event
+
+        log_broker_event(
+            action,
+            ok=False,
+            error=str(error.message),
+            code=error.code.value if hasattr(error.code, "value") else str(error.code),
+            status=status,
+        )
+    except Exception:
+        pass
     return JSONResponse(failure(action, error), status_code=status)
 
 

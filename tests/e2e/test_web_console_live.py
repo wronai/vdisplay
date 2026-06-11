@@ -1,10 +1,13 @@
-"""Playwright GUI tests against a running vdisplay-agent (live broker).
+"""Playwright GUI tests against vdisplay-agent (live broker).
 
-Requires:
-  vdisplay-agent serve  (default http://127.0.0.1:8765)
-  optional: screencast active for non-empty monitor PNGs
+By default starts an embedded agent (``live_agent_url`` fixture) so CI does not
+require ``vdisplay-agent serve`` on port 8765.
 
-Does not click ScreenCast start — portal picker would block headless CI.
+For manual testing against a long-running broker + real screencast:
+  export VDISPLAY_LIVE_EXTERNAL=1
+  export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+  vdisplay-agent serve
+  pytest tests/e2e/test_web_console_live.py -m live -v
 """
 
 from __future__ import annotations
@@ -23,8 +26,17 @@ def _agent_base() -> str:
     return os.environ.get("VDISPLAY_AGENT_URL", "http://127.0.0.1:8765").rstrip("/")
 
 
-def _fetch_json(path: str) -> dict:
-    req = urllib.request.Request(f"{_agent_base()}{path}")
+def _external_live_requested() -> bool:
+    return os.environ.get("VDISPLAY_LIVE_EXTERNAL", "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
+def _fetch_json(path: str, *, base: str | None = None) -> dict:
+    root = (base or _agent_base()).rstrip("/")
+    req = urllib.request.Request(f"{root}{path}")
     token = os.environ.get("VDISPLAY_AGENT_TOKEN", "").strip()
     if token:
         req.add_header("Authorization", f"Bearer {token}")
@@ -33,10 +45,12 @@ def _fetch_json(path: str) -> dict:
 
 
 @pytest.fixture(scope="module")
-def broker_url() -> str:
+def broker_url(live_agent_url: str) -> str:
+    if not _external_live_requested():
+        return live_agent_url
     base = _agent_base()
     try:
-        _fetch_json("/health")
+        _fetch_json("/health", base=base)
     except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as exc:
         pytest.skip(f"live agent not reachable at {base}: {exc}")
     return base
@@ -44,7 +58,7 @@ def broker_url() -> str:
 
 @pytest.fixture(scope="module")
 def live_overview(broker_url: str) -> dict:
-    payload = _fetch_json("/api/web/overview")
+    payload = _fetch_json("/api/web/overview", base=broker_url)
     assert payload.get("ok") is True, payload
     return payload["data"]
 
@@ -77,7 +91,7 @@ def test_live_overview_api(live_overview: dict) -> None:
 
 
 def test_live_replay_sessions_route(broker_url: str) -> None:
-    payload = _fetch_json("/api/web/replay/sessions")
+    payload = _fetch_json("/api/web/replay/sessions", base=broker_url)
     assert payload.get("ok") is True
     assert "sessions" in payload.get("data", {})
 

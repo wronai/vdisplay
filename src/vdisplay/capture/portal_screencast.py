@@ -93,6 +93,47 @@ def portal_session_env_status() -> tuple[bool, str]:
     return True, ""
 
 
+def _apply_keeper_fields(session, payload: dict[str, Any]) -> None:
+    session.keeper_managed = bool(payload.get("keeper_managed"))
+    session.keeper_socket_path = str(
+        payload.get("socket_path") or payload.get("keeper_socket_path") or ""
+    )
+    session.keeper_runtime_dir = str(
+        payload.get("runtime_dir") or payload.get("keeper_runtime_dir") or ""
+    )
+    try:
+        session.keeper_pid = int(payload.get("keeper_pid") or payload.get("pid") or 0)
+    except (TypeError, ValueError):
+        session.keeper_pid = 0
+    if session.keeper_socket_path and not session.keeper_managed:
+        session.keeper_managed = True
+
+
+def _probe_adopt_screencast_fd(session, session_path: str) -> bool:
+    """Probe the fd for an adopted session.
+
+    Returns True if the caller should return the session early (invalid
+    session tolerated), False otherwise.
+    """
+    probe_fd: int | None = None
+    try:
+        if session.pipewire_fd is not None and session.pipewire_fd >= 0:
+            probe_fd = os.dup(session.pipewire_fd)
+        else:
+            probe_fd = _open_screencast_pipewire_fd(session_path)
+    except VDisplayError as exc:
+        msg = str(exc).lower()
+        if "invalid session" in msg or "access denied" in msg:
+            session.pipewire_fd = None
+            _set_active(session)
+            return True
+        raise VDisplayError(f"adopted screencast session not usable: {exc}") from exc
+    finally:
+        if probe_fd is not None and probe_fd >= 0:
+            os.close(probe_fd)
+    return False
+
+
 @dataclass
 class PortalScreenCastSession:
     """Hold an open portal ScreenCast session and grab PNG frames from PipeWire."""
@@ -104,6 +145,10 @@ class PortalScreenCastSession:
     pipewire_fd: int | None = None
     active: bool = False
     source: str = "xdg-portal-screencast"
+    keeper_managed: bool = False
+    keeper_socket_path: str = ""
+    keeper_runtime_dir: str = ""
+    keeper_pid: int = 0
     _portal_bus: Any = field(default=None, repr=False, compare=False)
 
     @property
@@ -171,29 +216,10 @@ class PortalScreenCastSession:
         fd = payload.get("pipewire_fd")
         session.pipewire_fd = int(fd) if fd is not None else None
         session.active = True
+        _apply_keeper_fields(session, payload)
 
-        if verify_remote:
-            probe_fd: int | None = None
-            try:
-                if session.pipewire_fd is not None and session.pipewire_fd >= 0:
-                    probe_fd = os.dup(session.pipewire_fd)
-                else:
-                    probe_fd = _open_screencast_pipewire_fd(session_path)
-            except VDisplayError as exc:
-                msg = str(exc).lower()
-                if "invalid session" in msg or "access denied" in msg:
-                    # Probe from adopter failed (e.g. session created in CLI process,
-                    # DBus/app-id differences, or prior invalidation). Still register
-                    # the metadata the local start provided. First real capture will
-                    # retry the fd open. Prevents adopt from hard-failing with
-                    # "Invalid session".
-                    session.pipewire_fd = None
-                    _set_active(session)
-                    return session
-                raise VDisplayError(f"adopted screencast session not usable: {exc}") from exc
-            finally:
-                if probe_fd is not None and probe_fd >= 0:
-                    os.close(probe_fd)
+        if verify_remote and _probe_adopt_screencast_fd(session, session_path):
+            return session
 
         _set_active(session)
         return session
@@ -228,9 +254,34 @@ class PortalScreenCastSession:
             "streams": self.streams,
             "source": self.source,
             "has_pipewire_fd": bool(self.session_path),
+            "keeper_managed": self.keeper_managed,
+            "keeper_socket_path": self.keeper_socket_path,
+            "keeper_pid": self.keeper_pid or None,
         }
 
     def capture_png(self, *, node_index: int = 0) -> bytes:
+        if not self.is_ready:
+            raise VDisplayError("screencast session not ready — POST /session/screencast/start first")
+        from .screencast_keeper import request_keeper_capture, session_uses_keeper
+
+        if session_uses_keeper(self):
+            try:
+                return request_keeper_capture(
+                    node_index=node_index,
+                    session_path=self.session_path,
+                    socket_path=self.keeper_socket_path or None,
+                )
+            except VDisplayError as exc:
+                msg = str(exc).lower()
+                if "socket unavailable" in msg or "no response" in msg:
+                    raise VDisplayError(
+                        f"{exc} — restart screencast keeper: vdisplay agent screencast start --force"
+                    ) from exc
+                raise
+        return self.capture_png_local(node_index=node_index)
+
+    def capture_png_local(self, *, node_index: int = 0) -> bytes:
+        """Capture via PipeWire in this process (keeper daemon only)."""
         if not self.is_ready:
             raise VDisplayError("screencast session not ready — POST /session/screencast/start first")
         timeout_s = _pipewire_capture_timeout_s()
@@ -306,14 +357,24 @@ def prepare_portal_screencast_start() -> None:
     _purge_stale_screencast_sessions()
 
 
-def screencast_adopt_payload(session: PortalScreenCastSession) -> dict[str, Any]:
+def screencast_adopt_payload(session: PortalScreenCastSession, **extra: Any) -> dict[str, Any]:
     """Serialize a portal session for POST /session/screencast/adopt."""
-    return {
+    payload: dict[str, Any] = {
         "session_path": session.session_path,
         "streams": session.streams,
         "node_ids": session.node_ids,
         "stream_targets": session.stream_targets,
     }
+    if session.keeper_managed:
+        payload["keeper_managed"] = True
+    if session.keeper_socket_path:
+        payload["socket_path"] = session.keeper_socket_path
+    if session.keeper_runtime_dir:
+        payload["runtime_dir"] = session.keeper_runtime_dir
+    if session.keeper_pid:
+        payload["keeper_pid"] = session.keeper_pid
+    payload.update(extra)
+    return payload
 
 
 def start_screencast_session(
@@ -361,7 +422,7 @@ def _is_retryable_screencast_error(error: str | None) -> bool:
 
 
 def _pipewire_capture_timeout_s() -> float:
-    raw = os.environ.get("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", "20")
+    raw = os.environ.get("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", "30")
     try:
         return max(2.0, min(60.0, float(raw)))
     except ValueError:
@@ -501,10 +562,13 @@ def _stream_properties(raw: Any) -> dict[str, Any]:
 
 
 def _stream_serial(properties: dict[str, Any]) -> str | None:
-    """PipeWire object.serial for PW_KEY_TARGET_OBJECT (ScreenCast v6+)."""
+    """PipeWire target-object for pipewiresrc (portal stream id or PW serial)."""
     serial = properties.get("pipewire-serial")
     if serial is not None:
         return str(int(serial))
+    portal_id = properties.get("id")
+    if portal_id is not None and str(portal_id) != "":
+        return str(portal_id)
     return None
 
 
@@ -903,14 +967,23 @@ def _capture_pipewire_stream(
     timeout_s: float = 30.0,
 ) -> bytes:
     strategies: list[tuple[str, str | None]] = []
-    if target_object:
-        strategies.append((f"target-object={target_object}", target_object))
-    strategies.append((f"target-object={node_id}", str(node_id)))
-    if portal_stream_id and portal_stream_id not in {target_object, str(node_id)}:
-        strategies.append((f"target-object={portal_stream_id}", portal_stream_id))
-    strategies.append((f"path={node_id}", None))
+    seen: set[str] = set()
 
-    per_try = max(4.0, min(timeout_s, timeout_s / max(1, len(strategies))))
+    def _add(label: str, tobj: str | None) -> None:
+        key = tobj if tobj is not None else f"path:{node_id}"
+        if key in seen:
+            return
+        seen.add(key)
+        strategies.append((label, tobj))
+
+    if target_object:
+        _add(f"target-object={target_object}", target_object)
+    if portal_stream_id:
+        _add(f"target-object={portal_stream_id}", portal_stream_id)
+    _add(f"target-object={node_id}", str(node_id))
+    _add(f"path={node_id}", None)
+
+    per_try = max(8.0, min(timeout_s, timeout_s / max(1, len(strategies))))
     errors: list[str] = []
     for label, tobj in strategies:
         try:
@@ -920,6 +993,8 @@ def _capture_pipewire_stream(
                 target_object=tobj,
                 timeout_s=per_try,
             )
+        except subprocess.TimeoutExpired:
+            errors.append(f"{label}: timed out after {per_try:.1f}s")
         except VDisplayError as exc:
             err = str(exc)
             errors.append(f"{label}: {err[:160]}")
@@ -977,7 +1052,7 @@ gi.require_version("Gst", "1.0")
 from gi.repository import Gst
 
 Gst.init(None)
-props = f"fd={fd} always-copy=1 num-buffers=1"
+props = f"fd={fd} always-copy=1 num-buffers=1 do-timestamp=true keepalive-time=100"
 if target:
     props += f" target-object={target}"
 else:
@@ -1069,6 +1144,8 @@ def _capture_pipewire_frame_gst_launch(
         f"fd={cap_fd}",
         "always-copy=1",
         "num-buffers=1",
+        "do-timestamp=true",
+        "keepalive-time=100",
     ]
     if target_object:
         src_args.append(f"target-object={target_object}")
@@ -1076,33 +1153,38 @@ def _capture_pipewire_frame_gst_launch(
         src_args.append(f"path={node_id}")
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", message="pass_fds overriding close_fds", category=RuntimeWarning)
-        completed = subprocess.run(
-            [
-                gst,
-                "-e",
-                *src_args,
-                "!",
-                "queue",
-                "max-size-buffers=1",
-                "max-size-time=0",
-                "max-size-bytes=0",
-                "leaky=downstream",
-                "!",
-                "videoconvert",
-                "!",
-                "pngenc",
-                "!",
-                "filesink",
-                f"location={out}",
-                "sync=false",
-                "async=false",
-            ],
-            capture_output=True,
-            timeout=timeout_s,
-            check=False,
-            close_fds=False,
-            pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
-        )
+        try:
+            completed = subprocess.run(
+                [
+                    gst,
+                    "-e",
+                    *src_args,
+                    "!",
+                    "queue",
+                    "max-size-buffers=1",
+                    "max-size-time=0",
+                    "max-size-bytes=0",
+                    "leaky=downstream",
+                    "!",
+                    "videoconvert",
+                    "!",
+                    "pngenc",
+                    "!",
+                    "filesink",
+                    f"location={out}",
+                    "sync=false",
+                    "async=false",
+                ],
+                capture_output=True,
+                timeout=timeout_s,
+                check=False,
+                close_fds=False,
+                pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise VDisplayError(
+                f"gstreamer pipewire capture timed out after {timeout_s:.1f}s"
+            ) from exc
     if completed.returncode == 0 and out.is_file() and out.stat().st_size > 64:
         return out.read_bytes()
     err = (completed.stderr or b"").decode("utf-8", errors="replace").strip()

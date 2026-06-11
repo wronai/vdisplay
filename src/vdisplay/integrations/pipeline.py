@@ -37,6 +37,48 @@ def observe_enabled() -> bool:
     return imgl_available() or vql_available()
 
 
+def _evaluate_drift_with_png(ctx: ScreenContext, path: Path) -> None:
+    png_bytes: bytes | None = None
+    if path.is_file() and ctx.map_pack:
+        try:
+            png_bytes = path.read_bytes()
+        except OSError:
+            png_bytes = None
+    if ctx.map_pack:
+        evaluate_map_drift(ctx, png_bytes)
+
+
+def _resolve_cached_or_imgl(ctx: ScreenContext, *, include_imgl: bool) -> ScreenContext | None:
+    cached: ScreenContext | None = None
+    if observe_cache_enabled() and ctx.fingerprint:
+        cached = load_cached_context(ctx.fingerprint)
+    if cached and not map_drift_blocks_cache(ctx):
+        merge_cached_analysis(ctx, cached)
+    elif include_imgl and imgl_enabled():
+        attach_imgl_to_context(ctx)
+    return cached
+
+
+def _maybe_write_vql(
+    ctx: ScreenContext,
+    path: Path,
+    *,
+    include_vql: bool,
+    cached: ScreenContext | None,
+    vql_path: str | Path | None,
+    svg_path: str | Path | None,
+) -> None:
+    if include_vql and vql_enabled() and path.is_file():
+        if not (cached and ctx.vql.get("program")):
+            write_vql_artifacts(ctx, vql_path=vql_path, svg_path=svg_path)
+
+
+def _persist_observe_sidecar(ctx: ScreenContext, *, write_sidecar: bool) -> None:
+    if write_sidecar:
+        ctx.write_sidecar()
+    store_context_cache(ctx)
+
+
 def observe_screen(
     *,
     image_path: str | Path,
@@ -60,37 +102,14 @@ def observe_screen(
         map_path=str(map_path) if map_path else None,
     )
     ctx.environment.update(load_environment_snapshot(display=display or payload.get("display")))
-
-    png_bytes: bytes | None = None
-    if path.is_file() and ctx.map_pack:
-        try:
-            png_bytes = path.read_bytes()
-        except OSError:
-            png_bytes = None
-    if ctx.map_pack:
-        evaluate_map_drift(ctx, png_bytes)
-
-    cached: ScreenContext | None = None
-    if observe_cache_enabled() and ctx.fingerprint:
-        cached = load_cached_context(ctx.fingerprint)
-
-    if cached and not map_drift_blocks_cache(ctx):
-        merge_cached_analysis(ctx, cached)
-    elif include_imgl and imgl_enabled():
-        attach_imgl_to_context(ctx)
+    _evaluate_drift_with_png(ctx, path)
+    cached = _resolve_cached_or_imgl(ctx, include_imgl=include_imgl)
 
     if not ctx.nl and payload.get("nl"):
         ctx.nl = str(payload["nl"])
 
-    if include_vql and vql_enabled() and path.is_file():
-        if not (cached and ctx.vql.get("program")):
-            write_vql_artifacts(ctx, vql_path=vql_path, svg_path=svg_path)
-
-    if write_sidecar:
-        ctx.write_sidecar()
-
-    store_context_cache(ctx)
-
+    _maybe_write_vql(ctx, path, include_vql=include_vql, cached=cached, vql_path=vql_path, svg_path=svg_path)
+    _persist_observe_sidecar(ctx, write_sidecar=write_sidecar)
     return ctx
 
 

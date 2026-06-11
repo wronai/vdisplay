@@ -184,6 +184,14 @@ On GNOME Wayland, OCR-target `set-value` may fail with `can_type=False`. Prefer 
 vdisplay control set-value --map maps/pycharm-dp2.json --target message --value "test"
 ```
 
+### `set-value` / clipboard paste hangs
+
+In some environments, clipboard utilities like `wl-copy` or `xclip` can hang during `set_value` operations because the subprocess inherits standard input/output pipes that do not close properly.
+
+**Fix/Mitigation**:
+- Make sure `wl-clipboard` (for Wayland) or `xclip` (for X11) is installed.
+- The clipboard helper calls are protected by redirecting `stdout` and `stderr` to `subprocess.DEVNULL` and enforcing execution timeouts (15 seconds for `wl-copy`, 5 seconds for `xclip`) to prevent blocking the automation agent.
+
 ### Screencast / map capture 400
 
 Start agent **before** screencast, and screencast **after** agent is running:

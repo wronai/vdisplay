@@ -224,62 +224,89 @@ def reverse_generation_descriptor(ctx: ScreenContext) -> dict[str, Any]:
     return _enrich_render_intent(ctx, base)
 
 
-def _enrich_render_intent(ctx: ScreenContext, descriptor: dict[str, Any]) -> dict[str, Any]:
-    """Add vdisplay-specific scene/map hints on top of img2vql reverse_generate output."""
-    enriched = dict(descriptor)
-    capture = ctx.capture
-    width = int(capture.get("width") or enriched.get("canvas", {}).get("width") or 0)
-    height = int(capture.get("height") or enriched.get("canvas", {}).get("height") or 0)
-    enriched.setdefault("mode", "layout_reconstruction")
-    enriched.setdefault("canvas", {"width": width, "height": height})
-    enriched.setdefault("nl", ctx.nl)
-    enriched.setdefault("prompt_block", ctx.nl or f"UI screenshot {width}x{height}")
+def _resolve_canvas_size(
+    capture: dict[str, Any],
+    descriptor: dict[str, Any],
+) -> tuple[int, int]:
+    width = int(capture.get("width") or descriptor.get("canvas", {}).get("width") or 0)
+    height = int(capture.get("height") or descriptor.get("canvas", {}).get("height") or 0)
+    return width, height
 
-    scene_class = ""
-    img2nl = ctx.imgl.get("img2nl") or {}
+
+def _resolve_scene_class(imgl: dict[str, Any]) -> str:
+    img2nl = imgl.get("img2nl") or {}
     if isinstance(img2nl, dict):
-        scene_class = str(img2nl.get("scene_class") or "")
-    enriched.setdefault("scene_class", scene_class or "ui_screenshot")
+        return str(img2nl.get("scene_class") or "")
+    return ""
 
-    if not enriched.get("layers"):
-        layers: list[dict[str, Any]] = []
-        imgl_scene = ctx.imgl.get("scene") if ctx.imgl.get("ok") else None
-        if isinstance(imgl_scene, dict):
-            for window in imgl_scene.get("windows") or []:
-                layers.append(
-                    {
-                        "kind": "window",
-                        "id": window.get("id"),
-                        "title": window.get("title"),
-                        "bbox": window.get("bbox"),
-                    }
-                )
-            for element in imgl_scene.get("elements") or []:
-                layers.append(
-                    {
-                        "kind": element.get("role") or "element",
-                        "text": element.get("text"),
-                        "bbox": element.get("bbox"),
-                    }
-                )
-        enriched["layers"] = layers
 
-    if ctx.map_pack and "map_targets" not in enriched:
-        elements = ctx.map_pack.get("elements") or {}
-        if isinstance(elements, dict):
-            enriched["map_targets"] = [
-                {"id": key, "label": (value or {}).get("label"), "role": (value or {}).get("role")}
-                for key, value in elements.items()
-                if isinstance(value, dict)
-            ][:32]
+def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
+    layers: list[dict[str, Any]] = []
+    imgl_scene = imgl.get("scene") if imgl.get("ok") else None
+    if not isinstance(imgl_scene, dict):
+        return layers
+    for window in imgl_scene.get("windows") or []:
+        layers.append(
+            {
+                "kind": "window",
+                "id": window.get("id"),
+                "title": window.get("title"),
+                "bbox": window.get("bbox"),
+            }
+        )
+    for element in imgl_scene.get("elements") or []:
+        layers.append(
+            {
+                "kind": element.get("role") or "element",
+                "text": element.get("text"),
+                "bbox": element.get("bbox"),
+            }
+        )
+    return layers
 
-    routing = ctx.environment.get("routing")
+
+def _maybe_add_map_targets(
+    enriched: dict[str, Any],
+    map_pack: dict[str, Any] | None,
+) -> None:
+    if not map_pack or "map_targets" in enriched:
+        return
+    elements = map_pack.get("elements") or {}
+    if isinstance(elements, dict):
+        enriched["map_targets"] = [
+            {"id": key, "label": (value or {}).get("label"), "role": (value or {}).get("role")}
+            for key, value in elements.items()
+            if isinstance(value, dict)
+        ][:32]
+
+
+def _maybe_add_routing_hint(
+    enriched: dict[str, Any],
+    environment: dict[str, Any],
+) -> None:
+    routing = environment.get("routing")
     if isinstance(routing, dict) and "routing_hint" not in enriched:
         enriched["routing_hint"] = {
             "provider": routing.get("selected_provider"),
             "profile": routing.get("application_profile"),
         }
 
+
+def _enrich_render_intent(ctx: ScreenContext, descriptor: dict[str, Any]) -> dict[str, Any]:
+    """Add vdisplay-specific scene/map hints on top of img2vql reverse_generate output."""
+    enriched = dict(descriptor)
+    width, height = _resolve_canvas_size(ctx.capture, enriched)
+    enriched.setdefault("mode", "layout_reconstruction")
+    enriched.setdefault("canvas", {"width": width, "height": height})
+    enriched.setdefault("nl", ctx.nl)
+    enriched.setdefault("prompt_block", ctx.nl or f"UI screenshot {width}x{height}")
+    enriched.setdefault("scene_class", _resolve_scene_class(ctx.imgl) or "ui_screenshot")
+
+    if not enriched.get("layers"):
+        enriched["layers"] = _build_imgl_layers(ctx.imgl)
+
+    _maybe_add_map_targets(enriched, ctx.map_pack)
+    _maybe_add_routing_hint(enriched, ctx.environment)
     return enriched
 
 

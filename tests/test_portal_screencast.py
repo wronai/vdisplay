@@ -127,10 +127,10 @@ def test_stream_target_prefers_pipewire_serial() -> None:
     from vdisplay.capture.portal_screencast import _stream_serial, _stream_target
 
     assert _stream_serial({"pipewire-serial": 123456789}) == "123456789"
-    assert _stream_serial({"id": "2"}) is None
+    assert _stream_serial({"id": "2"}) == "2"
     assert _stream_serial({}) is None
     assert _stream_target(74, {"pipewire-serial": 123456789}) == "123456789"
-    assert _stream_target(74, {"id": "0"}) == "74"
+    assert _stream_target(74, {"id": "0"}) == "0"
     assert _stream_target(74, {}) == "74"
 
 
@@ -209,7 +209,7 @@ def test_capture_pipewire_stream_retries_on_timeout(monkeypatch: pytest.MonkeyPa
         timeout_s=20.0,
     )
     assert data.startswith(b"\x89PNG")
-    assert attempts == ["117", "2", None]
+    assert attempts == ["2", "117", None]
 
 
 def test_capture_pipewire_stream_uses_num_buffers(monkeypatch: pytest.MonkeyPatch) -> None:

@@ -237,6 +237,78 @@ def _application_matches(application, app_filter: str | None, *, max_depth: int 
     return scan(application, 0)
 
 
+def _walk_atspi_node(
+    accessible,
+    path: str,
+    parent_id: str | None,
+    depth: int,
+    app_name: str | None,
+    window_title: str | None,
+    *,
+    window_id: str | None,
+    max_depth: int,
+    nodes: dict[str, ControlNode],
+    root_ids: list[str],
+) -> str:
+    node_id = f"atspi:{path}"
+    role_name = accessible.get_role_name() or ""
+    role = _map_role(role_name)
+    name = accessible.name or None
+    current_window_title = window_title
+    if role in {ControlRole.WINDOW, ControlRole.PANEL} and name:
+        current_window_title = name
+
+    actions = _node_actions(accessible)
+    node = ControlNode(
+        id=node_id,
+        backend="atspi",
+        role=role,
+        name=name,
+        description=accessible.description or None,
+        bounds=_node_bounds(accessible),
+        window_id=window_id,
+        app_label=app_name,
+        window_title=current_window_title,
+        provider_ref=_provider_ref(accessible, node_id),
+        state=_node_state(accessible, role_name),
+        actions=actions,
+        capabilities=_node_capabilities(accessible, actions, role),
+        text_value=_node_text_value(accessible),
+        parent_id=parent_id,
+    )
+    nodes[node_id] = node
+    if parent_id and parent_id in nodes:
+        nodes[parent_id].children_ids.append(node_id)
+    if parent_id is None:
+        root_ids.append(node_id)
+    if depth >= max_depth:
+        return node_id
+    try:
+        child_count = accessible.get_child_count()
+    except Exception:
+        child_count = 0
+    for index in range(child_count):
+        try:
+            child = accessible.get_child_at_index(index)
+        except Exception:
+            continue
+        if child is None:
+            continue
+        _walk_atspi_node(
+            child,
+            f"{path}/{index}",
+            node_id,
+            depth + 1,
+            app_name,
+            current_window_title,
+            window_id=window_id,
+            max_depth=max_depth,
+            nodes=nodes,
+            root_ids=root_ids,
+        )
+    return node_id
+
+
 def snapshot_dict(
     *,
     window_id: str | None = None,
@@ -250,61 +322,6 @@ def snapshot_dict(
     root_ids: list[str] = []
     app_label: str | None = None
 
-    def walk(
-        accessible,
-        path: str,
-        parent_id: str | None,
-        depth: int,
-        app_name: str | None,
-        window_title: str | None,
-    ) -> str:
-        node_id = f"atspi:{path}"
-        role_name = accessible.get_role_name() or ""
-        role = _map_role(role_name)
-        name = accessible.name or None
-        current_window_title = window_title
-        if role in {ControlRole.WINDOW, ControlRole.PANEL} and name:
-            current_window_title = name
-
-        actions = _node_actions(accessible)
-        node = ControlNode(
-            id=node_id,
-            backend="atspi",
-            role=role,
-            name=name,
-            description=accessible.description or None,
-            bounds=_node_bounds(accessible),
-            window_id=window_id,
-            app_label=app_name,
-            window_title=current_window_title,
-            provider_ref=_provider_ref(accessible, node_id),
-            state=_node_state(accessible, role_name),
-            actions=actions,
-            capabilities=_node_capabilities(accessible, actions, role),
-            text_value=_node_text_value(accessible),
-            parent_id=parent_id,
-        )
-        nodes[node_id] = node
-        if parent_id and parent_id in nodes:
-            nodes[parent_id].children_ids.append(node_id)
-        if parent_id is None:
-            root_ids.append(node_id)
-        if depth >= max_depth:
-            return node_id
-        try:
-            child_count = accessible.get_child_count()
-        except Exception:
-            child_count = 0
-        for index in range(child_count):
-            try:
-                child = accessible.get_child_at_index(index)
-            except Exception:
-                continue
-            if child is None:
-                continue
-            walk(child, f"{path}/{index}", node_id, depth + 1, app_name, current_window_title)
-        return node_id
-
     for app_index in range(desktop.get_child_count()):
         try:
             application = desktop.get_child_at_index(app_index)
@@ -314,7 +331,18 @@ def snapshot_dict(
             if not _application_matches(application, app):
                 continue
             app_label = app_name
-            walk(application, str(app_index), None, 0, app_name, None)
+            _walk_atspi_node(
+                application,
+                str(app_index),
+                None,
+                0,
+                app_name,
+                None,
+                window_id=window_id,
+                max_depth=max_depth,
+                nodes=nodes,
+                root_ids=root_ids,
+            )
         except Exception:
             # An unresponsive app on the a11y bus (e.g. a hung Java/Electron
             # client) raises dbind timeouts — skip it instead of failing the

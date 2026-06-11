@@ -1,17 +1,17 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.30s
-# nodes: 444 | edges: 500 | modules: 122
-# CC̄=3.9
+# generated in 0.24s
+# nodes: 438 | edges: 500 | modules: 127
+# CC̄=4.0
 
 HUBS[20]:
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
     CC=1  in:0  out:68  total:68
   src.vdisplay.cli_handlers.print_json
-    CC=1  in:55  out:1  total:56
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
-    CC=3  in:44  out:2  total:46
+    CC=1  in:59  out:1  total:60
   src.vdisplay.commands.control.register
     CC=1  in:0  out:46  total:46
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
+    CC=3  in:44  out:2  total:46
   src.vdisplay.commands.ide.handle
     CC=8  in:0  out:45  total:45
   packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler
@@ -30,20 +30,20 @@ HUBS[20]:
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  examples.host-relay.relay_demo.main
-    CC=11  in:0  out:33  total:33
   src.vdisplay.application.session_recorder.load_session_document
     CC=13  in:4  out:29  total:33
-  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
-    CC=13  in:5  out:28  total:33
   src.vdisplay.commands.session.command_request_from_control_args
     CC=8  in:1  out:32  total:33
   packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
     CC=1  in:0  out:33  total:33
+  examples.host-relay.relay_demo.main
+    CC=11  in:0  out:33  total:33
+  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
+    CC=13  in:5  out:28  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  src.vdisplay.commands.map.handle
-    CC=7  in:0  out:31  total:31
+  examples.control-plane.control_demo.run_browser_demo
+    CC=6  in:1  out:30  total:31
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -144,13 +144,16 @@ MODULES:
     apply_audit_env  CC=7  out:6
     audit_context_from_fastapi_headers  CC=1  out:1
     audit_context_from_headers  CC=1  out:1
+  packages.vdisplay-agent.src.vdisplay_agent.broker_events  [2 funcs]
+    _broker_log_path  CC=4  out:8
+    log_broker_event  CC=3  out:7
   packages.vdisplay-agent.src.vdisplay_agent.cli  [1 funcs]
-    main  CC=4  out:18
+    main  CC=6  out:22
   packages.vdisplay-agent.src.vdisplay_agent.envelope  [7 funcs]
     agent_meta  CC=1  out:0
     failure  CC=3  out:2
     from_runtime  CC=3  out:8
-    json_error  CC=5  out:8
+    json_error  CC=7  out:12
     json_from_runtime  CC=1  out:2
     json_success  CC=1  out:2
     success  CC=2  out:1
@@ -189,10 +192,10 @@ MODULES:
     ensure_broker_port_free  CC=10  out:13
     find_listener_pids  CC=4  out:4
   packages.vdisplay-agent.src.vdisplay_agent.server  [1 funcs]
-    create_app  CC=2  out:7
+    create_app  CC=4  out:10
   packages.vdisplay-agent.src.vdisplay_agent.services.capabilities  [2 funcs]
-    diagnostics  CC=1  out:4
-    platform_capabilities  CC=5  out:13
+    diagnostics  CC=4  out:10
+    platform_capabilities  CC=6  out:18
   packages.vdisplay-agent.src.vdisplay_agent.services.control  [7 funcs]
     _run_on_browser_thread  CC=1  out:2
     _selector_kwargs  CC=1  out:23
@@ -207,19 +210,21 @@ MODULES:
     _capture_virtual_persistent  CC=5  out:12
     _config_from_body  CC=12  out:26
     _ensure_virtual_session  CC=4  out:5
-    _recover_screencast  CC=3  out:3
+    _recover_screencast  CC=3  out:1
     start_sampler  CC=7  out:42
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions  [13 funcs]
+  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery  [1 funcs]
+    try_recover_screencast  CC=8  out:5
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions  [15 funcs]
+    _release_store_screencast_if_different  CC=9  out:6
     _screencast_payload  CC=6  out:2
     _session_started  CC=1  out:2
+    adopt_screencast  CC=7  out:11
     list_sessions  CC=1  out:2
     screencast_status  CC=3  out:2
     shutdown  CC=4  out:8
     start_browser  CC=3  out:4
     start_mirror  CC=3  out:5
     start_relay  CC=4  out:5
-    start_screencast  CC=6  out:8
-    start_terminal  CC=5  out:5
   packages.vdisplay-agent.src.vdisplay_agent.services.tasks  [9 funcs]
     end_sampler_task  CC=1  out:1
     end_screencast_task  CC=1  out:1
@@ -232,8 +237,16 @@ MODULES:
     unregister_session_task  CC=1  out:1
   packages.vdisplay-agent.src.vdisplay_agent.services.web_console  [1 funcs]
     click_monitor_pointer  CC=1  out:2
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache  [1 funcs]
-    capture_monitor_frame_with_meta  CC=6  out:17
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache  [9 funcs]
+    _capture_bulk_or_fallback  CC=9  out:13
+    _get_cached_all_frames  CC=4  out:6
+    _persist_captures_to_cache  CC=9  out:18
+    _require_screencast  CC=3  out:1
+    cache_get  CC=4  out:3
+    cache_put  CC=1  out:1
+    capture_all_monitor_frames  CC=4  out:4
+    capture_monitor_frame  CC=1  out:1
+    capture_monitor_frame_with_meta  CC=9  out:18
   packages.vdisplay-agent.src.vdisplay_agent.services.web_replay  [2 funcs]
     list_replay_sessions  CC=9  out:21
     queue_replay  CC=4  out:3
@@ -270,6 +283,12 @@ MODULES:
     _default_relay_backend  CC=2  out:1
     _default_virtual_backend  CC=2  out:1
     platform_summary  CC=1  out:5
+  src.vdisplay.application.auto.runner  [3 funcs]
+    list_auto_tasks  CC=3  out:6
+    run_auto_loop  CC=11  out:20
+    run_auto_once  CC=6  out:12
+  src.vdisplay.application.auto.tasks  [1 funcs]
+    ensure_auto_dependencies  CC=5  out:4
   src.vdisplay.application.errors  [1 funcs]
     error_from_exception  CC=4  out:11
   src.vdisplay.application.executor  [1 funcs]
@@ -277,12 +296,14 @@ MODULES:
   src.vdisplay.application.handlers.control  [1 funcs]
     control_request_body  CC=3  out:3
   src.vdisplay.application.replay  [1 funcs]
-    queue_session_replay  CC=4  out:15
+    queue_session_replay  CC=4  out:10
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
   src.vdisplay.application.services.sampler  [2 funcs]
     run_sampler  CC=5  out:18
     start_sampler_via_agent  CC=1  out:1
+  src.vdisplay.application.services.screencast_cli  [1 funcs]
+    clear_local_start_cooldown  CC=2  out:1
   src.vdisplay.application.services.web_pointer  [1 funcs]
     pointer_click_at_monitor  CC=11  out:20
   src.vdisplay.application.session_context  [4 funcs]
@@ -314,17 +335,16 @@ MODULES:
     _output_capture_region  CC=5  out:10
     _output_mode  CC=7  out:6
     _primary_output_from_xrandr  CC=3  out:4
-  src.vdisplay.backends.linux_x11_relay  [22 funcs]
+  src.vdisplay.backends.linux_x11_relay  [9 funcs]
     __init__  CC=1  out:3
     adopt_window  CC=12  out:27
-    list_adopted  CC=4  out:4
-    release_window  CC=6  out:10
     start  CC=2  out:3
     _find_window_id  CC=12  out:11
     _load_stash  CC=5  out:8
     _move_window  CC=1  out:3
-    _offscreen_coordinates  CC=1  out:1
-    _output_origin  CC=11  out:20
+    _save_stash  CC=4  out:7
+    _window_geometry  CC=4  out:4
+    _window_metadata  CC=1  out:1
   src.vdisplay.backends.linux_xvfb  [6 funcs]
     _acquire_display  CC=8  out:14
     screenshot_bytes  CC=2  out:2
@@ -332,20 +352,28 @@ MODULES:
     _display_candidates  CC=4  out:4
     _probe_display  CC=2  out:2
     _wait_for_display  CC=7  out:10
-  src.vdisplay.capture.host  [1 funcs]
+  src.vdisplay.capture.host  [2 funcs]
+    capture_all_monitors  CC=8  out:12
     capture_host_to_file  CC=3  out:10
-  src.vdisplay.capture.linux_xwd  [3 funcs]
+  src.vdisplay.capture.linux_xwd  [2 funcs]
     _capture_xwd_png  CC=1  out:3
     capture_display_png  CC=2  out:2
-    is_blank_png  CC=8  out:14
-  src.vdisplay.capture.portal_screencast  [5 funcs]
+  src.vdisplay.capture.portal_screencast  [9 funcs]
     _screencast_multiple  CC=3  out:3
+    _set_active  CC=1  out:0
+    _set_active_if_self  CC=1  out:0
+    ensure_portal_session_env  CC=11  out:10
     get_active_screencast  CC=1  out:0
-    invalidate_screencast_session  CC=4  out:4
-    start_screencast_session  CC=5  out:6
+    portal_session_env_status  CC=5  out:5
+    prepare_portal_screencast_start  CC=1  out:2
+    start_screencast_session  CC=5  out:8
     stop_screencast_session  CC=2  out:2
   src.vdisplay.capture.providers.engine  [1 funcs]
     list_capture_providers  CC=4  out:6
+  src.vdisplay.capture.screencast_keeper  [3 funcs]
+    keeper_capture_ready  CC=5  out:8
+    read_keeper_state  CC=7  out:8
+    stop_keeper  CC=8  out:19
   src.vdisplay.cli  [2 funcs]
     build_parser  CC=1  out:4
     main  CC=2  out:5
@@ -366,12 +394,13 @@ MODULES:
     route_command  CC=7  out:7
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
-  src.vdisplay.commands.agent  [5 funcs]
+  src.vdisplay.commands.agent  [6 funcs]
     _agent_client  CC=3  out:3
     _handle_browser_open  CC=3  out:9
-    _handle_screencast  CC=7  out:13
+    _handle_preflight  CC=14  out:23
+    _handle_screencast  CC=12  out:26
     _handle_serve  CC=5  out:11
-    handle  CC=5  out:7
+    handle  CC=6  out:8
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
@@ -379,6 +408,8 @@ MODULES:
     register_outputs  CC=1  out:4
   src.vdisplay.commands.app  [1 funcs]
     handle  CC=6  out:17
+  src.vdisplay.commands.auto  [1 funcs]
+    handle  CC=8  out:18
   src.vdisplay.commands.common  [9 funcs]
     add_all_arg  CC=1  out:1
     add_control_selector_args  CC=1  out:21
@@ -467,17 +498,6 @@ MODULES:
   src.vdisplay.control.session  [2 funcs]
     build_catalog_from_agent_store  CC=11  out:17
     parse_session_kind  CC=3  out:5
-  src.vdisplay.control.vision_ocr  [17 funcs]
-    _box_matches  CC=3  out:2
-    _find_anchor_boxes  CC=1  out:2
-    _horizontal_overlap  CC=2  out:0
-    _match_by_text_fields  CC=13  out:4
-    _match_by_vision_anchor  CC=7  out:5
-    _normalize  CC=2  out:2
-    _ocr_from_screen_context_cache  CC=9  out:16
-    _ocr_png_local  CC=9  out:18
-    _vertical_overlap  CC=2  out:0
-    anchor_based_find  CC=1  out:1
   src.vdisplay.desktop_apps  [20 funcs]
     _binary_launch  CC=3  out:2
     _build_registry  CC=8  out:20
@@ -516,8 +536,6 @@ MODULES:
     _handle_wait_window  CC=9  out:10
     _ide_find_timeout_seconds  CC=2  out:3
     _is_wayland_session  CC=1  out:1
-  src.vdisplay.integrations.observe_cache  [1 funcs]
-    ocr_boxes_from_cached_context  CC=7  out:4
   src.vdisplay.integrations.pipeline  [1 funcs]
     observe_screen  CC=22  out:28
   src.vdisplay.integrations.vql_bridge  [1 funcs]
@@ -547,12 +565,10 @@ MODULES:
   src.vdisplay.utils  [2 funcs]
     run_command  CC=2  out:4
     run_command_bytes  CC=1  out:1
-  src.vdisplay.windows.query  [5 funcs]
+  src.vdisplay.windows.query  [3 funcs]
     find_companion_frames  CC=8  out:10
     find_windows  CC=6  out:5
-    inspect_window  CC=9  out:21
     list_windows_enriched  CC=2  out:5
-    pick_best_window  CC=8  out:3
 
 EDGES:
   packages.mcp2vdisplay.src.mcp2vdisplay.cli.main → packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server

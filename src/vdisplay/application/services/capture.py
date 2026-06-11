@@ -123,6 +123,22 @@ def _ensure_wayland_screencast(client) -> None:
     status = client.screencast_status()
     if status.get("active") and status.get("ready"):
         return
+
+    # If a keeper process is actively holding a portal session (the interactive
+    # "All Screens" one), treat it as ready even if the agent's status snapshot
+    # hasn't fully propagated yet. This avoids spurious re-prompts during
+    # screenshot / auto after a successful `agent screencast start`.
+    try:
+        from vdisplay.capture.screencast_keeper import read_keeper_state, keeper_manages_session
+
+        kstate = read_keeper_state()
+        if kstate and kstate.get("session_path"):
+            sp = str(kstate.get("session_path") or "")
+            if kstate.get("ready") or keeper_manages_session(sp):
+                return
+    except Exception:
+        pass
+
     import sys
 
     print(
@@ -136,6 +152,7 @@ def _ensure_wayland_screencast(client) -> None:
         interactive=True,
         timeout_s=120.0,
         multiple=True,
+        force=False,
     )
     if not (started.get("active") and started.get("ready")):
         raise VDisplayError(

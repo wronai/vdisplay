@@ -47,6 +47,22 @@ def _region_from_bounds(bounds: ControlBounds, *, padding: int = 12) -> tuple[in
     )
 
 
+def _suspicious_crop_size(png: bytes, local_region: tuple[int, int, int, int]) -> bool:
+    """Detect coordinate-map bugs that yield tiny sliver PNGs (e.g. 744×7)."""
+    _rx, _ry, req_w, req_h = local_region
+    if req_h >= 32 and req_w >= 32:
+        try:
+            from PIL import Image
+
+            with Image.open(io.BytesIO(png)) as image:
+                w, h = image.size
+                if h < max(16, req_h // 4) or w < max(16, req_w // 4):
+                    return True
+        except Exception:
+            pass
+    return False
+
+
 def capture_control_screenshot(
     *,
     display: str | None = None,
@@ -117,9 +133,9 @@ def _maybe_crop_capture(
         return png, meta
 
     cropped = _crop_png(png, local_region)
-    if is_blank_png(cropped):
+    if is_blank_png(cropped) or _suspicious_crop_size(cropped, local_region):
         meta["region_crop_failed"] = True
-        meta["region_crop_reason"] = "cropped region blank"
+        meta["region_crop_reason"] = "cropped region blank or too small — using full frame"
         meta["region_local"] = {
             "x": local_region[0],
             "y": local_region[1],

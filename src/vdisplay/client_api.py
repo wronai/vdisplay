@@ -103,6 +103,10 @@ class AgentClientApiMixin(AgentHttpTransport):
         node_ids: list[int] | None = None,
         stream_targets: list[str] | None = None,
         multiple: bool | None = None,
+        keeper_managed: bool | None = None,
+        socket_path: str | None = None,
+        runtime_dir: str | None = None,
+        keeper_pid: int | None = None,
     ) -> dict[str, Any]:
         body: dict[str, Any] = {"session_path": session_path}
         if streams is not None:
@@ -113,6 +117,14 @@ class AgentClientApiMixin(AgentHttpTransport):
             body["stream_targets"] = stream_targets
         if multiple is not None:
             body["multiple"] = multiple
+        if keeper_managed is not None:
+            body["keeper_managed"] = keeper_managed
+        if socket_path:
+            body["socket_path"] = socket_path
+        if runtime_dir:
+            body["runtime_dir"] = runtime_dir
+        if keeper_pid is not None:
+            body["keeper_pid"] = keeper_pid
         return self.request_json("POST", "/session/screencast/adopt", body=body)
 
     def stop_screencast(self) -> dict[str, Any]:
