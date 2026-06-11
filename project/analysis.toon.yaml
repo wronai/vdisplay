@@ -1,30 +1,29 @@
-# code2llm | 339f 48310L | python:273,json:26,toml:11,shell:7,yaml:6,yml:5,proto:4,txt:2 | 2026-06-11
-# generated in 0.12s
-# CC̅=4.0 | critical:17/2088 | dups:0 | cycles:0
+# code2llm | 339f 49178L | python:273,json:26,toml:11,shell:7,yaml:6,yml:5,proto:4,txt:2 | 2026-06-11
+# generated in 0.21s
+# CC̅=4.0 | critical:16/2131 | dups:0 | cycles:0
 
-HEALTH[17]:
+HEALTH[16]:
   🟡 CC    send_ide_prompt CC=15 (limit:15)
+  🟡 CC    _handle_preflight CC=16 (limit:15)
+  🟡 CC    _handle_screencast CC=15 (limit:15)
   🟡 CC    _handle_set_value_verification CC=16 (limit:15)
   🟡 CC    _aggregate CC=16 (limit:15)
   🟡 CC    global_region_to_capture_local CC=16 (limit:15)
+  🟡 CC    from_portal_payload CC=16 (limit:15)
+  🟡 CC    capture_png_local CC=22 (limit:15)
+  🟡 CC    screencast_stream_region_for_monitor CC=15 (limit:15)
   🟡 CC    execute CC=15 (limit:15)
-  🟡 CC    start_screencast_via_agent CC=27 (limit:15)
+  🟡 CC    probe_screencast_capture CC=30 (limit:15)
   🟡 CC    apply_step_verify_drift CC=19 (limit:15)
   🟡 CC    _execute_one CC=19 (limit:15)
   🟡 CC    _task_from_mapping CC=22 (limit:15)
   🟡 CC    sample_pointer CC=16 (limit:15)
   🟡 CC    _drift_recommends_refresh CC=16 (limit:15)
-  🟡 CC    observe_screen CC=22 (limit:15)
-  🟡 CC    from_portal_payload CC=31 (limit:15)
-  🟡 CC    capture_png_local CC=18 (limit:15)
-  🟡 CC    screencast_stream_region_for_monitor CC=15 (limit:15)
-  🟡 CC    request_keeper_capture CC=21 (limit:15)
-  🟡 CC    try_screencast_capture CC=16 (limit:15)
 
 REFACTOR[1]:
-  1. split 17 high-CC methods  (CC>15)
+  1. split 16 high-CC methods  (CC>15)
 
-PIPELINES[811]:
+PIPELINES[815]:
   [1] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
       PURITY: 100% pure
   [2] Src [main]: main → _main_legacy → execute_dsl_line → dispatch → ...(5 more)
@@ -128,45 +127,46 @@ PIPELINES[811]:
 
 LAYERS:
   src/                            CC̄=4.1    ←in:0  →out:0
-  │ !! portal_screencast         1234L  1C   56m  CC=31     ←12
+  │ !! portal_screencast         1555L  1C   72m  CC=22     ←13
   │ !! control                   1081L  0C   34m  CC=14     ←0
   │ !! scoring                    811L  2C   40m  CC=12     ←6
   │ !! session_recorder           763L  3C   34m  CC=14     ←6
   │ !! provider                   724L  1C   37m  CC=12     ←0
+  │ !! screencast_keeper          694L  0C   32m  CC=13     ←5
   │ !! verifier                   647L  3C   30m  CC=16     ←1
   │ !! ide_prompt                 601L  0C   17m  CC=15     ←13
   │ !! verify                     519L  0C   21m  CC=16     ←1
-  │ !! screencast_keeper          511L  0C   23m  CC=21     ←5
   │ !! gui_map_diff               500L  3C   18m  CC=14     ←2
+  │ screencast_crop            481L  0C   15m  CC=12     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ descriptors                464L  5C   11m  CC=14     ←10
   │ desktop_apps               463L  2C   25m  CC=9      ←3
-  │ !! screencast_crop            457L  0C   14m  CC=16     ←1
   │ atspi_impl                 441L  0C   20m  CC=14     ←1
   │ host                       440L  0C   14m  CC=13     ←7
   │ events                     429L  1C   17m  CC=14     ←3
   │ browser_playwright         380L  3C   36m  CC=14     ←2
   │ replay                     372L  3C   16m  CC=11     ←2
   │ vision_ocr                 365L  1C   18m  CC=13     ←7
-  │ discovery                  364L  0C   14m  CC=11     ←25
+  │ discovery                  364L  0C   14m  CC=11     ←26
   │ vision_preview             363L  2C   16m  CC=10     ←2
-  │ browser_session            351L  2C   22m  CC=11     ←4
+  │ browser_session            351L  2C   22m  CC=11     ←5
   │ selector                   347L  1C   18m  CC=14     ←9
   │ vql_bridge                 347L  0C   20m  CC=9      ←2
   │ !! tasks                      335L  1C   21m  CC=22     ←2
   │ session                    330L  0C   12m  CC=4      ←0
-  │ linux_xwd                  320L  0C   21m  CC=12     ←10
+  │ linux_xwd                  328L  0C   21m  CC=12     ←10
   │ parsers                    320L  0C   12m  CC=12     ←1
   │ screenshot_verify          319L  0C   11m  CC=13     ←7
   │ map                        313L  0C    9m  CC=10     ←0
+  │ !! agent                      310L  0C    7m  CC=16     ←0
   │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
   │ pointer_probes             297L  0C   12m  CC=13     ←7
   │ watch                      293L  0C   10m  CC=8      ←1
   │ local                      291L  0C   21m  CC=4      ←1
-  │ agent                      284L  0C    7m  CC=14     ←0
   │ sampler_loop               284L  3C   13m  CC=8      ←1
   │ vision_template            280L  1C   11m  CC=11     ←5
+  │ !! screencast_cli             277L  0C   11m  CC=30     ←2
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ !! coordinate_map             271L  0C   10m  CC=16     ←4
@@ -188,7 +188,7 @@ LAYERS:
   │ mouse                      231L  2C   16m  CC=13     ←1
   │ capture                    230L  0C    6m  CC=13     ←1
   │ terminal_session           227L  2C   16m  CC=7      ←6
-  │ portal                     221L  1C    7m  CC=11     ←1
+  │ portal                     221L  1C    7m  CC=11     ←2
   │ session                    216L  3C   11m  CC=11     ←2
   │ backend_scores             216L  0C   14m  CC=12     ←3
   │ models                     214L  3C    7m  CC=6      ←0
@@ -203,6 +203,7 @@ LAYERS:
   │ gui_map_export             179L  0C    7m  CC=8      ←2
   │ filter                     173L  0C   12m  CC=14     ←2
   │ vision_backend             171L  0C    7m  CC=7      ←1
+  │ pipeline                   170L  0C   10m  CC=9      ←2
   │ uia                        169L  1C   10m  CC=6      ←0
   │ ax                         169L  1C   10m  CC=6      ←0
   │ control                    166L  0C   10m  CC=5      ←0
@@ -214,10 +215,9 @@ LAYERS:
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
   │ routing_semantics          158L  1C    8m  CC=7      ←4
-  │ !! pipeline                   151L  0C    6m  CC=22     ←2
   │ x11                        150L  1C   13m  CC=9      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
-  │ screencast_stream_matching   146L  0C   13m  CC=8      ←1
+  │ screencast_stream_matching   146L  0C   13m  CC=8      ←2
   │ policy                     140L  1C    4m  CC=11     ←2
   │ coordinate_rotation        140L  0C   12m  CC=11     ←0
   │ !! map_health_handlers        139L  0C    8m  CC=19     ←1
@@ -225,7 +225,6 @@ LAYERS:
   │ session_recorder_readme    133L  0C    8m  CC=14     ←2
   │ sampler                    132L  0C    8m  CC=9      ←0
   │ web_pointer                130L  0C    5m  CC=11     ←1
-  │ !! screencast_cli             129L  0C    4m  CC=27     ←2
   │ client_routes              128L  0C    6m  CC=7      ←1
   │ !! executor                   125L  0C    6m  CC=15     ←6
   │ imgl_bridge                125L  0C    7m  CC=12     ←4
@@ -335,12 +334,12 @@ LAYERS:
   │ scratch_atspi               18L  0C    0m  CC=0.0    ←0
   │
   packages/                       CC̄=3.2    ←in:0  →out:0
-  │ sessions                   407L  0C   15m  CC=9      ←0
+  │ sessions                   415L  0C   15m  CC=9      ←0
   │ grammar                    406L  0C   30m  CC=11     ←2
-  │ task_store                 197L  3C   10m  CC=7      ←1
+  │ task_store                 301L  3C   15m  CC=6      ←1
+  │ tasks                      212L  0C   14m  CC=5      ←0
   │ sampler                    197L  0C    7m  CC=12     ←0
   │ serve_port                 190L  0C   11m  CC=13     ←2
-  │ tasks                      190L  0C   13m  CC=5      ←0
   │ control                    190L  0C    1m  CC=1      ←0
   │ web                        189L  0C    2m  CC=3      ←0
   │ web_frame_cache            178L  0C    9m  CC=9      ←1
@@ -369,8 +368,8 @@ LAYERS:
   │ windows                     52L  0C    1m  CC=1      ←0
   │ web_replay                  49L  0C    2m  CC=9      ←0
   │ sampler                     47L  0C    1m  CC=1      ←0
+  │ server                      46L  0C    1m  CC=4      ←0
   │ cli                         41L  0C    1m  CC=7      ←0
-  │ server                      41L  0C    1m  CC=4      ←0
   │ broker_events               37L  0C    2m  CC=4      ←2
   │ cli                         35L  0C    1m  CC=3      ←0
   │ capture                     35L  0C    1m  CC=1      ←0
@@ -416,7 +415,7 @@ LAYERS:
   examples/                       CC̄=2.6    ←in:0  →out:0
   │ control_demo               172L  0C    5m  CC=6      ←0
   │ planfile-automation.yaml   170L  0C    0m  CC=0.0    ←0
-  │ screenshot_meta            162L  0C    9m  CC=14     ←5
+  │ screenshot_meta            162L  0C    9m  CC=14     ←6
   │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
   │ relay_demo                 137L  0C    3m  CC=11     ←0
   │ mirror_demo                 97L  0C    2m  CC=7      ←0
@@ -487,8 +486,8 @@ LAYERS:
 
 COUPLING:
                                               src.vdisplay      packages.vdisplay-agent        packages.dsl2vdisplay              examples.common        packages.mcp2vdisplay       packages.rest2vdisplay         examples.host-mirror          examples.host-relay   examples.control-plugin-ax  examples.control-plugin-uia            examples.ci-agent      examples.control-plugin    examples.headless-virtual        packages.cli2vdisplay        packages.nlp2vdisplay
-                 src.vdisplay                           ──                            5                            9                           ←1                            1                            1                           ←3                           ←3                           ←1                           ←1                                                         1                                                                                     ←1  hub
-      packages.vdisplay-agent                           60                           ──                                                                                                                   1                                                                                                                                                                                                                                                                       hub
+                 src.vdisplay                           ──                            5                            9                            1                            1                            1                           ←3                           ←3                           ←1                           ←1                                                         1                                                                                     ←1  hub
+      packages.vdisplay-agent                           61                           ──                                                                                                                   1                                                                                                                                                                                                                                                                       hub
         packages.dsl2vdisplay                            6                                                        ──                                                        ←2                           ←4                                                                                                                                                                                                                                      ←2                               hub
               examples.common                            1                                                                                     ──                                                                                     ←3                           ←3                                                                                     ←2                                                        ←2                                                            hub
         packages.mcp2vdisplay                            4                                                         2                                                        ──                                                                                                                                                                                                                                                                                                 1
@@ -503,12 +502,12 @@ COUPLING:
         packages.cli2vdisplay                                                                                      2                                                                                                                                                                                                                                                                                                                             ──                             
         packages.nlp2vdisplay                            1                                                                                                                  ←1                                                                                                                                                                                                                                                                                                ──
   CYCLES: none
-  HUB: examples.common/ (fan-in=10)
-  HUB: src.vdisplay/ (fan-in=85)
-  HUB: packages.vdisplay-agent/ (fan-in=5)
   HUB: packages.dsl2vdisplay/ (fan-in=18)
-  SMELL: src.vdisplay/ fan-out=17 → split needed
-  SMELL: packages.vdisplay-agent/ fan-out=61 → split needed
+  HUB: packages.vdisplay-agent/ (fan-in=5)
+  HUB: src.vdisplay/ (fan-in=86)
+  HUB: examples.common/ (fan-in=11)
+  SMELL: packages.vdisplay-agent/ fan-out=62 → split needed
+  SMELL: src.vdisplay/ fan-out=18 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

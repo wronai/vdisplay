@@ -39,7 +39,7 @@ class _FakeSession:
     def is_ready(self) -> bool:
         return self.active and bool(self.session_path)
 
-    def capture_png_local(self, *, node_index: int = 0) -> bytes:
+    def capture_png_local(self, *, node_index: int = 0, try_all_streams: bool = True) -> bytes:
         self.calls.append(node_index)
         return self._png
 
@@ -108,8 +108,11 @@ def test_capture_server_roundtrip(tmp_path: Path, monkeypatch: pytest.MonkeyPatc
 
     def _accept_once() -> None:
         conn, _addr = server.accept()
-        with conn:
-            _handle_capture_connection(session, conn)
+        try:
+            handed_off = _handle_capture_connection(session, conn)
+        finally:
+            if not handed_off:
+                conn.close()
 
     worker = threading.Thread(target=_accept_once, daemon=True)
     worker.start()
@@ -142,7 +145,7 @@ def test_portal_capture_png_local_still_uses_pipewire(monkeypatch: pytest.Monkey
     monkeypatch.setattr(
         portal_mod,
         "_screencast_pipewire_fd",
-        lambda _session: os.dup(read_fd),
+        lambda _session, **kwargs: os.dup(read_fd),
     )
     monkeypatch.setattr(
         portal_mod,

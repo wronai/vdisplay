@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import os
 
 import pytest
 
@@ -127,11 +128,38 @@ def test_stream_target_prefers_pipewire_serial() -> None:
     from vdisplay.capture.portal_screencast import _stream_serial, _stream_target
 
     assert _stream_serial({"pipewire-serial": 123456789}) == "123456789"
+    assert _stream_serial({"id": "2"}, node_id=74) == "2"
     assert _stream_serial({"id": "2"}) == "2"
+    assert _stream_serial({}, node_id=74) == "74"
     assert _stream_serial({}) is None
     assert _stream_target(74, {"pipewire-serial": 123456789}) == "123456789"
     assert _stream_target(74, {"id": "0"}) == "0"
     assert _stream_target(74, {}) == "74"
+
+
+def test_refresh_screencast_adopt_payload_updates_keeper_fields() -> None:
+    from vdisplay.capture.portal_screencast import refresh_screencast_adopt_payload
+
+    session = PortalScreenCastSession()
+    session.session_path = "/org/freedesktop/portal/desktop/session/test/reuse"
+    session.active = True
+    session.node_ids = [1, 2, 3]
+    session.keeper_pid = 111
+    session.keeper_socket_path = "/run/user/1000/old.sock"
+
+    refresh_screencast_adopt_payload(
+        session,
+        {
+            "pid": 222,
+            "socket_path": "/run/user/1000/vdisplay-screencast.sock",
+            "keeper_managed": True,
+            "node_ids": [10, 20, 30],
+            "streams": [{"node_id": 10, "properties": {"id": "0"}}],
+        },
+    )
+    assert session.keeper_pid == 222
+    assert session.keeper_socket_path == "/run/user/1000/vdisplay-screencast.sock"
+    assert session.node_ids == [10, 20, 30]
 
 
 def test_cli_agent_screencast_status(live_agent_url: str, monkeypatch: pytest.MonkeyPatch, capsys) -> None:
@@ -171,9 +199,9 @@ def test_capture_pipewire_stream_falls_back_to_node_path(monkeypatch: pytest.Mon
 
     attempts: list[str | None] = []
 
-    def fake_once(*, pipewire_fd, node_id, target_object=None, timeout_s=30.0):
+    def fake_once(*, pipewire_fd, node_id, target_object=None, width=None, height=None, timeout_s=30.0):
         attempts.append(target_object)
-        if target_object == str(node_id):
+        if target_object == "2":
             return b"\x89PNG" + b"x" * 64
         raise mod.VDisplayError("target not found")
 
@@ -186,8 +214,8 @@ def test_capture_pipewire_stream_falls_back_to_node_path(monkeypatch: pytest.Mon
         timeout_s=5.0,
     )
     assert data.startswith(b"\x89PNG")
-    assert attempts[0] == "2"
-    assert attempts[1] == "117"
+    assert attempts[0] is None
+    assert attempts[1] == "2"
 
 
 def test_capture_pipewire_stream_retries_on_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -195,9 +223,9 @@ def test_capture_pipewire_stream_retries_on_timeout(monkeypatch: pytest.MonkeyPa
 
     attempts: list[str | None] = []
 
-    def fake_once(*, pipewire_fd, node_id, target_object=None, timeout_s=30.0):
+    def fake_once(*, pipewire_fd, node_id, target_object=None, width=None, height=None, timeout_s=30.0):
         attempts.append(target_object)
-        if target_object is None:
+        if target_object == "2":
             return b"\x89PNG" + b"x" * 64
         raise mod.VDisplayError("timed out after 20.0 seconds")
 
@@ -209,10 +237,10 @@ def test_capture_pipewire_stream_retries_on_timeout(monkeypatch: pytest.MonkeyPa
         timeout_s=20.0,
     )
     assert data.startswith(b"\x89PNG")
-    assert attempts == ["2", "117", None]
+    assert attempts == [None, "2"]
 
 
-def test_capture_pipewire_stream_uses_num_buffers(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_capture_pipewire_stream_uses_live_pipewiresrc(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.capture import portal_screencast as mod
 
     calls: list[list[str]] = []
@@ -230,7 +258,41 @@ def test_capture_pipewire_stream_uses_num_buffers(monkeypatch: pytest.MonkeyPatc
         mod._capture_pipewire_stream_once(pipewire_fd=9, node_id=71)
     assert calls
     gst_call = next(cmd for cmd in calls if cmd and cmd[0].endswith("gst-launch-1.0"))
-    assert "num-buffers=1" in gst_call
+    assert "always-copy=true" in gst_call
+    assert "is-live" not in gst_call
+
+
+def test_capture_png_local_falls_back_to_gnome_screenshot(monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.capture import portal_screencast as mod
+
+    session = mod.PortalScreenCastSession()
+    session.session_path = "/org/test/session"
+    session.active = True
+    session.node_ids = [126]
+    session.streams = [
+        {
+            "node_id": 126,
+            "properties": {"id": "2", "position": [0, 652], "size": [2048, 1280]},
+        }
+    ]
+    png = b"\x89PNG\r\n\x1a\n" + b"x" * 128
+    read_fd, write_fd = os.pipe()
+    os.close(write_fd)
+
+    monkeypatch.setattr(mod, "_screencast_pipewire_fd", lambda _session, **kwargs: os.dup(read_fd))
+    monkeypatch.setattr(
+        mod,
+        "_capture_pipewire_stream",
+        lambda **kwargs: (_ for _ in ()).throw(mod.VDisplayError("pipewire failed")),
+    )
+    monkeypatch.setattr(
+        mod,
+        "_capture_via_gnome_screenshot_region",
+        lambda properties: png,
+    )
+
+    assert session.capture_png_local(node_index=0, try_all_streams=False) == png
+    os.close(read_fd)
 
 
 def test_agent_client_screencast_status(live_agent_url: str, monkeypatch: pytest.MonkeyPatch) -> None:

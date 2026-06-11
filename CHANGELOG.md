@@ -92,6 +92,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.23] - 2026-06-11
+
+### Docs
+- Update README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_agent_tasks.py
+- Update tests/test_portal_screencast.py
+- Update tests/test_screencast_keeper_capture.py
+- Update tests/test_screencast_start_force.py
+
+### Other
+- Update packages/vdisplay-agent/src/vdisplay_agent/server.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/services/sessions.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/task_store.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- ... and 11 more files
+
 ## [0.1.22] - 2026-06-11
 
 ### Docs

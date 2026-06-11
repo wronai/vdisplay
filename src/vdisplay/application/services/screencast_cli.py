@@ -43,7 +43,9 @@ def clear_local_start_cooldown() -> None:
 
 
 def _try_reuse_existing_screencast(status: dict[str, Any], *, force: bool) -> dict[str, Any] | None:
-    if not (status.get("active") and status.get("ready") and not force):
+    if force:
+        return None
+    if not (status.get("active") and status.get("ready")):
         return None
     if not keeper_capture_ready():
         return None
@@ -82,6 +84,22 @@ def _stop_existing_screencast(client, status: dict[str, Any], *, force: bool) ->
             pass
 
 
+def _verify_keeper_running(*, context: str) -> dict[str, Any]:
+    state = read_keeper_state()
+    if state is None:
+        raise VDisplayError(
+            f"screencast keeper not running after {context} — "
+            "run: vdisplay agent screencast start --force"
+        )
+    if not keeper_capture_ready(state, timeout_s=5.0):
+        stop_keeper()
+        raise VDisplayError(
+            f"screencast keeper capture socket not ready after {context} — "
+            "run: vdisplay agent screencast start --force"
+        )
+    return state
+
+
 def _start_via_keeper(client, *, timeout_s: float, multiple: bool | None) -> dict[str, Any]:
     payload = spawn_keeper(interactive=True, timeout_s=timeout_s, multiple=multiple)
     try:
@@ -101,8 +119,10 @@ def _start_via_keeper(client, *, timeout_s: float, multiple: bool | None) -> dic
         _mark_local_start_failure()
         raise
     if adopted.get("active") and adopted.get("ready"):
+        state = _verify_keeper_running(context="start")
         clear_local_start_cooldown()
-        adopted["keeper_pid"] = payload.get("pid")
+        adopted["keeper_pid"] = state.get("pid")
+        adopted["keeper_socket_path"] = state.get("socket_path")
         return adopted
     stop_keeper()
     _mark_local_start_failure()
@@ -126,6 +146,110 @@ def _start_via_client(client, *, timeout_s: float, multiple: bool | None) -> dic
     return started
 
 
+def _resolve_probe_monitor(
+    source: str | None,
+    monitors: list[dict[str, Any]],
+) -> tuple[dict[str, Any] | None, str]:
+    monitor: dict[str, Any] | None = None
+    if source:
+        monitor = next((m for m in monitors if str(m.get("name") or "") == source), None)
+        if monitor is None:
+            raise VDisplayError(f"monitor not found: {source} (available: {[m.get('name') for m in monitors]})")
+    elif monitors:
+        monitor = monitors[0]
+    source_name = str(monitor.get("name") if monitor else source or "")
+    return monitor, source_name
+
+
+def _probe_via_agent(
+    client,
+    monitor: dict[str, Any] | None,
+    monitors: list[dict[str, Any]],
+    source_name: str,
+    output: str | None,
+) -> dict[str, Any]:
+    if client is None:
+        raise VDisplayError("agent client required for --via-agent probe")
+    out = output or "/tmp/vdisplay-probe.png"
+    monitor_num = monitors.index(monitor) + 1 if monitor in monitors else 1
+    payload = client.capture_frame(
+        output=out,
+        source=source_name or None,
+        monitor=monitor_num,
+    )
+    payload.pop("png_base64", None)
+    return {"ok": True, "via": "agent", **payload}
+
+
+def _probe_via_keeper(
+    session: Any,
+    state: dict[str, Any],
+    stream_idx: int,
+    source_name: str,
+) -> tuple[bytes, int, list[int], list[str]]:
+    from ...capture.screencast_keeper import request_keeper_capture
+
+    errors: list[str] = []
+    tried: list[int] = []
+    png: bytes | None = None
+    for candidate_idx in (stream_idx, 0):
+        if candidate_idx in tried:
+            continue
+        tried.append(candidate_idx)
+        try:
+            png = request_keeper_capture(
+                node_index=candidate_idx,
+                session_path=str(state.get("session_path") or ""),
+                socket_path=str(state.get("socket_path") or ""),
+            )
+            stream_idx = candidate_idx
+            break
+        except Exception as exc:
+            errors.append(f"node_index={candidate_idx}: {exc}")
+            continue
+    if png is None:
+        raise VDisplayError(
+            "keeper capture failed for source "
+            f"{source_name!r} (tried indices {tried}): {'; '.join(errors)}. "
+            "The chosen stream may not be producing frames; "
+            "inspect /tmp/vdisplay-keeper-capture.log inside the keeper and "
+            "re-run with `vdisplay agent screencast start --force`."
+        )
+    return png, stream_idx, tried, errors
+
+
+def _build_probe_result(
+    png: bytes,
+    stream_idx: int,
+    monitor: dict[str, Any] | None,
+    props: dict[str, Any],
+    state: dict[str, Any],
+    source_name: str,
+    tried: list[int],
+) -> dict[str, Any]:
+    from ...capture.portal_screencast import _stream_serial
+    from ...capture.screencast_crop import png_dimensions
+
+    width, height = png_dimensions(png)
+    portal_id = props.get("id")
+    node_id = state.get("node_ids", [])
+    node_id = node_id[stream_idx] if stream_idx < len(node_id) else None
+    return {
+        "ok": True,
+        "via": "keeper",
+        "bytes": len(png),
+        "width": width,
+        "height": height,
+        "source": source_name,
+        "stream_index": stream_idx,
+        "node_id": node_id,
+        "portal_stream_id": str(portal_id) if portal_id is not None else None,
+        "target_object": _stream_serial(props, node_id=node_id) if node_id is not None else _stream_serial(props),
+        "keeper_pid": state.get("pid"),
+        "tried_indices": tried,
+    }
+
+
 def probe_screencast_capture(
     *,
     source: str | None = None,
@@ -135,9 +259,7 @@ def probe_screencast_capture(
 ) -> dict[str, Any]:
     """Verify keeper (and optionally agent) can grab one ScreenCast frame."""
     from ...capture.host import list_monitors, resolve_host_display
-    from ...capture.portal_screencast import PortalScreenCastSession, _stream_serial
-    from ...capture.screencast_crop import png_dimensions
-    from ...capture.screencast_keeper import request_keeper_capture
+    from ...capture.portal_screencast import PortalScreenCastSession
     from ...capture.screencast_stream_matching import screencast_stream_index_for_monitor
 
     state = read_keeper_state()
@@ -158,13 +280,7 @@ def probe_screencast_capture(
     )
     display = resolve_host_display(os.environ.get("DISPLAY"))
     monitors = list_monitors(display)
-    monitor: dict[str, Any] | None = None
-    if source:
-        monitor = next((m for m in monitors if str(m.get("name") or "") == source), None)
-        if monitor is None:
-            raise VDisplayError(f"monitor not found: {source} (available: {[m.get('name') for m in monitors]})")
-    elif monitors:
-        monitor = monitors[0]
+    monitor, source_name = _resolve_probe_monitor(source, monitors)
 
     stream_idx = (
         screencast_stream_index_for_monitor(session, monitor, all_monitors=monitors)
@@ -174,42 +290,12 @@ def probe_screencast_capture(
     streams = list(session.streams or [])
     stream = streams[stream_idx] if 0 <= stream_idx < len(streams) else {}
     props = stream.get("properties") or {}
-    portal_id = props.get("id")
-    node_id = session.node_ids[stream_idx] if stream_idx < len(session.node_ids) else None
-    source_name = str(monitor.get("name") if monitor else source or "")
 
     if via_agent:
-        if client is None:
-            raise VDisplayError("agent client required for --via-agent probe")
-        out = output or "/tmp/vdisplay-probe.png"
-        monitor_num = monitors.index(monitor) + 1 if monitor in monitors else 1
-        payload = client.capture_frame(
-            output=out,
-            source=source_name or None,
-            monitor=monitor_num,
-        )
-        payload.pop("png_base64", None)
-        return {"ok": True, "via": "agent", **payload}
+        return _probe_via_agent(client, monitor, monitors, source_name, output)
 
-    png = request_keeper_capture(
-        node_index=stream_idx,
-        session_path=str(state.get("session_path") or ""),
-        socket_path=str(state.get("socket_path") or ""),
-    )
-    width, height = png_dimensions(png)
-    return {
-        "ok": True,
-        "via": "keeper",
-        "bytes": len(png),
-        "width": width,
-        "height": height,
-        "source": source_name,
-        "stream_index": stream_idx,
-        "node_id": node_id,
-        "portal_stream_id": str(portal_id) if portal_id is not None else None,
-        "target_object": _stream_serial(props),
-        "keeper_pid": state.get("pid"),
-    }
+    png, stream_idx, tried, _errors = _probe_via_keeper(session, state, stream_idx, source_name)
+    return _build_probe_result(png, stream_idx, monitor, props, state, source_name, tried)
 
 
 def start_screencast_via_agent(

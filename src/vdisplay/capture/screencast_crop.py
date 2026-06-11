@@ -12,6 +12,7 @@ from .portal_screencast import (
     get_active_screencast,
     invalidate_screencast_session,
     screencast_stream_region,
+    screencast_stream_region_for_index,
     screencast_stream_region_for_monitor,
 )
 from .screencast_keeper import keeper_manages_session, request_keeper_capture
@@ -97,21 +98,30 @@ def _capture_screencast_png_via_keeper_or_direct(
     """
     spath = getattr(session, "session_path", None) or ""
     if keeper_manages_session(spath):
-        try:
-            return request_keeper_capture(
-                node_index=node_index, session_path=spath or None, timeout_s=timeout_s
-            )
-        except VDisplayError as exc:
-            err_lower = str(exc).lower()
-            errors.append(f"keeper capture failed: {exc}")
-            if "invalid session" in err_lower or "access denied" in err_lower:
-                # Keeper's session became invalid; stop it so next ensure/start can create a fresh one.
-                try:
-                    from .screencast_keeper import stop_keeper
-                    stop_keeper()
-                except Exception:
-                    pass
-            # fall through to direct (will likely also fail with similar, but upper recoverable logic can recover)
+        for cand in (node_index, 0):
+            try:
+                return request_keeper_capture(
+                    node_index=cand, session_path=spath or None, timeout_s=timeout_s
+                )
+            except (VDisplayError, TimeoutError) as exc:
+                err_lower = str(exc).lower()
+                errors.append(f"keeper capture failed (node_index={cand}): {exc}")
+                if "invalid session" in err_lower or "access denied" in err_lower:
+                    try:
+                        from .screencast_keeper import stop_keeper
+                        stop_keeper()
+                    except Exception:
+                        pass
+                if cand == 0:
+                    break
+                # otherwise try the full "All Screens" stream (index 0) + let crop handle the monitor rect
+                continue
+        # Do NOT auto-stop on plain "timed out" — the stream for this particular
+        # source may simply be slow or need the full-frame (index 0) + crop path.
+        # When keeper-managed, direct capture via capture_png will also try the
+        # keeper (session_uses_keeper), so skip the redundant fallback.
+        if keeper_manages_session(spath):
+            return None
     try:
         return session.capture_png(node_index=node_index)
     except VDisplayError as exc:
@@ -180,10 +190,35 @@ def _build_screencast_extra(
         extra["method"] = "portal-screencast+stream"
         extra["screencast_multi_stream"] = True
         if monitor is not None:
-            stream_region = screencast_stream_region_for_monitor(session, monitor)
+            # Prefer the region of the stream we actually selected and captured
+            # for this source/monitor. This keeps the metadata consistent with
+            # stream_idx and the PNG we wrote (the for_monitor heuristic can
+            # pick a different "best" stream when portal virtual coords differ
+            # from xrandr, as seen with DP-1 + tall monitor layouts).
+            stream_region = screencast_stream_region_for_index(session, stream_idx)
+            if stream_region is None:
+                stream_region = screencast_stream_region_for_monitor(session, monitor)
             if stream_region is not None:
                 extra["region"] = stream_region
                 extra["screencast_stream"] = True
+            # As a last resort, if neither gave us a region, fall back to the
+            # region of the chosen stream by directly reading its properties.
+            # This guarantees the "region" tag always describes the frame we
+            # actually captured for the assigned stream_idx.
+            if "region" not in extra and stream_idx is not None:
+                streams = list(getattr(session, "streams", None) or [])
+                if 0 <= stream_idx < len(streams):
+                    props = streams[stream_idx].get("properties") or {}
+                    pos = props.get("position") or [0, 0]
+                    sz = props.get("size") or [0, 0]
+                    if len(pos) >= 2 and len(sz) >= 2 and int(sz[0]) > 0 and int(sz[1]) > 0:
+                        extra["region"] = {
+                            "x": int(pos[0]),
+                            "y": int(pos[1]),
+                            "width": int(sz[0]),
+                            "height": int(sz[1]),
+                        }
+                        extra["screencast_stream"] = True
     elif crop_region is not None:
         extra["region"] = {
             "x": crop_region[0],
@@ -203,6 +238,30 @@ def _build_screencast_extra(
     return extra
 
 
+def _maybe_fallback_stream_0(
+    session: Any,
+    png: bytes,
+    stream_idx: int,
+    monitor: dict[str, Any] | None,
+    errors: list[str],
+) -> tuple[bytes, int, bool]:
+    """If the assigned stream gave a small/blank frame, fall back to stream 0 + crop."""
+    w, h = png_dimensions(png)
+    monitor_name = (monitor or {}).get("name") if monitor else None
+    if monitor is None or (w >= 200 and h >= 200 and not is_blank_png(png)):
+        return png, stream_idx, session_has_multiple_streams(session)
+    if stream_idx == 0:
+        return png, stream_idx, session_has_multiple_streams(session)
+    errors.append(
+        f"portal-screencast: stream {stream_idx} for {monitor_name} gave small/blank {w}x{h}; "
+        "falling back to index 0 + crop (common with All Screens + complex/rotated layouts)"
+    )
+    png0 = _capture_screencast_png(session, 0, errors)
+    if png0 is not None:
+        return png0, 0, False  # force crop path on the "full" stream
+    return png, stream_idx, session_has_multiple_streams(session)
+
+
 def try_screencast_capture(
     screencast_session: Any,
     region: tuple[int, int, int, int] | None,
@@ -217,41 +276,24 @@ def try_screencast_capture(
         if session is None:
             return None
 
-        multi_stream = session_has_multiple_streams(session)
         stream_idx = (
             screencast_stream_index_for_monitor(session, monitor, all_monitors=all_monitors)
             if monitor is not None
             else 0
         )
-        png = _capture_screencast_png(session, stream_idx, errors)
-        if png is None:
+        orig_png = _capture_screencast_png(session, stream_idx, errors)
+        if orig_png is None:
             return None
 
-        orig_png = png
-        w, h = png_dimensions(png)
-        monitor_name = (monitor or {}).get("name") if monitor else None
-        # If the assigned stream produced a suspiciously small frame (e.g. 1280x720 default/virtual)
-        # or blank, fall back to index 0 (typical for "All Screens" single-stream portal choice)
-        # and let the per-monitor crop logic select the DP-1 etc. rect from the full desktop frame.
-        if monitor is not None and (w < 200 or h < 200 or is_blank_png(png)):
-            if stream_idx != 0:
-                errors.append(
-                    f"portal-screencast: stream {stream_idx} for {monitor_name} gave small/blank {w}x{h}; "
-                    "falling back to index 0 + crop (common with All Screens + complex/rotated layouts)"
-                )
-                png0 = _capture_screencast_png(session, 0, errors)
-                if png0 is not None:
-                    png = png0
-                    stream_idx = 0
-                    multi_stream = False  # force crop path on the "full" stream
+        png, stream_idx, multi_stream = _maybe_fallback_stream_0(
+            session, orig_png, stream_idx, monitor, errors
+        )
 
         png, crop_region, region_local = _maybe_crop_screencast_png(
             session, png, region, multi_stream, monitor, display
         )
 
         if is_blank_png(png):
-            # If we fell back and still blank, or original was blank, invalidate and fail the hit
-            # (upper layer will raise with hint on Wayland).
             invalidate_screencast_session(session)
             errors.append(
                 "portal-screencast: blank frame (stale ScreenCast — run: vdisplay agent screencast start)"

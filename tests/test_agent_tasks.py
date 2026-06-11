@@ -127,3 +127,32 @@ def test_virtual_session_registers_task(agent_client_with_db) -> None:
     row = runtime.task_store.get_task(session_id)
     assert row is not None
     assert row.status == "stopped"
+
+
+def test_task_store_recovers_corrupt_db(tmp_path: Path) -> None:
+    pytest.importorskip("sqlmodel")
+    from vdisplay_agent.task_store import TaskStore, recover_corrupt_task_db
+
+    db_path = tmp_path / "agent-tasks.db"
+    db_path.write_text("Traceback (most recent call last):\n", encoding="utf-8")
+    backup = recover_corrupt_task_db(db_path)
+    assert backup is not None
+    assert not db_path.is_file()
+
+    store = TaskStore(db_path)
+    store.create_task(task_id="t1", kind="screencast", broker_id="b1")
+    assert store.get_task("t1") is not None
+
+
+def test_task_store_recovers_corrupt_db_during_update(tmp_path: Path) -> None:
+    pytest.importorskip("sqlmodel")
+    from vdisplay_agent.task_store import TaskStatus, TaskStore
+
+    db_path = tmp_path / "agent-tasks.db"
+    store = TaskStore(db_path)
+    store.create_task(task_id="screencast:active", kind="screencast", broker_id="b1")
+
+    db_path.write_text("Traceback (most recent call last):\n", encoding="utf-8")
+    updated = store.update_task("screencast:active", status=TaskStatus.STOPPED, heartbeat=True)
+    assert updated is None
+    assert store.get_task("screencast:active") is None

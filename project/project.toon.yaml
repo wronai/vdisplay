@@ -1,52 +1,52 @@
-# vdisplay | 2088 func | 246f | 48310L | python | 2026-06-11
+# vdisplay | 2131 func | 246f | 49196L | python | 2026-06-11
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.0  critical=168 (limit:10)  dup=1  cycles=0
+  CC̄=4.0  critical=173 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
-  !!! high_fan_out     _start_screencast_impl = 37 (limit:10)
+  !!! high_fan_out     _start_screencast_impl = 41 (limit:10)
   !!! high_fan_out     register_routes = 33 (limit:10)
-  !!! cc_exceeded      PortalScreenCastSession.from_portal_payload = 31 (limit:15)
-  !!! cc_exceeded      start_screencast_via_agent = 27 (limit:15)
+  !!! cc_exceeded      probe_screencast_capture = 30 (limit:15)
   !!! high_fan_out     register_routes = 27 (limit:10)
   !!! high_fan_out     SessionRecorder.record = 26 (limit:10)
+  !!! high_fan_out     probe_screencast_capture = 26 (limit:10)
   !!! high_fan_out     execute = 25 (limit:10)
   !!! high_fan_out     start_sampler = 24 (limit:10)
-  !!! high_fan_out     request_keeper_capture = 24 (limit:10)
   !!! high_fan_out     create_app = 23 (limit:10)
+  !!! high_fan_out     _portal_impl = 23 (limit:10)
 
 MODULES[339] (top by size):
   M[maps/pycharm-chat.json] 1588L C:0 F:0 CC↑0 D:0 (json)
+  M[src/vdisplay/capture/portal_screencast.py] 1555L C:1 F:72 CC↑22 D:13 (python)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/capture/portal_screencast.py] 1234L C:1 F:56 CC↑31 D:12 (python)
   M[src/vdisplay/application/services/control.py] 1081L C:0 F:34 CC↑14 D:0 (python)
   M[src/vdisplay/control/scoring.py] 811L C:2 F:40 CC↑12 D:6 (python)
   M[maps/pycharm-chat-fresh.json] 795L C:0 F:0 CC↑0 D:0 (json)
   M[src/vdisplay/application/session_recorder.py] 763L C:3 F:34 CC↑14 D:6 (python)
   M[src/vdisplay/control/providers/vision/provider.py] 724L C:1 F:37 CC↑12 D:0 (python)
+  M[src/vdisplay/capture/screencast_keeper.py] 694L C:0 F:32 CC↑13 D:5 (python)
   M[src/vdisplay/control/verifier.py] 647L C:3 F:30 CC↑16 D:1 (python)
   M[src/vdisplay/ide_prompt.py] 601L C:0 F:17 CC↑15 D:13 (python)
   M[src/vdisplay/control/verify.py] 519L C:0 F:21 CC↑16 D:1 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/capture/screencast_keeper.py] 511L C:0 F:23 CC↑21 D:5 (python)
   M[src/vdisplay/control/gui_map_diff.py] 500L C:3 F:18 CC↑14 D:2 (python)
-  M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
+  M[src/vdisplay/capture/screencast_crop.py] 499L C:0 F:15 CC↑12 D:1 (python)
   LANGS: python:273/json:26/toml:11/shell:7/yaml:6/other:5/yml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
-  ★ _start_screencast_impl fan=37  // Orchestrates 37 calls
+  ★ _start_screencast_impl fan=41  // Orchestrates 41 calls
   ★ register_routes fan=33  // Orchestrates 33 calls
   ★ register_routes fan=27  // Orchestrates 27 calls
   ★ SessionRecorder.record fan=26  // Orchestrates 26 calls
-  ★ execute fan=25  // Single entry for command execution across CLI, DSL, REST, and agent dispatch.
+  ★ probe_screencast_capture fan=26  // Verify keeper (and optionally agent) can grab one ScreenCast frame.
 
 REFACTOR[15]:
-  [1] H/L Split start_screencast_via_agent (CC=27)
-  [2] H/L Split PortalScreenCastSession.from_portal_payload (CC=31)
-  [3] H/H Split god module src/vdisplay/capture/portal_screencast.py (1234L, 1 classes)
-  [4] H/H Split god module src/vdisplay/capture/screencast_keeper.py (511L, 0 classes)
-  [5] H/H Split god module src/vdisplay/control/verifier.py (647L, 3 classes)
+  [1] H/L Split probe_screencast_capture (CC=30)
+  [2] H/H Split god module src/vdisplay/capture/portal_screencast.py (1555L, 1 classes)
+  [3] H/H Split god module src/vdisplay/control/verifier.py (647L, 3 classes)
+  [4] H/H Split god module src/vdisplay/control/verify.py (519L, 0 classes)
+  [5] H/H Split god module src/vdisplay/ide_prompt.py (601L, 0 classes)
 
 EVOLUTION:
-  2026-06-11 CC̄=4.0 crit=168 48310L // Automated analysis
+  2026-06-11 CC̄=4.0 crit=173 49196L // Automated analysis

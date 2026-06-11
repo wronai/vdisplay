@@ -7,15 +7,15 @@
 - **Primary Language**: python
 - **Languages**: python: 273, json: 26, toml: 11, shell: 7, yaml: 6
 - **Analysis Mode**: static
-- **Total Functions**: 2088
+- **Total Functions**: 2131
 - **Total Classes**: 162
 - **Modules**: 339
-- **Entry Points**: 921
+- **Entry Points**: 925
 
 ## Architecture by Module
 
 ### src.vdisplay.capture.portal_screencast
-- **Functions**: 56
+- **Functions**: 72
 - **Classes**: 1
 - **File**: `portal_screencast.py`
 
@@ -52,6 +52,10 @@
 - **Functions**: 32
 - **Classes**: 3
 - **File**: `api.py`
+
+### src.vdisplay.capture.screencast_keeper
+- **Functions**: 32
+- **File**: `screencast_keeper.py`
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30
@@ -90,10 +94,6 @@
 ### src.vdisplay.application.handlers.agent
 - **Functions**: 23
 - **File**: `agent.py`
-
-### src.vdisplay.capture.screencast_keeper
-- **Functions**: 23
-- **File**: `screencast_keeper.py`
 
 ### src.vdisplay.control.providers.browser_session
 - **Functions**: 22
@@ -136,12 +136,11 @@ Main execution flows into the system:
 ### src.vdisplay.application.session_recorder.SessionRecorder._load_or_create_document
 - **Calls**: session_json.is_file, src.vdisplay.application.session_recorder._utc_now, SessionDocument, None.write_text, json.loads, SessionDocument, len, json.dumps
 
-### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload
-> Adopt an existing portal ScreenCast session opened in another process.
-- **Calls**: src.vdisplay.capture.portal_screencast.ensure_portal_session_env, src.vdisplay.capture.portal_screencast.portal_session_env_status, None.strip, cls, list, payload.get, bool, str
-
 ### src.vdisplay.commands.relay.register
 - **Calls**: sub.add_parser, parser.add_subparsers, relay_sub.add_parser, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument, radopt.add_argument
+
+### src.vdisplay.commands.agent.register
+- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
 
 ### src.vdisplay.application.session_recorder.SessionRecorder.record
 - **Calls**: step_dir.mkdir, src.vdisplay.application.session_recorder.request_to_dict, src.vdisplay.application.session_recorder.result_to_dict, None.write_text, None.write_text, src.vdisplay.application.session_recorder.collect_artifacts, src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics, None.write_text
@@ -161,9 +160,6 @@ Main execution flows into the system:
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
 
-### src.vdisplay.commands.agent.register
-- **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
-
 ### src.vdisplay.control.selector.ControlSelector.from_dict
 - **Calls**: dict, extra.update, cls, cls.__dataclass_fields__.values, payload.get, payload.get, payload.get, payload.get
 
@@ -172,6 +168,10 @@ Main execution flows into the system:
 
 ### src.vdisplay.commands.map.handle
 - **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
+
+### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png_local
+> Capture via PipeWire in this process (keeper daemon only).
+- **Calls**: src.vdisplay.capture.portal_screencast._pipewire_capture_timeout_s, VDisplayError, VDisplayError, range, properties.get, None.join, len, len
 
 ### src.vdisplay.integrations.screen_context.ScreenContext.from_dict
 - **Calls**: cls, int, str, dict, dict, dict, payload.get, dict
@@ -194,14 +194,15 @@ Main execution flows into the system:
 ### src.vdisplay.control.gui_map.GuiMapElement.from_dict
 - **Calls**: cls, str, str, GuiMapBounds.from_dict, GuiMapBounds.from_dict, GuiMapPoint.from_dict, GuiMapIdentity.from_dict, list
 
+### src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload
+> Adopt an existing portal ScreenCast session opened in another process.
+- **Calls**: src.vdisplay.capture.portal_screencast.ensure_portal_session_env, src.vdisplay.capture.portal_screencast.portal_session_env_status, None.strip, cls, list, payload.get, src.vdisplay.capture.portal_screencast._apply_keeper_fields, src.vdisplay.capture.portal_screencast._set_active
+
 ### packages.vdisplay-agent.src.vdisplay_agent.cli.main
 - **Calls**: argparse.ArgumentParser, parser.add_subparsers, sub.add_parser, serve.add_argument, serve.add_argument, serve.add_argument, parser.parse_args, print
 
 ### src.vdisplay.commands.sampler.register
 - **Calls**: sub.add_parser, parser.add_subparsers, subp.add_parser, src.vdisplay.commands.common.add_display_arg, start.add_argument, start.add_argument, start.add_argument, start.add_argument
-
-### src.vdisplay.commands.virtual.register
-- **Calls**: sub.add_parser, parser.add_subparsers, virtual_sub.add_parser, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.add_argument, vstart.set_defaults
 
 ## Process Flows
 
@@ -245,22 +246,14 @@ _load_or_create_document [src.vdisplay.application.session_recorder.SessionRecor
   └─ →> _utc_now
 ```
 
-### Flow 7: from_portal_payload
-```
-from_portal_payload [src.vdisplay.capture.portal_screencast.PortalScreenCastSession]
-  └─ →> ensure_portal_session_env
-  └─ →> portal_session_env_status
-      └─> ensure_portal_session_env
-```
-
-### Flow 8: record
+### Flow 7: record
 ```
 record [src.vdisplay.application.session_recorder.SessionRecorder]
   └─ →> request_to_dict
   └─ →> result_to_dict
 ```
 
-### Flow 9: main
+### Flow 8: main
 ```
 main [examples.agent-broker.broker_demo]
   └─ →> resolve_agent_url
@@ -269,9 +262,14 @@ main [examples.agent-broker.broker_demo]
           └─> _default_agent_base
 ```
 
-### Flow 10: create_server
+### Flow 9: create_server
 ```
 create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
+```
+
+### Flow 10: from_dict
+```
+from_dict [src.vdisplay.control.selector.ControlSelector]
 ```
 
 ## Key Classes
@@ -325,6 +323,11 @@ create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
 - **Key Methods**: src.vdisplay.control.providers.x11.X11ControlProvider.__init__, src.vdisplay.control.providers.x11.X11ControlProvider.available, src.vdisplay.control.providers.x11.X11ControlProvider.snapshot, src.vdisplay.control.providers.x11.X11ControlProvider.find, src.vdisplay.control.providers.x11.X11ControlProvider._node_for, src.vdisplay.control.providers.x11.X11ControlProvider._click_at, src.vdisplay.control.providers.x11.X11ControlProvider._click_node, src.vdisplay.control.providers.x11.X11ControlProvider.invoke, src.vdisplay.control.providers.x11.X11ControlProvider.focus, src.vdisplay.control.providers.x11.X11ControlProvider.set_value
 - **Inherits**: ControlProvider
 
+### packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore
+> Thin repository over agent-tasks.db.
+- **Methods**: 10
+- **Key Methods**: packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.__init__, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore._is_db_corrupt, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore._run_with_recovery, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore._reopen_after_corruption, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.create_task, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.get_task, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.list_tasks, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.update_task, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.heartbeat, packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.mark_orphan_running_as_stale
+
 ### src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend
 - **Methods**: 10
 - **Key Methods**: src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.__init__, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.capabilities, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.info, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.start, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.stop, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.launch, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.screenshot_bytes, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.adopt_window, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend.release_window, src.vdisplay.backends.linux_xvfb.LinuxXvfbBackend._acquire_display
@@ -370,11 +373,6 @@ create_server [packages.mcp2vdisplay.src.mcp2vdisplay.server]
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal.TerminalControlProvider.__init__, src.vdisplay.control.providers.terminal.TerminalControlProvider.available, src.vdisplay.control.providers.terminal.TerminalControlProvider._resolve_session_id, src.vdisplay.control.providers.terminal.TerminalControlProvider.snapshot, src.vdisplay.control.providers.terminal.TerminalControlProvider.find, src.vdisplay.control.providers.terminal.TerminalControlProvider.invoke, src.vdisplay.control.providers.terminal.TerminalControlProvider.focus, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.bounds
 - **Inherits**: ControlProvider
-
-### src.vdisplay.hmi.keyboard.KeyboardWatcher
-> Background evdev reader pushing :class:`KeyEvent` objects to a queue.
-- **Methods**: 9
-- **Key Methods**: src.vdisplay.hmi.keyboard.KeyboardWatcher.__init__, src.vdisplay.hmi.keyboard.KeyboardWatcher.typed_buffer, src.vdisplay.hmi.keyboard.KeyboardWatcher.start, src.vdisplay.hmi.keyboard.KeyboardWatcher.stop, src.vdisplay.hmi.keyboard.KeyboardWatcher.drain, src.vdisplay.hmi.keyboard.KeyboardWatcher._emit, src.vdisplay.hmi.keyboard.KeyboardWatcher._handle_key, src.vdisplay.hmi.keyboard.KeyboardWatcher._open_fds, src.vdisplay.hmi.keyboard.KeyboardWatcher._run
 
 ## Data Transformation Functions
 
@@ -456,16 +454,6 @@ Key functions that process and transform data:
 
 ## Behavioral Patterns
 
-### recursion_enrich_screenshot_payload
-- **Type**: recursion
-- **Confidence**: 0.90
-- **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
-
-### recursion_dump_tree
-- **Type**: recursion
-- **Confidence**: 0.90
-- **Functions**: brain.scratch_find_pycharm_chat.dump_tree
-
 ### recursion__capture_host
 - **Type**: recursion
 - **Confidence**: 0.90
@@ -475,6 +463,16 @@ Key functions that process and transform data:
 - **Type**: recursion
 - **Confidence**: 0.90
 - **Functions**: src.vdisplay.control.providers.atspi_impl._walk_atspi_node
+
+### recursion_enrich_screenshot_payload
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: src.vdisplay.application.services.img2nl_enrich.enrich_screenshot_payload
+
+### recursion_dump_tree
+- **Type**: recursion
+- **Confidence**: 0.90
+- **Functions**: brain.scratch_find_pycharm_chat.dump_tree
 
 ### state_machine_ControlActionState
 - **Type**: state_machine
@@ -490,41 +488,41 @@ Functions exposed as public API (no underscore prefix):
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 68 calls
 - `brain.scratch_test_screencast.test_screencast` - 55 calls
 - `src.vdisplay.commands.control.register` - 46 calls
-- `src.vdisplay.application.services.screencast_cli.start_screencast_via_agent` - 46 calls
 - `src.vdisplay.commands.ide.handle` - 45 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler` - 42 calls
-- `src.vdisplay.capture.portal_screencast.PortalScreenCastSession.from_portal_payload` - 40 calls
+- `src.vdisplay.application.services.screencast_cli.probe_screencast_capture` - 41 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
-- `src.vdisplay.capture.screencast_keeper.request_keeper_capture` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
+- `src.vdisplay.commands.agent.register` - 37 calls
 - `src.vdisplay.application.parsers.parse_dsl` - 37 calls
 - `src.vdisplay.application.events.map_events_from_diagnostics` - 36 calls
 - `src.vdisplay.application.session_recorder.SessionRecorder.record` - 36 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
 - `src.vdisplay.commands.map.register` - 35 calls
+- `src.vdisplay.capture.screencast_keeper.run_keeper_daemon` - 34 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes` - 33 calls
 - `examples.host-relay.relay_demo.main` - 33 calls
 - `src.vdisplay.application.artifacts.artifacts_from_control` - 33 calls
 - `src.vdisplay.application.projections.map_health_handlers.apply_step_verify_drift` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
 - `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
-- `src.vdisplay.commands.agent.register` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `src.vdisplay.application.parsers.parse_agent_control_body` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.commands.map.handle` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls
 - `src.vdisplay.application.executor.execute` - 30 calls
-- `src.vdisplay.capture.screencast_keeper.run_keeper_daemon` - 30 calls
+- `src.vdisplay.capture.portal_screencast.PortalScreenCastSession.capture_png_local` - 29 calls
 - `src.vdisplay.application.session_recorder.load_session_document` - 29 calls
 - `src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics` - 28 calls
 - `src.vdisplay.application.proto.codec.decode_event_envelope` - 28 calls
 - `src.vdisplay.integrations.screen_context.ScreenContext.from_dict` - 28 calls
-- `src.vdisplay.integrations.pipeline.observe_screen` - 28 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
 - `examples.ci-agent.agent.main` - 27 calls
 - `src.vdisplay.discovery.list_outputs` - 27 calls
+- `src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window` - 27 calls
+- `src.vdisplay.control.contracts.control_route_request_from_command` - 27 calls
 
 ## System Interactions
 
@@ -558,10 +556,10 @@ graph TD
     _load_or_create_docu --> SessionDocument
     _load_or_create_docu --> write_text
     _load_or_create_docu --> loads
-    from_portal_payload --> ensure_portal_sessio
-    from_portal_payload --> portal_session_env_s
-    from_portal_payload --> strip
-    from_portal_payload --> cls
+    record --> mkdir
+    record --> request_to_dict
+    record --> result_to_dict
+    record --> write_text
 ```
 
 ## Reverse Engineering Guidelines

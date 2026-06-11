@@ -35,7 +35,12 @@ def create_app(runtime: AgentRuntime | None = None):
 
     @app.on_event("shutdown")
     def _shutdown() -> None:
-        broker.shutdown()
+        try:
+            broker.shutdown()
+        except Exception as exc:
+            import logging
+
+            logging.getLogger(__name__).warning("agent shutdown cleanup failed: %s", exc)
 
     app.state.runtime = broker
     return app

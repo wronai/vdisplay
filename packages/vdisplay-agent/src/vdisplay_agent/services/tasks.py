@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 from dataclasses import asdict
 from typing import Any
@@ -12,6 +13,15 @@ from vdisplay.exceptions import VDisplayError
 
 from ..session_store import SessionRecord, SessionStore
 from ..task_store import TaskStatus, TaskStore, task_to_dict
+
+_LOG = logging.getLogger(__name__)
+
+
+def _best_effort_task_op(label: str, fn) -> None:
+    try:
+        fn()
+    except Exception as exc:
+        _LOG.warning("agent task %s skipped: %s", label, exc)
 
 
 def recover_on_startup(task_store: TaskStore, broker_id: str) -> dict[str, Any]:
@@ -169,7 +179,10 @@ def begin_screencast_task(
 
 
 def end_screencast_task(task_store: TaskStore, task_id: str = "screencast:active") -> None:
-    task_store.update_task(task_id, status=TaskStatus.STOPPED, heartbeat=True)
+    _best_effort_task_op(
+        "end_screencast",
+        lambda: task_store.update_task(task_id, status=TaskStatus.STOPPED, heartbeat=True),
+    )
 
 
 def shutdown_tasks(
@@ -180,11 +193,20 @@ def shutdown_tasks(
 ) -> None:
     if store.sampler_task_id:
         state = store.sampler.status() if store.sampler is not None else None
-        end_sampler_task(task_store, store.sampler_task_id, state=state)
+        _best_effort_task_op(
+            "end_sampler",
+            lambda: end_sampler_task(task_store, store.sampler_task_id, state=state),
+        )
         store.sampler_task_id = None
     if store.screencast_task_id:
         end_screencast_task(task_store, store.screencast_task_id)
         store.screencast_task_id = None
     for record in list(store.sessions.values()):
-        unregister_session_task(task_store, record.session_id)
-    task_store.mark_orphan_running_as_stale(broker_id)
+        _best_effort_task_op(
+            f"unregister_session:{record.session_id}",
+            lambda task_id=record.session_id: unregister_session_task(task_store, task_id),
+        )
+    _best_effort_task_op(
+        "mark_orphan_running_as_stale",
+        lambda: task_store.mark_orphan_running_as_stale(broker_id),
+    )

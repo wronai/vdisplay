@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from vdisplay import MirrorSession, VirtualDisplaySession, WindowRelaySession
@@ -10,6 +11,8 @@ from vdisplay.exceptions import VDisplayError
 from ..session_store import SessionRecord, SessionStore
 from ..task_store import TaskStore
 from . import tasks as task_svc
+
+_LOG = logging.getLogger(__name__)
 
 
 def _session_started(record, *, mode: str) -> dict[str, Any]:
@@ -89,16 +92,19 @@ def _screencast_payload(
     if reused:
         payload["reused"] = True
     if task_store is not None and broker_id and not (reused and store.screencast_task_id):
-        store.screencast_task_id = task_svc.begin_screencast_task(
-            task_store,
-            broker_id=broker_id,
-            config={
-                "interactive": interactive,
-                "timeout_s": timeout_s,
-                "multiple": allow_multiple,
-            },
-        )
-        payload["task_id"] = store.screencast_task_id
+        try:
+            store.screencast_task_id = task_svc.begin_screencast_task(
+                task_store,
+                broker_id=broker_id,
+                config={
+                    "interactive": interactive,
+                    "timeout_s": timeout_s,
+                    "multiple": allow_multiple,
+                },
+            )
+            payload["task_id"] = store.screencast_task_id
+        except Exception as exc:
+            _LOG.warning("screencast task persistence unavailable: %s", exc)
     return payload
 
 
@@ -114,6 +120,7 @@ def adopt_screencast(
         _screencast_multiple,
         ensure_portal_session_env,
         get_active_screencast,
+        refresh_screencast_adopt_payload,
     )
 
     ensure_portal_session_env()
@@ -126,6 +133,7 @@ def adopt_screencast(
         and adopt_path
         and adopt_path == existing.session_path
     ):
+        refresh_screencast_adopt_payload(existing, body)
         return _screencast_payload(
             store,
             existing,

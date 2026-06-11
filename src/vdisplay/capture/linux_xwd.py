@@ -138,18 +138,26 @@ def _capture_scrot_png(
 
 def _capture_gnome_screenshot_png() -> bytes:
     require_command("gnome-screenshot")
+    from .portal_screencast import ensure_portal_session_env
+
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp:
         tmp_path = Path(tmp.name)
+    env = os.environ.copy()
+    env.update(ensure_portal_session_env())
     try:
         result = run_command(
             ["gnome-screenshot", "-f", str(tmp_path)],
+            env=env,
             timeout=12,
             text=False,
             check=False,
         )
         data = tmp_path.read_bytes() if tmp_path.is_file() else b""
         if result.returncode != 0 or not _is_valid_png(data):
-            raise VDisplayError("gnome-screenshot failed")
+            err = ""
+            if hasattr(result, "stderr") and result.stderr:
+                err = result.stderr.decode("utf-8", errors="replace").strip()[:200]
+            raise VDisplayError(f"gnome-screenshot failed{': ' + err if err else ''}")
         return data
     finally:
         tmp_path.unlink(missing_ok=True)
