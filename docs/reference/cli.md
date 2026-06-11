@@ -70,7 +70,34 @@ Guide: [guides/gui-map-pack.md](../guides/gui-map-pack.md)
 |---------|-------------|
 | `vdisplay-agent serve` | Start broker |
 | `vdisplay agent serve` | Alias |
-| `vdisplay agent screencast start/stop/status` | Portal screencast |
+| `vdisplay agent preflight` | Agent + portal + keeper readiness check |
+| `vdisplay agent health` | Broker health via HTTP |
+| `vdisplay agent screencast start` | Start keeper + portal screencast (All Screens) |
+| `vdisplay agent screencast start --force` | Bypass cooldown / refresh stale session |
+| `vdisplay agent screencast start --single-monitor` | Single-monitor portal picker |
+| `vdisplay agent screencast stop` | Stop screencast session |
+| `vdisplay agent screencast status` | Active session + streams + keeper PID |
+| `vdisplay agent screencast probe --source DP-1` | Test keeper capture for monitor |
+| `vdisplay agent screencast probe --via-agent` | Probe through agent `/capture/frame` |
+| `vdisplay agent screencast clear-cooldown` | Reset screencast start cooldown |
+
+## App registry
+
+| Command | Description |
+|---------|-------------|
+| `vdisplay app list` | IDE/app registry (cursor, pycharm, vscode, …) |
+| `vdisplay app show <id>` | Show app variants and map targets |
+| `vdisplay app open <id> [--variant default-xwayland]` | Launch registered app |
+
+## Automation
+
+| Command | Description |
+|---------|-------------|
+| `vdisplay auto list` | List planfile automation tasks |
+| `vdisplay auto once` | Run next pending task |
+| `vdisplay auto run` | Run task loop |
+
+Example: [examples/dev-workflow](../examples/dev-workflow/) · Guide: [guides/gnome-wayland-screencast.md](../guides/gnome-wayland-screencast.md)
 
 ## DSL equivalent
 

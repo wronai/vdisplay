@@ -173,6 +173,36 @@ def _maybe_crop_screencast_png(
     return png, crop_region, region_local
 
 
+def _resolve_multi_stream_region(
+    session: Any,
+    stream_idx: int,
+    monitor: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Return the best region dict for a multi-stream session."""
+    if monitor is not None:
+        region = screencast_stream_region_for_index(session, stream_idx)
+        if region is None:
+            region = screencast_stream_region_for_monitor(session, monitor)
+        if region is not None:
+            return region
+    if stream_idx is None:
+        return None
+    streams = list(getattr(session, "streams", None) or [])
+    if not (0 <= stream_idx < len(streams)):
+        return None
+    props = streams[stream_idx].get("properties") or {}
+    pos = props.get("position") or [0, 0]
+    sz = props.get("size") or [0, 0]
+    if len(pos) >= 2 and len(sz) >= 2 and int(sz[0]) > 0 and int(sz[1]) > 0:
+        return {
+            "x": int(pos[0]),
+            "y": int(pos[1]),
+            "width": int(sz[0]),
+            "height": int(sz[1]),
+        }
+    return None
+
+
 def _build_screencast_extra(
     session: Any,
     stream_idx: int,
@@ -189,36 +219,10 @@ def _build_screencast_extra(
     if multi_stream:
         extra["method"] = "portal-screencast+stream"
         extra["screencast_multi_stream"] = True
-        if monitor is not None:
-            # Prefer the region of the stream we actually selected and captured
-            # for this source/monitor. This keeps the metadata consistent with
-            # stream_idx and the PNG we wrote (the for_monitor heuristic can
-            # pick a different "best" stream when portal virtual coords differ
-            # from xrandr, as seen with DP-1 + tall monitor layouts).
-            stream_region = screencast_stream_region_for_index(session, stream_idx)
-            if stream_region is None:
-                stream_region = screencast_stream_region_for_monitor(session, monitor)
-            if stream_region is not None:
-                extra["region"] = stream_region
-                extra["screencast_stream"] = True
-            # As a last resort, if neither gave us a region, fall back to the
-            # region of the chosen stream by directly reading its properties.
-            # This guarantees the "region" tag always describes the frame we
-            # actually captured for the assigned stream_idx.
-            if "region" not in extra and stream_idx is not None:
-                streams = list(getattr(session, "streams", None) or [])
-                if 0 <= stream_idx < len(streams):
-                    props = streams[stream_idx].get("properties") or {}
-                    pos = props.get("position") or [0, 0]
-                    sz = props.get("size") or [0, 0]
-                    if len(pos) >= 2 and len(sz) >= 2 and int(sz[0]) > 0 and int(sz[1]) > 0:
-                        extra["region"] = {
-                            "x": int(pos[0]),
-                            "y": int(pos[1]),
-                            "width": int(sz[0]),
-                            "height": int(sz[1]),
-                        }
-                        extra["screencast_stream"] = True
+        stream_region = _resolve_multi_stream_region(session, stream_idx, monitor)
+        if stream_region is not None:
+            extra["region"] = stream_region
+            extra["screencast_stream"] = True
     elif crop_region is not None:
         extra["region"] = {
             "x": crop_region[0],

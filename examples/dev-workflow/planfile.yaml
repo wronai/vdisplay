@@ -1,0 +1,287 @@
+automation:
+- id: dev-preflight
+  title: Agent + portal + keeper preflight
+  status: done
+  priority: high
+  handler: vdisplay agent preflight
+  last_run_note: "{\n  \"ok\": true,\n  \"agent\": {\n    \"status\": \"ok\",\n  \
+    \  \"service\": \"vdisplay-agent\",\n    \"broker\": \"vdisplay-agent\",\n   \
+    \ \"ok\": true\n  },\n  \"cli_portal_session\": {\n    \"ok\": true,\n    \"hint\"\
+    : null\n  },\n  \"agent_portal_session\": {\n    \"ok\": true,\n    \"hint\":\
+    \ null,\n    \"dbus_session_bus_address\": \"unix:path=/run/user/1000/bus\",\n\
+    \    \"wayland_display\": \"wayland-0\",\n    \"xdg_runtime_dir\": \"/run/user/1000\"\
+    \n  },\n  \"screencast\": {\n    \"supported\": true,\n    \"active\": true,\n\
+    \    \"ready\": true\n  },\n  \"keeper\": {\n    \"running\": true,\n    \"capture_ready\"\
+    : true,\n    \"pid\": 1265879,\n    \"socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
+    \n  },\n  \"next\": \"vdisplay agent screencast probe --source DP-1\"\n}"
+- id: dev-screencast-status
+  title: Screencast session status (keeper-managed)
+  status: done
+  priority: high
+  handler: vdisplay agent screencast status
+  last_run_note: "{\n  \"active\": true,\n  \"ready\": true,\n  \"session_path\":\
+    \ \"/org/freedesktop/portal/desktop/session/1_45944/vdisplay_sc_2bd92ea5\",\n\
+    \  \"node_ids\": [\n    119,\n    91,\n    86\n  ],\n  \"streams\": [\n    {\n\
+    \      \"node_id\": 119,\n      \"properties\": {\n        \"id\": \"2\",\n  \
+    \      \"source_type\": 1,\n        \"position\": [\n          0,\n          652\n\
+    \        ],\n        \"size\": [\n          2048,\n          1280\n        ]\n\
+    \      }\n    },\n    {\n      \"node_id\": 91,\n      \"properties\": {\n   \
+    \     \"id\": \"1\",\n        \"source_type\": 1,\n        \"position\": [\n \
+    \         0,\n          1932\n        ],\n        \"size\": [\n          2048,\n\
+    \          1280\n        ]\n      }\n    },\n    {\n      \"node_id\": 86,\n \
+    \     \"properties\": {\n        \"id\": \"0\",\n        \"source_type\": 1,\n\
+    \        \"position\": [\n          2048,\n          0\n        ],\n        \"\
+    size\": [\n          2160,\n          3840\n        ]\n      }\n    }\n  ],\n\
+    \  \"source\": \"xdg-portal-screencast\",\n  \"has_pipewire_fd\": true,\n  \"\
+    keeper_managed\": true,\n  \"keeper_socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
+    ,\n  \"keeper_pid\": 1265879,\n  \"ok\": true\n}"
+- id: dev-monitors
+  title: List monitors with NL descriptions
+  status: done
+  priority: high
+  handler: vdisplay monitors
+  last_run_note: "{\n  \"requested_display\": \":0\",\n  \"resolved_display\": \"\
+    :0\",\n  \"monitor_count\": 3,\n  \"monitors\": [\n    {\n      \"name\": \"DP-2\"\
+    ,\n      \"connected\": true,\n      \"primary\": true,\n      \"geometry\": \"\
+    4320x7680+4096+0\",\n      \"monitor_index\": 0,\n      \"label\": \"DP-2\",\n\
+    \      \"geometry_mm\": \"4320/700x7680/390+4096+0\",\n      \"geometry_px\":\
+    \ \"4320x7680+4096+0\",\n      \"width\": 4320,\n      \"height\": 7680,\n   \
+    \   \"x\": 4096,\n      \"y\": 0,\n      \"rotation\": \"left\",\n      \"rotation_degrees\"\
+    : 90,\n      \"width_px\": 4320,\n      \"height_px\": 7680,\n      \"width_mm\"\
+    : 700,\n      \"height_mm\": 390,\n      \"geometry_x\": 4096,\n      \"geometry_y\"\
+    : 0,\n      \"diagonal_in\": 31.5,\n      \"monitor_id\": 0,\n      \"nl\": \"\
+    Primary monitor DP-2 (4320\\u00d77680, rotated left (90\\u00b0)). Visible apps:\
+    \ Toolbox.\"\n    },\n    {\n      \"name\": \"HDMI-1\",\n      \"connected\"\
+    : true,\n      \"primary\": false,\n      \"geometry\": \"4096x2560+0+3864\",\n\
+    \      \"monitor_index\": 1,\n      \"label\": \"HDMI-1\",\n      \"geometry_mm\"\
+    : \"4096/300x2560/260+0+3864\",\n      \"geometry_px\": \"4096x2560+0+3864\",\n\
+    \      \"width\": 4096,\n      \"height\": 2560,\n      \"x\": 0,\n      \"y\"\
+    : 3864,\n      \"rotation\": \"normal\",\n      \"rotation_degrees\": 0,\n   \
+    \   \"width_px\": 4096,\n      \"height_px\": 2560,\n      \"width_mm\": 300,\n\
+    \      \"height_mm\": 260,\n      \"geometry_x\": 0,\n      \"geometry_y\": 3864,\n\
+    \      \"diagonal_in\": 15.6,\n      \"monitor_id\": 1,\n      \"nl\": \"monitor\
+    \ HDMI-1 (4096\\u00d72560). No visible application windows detected.\"\n    },\n\
+    \    {\n      \"name\": \"DP-1\",\n      \"connected\": true,\n      \"primary\"\
+    : false,\n      \"geometry\": \"4096x2560+0+1304\",\n      \"monitor_index\":\
+    \ 2,\n      \"label\": \"DP-1\",\n      \"geometry_mm\": \"4096/610x2560/350+0+1304\"\
+    ,\n      \"geometry_px\": \"4096x2560+0+1304\",\n      \"width\": 4096,\n    \
+    \  \"height\": 2560,\n      \"x\": 0,\n      \"y\": 1304,\n      \"rotation\"\
+    : \"normal\",\n      \"rotation_degrees\": 0,\n      \"width_px\": 4096,\n   \
+    \   \"height_px\": 2560,\n      \"width_mm\": 610,\n      \"height_mm\": 350,\n\
+    \      \"geometry_x\": 0,\n      \"geometry_y\": 1304,\n      \"diagonal_in\"\
+    : 27.7,\n      \"monitor_id\": 2,\n      \"nl\": \"monitor DP-1 (4096\\u00d72560).\
+    \ No user application windows detected via X11 (internal/helper windows only,\
+    \ or native Wayland apps not listed).\"\n    }\n  ]\n}"
+- id: dev-windows
+  title: List XWayland application windows
+  status: done
+  priority: normal
+  handler: vdisplay windows --apps-only
+  last_run_note: "{\n  \"requested_display\": \":0\",\n  \"resolved_display\": \"\
+    :0\",\n  \"window_count\": 1,\n  \"session_type\": \"wayland\",\n  \"window_source\"\
+    : \"x11\",\n  \"hint\": \"Session is Wayland. vdisplay lists X11/XWayland windows\
+    \ on :0 via xdotool. Native Wayland apps (Firefox, Cursor, GNOME Terminal, etc.)\
+    \ are not visible here \\u2014 only XWayland clients. Use `vdisplay windows --apps-only`\
+    \ for application windows only.\",\n  \"windows\": [\n    {\n      \"window_id\"\
+    : \"10485909\",\n      \"title\": \"Toolbox\",\n      \"name\": \"Toolbox\",\n\
+    \      \"type\": \"application\",\n      \"wm_class\": \"jetbrains-toolbox\",\n\
+    \      \"wm_class_instance\": \"JetBrains Toolbox\",\n      \"window_type\": \"\
+    normal\",\n      \"pid\": 25432,\n      \"process_name\": \"jetbrains-toolb\"\
+    ,\n      \"process_cmdline\": \"/home/tom/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox\
+    \ --minimize\",\n      \"app_label\": \"Toolbox\",\n      \"is_internal\": false,\n\
+    \      \"x\": 7586,\n      \"y\": 262,\n      \"width\": 880,\n      \"height\"\
+    : 1326,\n      \"display\": \":0\",\n      \"nl\": \"Toolbox application window\
+    \ (880\\u00d71326 at (7586,262)) on monitor DP-2, process jetbrains-toolb, class\
+    \ jetbrains-toolbox.\",\n      \"monitor_id\": 0,\n      \"monitor_name\": \"\
+    DP-2\",\n      \"monitor_index\": 0\n    }\n  ]\n}"
+- id: dev-app-list
+  title: IDE/app registry
+  status: done
+  priority: normal
+  handler: vdisplay app list
+  last_run_note: "{\n  \"apps\": [\n    {\n      \"app_id\": \"cursor\",\n      \"\
+    label\": \"Cursor\",\n      \"variants\": [\n        {\n          \"variant_id\"\
+    : \"desktop\",\n          \"label\": \"gtk-launch cursor.desktop\",\n        \
+    \  \"argv\": [\n            \"gtk-launch\",\n            \"cursor.desktop\"\n\
+    \          ],\n          \"env\": {},\n          \"cwd\": null\n        },\n \
+    \       {\n          \"variant_id\": \"default\",\n          \"label\": \"cursor\"\
+    ,\n          \"argv\": [\n            \"/tmp/.mount_cursorObnJFC/usr/bin/cursor\"\
+    \n          ],\n          \"env\": {},\n          \"cwd\": null\n        },\n\
+    \        {\n          \"variant_id\": \"desktop-xwayland\",\n          \"label\"\
+    : \"gtk-launch cursor.desktop (XWayland)\",\n          \"argv\": [\n         \
+    \   \"gtk-launch\",\n            \"cursor.desktop\"\n          ],\n          \"\
+    env\": {\n            \"WAYLAND_DISPLAY\": \"\",\n            \"XDG_SESSION_TYPE\"\
+    : \"\",\n            \"DISPLAY\": \":0\",\n            \"GDK_BACKEND\": \"x11\"\
+    \n          },\n          \"cwd\": null\n        },\n        {\n          \"variant_id\"\
+    : \"default-xwayland\",\n          \"label\": \"cursor (XWayland)\",\n       \
+    \   \"argv\": [\n            \"/tmp/.mount_cursorObnJFC/usr/bin/cursor\"\n   \
+    \       ],\n          \"env\": {\n            \"WAYLAND_DISPLAY\": \"\",\n   \
+    \         \"XDG_SESSION_TYPE\": \"\",\n            \"DISPLAY\": \":0\",\n    \
+    \        \"GDK_BACKEND\": \"x11\"\n          },\n          \"cwd\": null\n   \
+    \     }\n      ],\n      \"app_hint\": \"Cursor\",\n      \"window_title_contains\"\
+    : \"Cursor\",\n      \"preferred_backend\": \"vision\",\n      \"chat_selectors\"\
+    : [\n        {\n          \"environment\": \"vision\",\n          \"vision_anchor\"\
+    : \"Ask\",\n          \"vision_anchor_rel\": \"below\"\n        },\n        {\n\
+    \          \"environment\": \"vision\",\n          \"vision_anchor\": \"Chat\"\
+    ,\n          \"vision_anchor_rel\": \"below\"\n        },\n        {\n       \
+    \   \"environment\": \"vision\",\n          \"vision_anchor\": \"Composer\",\n\
+    \          \"vision_anchor_rel\": \"below\"\n        },\n        {\n         \
+    \ \"role\": \"input\",\n          \"name_contains\": \"Chat\"\n        },\n  \
+    \      {\n          \"role\": \"input\",\n          \"name_contains\": \"chat\"\
+    \n        },\n        {\n          \"role\": \"input\",\n          \"name_contains\"\
+    : \"Ask\"\n        },\n        {\n          \"role\": \"input\",\n          \"\
+    name_contains\": \"Composer\"\n        },\n        {\n          \"role\": \"input\"\
+    ,\n          \"name_contains\": \"Message\"\n        },\n        {\n         \
+    \ \"role\": \"input\",\n          \"name_contains\": \"Prompt\"\n        },\n\
+    \        {\n          \"role\": \"entry\",\n          \"name_contains\": \"Chat\"\
+    \n        },\n        {\n          \"role\": \"entry\",\n          \"name_contains\"\
+    : \"chat\"\n        },\n        {\n          \"role\": \"text\",\n          \"\
+    name_contains\": \"Chat\"\n        },\n        {\n          \"role\": \"input\"\
+    \n        },\n        {\n          \"role\": \"entry\"\n        }\n      ],\n\
+    \      \"submit_selectors\": [\n        {\n          \"role\": \"button\",\n \
+    \         \"name_contains\": \"Send\"\n        },\n        {\n          \"role\"\
+    : \"button\",\n          \"name_contains\": \"Submit\"\n        },\n        {\n\
+    \          \"role\": \"button\",\n          \"name_contains\": \"Run\"\n     \
+    \   }\n      ],\n      \"map_template\": \"/home/tom/github/wronai/vdisplay/maps/templates/cursor-chat.manifest.json\"\
+    ,\n      \"map_targets\": {\n        \"chat\": \"chat-focus\",\n        \"message\"\
+    : \"chat-input\",\n        \"send\": \"chat-send\"\n      },\n      \"notes\"\
+    : \"Native Wayland chat is not in AT-SPI; prefer koru plugin or vision+map.\"\n\
+    \    },\n    {\n      \"app_id\": \"pycharm\",\n      \"label\": \"PyCharm\",\n\
+    \      \"variants\": [\n        {\n          \"variant_id\": \"desktop\",\n  \
+    \        \"label\": \"gtk-launch jetbrains-pycharm-professional.desktop\",\n \
+    \         \"argv\": [\n            \"gtk-launch\",\n            \"jetbrains-pycharm-professional.desktop\"\
+    \n          ],\n          \"env\": {},\n          \"cwd\": null\n        },\n\
+    \        {\n          \"variant_id\": \"default\",\n          \"label\": \"pycharm-professional\"\
+    ,\n          \"argv\": [\n            \"/snap/bin/pycharm-professional\"\n   \
+    \       ],\n          \"env\": {},\n          \"cwd\": null\n        },\n    \
+    \    {\n          \"variant_id\": \"desktop-xwayland\",\n          \"label\":\
+    \ \"gtk-launch jetbrains-pycharm-professional"
+- id: dev-probe-dp1
+  title: Probe keeper capture — DP-1
+  status: done
+  priority: high
+  monitor: DP-1
+  handler: vdisplay agent screencast probe --source DP-1
+  last_run_note: "{\n  \"ok\": true,\n  \"via\": \"keeper\",\n  \"bytes\": 390935,\n\
+    \  \"width\": 2048,\n  \"height\": 1280,\n  \"source\": \"DP-1\",\n  \"stream_index\"\
+    : 0,\n  \"node_id\": 119,\n  \"portal_stream_id\": \"2\",\n  \"target_object\"\
+    : \"2\",\n  \"keeper_pid\": 1265879,\n  \"tried_indices\": [\n    0\n  ]\n}"
+- id: dev-screenshot-dp1
+  title: Screenshot DP-1
+  status: done
+  priority: high
+  monitor: DP-1
+  handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp1.png --source DP-1
+  last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-1\",\n  \"monitor\"\
+    : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
+    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
+    screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n\
+    \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
+    \  \"monitor_name\": \"DP-1\",\n  \"path\": \"/tmp/vdisplay-dev-dp1.png\",\n \
+    \ \"bytes\": 391036,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
+    \ 2048\\u00d71280 px. Widocznych ~786 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
+    \ 255). Widoczny szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\\
+    u00f3w. Regularne wzorce: pasy poziome.\",\n    \"locale\": \"pl\",\n    \"scene_class\"\
+    : \"general\",\n    \"llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\"\
+    : 1.0,\n      \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\"\
+    ,\n        \"large_regions\",\n        \"multiple_regions\",\n        \"regular_pattern\"\
+    \n      ],\n      \"recommendation\": \"send\"\n    },\n    \"source\": \"img2nl\"\
+    \n  },\n  \"nl\": \"Obraz 2048\\u00d71280 px. Widocznych ~786 kolor\\u00f3w w\
+    \ pr\\u00f3bce. Dominuj\\u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107\
+    \ 0\\u2013167 (zakres dynamiki 255). Widoczny szum lub drobna tekstura. Wykryto\
+    \ 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w. Regularne wzorce: pasy poziome.\"\
+    \n}"
+- id: dev-screenshot-dp2
+  title: Screenshot DP-2 (rotated primary)
+  status: done
+  priority: normal
+  monitor: DP-2
+  handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp2.png --source DP-2
+  last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-2\",\n  \"monitor\"\
+    : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
+    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 2,\n  \"\
+    screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 2048,\n    \"y\"\
+    : 0,\n    \"width\": 2160,\n    \"height\": 3840\n  },\n  \"screencast_stream\"\
+    : true,\n  \"monitor_name\": \"DP-2\",\n  \"path\": \"/tmp/vdisplay-dev-dp2.png\"\
+    ,\n  \"bytes\": 1518410,\n  \"width\": 2160,\n  \"height\": 3840,\n  \"ok\": true,\n\
+    \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
+    \ 2160\\u00d73840 px. Widocznych ~830 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #181818, #000000, #171717. Jasno\\u015b\\u0107 0\\u201375 (zakres dynamiki\
+    \ 255). Widoczny szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\\
+    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
+    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
+    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
+    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
+    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2160\\\
+    u00d73840 px. Widocznych ~830 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #181818,\
+    \ #000000, #171717. Jasno\\u015b\\u0107 0\\u201375 (zakres dynamiki 255). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \n}"
+- id: dev-screenshot-hdmi1
+  title: Screenshot HDMI-1
+  status: done
+  priority: normal
+  monitor: HDMI-1
+  handler: vdisplay screenshot -o /tmp/vdisplay-dev-hdmi1.png --source HDMI-1
+  last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"HDMI-1\",\n  \"monitor\"\
+    : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
+    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 1,\n  \"\
+    screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 1932,\n\
+    \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
+    \  \"monitor_name\": \"HDMI-1\",\n  \"path\": \"/tmp/vdisplay-dev-hdmi1.png\"\
+    ,\n  \"bytes\": 504514,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
+    \ 2048\\u00d71280 px. Widocznych ~936 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #141414, #191A1C, #3D1618. Jasno\\u015b\\u0107 17\\u2013123 (zakres dynamiki\
+    \ 238). Widoczny szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\\
+    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
+    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
+    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
+    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
+    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
+    u00d71280 px. Widocznych ~936 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #141414,\
+    \ #191A1C, #3D1618. Jasno\\u015b\\u0107 17\\u2013123 (zakres dynamiki 238). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \n}"
+- id: dev-pytest-screencast
+  title: Run screencast unit tests (regression)
+  status: done
+  priority: high
+  handler: .venv/bin/pytest tests/test_screencast*.py tests/test_portal_screencast.py
+    -q --tb=no
+  last_run_note: "....................................                           \
+    \          [100%]\n=============================== warnings summary ===============================\n\
+    tests/test_portal_screencast.py::test_agent_screencast_status_endpoint\n  /home/tom/github/wronai/vdisplay/.venv/lib/python3.13/site-packages/fastapi/testclient.py:1:\
+    \ StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated;\
+    \ install `httpx2` instead.\n    from starlette.testclient import TestClient as\
+    \ TestClient  # noqa\n\ntests/test_portal_screencast.py::test_agent_screencast_status_endpoint\n\
+    tests/test_portal_screencast.py::test_cli_agent_screencast_status\ntests/test_portal_screencast.py::test_agent_capture_uses_store_screencast\n\
+    tests/test_portal_screencast.py::test_agent_screencast_adopt_endpoint\n  /home/tom/github/wronai/vdisplay/packages/vdisplay-agent/src/vdisplay_agent/server.py:32:\
+    \ DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers\
+    \ instead.\n  \n          Read more about it in the\n          [FastAPI docs for\
+    \ Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n         \
+    \ \n    @app.on_event(\"startup\")\n\ntests/test_portal_screencast.py::test_agent_screencast_status_endpoint\n\
+    tests/test_portal_screencast.py::test_agent_screencast_status_endpoint\ntests/test_portal_screencast.py::test_cli_agent_screencast_status\n\
+    tests/test_portal_screencast.py::test_cli_agent_screencast_status\ntests/test_portal_screencast.py::test_agent_capture_uses_store_screencast\n\
+    tests/test_portal_screencast.py::test_agent_capture_uses_store_screencast\ntests/test_portal_screencast.py::test_agent_screencast_adopt_endpoint\n\
+    tests/test_portal_screencast.py::test_agent_screencast_adopt_endpoint\n  /home/tom/github/wronai/vdisplay/.venv/lib/python3.13/site-packages/fastapi/applications.py:4598:\
+    \ DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers\
+    \ instead.\n  \n          Read more about it in the\n          [FastAPI docs for\
+    \ Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n         \
+    \ \n    return self.router.on_event(event_type)  # ty: ignore[deprecated]\n\n\
+    tests/test_portal_screencast.py::test_agent_screencast_status_endpoint\ntests/test_portal_screencast.py::test_cli_agent_screencast_status\n\
+    tests/test_portal_screencast.py::test_agent_capture_uses_store_screencast\ntests/test_portal_screencast.py::test_agent_screencast_adopt_endpoint\n\
+    \  /home/tom/github/wronai/vdisplay/packages/vdisplay-agent/src/vdisplay_agent/server.py:36:\
+    \ DeprecationWarning: \n          on_event is deprecated, use lifespan event handlers\
+    \ instead.\n  \n          Read more about it in the\n          [FastAPI docs for\
+    \ Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n         \
+    \ \n    @app.on_event(\"shutdown\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html"
+- id: dev-health
+  title: Agent health check
+  status: done
+  priority: normal
+  handler: vdisplay agent health
+  last_run_note: "{\n  \"status\": \"ok\",\n  \"service\": \"vdisplay-agent\",\n \
+    \ \"broker\": \"vdisplay-agent\",\n  \"ok\": true\n}"

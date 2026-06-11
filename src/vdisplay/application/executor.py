@@ -59,6 +59,60 @@ def _agent_discovery_fallback(cmd: CommandRequest, exc: VDisplayError) -> bool:
     return "unreachable" in message or "timed out" in message or "hung" in message
 
 
+def _execute_for_route(
+    cmd: CommandRequest,
+    route: Route,
+    meta: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Run the command on the chosen route and return (data, updated_meta)."""
+    if route != "agent":
+        return execute_local(cmd), meta
+    try:
+        return execute_agent(cmd), meta
+    except VDisplayError as exc:
+        if _agent_discovery_fallback(cmd, exc):
+            return execute_local(cmd), {**meta, "route": "local", "agent_fallback": str(exc)}
+        raise
+
+
+def _build_success_result(
+    cmd: CommandRequest,
+    data: dict[str, Any],
+    meta: dict[str, Any],
+) -> CommandResult:
+    data = _maybe_enrich_screenshot(cmd, data)
+    return CommandResult.success(
+        action=cmd.action,
+        data=data,
+        command=cmd.line,
+        meta=meta,
+        artifacts=build_artifacts(cmd, data),
+    )
+
+
+def _finalize_execution(
+    cmd: CommandRequest,
+    result: CommandResult,
+    route: Route,
+    started: float,
+) -> CommandResult:
+    result.diagnostics = extract_diagnostics(result)
+    duration_ms = int((time.perf_counter() - started) * 1000)
+    delegate_to_broker = route == "agent" and session_recording_enabled() and agent_audit_delegated()
+    if delegate_to_broker:
+        session_dir = os.environ.get("VDISPLAY_SESSION_DIR", "").strip()
+        if session_dir and result.meta is not None:
+            result.meta["session_dir"] = session_dir
+            result.meta["audit_delegated"] = "broker"
+        result.session_id = cmd.session_id
+        result.request_id = cmd.request_id
+        return result
+    if _audit_record_on_client(route):
+        _emit_command_completed(cmd, result, route=route, duration_ms=duration_ms)
+    record_execution(cmd, result, route=route, duration_ms=duration_ms)
+    return result
+
+
 def execute(
     cmd: CommandRequest,
     *,
@@ -75,32 +129,8 @@ def execute(
     if _audit_record_on_client(route):
         _emit_command_received(cmd, route=route)
     try:
-        if route == "agent":
-            try:
-                data = execute_agent(cmd)
-            except VDisplayError as exc:
-                if _agent_discovery_fallback(cmd, exc):
-                    data = execute_local(cmd)
-                    meta = {**meta, "route": "local", "agent_fallback": str(exc)}
-                else:
-                    raise
-        else:
-            data = execute_local(cmd)
-        data = _maybe_enrich_screenshot(cmd, data)
-        result = CommandResult.success(
-            action=cmd.action,
-            data=data,
-            command=cmd.line,
-            meta=meta,
-            artifacts=build_artifacts(cmd, data),
-        )
-    except VDisplayError as exc:
-        result = CommandResult.failure(
-            action=cmd.action,
-            error=error_from_exception(exc),
-            command=cmd.line,
-            meta=meta,
-        )
+        data, meta = _execute_for_route(cmd, route, meta)
+        result = _build_success_result(cmd, data, meta)
     except Exception as exc:
         result = CommandResult.failure(
             action=cmd.action,
@@ -108,18 +138,4 @@ def execute(
             command=cmd.line,
             meta=meta,
         )
-    result.diagnostics = extract_diagnostics(result)
-    duration_ms = int((time.perf_counter() - started) * 1000)
-    delegate_to_broker = route == "agent" and session_recording_enabled() and agent_audit_delegated()
-    if delegate_to_broker:
-        session_dir = os.environ.get("VDISPLAY_SESSION_DIR", "").strip()
-        if session_dir and result.meta is not None:
-            result.meta["session_dir"] = session_dir
-            result.meta["audit_delegated"] = "broker"
-        result.session_id = cmd.session_id
-        result.request_id = cmd.request_id
-    else:
-        if _audit_record_on_client(route):
-            _emit_command_completed(cmd, result, route=route, duration_ms=duration_ms)
-        record_execution(cmd, result, route=route, duration_ms=duration_ms)
-    return result
+    return _finalize_execution(cmd, result, route, started)

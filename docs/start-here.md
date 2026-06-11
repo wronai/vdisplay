@@ -40,15 +40,19 @@ System deps (Linux): [installation.md](installation.md)
 ### Broker (recommended on desktop)
 
 ```bash
-# terminal 1
+# terminal 1 — leave running (same GNOME session, not SSH)
+export PYTHONPATH=src:packages/vdisplay-agent/src
 vdisplay-agent serve --port 8765
 
 # terminal 2
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
-vdisplay monitors
-vdisplay agent screencast start    # Wayland: one-time portal pick
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay agent preflight                         # agent + portal + keeper check
+vdisplay agent screencast start --force          # Wayland: portal → All Screens
 vdisplay screenshot -o /tmp/host.png --source DP-1
 ```
+
+Multi-monitor GNOME Wayland: [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) · Dev automation: [examples/dev-workflow](../examples/dev-workflow/)
 
 Guide: [guides/agent-broker.md](guides/agent-broker.md) · Full reference: [agent-broker.md](agent-broker.md)
 
@@ -78,6 +82,8 @@ vdisplay diagnose control                 # control backends + routing
 |------------|-------|
 | See desktop control status, gaps, koru integration | [guides/desktop-control-today.md](guides/desktop-control-today.md) |
 | Automate PyCharm / canvas on Wayland | [guides/wayland-control.md](guides/wayland-control.md) |
+| Multi-monitor screencast (DP-1/DP-2/HDMI-1) | [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) |
+| Develop vdisplay on this PC (automation) | [examples/dev-workflow](../examples/dev-workflow/) |
 | Monitor desktop from browser (multi-monitor console) | [guides/web-console.md](guides/web-console.md) |
 | Build persistent click targets (GUI map) | [guides/gui-map-pack.md](guides/gui-map-pack.md) |
 | OCR verify + vision LLM fallback | [guides/vision-fallback.md](guides/vision-fallback.md) |

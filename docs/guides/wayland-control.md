@@ -18,10 +18,12 @@ Native Wayland PyCharm does **not** appear in `vdisplay windows`. That is expect
 
 ## Recommended stack (`vision_only_surface`)
 
-1. `vdisplay-agent serve` + `vdisplay agent screencast start` (capture on Wayland host)
+1. `vdisplay-agent serve` + `vdisplay agent screencast start --force` (capture on Wayland host)
 2. Build a **scoped** GUI map (`vdisplay map build --crop-bounds …`) — not full monitor OCR
 3. Act with `--map --target` (uses `action_bounds` / `click_point`, not raw OCR box)
 4. Verify with `--verify` (map `verify_mode` → `ocr_contains` / screenshot hybrid)
+
+Multi-monitor screencast (keeper, stream mapping, per-monitor `--source`): [gnome-wayland-screencast.md](gnome-wayland-screencast.md)
 
 Full workflow: [vision-only-wayland.md](../vision-only-wayland.md) · Map details: [gui-map-pack.md](gui-map-pack.md)
 

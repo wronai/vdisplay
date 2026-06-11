@@ -67,3 +67,25 @@ def test_probe_keeper_capture(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -
     assert payload["via"] == "keeper"
     assert payload["target_object"] == "2"
     assert payload["bytes"] > 0
+
+
+def test_screencast_probe_cli_dispatch(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Probe handler must accept (args, fast) like other screencast actions."""
+    import argparse
+
+    from vdisplay.commands import agent as agent_cmd
+
+    called = []
+
+    def fake_probe(**kwargs):
+        called.append(kwargs)
+        return {"ok": True, "via": "keeper"}
+
+    monkeypatch.setattr(
+        "vdisplay.application.services.screencast_cli.probe_screencast_capture",
+        fake_probe,
+    )
+    args = argparse.Namespace(source="DP-1", via_agent=False, output=None, sc_action="probe")
+    fast = object()
+    assert agent_cmd._SCREENCAST_ACTIONS["probe"](args, fast) == 0
+    assert called and called[0]["source"] == "DP-1"

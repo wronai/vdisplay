@@ -122,6 +122,17 @@ def _bounds_from_corners(
     return left, top, width, height
 
 
+def _map_corners_to_local(
+    corners: tuple[tuple[int, int], ...],
+    meta: dict[str, Any],
+    display: str | None,
+) -> list[tuple[int, int]]:
+    return [
+        global_point_to_capture_local(x, y, meta, display=display or meta.get("display"))
+        for x, y in corners
+    ]
+
+
 def global_region_to_capture_local(
     region: tuple[int, int, int, int],
     capture_meta: dict[str, Any],
@@ -150,15 +161,16 @@ def global_region_to_capture_local(
         return None
     clip_left, clip_top, clip_right, clip_bottom = clipped
 
-    corners = [
-        global_point_to_capture_local(x, y, meta, display=display or meta.get("display"))
-        for x, y in (
+    corners = _map_corners_to_local(
+        (
             (clip_left, clip_top),
             (clip_right, clip_top),
             (clip_left, clip_bottom),
             (clip_right, clip_bottom),
-        )
-    ]
+        ),
+        meta,
+        display,
+    )
     return _bounds_from_corners(tuple(corners), png_w=png_w, png_h=png_h)
 
 

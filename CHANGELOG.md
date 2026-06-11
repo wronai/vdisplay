@@ -92,6 +92,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.24] - 2026-06-11
+
+### Docs
+- Update README.md
+- Update docs/control.md
+- Update docs/examples.md
+- Update docs/guides/agent-broker.md
+- Update docs/guides/gnome-wayland-screencast.md
+- Update docs/guides/wayland-control.md
+- Update docs/index.md
+- Update docs/reference/cli.md
+- Update docs/reference/env.md
+- Update docs/start-here.md
+- ... and 5 more files
+
+### Test
+- Update tests/test_screencast_probe.py
+
+### Other
+- Update cursor-dp1.png
+- Update cursor-dp2.png
+- Update cursor-test.png
+- Update examples/dev-workflow/planfile.yaml
+- Update examples/dev-workflow/run-dev-automation.sh
+- Update packages/vdisplay-agent/src/vdisplay_agent/services/control.py
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- ... and 13 more files
+
 ## [0.1.23] - 2026-06-11
 
 ### Docs

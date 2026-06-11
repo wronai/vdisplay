@@ -223,6 +223,32 @@ class PortalScreenCastSession:
         }
 
     @classmethod
+    def _parse_adopted_ids(cls, payload: dict[str, Any]) -> tuple[list[int], list[str]]:
+        node_ids = [int(n) for n in payload.get("node_ids") or [] if str(n).isdigit()]
+        stream_targets = [str(item) for item in payload.get("stream_targets") or []]
+        if not node_ids:
+            session = cls()
+            session.streams = list(payload.get("streams") or [])
+            node_ids = session._parse_node_ids(payload)
+        if not stream_targets:
+            session = cls()
+            session.streams = list(payload.get("streams") or [])
+            stream_targets = session._parse_stream_targets(payload)
+        return node_ids, stream_targets
+
+    @classmethod
+    def _init_adopted_session(cls, payload: dict[str, Any]) -> PortalScreenCastSession:
+        session = cls()
+        session.session_path = str(payload.get("session_path") or "").strip()
+        session.streams = list(payload.get("streams") or [])
+        session.node_ids, session.stream_targets = cls._parse_adopted_ids(payload)
+        fd = payload.get("pipewire_fd")
+        session.pipewire_fd = int(fd) if fd is not None else None
+        session.active = True
+        _apply_keeper_fields(session, payload)
+        return session
+
+    @classmethod
     def from_portal_payload(
         cls,
         payload: dict[str, Any],
@@ -239,22 +265,9 @@ class PortalScreenCastSession:
         if not session_path:
             raise VDisplayError("adopt screencast requires session_path")
 
-        session = cls()
-        session.session_path = session_path
-        session.streams = list(payload.get("streams") or [])
-        session.node_ids = [int(n) for n in payload.get("node_ids") or [] if str(n).isdigit()]
-        session.stream_targets = [str(item) for item in payload.get("stream_targets") or []]
-        if not session.node_ids:
-            session.node_ids = session._parse_node_ids(payload)
-        if not session.stream_targets:
-            session.stream_targets = session._parse_stream_targets(payload)
+        session = cls._init_adopted_session(payload)
         if not session.node_ids:
             raise VDisplayError("adopt screencast requires node_ids or streams")
-
-        fd = payload.get("pipewire_fd")
-        session.pipewire_fd = int(fd) if fd is not None else None
-        session.active = True
-        _apply_keeper_fields(session, payload)
 
         if verify_remote and _probe_adopt_screencast_fd(session, session_path):
             return session
@@ -318,6 +331,64 @@ class PortalScreenCastSession:
                 raise
         return self.capture_png_local(node_index=node_index)
 
+    def _try_pipewire_node(self, index: int, timeout_s: float) -> bytes:
+        """Capture one node via PipeWire, trying cached fd then fresh fd if enabled."""
+        properties: dict[str, Any] = {}
+        if index < len(self.streams):
+            properties = self.streams[index].get("properties") or {}
+        portal_id = properties.get("id")
+        exc: VDisplayError | None = None
+
+        def _attempt(fresh: bool) -> bytes:
+            fd: int | None = None
+            try:
+                fd = _screencast_pipewire_fd(self, fresh=fresh)
+                return _capture_pipewire_stream(
+                    pipewire_fd=fd,
+                    node_id=self.node_ids[index],
+                    target_object=_stream_serial(properties, node_id=self.node_ids[index]),
+                    portal_stream_id=str(portal_id) if portal_id is not None else None,
+                    stream_size=_stream_properties_size(properties),
+                    timeout_s=timeout_s,
+                )
+            finally:
+                if fd is not None:
+                    os.close(fd)
+
+        try:
+            return _attempt(fresh=False)
+        except VDisplayError as first_exc:
+            exc = first_exc
+        if self.pipewire_fd is not None and _pipewire_fresh_fd_enabled():
+            try:
+                return _attempt(fresh=True)
+            except VDisplayError:
+                pass
+        raise exc or VDisplayError("screencast frame capture failed")
+
+    def _try_capture_single_node(
+        self,
+        index: int,
+        node_index: int,
+        timeout_s: float,
+        errors: list[str],
+    ) -> bytes | None:
+        properties: dict[str, Any] = {}
+        if index < len(self.streams):
+            properties = self.streams[index].get("properties") or {}
+        try:
+            return self._try_pipewire_node(index, timeout_s)
+        except VDisplayError as exc:
+            errors.append(f"node[{index}]={self.node_ids[index]}: {exc}")
+            if _gnome_screenshot_fallback_enabled() and index == node_index:
+                try:
+                    return _capture_via_gnome_screenshot_region(properties)
+                except VDisplayError as fb_exc:
+                    errors.append(
+                        f"node[{index}]={self.node_ids[index]} gnome-screenshot: {fb_exc}"
+                    )
+        return None
+
     def capture_png_local(
         self,
         *,
@@ -337,55 +408,9 @@ class PortalScreenCastSession:
         for index in indices:
             if index < 0 or index >= len(self.node_ids):
                 continue
-            properties: dict[str, Any] = {}
-            if index < len(self.streams):
-                properties = self.streams[index].get("properties") or {}
-            portal_id = properties.get("id")
-            fd: int | None = None
-            try:
-                fd = _screencast_pipewire_fd(self, fresh=False)
-                return _capture_pipewire_stream(
-                    pipewire_fd=fd,
-                    node_id=self.node_ids[index],
-                    target_object=_stream_serial(properties, node_id=self.node_ids[index]),
-                    portal_stream_id=str(portal_id) if portal_id is not None else None,
-                    stream_size=_stream_properties_size(properties),
-                    timeout_s=timeout_s,
-                )
-            except VDisplayError as exc:
-                errors.append(f"node[{index}]={self.node_ids[index]}: {exc}")
-                if (
-                    _gnome_screenshot_fallback_enabled()
-                    and index == node_index
-                ):
-                    try:
-                        return _capture_via_gnome_screenshot_region(properties)
-                    except VDisplayError as fb_exc:
-                        errors.append(
-                            f"node[{index}]={self.node_ids[index]} gnome-screenshot: {fb_exc}"
-                        )
-            finally:
-                if fd is not None:
-                    os.close(fd)
-                    fd = None
-            if self.pipewire_fd is not None and _pipewire_fresh_fd_enabled():
-                try:
-                    fd = _screencast_pipewire_fd(self, fresh=True)
-                    return _capture_pipewire_stream(
-                        pipewire_fd=fd,
-                        node_id=self.node_ids[index],
-                        target_object=_stream_serial(properties, node_id=self.node_ids[index]),
-                        portal_stream_id=str(portal_id) if portal_id is not None else None,
-                        stream_size=_stream_properties_size(properties),
-                        timeout_s=timeout_s,
-                    )
-                except VDisplayError as retry_exc:
-                    errors.append(
-                        f"node[{index}]={self.node_ids[index]} (fresh fd): {retry_exc}"
-                    )
-                finally:
-                    if fd is not None:
-                        os.close(fd)
+            result = self._try_capture_single_node(index, node_index, timeout_s, errors)
+            if result is not None:
+                return result
         detail = "; ".join(errors) or "no pipewire nodes"
         raise VDisplayError(f"screencast frame capture failed ({detail})")
 
@@ -714,6 +739,17 @@ def screencast_stream_region(session: PortalScreenCastSession | None) -> dict[st
     return _stream_properties_region(streams[0].get("properties") or {})
 
 
+def _rect_overlap_area(
+    ax: int, ay: int, aw: int, ah: int,
+    bx: int, by: int, bw: int, bh: int,
+) -> int:
+    ix = max(ax, bx)
+    iy = max(ay, by)
+    ir = min(ax + aw, bx + bw)
+    ib = min(ay + ah, by + bh)
+    return max(0, ir - ix) * max(0, ib - iy)
+
+
 def screencast_stream_region_for_monitor(
     session: PortalScreenCastSession | None,
     monitor: dict[str, Any],
@@ -738,15 +774,10 @@ def screencast_stream_region_for_monitor(
         region = _stream_properties_region(stream.get("properties") or {})
         if region is None:
             continue
-        sx = region["x"]
-        sy = region["y"]
-        sw = region["width"]
-        sh = region["height"]
-        ix = max(mx, sx)
-        iy = max(my, sy)
-        ir = min(mx + mw, sx + sw)
-        ib = min(my + mh, sy + sh)
-        area = max(0, ir - ix) * max(0, ib - iy)
+        area = _rect_overlap_area(
+            mx, my, mw, mh,
+            region["x"], region["y"], region["width"], region["height"],
+        )
         if area > best_area:
             best_area = area
             best = region

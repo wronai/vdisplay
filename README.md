@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.23-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$15.05-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-13.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.24-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$15.58-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-14.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $15.0469 (27 commits)
-- 👤 **Human dev:** ~$1360 (13.6h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $15.5792 (28 commits)
+- 👤 **Human dev:** ~$1464 (14.6h @ $100/h, 30min dedup)
 
 Generated on 2026-06-11 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -150,10 +150,20 @@ vdisplay control click --role button --name Save --verify
 ## vdisplay-agent broker
 
 ```bash
+# Terminal 1 — same GNOME session
+export PYTHONPATH=src:packages/vdisplay-agent/src
 vdisplay-agent serve --port 8765
+
+# Terminal 2
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
-vdisplay agent screencast start   # Wayland portal — once per session
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay agent preflight
+vdisplay agent screencast start --force   # portal → All Screens
+vdisplay screenshot -o /tmp/host.png --source DP-1
 ```
+
+**GNOME Wayland 3-monitor:** [docs/guides/gnome-wayland-screencast.md](docs/guides/gnome-wayland-screencast.md)  
+**Dev automation on this PC:** [examples/dev-workflow/](examples/dev-workflow/)
 
 Full API: [docs/agent-broker.md](docs/agent-broker.md) · Guide: [docs/guides/agent-broker.md](docs/guides/agent-broker.md)
 

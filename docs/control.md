@@ -271,6 +271,13 @@ def capture_multimon(...) -> dict: ...
 
 **Kryterium done:** zero regresji w 122+ testach; `host.py` < 200 ln (reszta w submodułach).
 
+**Recent updates (keeper/multi-monitor era for full desktop dev loop via vdisplay):**
+- Increased default AT-SPI subprocess timeout to 30s (`VDISPLAY_ATSPI_TIMEOUT_S`) and lowered `max-depth` default for `control list` in agent (to 4) to prevent 12s timeouts on complex Wayland desktops with many mutter helpers/XWayland frames.
+- AT-SPI calls for control are routed through wrappers to keep sync ops off asyncio loops where relevant.
+- Combined with screencast keeper: observe any source (e.g. DP-1 via `--source`, correct region now reported thanks to `screencast_stream_region_for_index` preference) while controlling via AT-SPI or vision.
+- Self-hosting development of vdisplay itself: `vdisplay app open cursor` (or code/pycharm), `screenshot --source DP-1` for "eyes" (with img2nl), `control find --role entry --text-contains "Chat"` using shipped selectors + vision fallback for native Wayland UIs. See updated `packages/vdisplay-agent/README.md` for the full "używaj tego komputera do rozwoju vdisplay poprzez vdisplay" example.
+- For native Wayland apps (Cursor, etc.): vision + GUI maps preferred over pure AT-SPI (as documented in app registry).
+
 ---
 
 ### 6.2 `control/*` — **nowa domena (Sprint 1 priorytet)**

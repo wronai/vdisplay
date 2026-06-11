@@ -257,7 +257,8 @@ def _is_valid_planfile_action(source: str, action: str, labels: set[str]) -> boo
     return bool(labels & {"desktop", "automation", "vdisplay"})
 
 
-def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) -> AutoTask | None:
+def _validate_mapping_task(item: dict[str, Any], source: str) -> str | None:
+    """Return the command string if the mapping item is a valid runnable task, else None."""
     command = _mapping_command(item)
     if not command:
         return None
@@ -271,6 +272,14 @@ def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) ->
         return None
     if not _is_valid_planfile_action(source, action, labels):
         return None
+    return command
+
+
+def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) -> AutoTask | None:
+    command = _validate_mapping_task(item, source)
+    if not command:
+        return None
+    status = str(item.get("status") or "todo").lower()
     return AutoTask(
         id=str(item.get("id") or default_id),
         title=str(item.get("title") or item.get("name") or default_id),

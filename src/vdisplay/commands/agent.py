@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import os
+from typing import Any, Callable
 
 from ..exceptions import VDisplayError
 from .io import print_json
@@ -153,6 +154,16 @@ def _handle_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def _preflight_next_steps(ready: bool, keeper_ready: bool) -> str:
+    if ready and keeper_ready:
+        return "vdisplay agent screencast probe --source DP-1"
+    if ready and not keeper_ready:
+        return "restart vdisplay-agent serve, then: vdisplay agent screencast start --force"
+    if not ready:
+        return "vdisplay agent screencast start --force"
+    return "vdisplay agent screencast probe --via-agent --source DP-1"
+
+
 def _handle_preflight() -> int:
     from ..capture.portal_screencast import ensure_portal_session_env, portal_session_env_status
     from ..capture.screencast_keeper import keeper_capture_ready, read_keeper_state
@@ -192,19 +203,7 @@ def _handle_preflight() -> int:
                 "pid": keeper_state.get("pid"),
                 "socket_path": keeper_state.get("socket_path"),
             },
-            "next": (
-                "vdisplay agent screencast probe --source DP-1"
-                if ready and keeper_ready
-                else (
-                    "restart vdisplay-agent serve, then: vdisplay agent screencast start --force"
-                    if ready and not keeper_ready
-                    else (
-                        "vdisplay agent screencast start --force"
-                        if not ready
-                        else "vdisplay agent screencast probe --via-agent --source DP-1"
-                    )
-                )
-            ),
+            "next": _preflight_next_steps(ready, keeper_ready),
         }
     )
     return 0 if ok else 1
@@ -237,74 +236,96 @@ def _handle_browser_open(args: argparse.Namespace) -> int:
     return 0
 
 
-def _handle_screencast(args: argparse.Namespace) -> int:
-    fast = _agent_client(timeout=5.0)
-    if args.sc_action == "start":
-        force = bool(getattr(args, "force", False))
-        multiple = False if args.single_monitor else True
-        if args.no_interactive:
-            print_json(
-                _agent_client(timeout=120.0).start_screencast(
-                    interactive=False,
-                    timeout_s=args.timeout,
-                    multiple=multiple,
-                )
-            )
-            return 0
-
-        from ..application.services.screencast_cli import start_screencast_via_agent
-        from ..capture.screencast_keeper import keeper_capture_ready, read_keeper_state
-
-        status = fast.screencast_status()
-        state = read_keeper_state() or {}
-        will_reuse = (
-            status.get("active")
-            and status.get("ready")
-            and not force
-            and keeper_capture_ready(state)
-        )
-        if not will_reuse:
-            import sys
-
-            print(
-                "vdisplay: waiting for GNOME Screen Recording portal — choose All Screens",
-                file=sys.stderr,
-            )
+def _screencast_start(args: argparse.Namespace, fast) -> int:
+    force = bool(getattr(args, "force", False))
+    multiple = False if args.single_monitor else True
+    if args.no_interactive:
         print_json(
-            start_screencast_via_agent(
-                _agent_client(timeout=120.0),
-                interactive=True,
+            _agent_client(timeout=120.0).start_screencast(
+                interactive=False,
                 timeout_s=args.timeout,
                 multiple=multiple,
-                force=force,
             )
         )
         return 0
-    if args.sc_action == "stop":
-        from ..capture.screencast_keeper import stop_keeper
 
-        stop_keeper()
-        print_json(fast.stop_screencast())
-        return 0
-    if args.sc_action == "clear-cooldown":
-        from ..application.services.screencast_cli import clear_local_start_cooldown
+    from ..application.services.screencast_cli import start_screencast_via_agent
+    from ..capture.screencast_keeper import keeper_capture_ready, read_keeper_state
 
-        clear_local_start_cooldown()
-        print_json({"ok": True, "cleared": True})
-        return 0
-    if args.sc_action == "status":
-        print_json(fast.screencast_status())
-        return 0
-    if args.sc_action == "probe":
-        from ..application.services.screencast_cli import probe_screencast_capture
+    status = fast.screencast_status()
+    state = read_keeper_state() or {}
+    will_reuse = (
+        status.get("active")
+        and status.get("ready")
+        and not force
+        and keeper_capture_ready(state)
+    )
+    if not will_reuse:
+        import sys
 
-        print_json(
-            probe_screencast_capture(
-                source=getattr(args, "source", None) or "DP-1",
-                via_agent=bool(getattr(args, "via_agent", False)),
-                client=_agent_client(timeout=120.0) if getattr(args, "via_agent", False) else None,
-                output=getattr(args, "output", None),
-            )
+        print(
+            "vdisplay: waiting for GNOME Screen Recording portal — choose All Screens",
+            file=sys.stderr,
         )
-        return 0
-    raise VDisplayError(f"unsupported screencast action: {args.sc_action}")
+    print_json(
+        start_screencast_via_agent(
+            _agent_client(timeout=120.0),
+            interactive=True,
+            timeout_s=args.timeout,
+            multiple=multiple,
+            force=force,
+        )
+    )
+    return 0
+
+
+def _screencast_stop(fast) -> int:
+    from ..capture.screencast_keeper import stop_keeper
+
+    stop_keeper()
+    print_json(fast.stop_screencast())
+    return 0
+
+
+def _screencast_clear_cooldown() -> int:
+    from ..application.services.screencast_cli import clear_local_start_cooldown
+
+    clear_local_start_cooldown()
+    print_json({"ok": True, "cleared": True})
+    return 0
+
+
+def _screencast_status(fast) -> int:
+    print_json(fast.screencast_status())
+    return 0
+
+
+def _screencast_probe(args: argparse.Namespace) -> int:
+    from ..application.services.screencast_cli import probe_screencast_capture
+
+    print_json(
+        probe_screencast_capture(
+            source=getattr(args, "source", None) or "DP-1",
+            via_agent=bool(getattr(args, "via_agent", False)),
+            client=_agent_client(timeout=120.0) if getattr(args, "via_agent", False) else None,
+            output=getattr(args, "output", None),
+        )
+    )
+    return 0
+
+
+_SCREENCAST_ACTIONS: dict[str, Callable[[argparse.Namespace, Any], int]] = {
+    "start": _screencast_start,
+    "stop": lambda args, fast: _screencast_stop(fast),
+    "clear-cooldown": lambda args, fast: _screencast_clear_cooldown(),
+    "status": lambda args, fast: _screencast_status(fast),
+    "probe": lambda args, fast: _screencast_probe(args),
+}
+
+
+def _handle_screencast(args: argparse.Namespace) -> int:
+    fast = _agent_client(timeout=5.0)
+    handler = _SCREENCAST_ACTIONS.get(args.sc_action)
+    if handler is None:
+        raise VDisplayError(f"unsupported screencast action: {args.sc_action}")
+    return handler(args, fast)

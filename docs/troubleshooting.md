@@ -197,12 +197,67 @@ In some environments, clipboard utilities like `wl-copy` or `xclip` can hang dur
 Start agent **before** screencast, and screencast **after** agent is running:
 
 ```bash
-vdisplay-agent serve &
-sleep 2
-vdisplay agent screencast start
+# Terminal 1
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay-agent serve
+
+# Terminal 2
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay agent screencast start --force
 ```
 
-Full guide: [vision-only-wayland.md](vision-only-wayland.md) · [gui-map-pack.md](../examples/control-plane/gui-map-pack.md)
+Full guide: [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) · [vision-only-wayland.md](vision-only-wayland.md)
+
+### `vdisplay-agent unreachable`
+
+The broker is not running. Start it in a **local GNOME terminal** (Terminal 1):
+
+```bash
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay-agent serve
+curl -s http://127.0.0.1:8765/health
+```
+
+### Keeper not running / capture socket unavailable
+
+Symptoms: `probe` fails, `keeper_managed: false`, or `POST /capture/frame` 500.
+
+```bash
+pkill -f screencast_keeper 2>/dev/null || true
+vdisplay agent screencast start --force
+vdisplay agent screencast status | jq '{ready, keeper_pid, keeper_socket_path}'
+vdisplay agent screencast probe --source DP-1
+```
+
+Keeper state: `$XDG_RUNTIME_DIR/vdisplay-screencast-keeper.json`  
+Socket: `$XDG_RUNTIME_DIR/vdisplay-screencast.sock`
+
+### Wrong monitor in screenshot
+
+Portal stream order varies per session. vdisplay matches by geometry — if content looks wrong:
+
+```bash
+vdisplay agent screencast status | jq '.streams'
+vdisplay monitors | jq '.monitors[] | {name, geometry, rotation}'
+vdisplay agent screencast probe --source DP-1
+vdisplay agent screencast probe --source DP-2
+```
+
+Restart with `--force` if keeper reused a stale session.
+
+### Corrupt `agent-tasks.db` on shutdown
+
+Symptoms: `sqlite3.DatabaseError: file is not a database` during agent shutdown.
+
+```bash
+file ~/.cache/vdisplay/agent-tasks.db   # must say "SQLite 3.x database"
+# if corrupt:
+mv ~/.cache/vdisplay/agent-tasks.db ~/.cache/vdisplay/agent-tasks.db.bak
+vdisplay-agent serve   # recreates fresh DB
+```
+
+Current builds recover automatically; upgrade if shutdown still crashes.
 
 ### REST `POST /v1/dsl` returns 422
 

@@ -1,12 +1,12 @@
-# redup/duplication | 53 groups | 271f 42019L | 2026-06-11
+# redup/duplication | 53 groups | 271f 42260L | 2026-06-11
 
 SUMMARY:
   files_scanned: 271
-  total_lines:   42019
+  total_lines:   42260
   dup_groups:    53
   dup_fragments: 124
   saved_lines:   511
-  scan_ms:       3437
+  scan_ms:       3363
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.2%)
@@ -80,7 +80,7 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/integrations/vision_backend.py:13-24  (prefer_imgl_backend)
   [7168a023bfc45913]   EXAC  _system_python  L=5 N=3 saved=10 sim=1.00
       src/vdisplay/capture/portal.py:81-85  (_system_python)
-      src/vdisplay/capture/portal_screencast.py:565-569  (_system_python)
+      src/vdisplay/capture/portal_screencast.py:590-594  (_system_python)
       src/vdisplay/control/providers/atspi.py:40-44  (_system_python)
   [074206dcbb6b73b7]   STRU  _parse_mirror  L=10 N=2 saved=10 sim=1.00
       packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:112-121  (_parse_mirror)
@@ -145,7 +145,7 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/providers/ax_impl.py:113-118  (_matches_selector)
       src/vdisplay/control/providers/uia_impl.py:108-113  (_matches_selector)
   [5177a541164fa53c]   EXAC  _vdisplay_src_path  L=5 N=2 saved=5 sim=1.00
-      src/vdisplay/capture/portal_screencast.py:1502-1506  (_vdisplay_src_path)
+      src/vdisplay/capture/portal_screencast.py:1533-1537  (_vdisplay_src_path)
       src/vdisplay/control/providers/atspi.py:47-51  (_vdisplay_src_path)
   [5fc23137774f78a9]   STRU  _get_name_safe  L=5 N=2 saved=5 sim=1.00
       brain/scratch_find_pycharm_chat.py:16-20  (_get_name_safe)
@@ -187,8 +187,8 @@ DUPLICATES[53] (ranked by impact):
       src/vdisplay/control/providers/vision/provider.py:719-721  (bounds)
       src/vdisplay/control/providers/x11.py:105-107  (bounds)
   [86158c04b60bf77f]   STRU  _pipewire_force_caps  L=3 N=2 saved=3 sim=1.00
-      src/vdisplay/capture/portal_screencast.py:507-509  (_pipewire_force_caps)
-      src/vdisplay/capture/portal_screencast.py:598-600  (_pipewire_fresh_fd_enabled)
+      src/vdisplay/capture/portal_screencast.py:532-534  (_pipewire_force_caps)
+      src/vdisplay/capture/portal_screencast.py:623-625  (_pipewire_fresh_fd_enabled)
   [2bae6c54b401ddd7]   STRU  vision_llm_fallback_enabled  L=3 N=2 saved=3 sim=1.00
       src/vdisplay/control/vision_llm.py:73-75  (vision_llm_fallback_enabled)
       src/vdisplay/control/vision_llm.py:78-80  (vision_llm_enrich_enabled)

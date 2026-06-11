@@ -120,6 +120,65 @@ def list_auto_tasks(
     }
 
 
+def _update_task_status(
+    task: AutoTask,
+    result: ExecuteResult,
+    pf: Any | None,
+    project: Path,
+    planfile: str | Path | None,
+) -> None:
+    if pf is not None and task.ticket_id:
+        note = result.output or result.error or result.method
+        if result.ok:
+            pf.complete_ticket(task.ticket_id, note=note[:4000])
+        else:
+            pf.fail_ticket(task.ticket_id, error=note[:4000])
+    elif task.source.startswith("planfile.yaml"):
+        yaml_path = resolve_planfile_path(project, planfile)
+        if yaml_path.is_file():
+            write_yaml_task_status(
+                yaml_path,
+                task.id,
+                status="done" if result.ok else "failed",
+                note=result.output or result.error,
+            )
+
+
+def _planfile_for_task(task: AutoTask, project: Path, dry_run: bool) -> Any:
+    if task.source == ".planfile" and task.ticket_id and not dry_run:
+        return _planfile_client(project)
+    return None
+
+
+def _build_execute_payload(result: ExecuteResult, task: AutoTask) -> dict[str, Any]:
+    return {
+        "ok": result.ok,
+        "task": task.to_dict(),
+        "method": result.method,
+        "output": result.output,
+        "error": result.error,
+        "exit_code": result.exit_code,
+    }
+
+
+def _handle_execute_exception(
+    task: AutoTask,
+    pf: Any,
+    exc: Exception,
+) -> dict[str, Any]:
+    if pf is not None and task.ticket_id:
+        try:
+            pf.fail_ticket(task.ticket_id, error=str(exc))
+        except Exception:
+            pass
+    return {
+        "ok": False,
+        "task": task.to_dict(),
+        "method": "error",
+        "error": str(exc),
+    }
+
+
 def _execute_one(
     task: AutoTask,
     *,
@@ -128,10 +187,7 @@ def _execute_one(
     dry_run: bool,
     assigned_to: str,
 ) -> dict[str, Any]:
-    ticket_mode = task.source == ".planfile" and task.ticket_id
-    pf = None
-    if ticket_mode and not dry_run:
-        pf = _planfile_client(project)
+    pf = _planfile_for_task(task, project, dry_run)
 
     try:
         if pf is not None:
@@ -139,47 +195,15 @@ def _execute_one(
             pf.start_ticket(task.ticket_id)
 
         result = execute_task_command(task.command, project=str(project), dry_run=dry_run)
-        payload = {
-            "ok": result.ok,
-            "task": task.to_dict(),
-            "method": result.method,
-            "output": result.output,
-            "error": result.error,
-            "exit_code": result.exit_code,
-        }
+        payload = _build_execute_payload(result, task)
 
         if dry_run:
             return payload
 
-        if pf is not None and task.ticket_id:
-            note = result.output or result.error or result.method
-            if result.ok:
-                pf.complete_ticket(task.ticket_id, note=note[:4000])
-            else:
-                pf.fail_ticket(task.ticket_id, error=note[:4000])
-        elif task.source.startswith("planfile.yaml"):
-            yaml_path = resolve_planfile_path(project, planfile)
-            if yaml_path.is_file():
-                write_yaml_task_status(
-                    yaml_path,
-                    task.id,
-                    status="done" if result.ok else "failed",
-                    note=result.output or result.error,
-                )
-
+        _update_task_status(task, result, pf, project, planfile)
         return payload
     except Exception as exc:
-        if pf is not None and task.ticket_id:
-            try:
-                pf.fail_ticket(task.ticket_id, error=str(exc))
-            except Exception:
-                pass
-        return {
-            "ok": False,
-            "task": task.to_dict(),
-            "method": "error",
-            "error": str(exc),
-        }
+        return _handle_execute_exception(task, pf, exc)
 
 
 def _planfile_client(project: Path) -> Any:

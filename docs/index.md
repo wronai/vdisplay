@@ -19,7 +19,8 @@
 | [guides/agent-broker.md](guides/agent-broker.md) | Local vs broker? Screencast order? |
 | [guides/web-console.md](guides/web-console.md) | Multi-monitor web dashboard at `/web`? |
 | [guides/desktop-control-today.md](guides/desktop-control-today.md) | What works today, gaps, PyCharm prompt, koru fallback |
-| [guides/wayland-control.md](guides/wayland-control.md) | Native Wayland / PyCharm / canvas? |
+| `guides/wayland-control.md` | Native Wayland / PyCharm / canvas? |
+| [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) | Multi-monitor screencast (keeper, DP-1/DP-2/HDMI-1)? |
 | [guides/gui-map-pack.md](guides/gui-map-pack.md) | Build and refresh GUI map? |
 | [guides/vision-fallback.md](guides/vision-fallback.md) | OCR verify + vision LLM? |
 | [guides/browser-control.md](guides/browser-control.md) | Playwright DOM control? |

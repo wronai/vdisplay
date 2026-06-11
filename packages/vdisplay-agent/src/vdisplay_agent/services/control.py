@@ -75,7 +75,7 @@ def list_controls(body: dict[str, Any]) -> dict[str, Any]:
         window_id=body.get("window_id"),
         app=body.get("app"),
         backend=str(body.get("backend") or "auto"),
-        max_depth=int(body.get("max_depth") or 8),
+        max_depth=int(body.get("max_depth") or 4),  # lower default for list to avoid long AT-SPI snapshots on complex Wayland desktops
         format=str(body.get("format") or "flat"),
         session_id=body.get("session_id"),
     )

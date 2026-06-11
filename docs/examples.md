@@ -12,6 +12,7 @@ Back to [documentation index](index.md) · [start-here.md](start-here.md) · [gu
 | GUI Map Pack (vision-only Wayland) | [control-plane/gui-map-pack.md](../examples/control-plane/gui-map-pack.md) |
 | Mirror host desktop to second output | [host-mirror](../examples/host-mirror/) |
 | Hide window off-screen (relay) | [host-relay](../examples/host-relay/) |
+| **Develop vdisplay on GNOME Wayland 3-monitor PC** | [dev-workflow](../examples/dev-workflow/) |
 | Custom control provider plugin | [control-plugin](../examples/control-plugin/) |
 
 ## Desktop host — vdisplay-agent (recommended)
@@ -33,13 +34,21 @@ export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 python3 examples/agent-broker/broker_demo.py
 ```
 
-On **GNOME Wayland**, host screenshots need a one-time ScreenCast session:
+On **GNOME Wayland**, host screenshots need agent + keeper screencast:
 
 ```bash
-curl -X POST http://127.0.0.1:8765/session/screencast/start \
-  -H 'content-type: application/json' -d '{"interactive": true}'
+# Terminal 1
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay-agent serve --port 8765
+
+# Terminal 2
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+export PYTHONPATH=src:packages/vdisplay-agent/src
+vdisplay agent screencast start --force   # portal → All Screens
 vdisplay screenshot -o /tmp/host.png --source DP-1
 ```
+
+Full guide: [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) · Automation: [examples/dev-workflow](../examples/dev-workflow/)
 
 Files: `broker_demo.py`, `run.sh`, `README.md`
 

@@ -568,6 +568,31 @@ class VerifierPipeline:
 
         return self._run_ocr_anchor_match(after_png, after_meta, anchor_label, spec.min_confidence)
 
+    def _aggregate_vision(
+        self,
+        *,
+        ctx: VerifyContext,
+        semantic_ok: bool | None,
+        visual_ok: bool | None,
+    ) -> tuple[bool, float, list[str]]:
+        verified = bool(semantic_ok) or bool(visual_ok)
+        confidence = 0.9 if verified else 0.0
+        reasons = []
+        if semantic_ok:
+            reasons.append("semantic verify passed")
+        if visual_ok:
+            reasons.append("visual verify passed")
+        if not verified:
+            reasons.append("both semantic and visual verify failed")
+        return verified, confidence, reasons
+
+    @staticmethod
+    def _is_vision_action(ctx: VerifyContext) -> bool:
+        return (
+            getattr(ctx.action_provider, "name", None) == "vision"
+            or (ctx.target and (ctx.target.backend == "vision" or ctx.target.id.startswith("map:")))
+        )
+
     def _aggregate(
         self,
         *,
@@ -581,21 +606,8 @@ class VerifierPipeline:
         visual_payload: dict[str, Any] | None,
     ) -> tuple[bool | None, float, list[str]]:
         if verify_semantic and verify_screenshot:
-            is_vision_action = (
-                getattr(ctx.action_provider, "name", None) == "vision"
-                or (ctx.target and (ctx.target.backend == "vision" or ctx.target.id.startswith("map:")))
-            )
-            if is_vision_action:
-                verified = bool(semantic_ok) or bool(visual_ok)
-                confidence = 0.9 if verified else 0.0
-                reasons = []
-                if semantic_ok:
-                    reasons.append("semantic verify passed")
-                if visual_ok:
-                    reasons.append("visual verify passed")
-                if not verified:
-                    reasons.append("both semantic and visual verify failed")
-                return verified, confidence, reasons
+            if self._is_vision_action(ctx):
+                return self._aggregate_vision(ctx=ctx, semantic_ok=semantic_ok, visual_ok=visual_ok)
             return _aggregate_dual(semantic_ok, visual_ok)
 
         if verify_screenshot and not verify_semantic:

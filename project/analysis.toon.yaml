@@ -1,29 +1,19 @@
-# code2llm | 339f 49178L | python:273,json:26,toml:11,shell:7,yaml:6,yml:5,proto:4,txt:2 | 2026-06-11
-# generated in 0.21s
-# CC̅=4.0 | critical:16/2131 | dups:0 | cycles:0
+# code2llm | 341f 49725L | python:273,json:26,toml:11,shell:8,yaml:7,yml:5,proto:4,txt:2 | 2026-06-11
+# generated in 0.13s
+# CC̅=3.9 | critical:6/2161 | dups:0 | cycles:0
 
-HEALTH[16]:
+HEALTH[6]:
   🟡 CC    send_ide_prompt CC=15 (limit:15)
-  🟡 CC    _handle_preflight CC=16 (limit:15)
-  🟡 CC    _handle_screencast CC=15 (limit:15)
-  🟡 CC    _handle_set_value_verification CC=16 (limit:15)
-  🟡 CC    _aggregate CC=16 (limit:15)
   🟡 CC    global_region_to_capture_local CC=16 (limit:15)
-  🟡 CC    from_portal_payload CC=16 (limit:15)
-  🟡 CC    capture_png_local CC=22 (limit:15)
-  🟡 CC    screencast_stream_region_for_monitor CC=15 (limit:15)
-  🟡 CC    execute CC=15 (limit:15)
-  🟡 CC    probe_screencast_capture CC=30 (limit:15)
-  🟡 CC    apply_step_verify_drift CC=19 (limit:15)
-  🟡 CC    _execute_one CC=19 (limit:15)
-  🟡 CC    _task_from_mapping CC=22 (limit:15)
+  🟡 CC    _task_from_mapping CC=15 (limit:15)
   🟡 CC    sample_pointer CC=16 (limit:15)
   🟡 CC    _drift_recommends_refresh CC=16 (limit:15)
+  🟡 CC    screencast_stream_region_for_monitor CC=15 (limit:15)
 
 REFACTOR[1]:
-  1. split 16 high-CC methods  (CC>15)
+  1. split 6 high-CC methods  (CC>15)
 
-PIPELINES[815]:
+PIPELINES[826]:
   [1] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
       PURITY: 100% pure
   [2] Src [main]: main → _main_legacy → execute_dsl_line → dispatch → ...(5 more)
@@ -127,17 +117,17 @@ PIPELINES[815]:
 
 LAYERS:
   src/                            CC̄=4.1    ←in:0  →out:0
-  │ !! portal_screencast         1555L  1C   72m  CC=22     ←13
+  │ !! portal_screencast         1586L  1C   77m  CC=15     ←13
   │ !! control                   1081L  0C   34m  CC=14     ←0
   │ !! scoring                    811L  2C   40m  CC=12     ←6
   │ !! session_recorder           763L  3C   34m  CC=14     ←6
   │ !! provider                   724L  1C   37m  CC=12     ←0
   │ !! screencast_keeper          694L  0C   32m  CC=13     ←5
-  │ !! verifier                   647L  3C   30m  CC=16     ←1
+  │ !! verifier                   659L  3C   32m  CC=14     ←1
   │ !! ide_prompt                 601L  0C   17m  CC=15     ←13
-  │ !! verify                     519L  0C   21m  CC=16     ←1
+  │ !! verify                     524L  0C   23m  CC=12     ←1
+  │ !! screencast_crop            503L  0C   16m  CC=14     ←1
   │ !! gui_map_diff               500L  3C   18m  CC=14     ←2
-  │ screencast_crop            481L  0C   15m  CC=12     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ descriptors                464L  5C   11m  CC=14     ←10
   │ desktop_apps               463L  2C   25m  CC=9      ←3
@@ -152,13 +142,14 @@ LAYERS:
   │ browser_session            351L  2C   22m  CC=11     ←5
   │ selector                   347L  1C   18m  CC=14     ←9
   │ vql_bridge                 347L  0C   20m  CC=9      ←2
-  │ !! tasks                      335L  1C   21m  CC=22     ←2
+  │ !! tasks                      344L  1C   22m  CC=15     ←2
+  │ agent                      331L  0C   13m  CC=11     ←0
   │ session                    330L  0C   12m  CC=4      ←0
   │ linux_xwd                  328L  0C   21m  CC=12     ←10
   │ parsers                    320L  0C   12m  CC=12     ←1
+  │ screencast_cli             320L  0C   15m  CC=10     ←2
   │ screenshot_verify          319L  0C   11m  CC=13     ←7
   │ map                        313L  0C    9m  CC=10     ←0
-  │ !! agent                      310L  0C    7m  CC=16     ←0
   │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
   │ pointer_probes             297L  0C   12m  CC=13     ←7
@@ -166,7 +157,6 @@ LAYERS:
   │ local                      291L  0C   21m  CC=4      ←1
   │ sampler_loop               284L  3C   13m  CC=8      ←1
   │ vision_template            280L  1C   11m  CC=11     ←5
-  │ !! screencast_cli             277L  0C   11m  CC=30     ←2
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ !! coordinate_map             271L  0C   10m  CC=16     ←4
@@ -191,13 +181,13 @@ LAYERS:
   │ portal                     221L  1C    7m  CC=11     ←2
   │ session                    216L  3C   11m  CC=11     ←2
   │ backend_scores             216L  0C   14m  CC=12     ←3
+  │ runner                     216L  1C   10m  CC=11     ←1
   │ models                     214L  3C    7m  CC=6      ←0
   │ !! observe_cache              214L  0C   13m  CC=16     ←2
   │ query                      209L  0C    6m  CC=9      ←5
   │ executor                   203L  1C    7m  CC=11     ←1
   │ browser_session_store      196L  1C   14m  CC=7      ←2
   │ api                        193L  3C   32m  CC=6      ←4
-  │ !! runner                     192L  1C    6m  CC=19     ←1
   │ models                     187L  9C    7m  CC=4      ←0
   │ retry_policy               181L  2C    9m  CC=10     ←1
   │ gui_map_export             179L  0C    7m  CC=8      ←2
@@ -215,18 +205,18 @@ LAYERS:
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
   │ routing_semantics          158L  1C    8m  CC=7      ←4
+  │ map_health_handlers        158L  0C   10m  CC=11     ←1
   │ x11                        150L  1C   13m  CC=9      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
   │ screencast_stream_matching   146L  0C   13m  CC=8      ←2
+  │ executor                   141L  0C    9m  CC=7      ←6
   │ policy                     140L  1C    4m  CC=11     ←2
   │ coordinate_rotation        140L  0C   12m  CC=11     ←0
-  │ !! map_health_handlers        139L  0C    8m  CC=19     ←1
   │ common                     137L  0C    9m  CC=2      ←10
   │ session_recorder_readme    133L  0C    8m  CC=14     ←2
   │ sampler                    132L  0C    8m  CC=9      ←0
   │ web_pointer                130L  0C    5m  CC=11     ←1
   │ client_routes              128L  0C    6m  CC=7      ←1
-  │ !! executor                   125L  0C    6m  CC=15     ←6
   │ imgl_bridge                125L  0C    7m  CC=12     ←4
   │ session_context            124L  1C    8m  CC=6      ←6
   │ registry                   117L  1C   14m  CC=3      ←4
@@ -413,6 +403,7 @@ LAYERS:
   │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=2.6    ←in:0  →out:0
+  │ planfile.yaml              287L  0C    0m  CC=0.0    ←0
   │ control_demo               172L  0C    5m  CC=6      ←0
   │ planfile-automation.yaml   170L  0C    0m  CC=0.0    ←0
   │ screenshot_meta            162L  0C    9m  CC=14     ←6
@@ -425,6 +416,7 @@ LAYERS:
   │ validate_artifacts          84L  0C    3m  CC=12     ←0
   │ agent                       73L  0C    2m  CC=4      ←0
   │ run_virtual                 63L  0C    2m  CC=4      ←0
+  │ run-dev-automation.sh       58L  0C    0m  CC=0.0    ←0
   │ broker_demo                 57L  0C    1m  CC=9      ←0
   │ run.sh                      53L  0C    1m  CC=0.0    ←0
   │ run.sh                      47L  0C    1m  CC=0.0    ←0
@@ -502,12 +494,12 @@ COUPLING:
         packages.cli2vdisplay                                                                                      2                                                                                                                                                                                                                                                                                                                             ──                             
         packages.nlp2vdisplay                            1                                                                                                                  ←1                                                                                                                                                                                                                                                                                                ──
   CYCLES: none
+  HUB: examples.common/ (fan-in=11)
+  HUB: src.vdisplay/ (fan-in=86)
   HUB: packages.dsl2vdisplay/ (fan-in=18)
   HUB: packages.vdisplay-agent/ (fan-in=5)
-  HUB: src.vdisplay/ (fan-in=86)
-  HUB: examples.common/ (fan-in=11)
-  SMELL: packages.vdisplay-agent/ fan-out=62 → split needed
   SMELL: src.vdisplay/ fan-out=18 → split needed
+  SMELL: packages.vdisplay-agent/ fan-out=62 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

@@ -105,26 +105,35 @@ def _extract_map_path(verify: dict[str, Any], event: DomainEvent, control: dict[
     return str(map_block.get("path") or event.body.get("map_path") or "")
 
 
-def apply_step_verify_drift(health: dict[str, Any], event: DomainEvent) -> None:
-    diagnostics = event.body.get("diagnostics") if isinstance(event.body.get("diagnostics"), dict) else {}
-    control = diagnostics.get("control") if isinstance(diagnostics.get("control"), dict) else {}
-    verify = _extract_verify_dict(diagnostics)
-
+def _apply_verify_drift(
+    health: dict[str, Any],
+    event: DomainEvent,
+    verify: dict[str, Any],
+    control: dict[str, Any],
+) -> None:
     map_path = _extract_map_path(verify, event, control)
     drift = verify.get("map_drift") or verify.get("gui_map_drift")
-    if map_path and isinstance(drift, dict) and drift.get("drifted"):
-        entry = ensure_map_entry(health, map_path)
-        map_block = control.get("map") if isinstance(control.get("map"), dict) else {}
-        apply_drift_payload(
-            entry,
-            occurred_at_ms=event.occurred_at_ms,
-            drift=drift,
-            scope_id=map_block.get("scope") or map_block.get("scope_id"),
-        )
+    if not map_path or not isinstance(drift, dict) or not drift.get("drifted"):
+        return
+    entry = ensure_map_entry(health, map_path)
+    map_block = control.get("map") if isinstance(control.get("map"), dict) else {}
+    apply_drift_payload(
+        entry,
+        occurred_at_ms=event.occurred_at_ms,
+        drift=drift,
+        scope_id=map_block.get("scope") or map_block.get("scope_id"),
+    )
 
+
+def _apply_layout_failure(
+    health: dict[str, Any],
+    event: DomainEvent,
+    verify: dict[str, Any],
+    control: dict[str, Any],
+    map_path: str,
+) -> None:
     if event.event_type != "ControlVerificationFailed":
         return
-
     phases = verify.get("phases") if isinstance(verify.get("phases"), list) else []
     for phase in phases:
         if not isinstance(phase, dict) or phase.get("phase") != "layout":
@@ -137,3 +146,13 @@ def apply_step_verify_drift(health: dict[str, Any], event: DomainEvent) -> None:
         entry["layout_failures"] = int(entry.get("layout_failures") or 0) + 1
         entry["refresh_required"] = True
         entry["last_layout_failure_ms"] = event.occurred_at_ms
+
+
+def apply_step_verify_drift(health: dict[str, Any], event: DomainEvent) -> None:
+    diagnostics = event.body.get("diagnostics") if isinstance(event.body.get("diagnostics"), dict) else {}
+    control = diagnostics.get("control") if isinstance(diagnostics.get("control"), dict) else {}
+    verify = _extract_verify_dict(diagnostics)
+    map_path = _extract_map_path(verify, event, control)
+
+    _apply_verify_drift(health, event, verify, control)
+    _apply_layout_failure(health, event, verify, control, map_path)

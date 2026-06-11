@@ -13,6 +13,19 @@ Consolidated reference. Package-specific vars may also appear in [agent-broker.m
 | `VDISPLAY_AGENT_BROKER` | agent only | Set to `1` inside broker — **never on clients** |
 | `VDISPLAY_AGENT_DB` | agent | Task persistence DB (default `~/.cache/vdisplay/agent-tasks.db`) |
 | `VDISPLAY_CAPTURE_ALLOW_PORTAL` | agent | Set `1` to opt in to xdg-desktop-portal capture |
+
+## Screencast / keeper (GNOME Wayland)
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `VDISPLAY_SCREENCAST_MULTIPLE` | `1` | Multi-stream portal session (All Screens) |
+| `VDISPLAY_SCREENCAST_GNOME_FALLBACK` | `1` | Portal screenshot + crop when PipeWire gst fails |
+| `VDISPLAY_KEEPER_CAPTURE_TIMEOUT_S` | `130` | Keeper IPC capture timeout (seconds) |
+| `VDISPLAY_SCREENCAST_LOCAL_START_COOLDOWN_S` | — | Cooldown between screencast starts |
+| `VDISPLAY_SCREENCAST_RECOVERY_COOLDOWN_S` | — | Auto-recovery cooldown after failed capture |
+| `VDISPLAY_SCREENCAST_CURSOR` | — | Include cursor in screencast capture |
+
+Guide: [guides/gnome-wayland-screencast.md](../guides/gnome-wayland-screencast.md)
 | `DISPLAY` | agent / local | X display (auto-resolves to `:0` on host) |
 | `VDISPLAY_SESSION_BASE` | web replay | Root directory for audit sessions (default `.vdisplay` in cwd / home) |
 | `VDISPLAY_REPLAY_DELAY_S` | replay | Pause between replayed CONTROL_* steps (default `0.25`) |
