@@ -2,9 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Any
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 from vdisplay.application.services import control as control_svc
+
+T = TypeVar("T")
+
+
+def _run_on_browser_thread(func: Callable[..., T], /, *args: Any, **kwargs: Any) -> T:
+    """Keep Playwright sync API off the FastAPI asyncio thread."""
+    from vdisplay.control.providers.browser_sync_executor import run_browser_sync
+
+    return run_browser_sync(lambda: func(*args, **kwargs))
 
 
 def _selector_kwargs(body: dict[str, Any]) -> dict[str, Any]:
@@ -59,7 +69,8 @@ def diagnose_control(
 
 
 def list_controls(body: dict[str, Any]) -> dict[str, Any]:
-    return control_svc.controls_list(
+    return _run_on_browser_thread(
+        control_svc.controls_list,
         display=body.get("display"),
         window_id=body.get("window_id"),
         app=body.get("app"),
@@ -71,7 +82,8 @@ def list_controls(body: dict[str, Any]) -> dict[str, Any]:
 
 
 def find_controls(body: dict[str, Any]) -> dict[str, Any]:
-    return control_svc.controls_find(
+    return _run_on_browser_thread(
+        control_svc.controls_find,
         display=body.get("display"),
         backend=str(body.get("backend") or "auto"),
         preview=bool(body.get("preview", False)),
@@ -82,7 +94,8 @@ def find_controls(body: dict[str, Any]) -> dict[str, Any]:
 
 
 def invoke_control(body: dict[str, Any]) -> dict[str, Any]:
-    return control_svc.control_click(
+    return _run_on_browser_thread(
+        control_svc.control_click,
         display=body.get("display"),
         backend=str(body.get("backend") or "auto"),
         verify=bool(body.get("verify", False)),
@@ -94,7 +107,8 @@ def invoke_control(body: dict[str, Any]) -> dict[str, Any]:
 
 
 def focus_control(body: dict[str, Any]) -> dict[str, Any]:
-    return control_svc.control_focus(
+    return _run_on_browser_thread(
+        control_svc.control_focus,
         display=body.get("display"),
         backend=str(body.get("backend") or "auto"),
         verify=bool(body.get("verify", False)),
@@ -104,7 +118,8 @@ def focus_control(body: dict[str, Any]) -> dict[str, Any]:
 
 
 def set_control_value(body: dict[str, Any]) -> dict[str, Any]:
-    return control_svc.control_set_value(
+    return _run_on_browser_thread(
+        control_svc.control_set_value,
         display=body.get("display"),
         backend=str(body.get("backend") or "auto"),
         verify=bool(body.get("verify", False)),

@@ -10,7 +10,6 @@ from typing import Any
 
 from fastapi.responses import JSONResponse
 from vdisplay.application.commands import CommandRequest, CommandResult, CommandVerb
-from vdisplay.application.executor import execute
 from vdisplay.application.session_recorder import extract_diagnostics, record_execution
 
 from ..audit_context import AuditContext, apply_audit_env
@@ -34,7 +33,19 @@ async def execute_audit_route(
 
     with apply_audit_env(audit):
         cmd = CommandRequest.from_agent_body(verb, body, audit=audit)
-        result = await asyncio.to_thread(execute, cmd, force_route="local")
+        started = time.perf_counter()
+        try:
+            data = await asyncio.to_thread(fallback, body)
+            if not isinstance(data, dict):
+                data = {"payload": data}
+            result = CommandResult.success(action=cmd.action, data=data)
+        except Exception as exc:
+            from vdisplay.application.errors import error_from_exception
+
+            result = CommandResult.failure(action=cmd.action, error=error_from_exception(exc))
+        duration_ms = int((time.perf_counter() - started) * 1000)
+        result.diagnostics = extract_diagnostics(result)
+        record_execution(cmd, result, route="local", duration_ms=duration_ms)
         return _json_from_command_result(action, result)
 
 
@@ -46,7 +57,10 @@ async def execute_audited_service(
     fallback: Callable[[dict[str, Any]], dict[str, Any]],
     record_verb: CommandVerb = CommandVerb.SCREENSHOT,
 ) -> JSONResponse:
-    """Record audit steps for broker-only services (capture/frame, relay, etc.)."""
+    """Record audit steps for broker-only services (capture/frame, relay, etc.).
+    Default SCREENSHOT is appropriate for /capture/frame; always pass explicit for other actions
+    (e.g. VIRTUAL_START, MIRROR, SCREENCAST_START) to keep .vdisplay session event logs accurate.
+    """
     if not audit.should_record:
         try:
             payload = await asyncio.to_thread(fallback, body)

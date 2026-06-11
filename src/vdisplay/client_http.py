@@ -40,11 +40,22 @@ class AgentHttpTransport:
         try:
             with urllib.request.urlopen(request, timeout=self.timeout) as response:
                 return response.read().decode("utf-8")
+        except TimeoutError as exc:
+            raise VDisplayError(
+                f"vdisplay-agent timed out at {self.base_url} ({method} {path}). "
+                "The broker may be hung — restart: vdisplay-agent serve"
+            ) from exc
         except urllib.error.HTTPError as exc:
             raise VDisplayError(
                 f"vdisplay-agent {method} {path}: {self.http_error_message(exc)}"
             ) from exc
         except urllib.error.URLError as exc:
+            reason = getattr(exc, "reason", exc)
+            if isinstance(reason, TimeoutError):
+                raise VDisplayError(
+                    f"vdisplay-agent timed out at {self.base_url} ({method} {path}). "
+                    "The broker may be hung — restart: vdisplay-agent serve"
+                ) from exc
             raise VDisplayError(
                 f"vdisplay-agent unreachable at {self.base_url}. "
                 "Start: vdisplay-agent serve (or vdisplay agent serve)"

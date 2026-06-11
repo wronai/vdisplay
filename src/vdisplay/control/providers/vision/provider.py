@@ -678,7 +678,14 @@ class VisionStubProvider(ControlProvider):
         # Prefer wl-copy on Wayland, xclip on X11
         if shutil.which("wl-copy"):
             try:
-                subprocess.run(["wl-copy"], input=value.encode(), check=True, timeout=15)
+                subprocess.run(
+                    ["wl-copy"],
+                    input=value.encode(),
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=True,
+                    timeout=15,
+                )
             except Exception as exc:
                 return False, f"wl-copy failed: {exc}"
         elif shutil.which("xclip"):
@@ -686,6 +693,8 @@ class VisionStubProvider(ControlProvider):
                 subprocess.run(
                     ["xclip", "-selection", "clipboard"],
                     input=value.encode(),
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                     check=True,
                     timeout=5,
                 )

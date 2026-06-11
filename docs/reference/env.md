@@ -14,6 +14,8 @@ Consolidated reference. Package-specific vars may also appear in [agent-broker.m
 | `VDISPLAY_AGENT_DB` | agent | Task persistence DB (default `~/.cache/vdisplay/agent-tasks.db`) |
 | `VDISPLAY_CAPTURE_ALLOW_PORTAL` | agent | Set `1` to opt in to xdg-desktop-portal capture |
 | `DISPLAY` | agent / local | X display (auto-resolves to `:0` on host) |
+| `VDISPLAY_SESSION_BASE` | web replay | Root directory for audit sessions (default `.vdisplay` in cwd / home) |
+| `VDISPLAY_REPLAY_DELAY_S` | replay | Pause between replayed CONTROL_* steps (default `0.25`) |
 
 ## Vision / map (Wayland)
 

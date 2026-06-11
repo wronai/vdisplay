@@ -20,7 +20,7 @@ RecoverFn = Callable[[], bool]
 
 @dataclass
 class SamplerLoopConfig:
-    interval_s: float = 1.0
+    interval_s: float = 5.0
     mode: str = "desktop"
     source: str | None = None
     display: str | None = None
@@ -28,6 +28,7 @@ class SamplerLoopConfig:
     output_dir: str = "./captures"
     max_frames: int | None = None
     dedupe: bool = True
+    all_monitors: bool = False
     width: int = 1280
     height: int = 720
     format: FrameFormat = "png"
@@ -196,7 +197,7 @@ class SamplerLoop:
         consecutive_errors = 0
 
         while not self._stop.is_set():
-            if self.config.max_frames is not None and index >= self.config.max_frames:
+            if self._should_stop_by_max_frames(index):
                 break
             try:
                 last_hash, index = self._capture_frame_iteration(out_dir, index, last_hash)
@@ -209,13 +210,16 @@ class SamplerLoop:
                 if consecutive_errors >= 3:
                     break
 
-            if self.config.max_frames is not None and index >= self.config.max_frames:
+            if self._should_stop_by_max_frames(index):
                 break
             if self._stop.wait(timeout=max(0.05, self.config.interval_s)):
                 break
 
         with self._lock:
             self.state.running = False
+
+    def _should_stop_by_max_frames(self, index: int) -> bool:
+        return self.config.max_frames is not None and index >= self.config.max_frames
 
     def _capture_frame_iteration(self, out_dir: Path, index: int, last_hash: str | None) -> tuple[str | None, int]:
         png_path = out_dir / f"frame-{index:06d}.png"

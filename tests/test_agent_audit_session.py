@@ -123,8 +123,8 @@ def test_broker_records_browser_open_with_audit_headers(
     client, _runtime = agent_client
     session_dir = tmp_path / "browser-audit"
     monkeypatch.setattr(
-        "vdisplay.application.services.session.browser_open",
-        lambda **kwargs: {
+        "vdisplay_agent.services.sessions.start_browser",
+        lambda store, **kwargs: {
             "ok": True,
             "session_id": kwargs.get("session_id") or "web-ff",
             "mode": "browser",
@@ -200,8 +200,8 @@ def test_broker_records_window_adopt_with_audit_headers(
     client, _runtime = agent_client
     session_dir = tmp_path / "adopt-audit"
     monkeypatch.setattr(
-        "vdisplay.application.services.session.relay_adopt",
-        lambda **kwargs: {"ok": True, "window_id": kwargs.get("window_id") or "win-1"},
+        "vdisplay_agent.services.relay.adopt_window",
+        lambda store, body: {"ok": True, "window_id": body.get("window_id") or "win-1"},
     )
 
     response = client.post(

@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+from .imgl_bridge import imgl_available
 from .screen_context import ScreenContext
 
 
@@ -47,63 +48,72 @@ def _environment_block(ctx: ScreenContext) -> dict[str, Any]:
     return block
 
 
-def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
-    """Build or merge a VQLProgram-compatible dict from ScreenContext."""
+def _try_from_screen_context(ctx: ScreenContext) -> dict[str, Any] | None:
     try:
         from img2vql.vdisplay_context import from_screen_context
 
         program = from_screen_context(ctx.to_dict())
-        if hasattr(program, "to_dict"):
-            payload = program.to_dict()
-            metadata = dict(payload.get("metadata") or {})
-            metadata["render_intent"] = _enrich_render_intent(
-                ctx,
-                dict(metadata.get("render_intent") or {}),
-            )
-            payload["metadata"] = metadata
-            return payload
+        if not hasattr(program, "to_dict"):
+            return None
+        payload = program.to_dict()
+        metadata = dict(payload.get("metadata") or {})
+        metadata["render_intent"] = _enrich_render_intent(
+            ctx,
+            dict(metadata.get("render_intent") or {}),
+        )
+        payload["metadata"] = metadata
+        return payload
+    except ImportError:
+        return None
+    except Exception:
+        return None
+
+
+def _try_imgl_scene(ctx: ScreenContext) -> dict[str, Any] | None:
+    imgl_scene = (ctx.imgl.get("scene") if ctx.imgl.get("ok") else None)
+    if not imgl_scene or not imgl_available():
+        return None
+    try:
+        from imgl.export.vql_adapter import scene_to_vql
+        from imgl.types import Scene
+
+        scene = Scene.from_dict(imgl_scene) if hasattr(Scene, "from_dict") else None
+        if scene is not None:
+            return scene_to_vql(scene)
+    except Exception:
+        pass
+    return None
+
+
+def _try_adopt_screenshot(ctx: ScreenContext) -> dict[str, Any] | None:
+    if not ctx.image_path or not Path(ctx.image_path).is_file():
+        return None
+    try:
+        from img2vql import adopt_screenshot
+
+        adopted = adopt_screenshot(ctx.image_path)
+        if isinstance(adopted, dict):
+            return adopted
+        if hasattr(adopted, "to_dict"):
+            return adopted.to_dict()
     except ImportError:
         pass
     except Exception:
         pass
+    return None
 
-    program: dict[str, Any] | None = None
 
-    imgl_scene = (ctx.imgl.get("scene") if ctx.imgl.get("ok") else None)
-    if imgl_scene and imgl_available():
-        try:
-            from imgl.export.vql_adapter import scene_to_vql
-            from imgl.types import Scene
+def _fallback_program(ctx: ScreenContext) -> dict[str, Any]:
+    return {
+        "version": "1.0",
+        "scene": {"width": ctx.capture.get("width", 0), "height": ctx.capture.get("height", 0)},
+        "layers": [],
+        "relations": [],
+        "metadata": {},
+    }
 
-            scene = Scene.from_dict(imgl_scene) if hasattr(Scene, "from_dict") else None
-            if scene is not None:
-                program = scene_to_vql(scene)
-        except Exception:
-            program = None
 
-    if program is None and ctx.image_path and Path(ctx.image_path).is_file():
-        try:
-            from img2vql import adopt_screenshot
-
-            adopted = adopt_screenshot(ctx.image_path)
-            if isinstance(adopted, dict):
-                program = adopted
-            elif hasattr(adopted, "to_dict"):
-                program = adopted.to_dict()
-        except ImportError:
-            pass
-        except Exception:
-            program = None
-
-    if program is None:
-        program = {
-            "version": "1.0",
-            "scene": {"width": ctx.capture.get("width", 0), "height": ctx.capture.get("height", 0)},
-            "layers": [],
-            "relations": [],
-            "metadata": {},
-        }
-
+def _assemble_metadata(ctx: ScreenContext, program: dict[str, Any]) -> dict[str, Any]:
     metadata = dict(program.get("metadata") or {})
     metadata["capture"] = _capture_block(ctx)
     metadata["environment"] = _environment_block(ctx)
@@ -116,30 +126,56 @@ def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
     if ctx.nl:
         metadata.setdefault("describe", {})["nl"] = ctx.nl
     metadata["render_intent"] = reverse_generation_descriptor(ctx)
+    return metadata
+
+
+def _try_merge_metadata(ctx: ScreenContext, metadata: dict[str, Any]) -> dict[str, Any]:
+    if not vql_available() or not ctx.image_path:
+        return metadata
+    try:
+        from img2vql.metadata import merge_program_metadata
+
+        metadata.update(merge_program_metadata(metadata, ctx.image_path))
+    except ImportError:
+        pass
+    except Exception:
+        pass
+    return metadata
+
+
+def _try_validate_metadata(program: dict[str, Any], metadata: dict[str, Any]) -> dict[str, Any]:
+    if not vql_available():
+        return metadata
+    try:
+        from vql import validate_program_metadata
+
+        issues = validate_program_metadata(program.get("metadata") or {})
+        if issues:
+            metadata["validation_issues"] = [
+                issue.to_dict() if hasattr(issue, "to_dict") else str(issue)
+                for issue in issues
+            ]
+    except Exception:
+        pass
+    return metadata
+
+
+def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
+    """Build or merge a VQLProgram-compatible dict from ScreenContext."""
+    program = _try_from_screen_context(ctx)
+    if program is not None:
+        return program
+
+    program = _try_imgl_scene(ctx)
+    if program is None:
+        program = _try_adopt_screenshot(ctx)
+    if program is None:
+        program = _fallback_program(ctx)
+
+    metadata = _assemble_metadata(ctx, program)
+    metadata = _try_merge_metadata(ctx, metadata)
+    metadata = _try_validate_metadata(program, metadata)
     program["metadata"] = metadata
-
-    if vql_available():
-        try:
-            from img2vql.metadata import merge_program_metadata
-
-            if ctx.image_path:
-                metadata.update(merge_program_metadata(metadata, ctx.image_path))
-                program["metadata"] = metadata
-        except ImportError:
-            pass
-        except Exception:
-            pass
-
-        try:
-            from vql import validate_program_metadata
-
-            issues = validate_program_metadata(program.get("metadata") or {})
-            if issues:
-                metadata["validation_issues"] = [issue.to_dict() if hasattr(issue, "to_dict") else str(issue) for issue in issues]
-                program["metadata"] = metadata
-        except Exception:
-            pass
-
     return program
 
 

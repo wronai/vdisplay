@@ -1,58 +1,58 @@
-# code2llm/evolution | 1721 func | 197f | 2026-06-10
+# code2llm/evolution | 1945 func | 223f | 2026-06-11
 # generated in 0.01s
 
 NEXT[10] (ranked by impact):
-  [1] !! SPLIT           src/vdisplay/application/session_recorder.py
-      WHY: 1018L, 3 classes, max CC=31
-      EFFORT: ~4h  IMPACT: 31558
+  [1] !! SPLIT           src/vdisplay/application/services/control.py
+      WHY: 1010L, 0 classes, max CC=14
+      EFFORT: ~4h  IMPACT: 14140
 
-  [2] !! SPLIT-FUNC      run_hmi_watch  CC=39  fan=28
-      WHY: CC=39 exceeds 15
-      EFFORT: ~1h  IMPACT: 1092
+  [2] !  SPLIT-FUNC      BrowserSessionRegistry._open  CC=20  fan=26
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 520
 
-  [3] !! SPLIT-FUNC      context_to_vql_program  CC=34  fan=29
-      WHY: CC=34 exceeds 15
-      EFFORT: ~1h  IMPACT: 986
-
-  [4] !! SPLIT-FUNC      sample_pointer  CC=31  fan=21
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 651
-
-  [5] !! SPLIT-FUNC      send_ide_prompt  CC=27  fan=23
-      WHY: CC=27 exceeds 15
-      EFFORT: ~1h  IMPACT: 621
-
-  [6] !! SPLIT-FUNC      build_map_health  CC=38  fan=16
-      WHY: CC=38 exceeds 15
-      EFFORT: ~1h  IMPACT: 608
-
-  [7] !! SPLIT-FUNC      render_readme  CC=31  fan=19
-      WHY: CC=31 exceeds 15
-      EFFORT: ~1h  IMPACT: 589
-
-  [8] !  SPLIT-FUNC      observe_screen  CC=22  fan=23
+  [3] !  SPLIT-FUNC      observe_screen  CC=22  fan=23
       WHY: CC=22 exceeds 15
       EFFORT: ~1h  IMPACT: 506
 
-  [9] !! SPLIT-FUNC      _enrich_render_intent  CC=28  fan=18
+  [4] !! SPLIT-FUNC      _enrich_render_intent  CC=28  fan=18
       WHY: CC=28 exceeds 15
       EFFORT: ~1h  IMPACT: 504
 
-  [10] !  SPLIT-FUNC      VerifierPipeline._run_ocr  CC=23  fan=20
-      WHY: CC=23 exceeds 15
-      EFFORT: ~1h  IMPACT: 460
+  [5] !  SPLIT-FUNC      execute  CC=15  fan=25
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 375
+
+  [6] !  SPLIT-FUNC      apply_step_verify_drift  CC=19  fan=16
+      WHY: CC=19 exceeds 15
+      EFFORT: ~1h  IMPACT: 304
+
+  [7] !  SPLIT-FUNC      dump_tree  CC=22  fan=13
+      WHY: CC=22 exceeds 15
+      EFFORT: ~1h  IMPACT: 286
+
+  [8] !  SPLIT-FUNC      send_ide_prompt  CC=15  fan=19
+      WHY: CC=15 exceeds 15
+      EFFORT: ~1h  IMPACT: 285
+
+  [9] !  SPLIT-FUNC      sample_pointer  CC=16  fan=16
+      WHY: CC=16 exceeds 15
+      EFFORT: ~1h  IMPACT: 256
+
+  [10] !  SPLIT-FUNC      MouseWatcher._run  CC=18  fan=14
+      WHY: CC=18 exceeds 15
+      EFFORT: ~1h  IMPACT: 252
 
 
 RISKS[3]:
   ⚠ Splitting maps/pycharm-chat.json may break 0 import paths
   ⚠ Splitting planfile.yaml may break 0 import paths
-  ⚠ Splitting src/vdisplay/application/session_recorder.py may break 46 import paths
+  ⚠ Splitting src/vdisplay/application/services/control.py may break 30 import paths
 
 METRICS-TARGET:
   CC̄:          3.9 → ≤2.7
-  max-CC:      39 → ≤19
+  max-CC:      28 → ≤14
   god-modules: 12 → 0
-  high-CC(≥15): 21 → ≤10
+  high-CC(≥15): 14 → ≤7
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -80,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=3.9 → now CC̄=3.9
+  prev CC̄=4.0 → now CC̄=3.9

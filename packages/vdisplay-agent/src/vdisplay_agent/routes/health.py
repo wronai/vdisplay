@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from collections.abc import Callable
 from typing import Any
 
@@ -23,7 +24,7 @@ def register_routes(
     check_auth: Callable[[str | None], None],
 ) -> None:
     @app.get("/health")
-    def health(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+    async def health(authorization: str | None = Header(default=None)) -> dict[str, Any]:
         check_auth(authorization)
         return success(
             S.ACTION_HEALTH,
@@ -31,7 +32,7 @@ def register_routes(
         )
 
     @app.get("/version")
-    def version(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+    async def version(authorization: str | None = Header(default=None)) -> dict[str, Any]:
         check_auth(authorization)
         return success(
             S.ACTION_VERSION,
@@ -42,35 +43,40 @@ def register_routes(
         )
 
     @app.get("/capabilities")
-    def capabilities(authorization: str | None = Header(default=None)) -> dict[str, Any]:
+    async def capabilities(authorization: str | None = Header(default=None)) -> dict[str, Any]:
         check_auth(authorization)
-        return success(S.ACTION_CAPABILITIES, broker.platform_capabilities())
+        payload = await asyncio.to_thread(broker.platform_capabilities)
+        return success(S.ACTION_CAPABILITIES, payload)
 
     @app.get("/diagnostics")
-    def diagnostics(
+    async def diagnostics(
         display: str | None = Query(default=None),
         authorization: str | None = Header(default=None),
     ) -> dict[str, Any]:
         check_auth(authorization)
-        return success(S.ACTION_DIAGNOSTICS, broker.diagnostics(display=display))
+        payload = await asyncio.to_thread(broker.diagnostics, display=display)
+        return success(S.ACTION_DIAGNOSTICS, payload)
 
     @app.get("/outputs")
-    def outputs(
+    async def outputs(
         display: str | None = Query(default=None),
         include_all: bool = Query(default=True),
         authorization: str | None = Header(default=None),
     ) -> dict[str, Any]:
         check_auth(authorization)
-        return success(
-            S.ACTION_OUTPUTS,
-            broker.outputs(display=display, include_all=include_all),
+        payload = await asyncio.to_thread(
+            broker.outputs,
+            display=display,
+            include_all=include_all,
         )
+        return success(S.ACTION_OUTPUTS, payload)
 
     @app.get("/windows")
-    def windows(
+    async def windows(
         request: Request,
         authorization: str | None = Header(default=None),
     ) -> dict[str, Any]:
         check_auth(authorization)
         params = dict(request.query_params)
-        return success(S.ACTION_WINDOWS, broker.list_windows(**params))
+        payload = await asyncio.to_thread(broker.list_windows, **params)
+        return success(S.ACTION_WINDOWS, payload)

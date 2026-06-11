@@ -78,6 +78,7 @@ vdisplay diagnose control                 # control backends + routing
 |------------|-------|
 | See desktop control status, gaps, koru integration | [guides/desktop-control-today.md](guides/desktop-control-today.md) |
 | Automate PyCharm / canvas on Wayland | [guides/wayland-control.md](guides/wayland-control.md) |
+| Monitor desktop from browser (multi-monitor console) | [guides/web-console.md](guides/web-console.md) |
 | Build persistent click targets (GUI map) | [guides/gui-map-pack.md](guides/gui-map-pack.md) |
 | OCR verify + vision LLM fallback | [guides/vision-fallback.md](guides/vision-fallback.md) |
 | Control a web app (Playwright) | [guides/browser-control.md](guides/browser-control.md) |

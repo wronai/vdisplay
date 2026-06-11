@@ -68,6 +68,24 @@ class VerificationResult:
         }
 
 
+def _resolve_verify_mode(verify_semantic: bool, verify_screenshot: bool, verify_mode: str) -> str:
+    if verify_semantic and verify_screenshot:
+        return "hybrid"
+    if verify_screenshot:
+        return "screenshot_diff"
+    if verify_mode in {
+        "semantic",
+        "hybrid",
+        "dom",
+        "anchor_visible",
+        "ocr_contains",
+        "screenshot_diff",
+        "identity+region",
+    }:
+        return "ocr_contains" if verify_mode == "identity+region" else verify_mode
+    return "semantic"
+
+
 def verify_spec_from_flags(
     *,
     verify_semantic: bool,
@@ -78,22 +96,7 @@ def verify_spec_from_flags(
 ) -> VerifySpec | None:
     if not verify_semantic and not verify_screenshot:
         return None
-    if verify_semantic and verify_screenshot:
-        mode = "hybrid"
-    elif verify_screenshot:
-        mode = "screenshot_diff"
-    elif verify_mode in {
-        "semantic",
-        "hybrid",
-        "dom",
-        "anchor_visible",
-        "ocr_contains",
-        "screenshot_diff",
-        "identity+region",
-    }:
-        mode = "ocr_contains" if verify_mode == "identity+region" else verify_mode
-    else:
-        mode = "semantic"
+    mode = _resolve_verify_mode(verify_semantic, verify_screenshot, verify_mode)
     min_change_ratio = 0.00005 if verify_screenshot else 0.02
     return VerifySpec(
         mode=mode,  # type: ignore[arg-type]
@@ -305,6 +308,7 @@ class VerifierPipeline:
         semantic_payload, semantic_ok, visual_payload, visual_ok, ocr_payload = self._evaluate_runs(ctx, spec)
 
         verified, confidence, reasons = self._aggregate(
+            ctx=ctx,
             spec=spec,
             verify_semantic=ctx.verify_semantic,
             verify_screenshot=ctx.verify_screenshot,
@@ -324,7 +328,18 @@ class VerifierPipeline:
         )
 
     def _run_semantic(self, ctx: VerifyContext) -> dict[str, Any]:
-        after_snapshot = ctx.action_provider.snapshot(
+        provider = ctx.action_provider
+        if ctx.verify_provider and ctx.verify_provider != getattr(ctx.action_provider, "name", None):
+            from .registry import default_provider_registry
+            try:
+                provider = default_provider_registry().build(
+                    ctx.verify_provider,
+                    display=ctx.display,
+                    session_id=ctx.session_id,
+                )
+            except Exception:
+                pass
+        after_snapshot = provider.snapshot(
             app=ctx.selector.app or ctx.session_id,
             window_id=ctx.selector.window_id or ctx.session_id,
         )
@@ -373,21 +388,12 @@ class VerifierPipeline:
         result["provider"] = ctx.verify_provider or getattr(ctx.action_provider, "name", "unknown")
         return result
 
-    def _run_ocr(
+    def _resolve_ocr_png(
         self,
         ctx: VerifyContext,
-        spec: VerifySpec,
         visual_payload: dict[str, Any],
-    ) -> dict[str, Any] | None:
+    ) -> tuple[bytes, dict[str, Any]]:
         after_capture = (visual_payload.get("capture") or {}).get("after")
-        if after_capture is None and ctx.before_png is None and spec.mode != "ocr_contains":
-            return None
-        from .vision_ocr import ocr_available, ocr_png
-
-        ready, reason = ocr_available()
-        if not ready:
-            return {"verified": False, "reason": reason, "method": "ocr"}
-
         after_meta: dict[str, Any] = {}
         after_png: bytes | None = None
         if isinstance(after_capture, (bytes, bytearray)):
@@ -406,7 +412,10 @@ class VerifierPipeline:
             )
             if isinstance(capture_meta, dict):
                 after_meta = {**after_meta, **capture_meta}
+        return after_png, after_meta
 
+    @staticmethod
+    def _set_ocr_sidecar_env(ctx: VerifyContext, after_meta: dict[str, Any], visual_payload: dict[str, Any]) -> None:
         sidecar_path = (
             (ctx.before_capture_meta or {}).get("screen_context_path")
             or after_meta.get("screen_context_path")
@@ -414,17 +423,38 @@ class VerifierPipeline:
         )
         if sidecar_path:
             import os
-
             os.environ.setdefault("VDISPLAY_SCREEN_CONTEXT_PATH", str(sidecar_path))
+
+    @staticmethod
+    def _crop_png_to_region(png: bytes, region: tuple[int, int, int, int]) -> bytes:
+        from PIL import Image
+        image = Image.open(io.BytesIO(png))
+        x, y, w, h = region
+        buf = io.BytesIO()
+        image.crop((x, y, x + w, y + h)).save(buf, format="PNG")
+        return buf.getvalue()
+
+    def _run_ocr(
+        self,
+        ctx: VerifyContext,
+        spec: VerifySpec,
+        visual_payload: dict[str, Any],
+    ) -> dict[str, Any] | None:
+        after_capture = (visual_payload.get("capture") or {}).get("after")
+        if after_capture is None and ctx.before_png is None and spec.mode != "ocr_contains":
+            return None
+        from .vision_ocr import ocr_available, ocr_png
+
+        ready, reason = ocr_available()
+        if not ready:
+            return {"verified": False, "reason": reason, "method": "ocr"}
+
+        after_png, after_meta = self._resolve_ocr_png(ctx, visual_payload)
+        self._set_ocr_sidecar_env(ctx, after_meta, visual_payload)
+
         region = _region_for_verify(ctx, spec)
         if region is not None:
-            from PIL import Image
-
-            image = Image.open(io.BytesIO(after_png))
-            x, y, w, h = region
-            buf = io.BytesIO()
-            image.crop((x, y, x + w, y + h)).save(buf, format="PNG")
-            after_png = buf.getvalue()
+            after_png = self._crop_png_to_region(after_png, region)
 
         boxes = ocr_png(after_png)
         text = " ".join(box.text for box in boxes)
@@ -471,6 +501,51 @@ class VerifierPipeline:
             anchor_label=anchor_label,
         )
 
+    def _run_template_match(
+        self,
+        after_png: bytes,
+        after_meta: dict[str, Any],
+        selector: ControlSelector,
+        min_confidence: float,
+    ) -> dict[str, Any]:
+        from .vision_template import template_available, template_find_selector
+        ready, reason = template_available()
+        if not ready:
+            return {"verified": False, "method": "template", "reason": reason, "capture": after_meta}
+        matches = template_find_selector(after_png, selector, threshold=min_confidence)
+        found = bool(matches)
+        return {
+            "verified": found,
+            "method": "template",
+            "confidence": float(matches[0].confidence) if matches else 0.0,
+            "match_count": len(matches),
+            "capture": after_meta,
+        }
+
+    def _run_ocr_anchor_match(
+        self,
+        after_png: bytes,
+        after_meta: dict[str, Any],
+        anchor_label: str,
+        min_confidence: float,
+    ) -> dict[str, Any]:
+        from .vision_ocr import ocr_available, ocr_png, match_selector_boxes
+        ready, reason = ocr_available()
+        if not ready:
+            return {"verified": False, "method": "ocr_anchor", "reason": reason, "capture": after_meta}
+        boxes = ocr_png(after_png)
+        matched = match_selector_boxes(boxes, ControlSelector(vision_anchor=anchor_label))
+        found = bool(matched)
+        confidence = float(matched[0].confidence) if matched else 0.0
+        return {
+            "verified": found and confidence >= min_confidence,
+            "method": "ocr_anchor",
+            "expected_text": anchor_label,
+            "confidence": confidence,
+            "match_count": len(matched),
+            "capture": after_meta,
+        }
+
     def _run_anchor_visible(self, ctx: VerifyContext, spec: VerifySpec) -> dict[str, Any]:
         """PR-22 — confirm template PNG or OCR anchor label is still visible after action."""
         after_png, after_meta = capture_control_screenshot(
@@ -480,24 +555,7 @@ class VerifierPipeline:
         )
 
         if ctx.selector.vision_template:
-            from .vision_template import template_available, template_find_selector
-
-            ready, reason = template_available()
-            if not ready:
-                return {"verified": False, "method": "template", "reason": reason, "capture": after_meta}
-            matches = template_find_selector(
-                after_png,
-                ctx.selector,
-                threshold=spec.min_confidence,
-            )
-            found = bool(matches)
-            return {
-                "verified": found,
-                "method": "template",
-                "confidence": float(matches[0].confidence) if matches else 0.0,
-                "match_count": len(matches),
-                "capture": after_meta,
-            }
+            return self._run_template_match(after_png, after_meta, ctx.selector, spec.min_confidence)
 
         anchor_label = spec.expected_text or ctx.selector.vision_anchor or ctx.verify_label
         if not anchor_label:
@@ -508,28 +566,12 @@ class VerifierPipeline:
                 "capture": after_meta,
             }
 
-        from .vision_ocr import ocr_available, ocr_png, match_selector_boxes
-
-        ready, reason = ocr_available()
-        if not ready:
-            return {"verified": False, "method": "ocr_anchor", "reason": reason, "capture": after_meta}
-
-        boxes = ocr_png(after_png)
-        matched = match_selector_boxes(boxes, ControlSelector(vision_anchor=anchor_label))
-        found = bool(matched)
-        confidence = float(matched[0].confidence) if matched else 0.0
-        return {
-            "verified": found and confidence >= spec.min_confidence,
-            "method": "ocr_anchor",
-            "expected_text": anchor_label,
-            "confidence": confidence,
-            "match_count": len(matched),
-            "capture": after_meta,
-        }
+        return self._run_ocr_anchor_match(after_png, after_meta, anchor_label, spec.min_confidence)
 
     def _aggregate(
         self,
         *,
+        ctx: VerifyContext,
         spec: VerifySpec,
         verify_semantic: bool,
         verify_screenshot: bool,
@@ -539,6 +581,21 @@ class VerifierPipeline:
         visual_payload: dict[str, Any] | None,
     ) -> tuple[bool | None, float, list[str]]:
         if verify_semantic and verify_screenshot:
+            is_vision_action = (
+                getattr(ctx.action_provider, "name", None) == "vision"
+                or (ctx.target and (ctx.target.backend == "vision" or ctx.target.id.startswith("map:")))
+            )
+            if is_vision_action:
+                verified = bool(semantic_ok) or bool(visual_ok)
+                confidence = 0.9 if verified else 0.0
+                reasons = []
+                if semantic_ok:
+                    reasons.append("semantic verify passed")
+                if visual_ok:
+                    reasons.append("visual verify passed")
+                if not verified:
+                    reasons.append("both semantic and visual verify failed")
+                return verified, confidence, reasons
             return _aggregate_dual(semantic_ok, visual_ok)
 
         if verify_screenshot and not verify_semantic:

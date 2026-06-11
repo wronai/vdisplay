@@ -14,7 +14,7 @@ from .sampler_loop import FrameFormat, SamplerLoop, SamplerLoopConfig, validate_
 
 @dataclass
 class SamplerConfig:
-    interval_s: float = 1.0
+    interval_s: float = 5.0
     mode: CaptureMode = "desktop"
     source: str | None = None
     display: str | None = None

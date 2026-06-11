@@ -21,7 +21,7 @@ def _config_from_body(body: dict[str, Any]) -> SamplerLoopConfig:
     if fmt == "jpg":
         fmt = "jpeg"
     return SamplerLoopConfig(
-        interval_s=float(body.get("interval_s") or body.get("interval") or 1.0),
+        interval_s=float(body.get("interval_s") or body.get("interval") or 5.0),
         mode=str(body.get("mode") or "desktop"),
         source=body.get("source"),
         display=body.get("display"),
@@ -29,6 +29,7 @@ def _config_from_body(body: dict[str, Any]) -> SamplerLoopConfig:
         output_dir=str(body.get("out_dir") or body.get("output_dir") or "./captures"),
         max_frames=body.get("max_frames"),
         dedupe=bool(body.get("dedupe", True)),
+        all_monitors=bool(body.get("all_monitors", False)),
         width=int(body.get("width") or 1280),
         height=int(body.get("height") or 720),
         format=fmt,  # type: ignore[arg-type]
@@ -77,25 +78,11 @@ def _capture_virtual_persistent(store: SessionStore, **kwargs: Any) -> dict[str,
 
 
 def _recover_screencast(store: SessionStore) -> bool:
-    from vdisplay.capture.portal_screencast import (
-        get_active_screencast,
-        invalidate_screencast_session,
-        start_screencast_session,
-    )
+    from .screencast_recovery import try_recover_screencast
 
-    session = store.screencast or get_active_screencast()
-    invalidate_screencast_session(session)
-    store.screencast = None
-    try:
-        new_session = start_screencast_session(
-            interactive=False,
-            timeout_s=30.0,
-            multiple=store.screencast_multiple,
-        )
-    except VDisplayError:
-        return False
-    store.screencast = new_session
-    return new_session.is_ready
+    if try_recover_screencast(store, interactive_preferred=False):
+        return store.screencast is not None and store.screencast.is_ready
+    return False
 
 
 def start_sampler(
@@ -116,6 +103,33 @@ def start_sampler(
             raise VDisplayError("sampler capture requires output path")
         if kwargs.get("mode") == "virtual":
             return _capture_virtual_persistent(store, **kwargs)
+        if config.all_monitors:
+            from pathlib import Path
+
+            from vdisplay.capture.host import capture_all_monitors
+
+            out_parent = Path(str(output)).expanduser().parent
+            out_parent.mkdir(parents=True, exist_ok=True)
+            bulk = capture_all_monitors(
+                display=kwargs.get("display"),
+                out_dir=out_parent,
+                screencast_session=store.screencast,
+            )
+            captures = list(bulk.get("captures") or [])
+            if not captures:
+                raise VDisplayError("all_monitors capture returned no frames")
+            primary = captures[0]
+            for cap in captures:
+                name = str(cap.get("monitor_name") or cap.get("source") or "monitor")
+                src = Path(str(cap.get("path") or ""))
+                if src.is_file():
+                    (out_parent / f"latest-{name}.png").write_bytes(src.read_bytes())
+            Path(str(output)).write_bytes(Path(str(primary.get("path"))).read_bytes())
+            return {
+                **primary,
+                "all_monitors": [str(c.get("monitor_name") or c.get("source") or "") for c in captures],
+                "capture_count": len(captures),
+            }
         return capture_host_to_file(
             output,
             monitor=1,

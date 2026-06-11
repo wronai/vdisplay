@@ -64,6 +64,14 @@ class AgentRuntime:
             broker_id=self.broker_id,
         )
 
+    def adopt_screencast(self, body: dict[str, Any]) -> dict[str, Any]:
+        return sessions.adopt_screencast(
+            self.store,
+            body,
+            task_store=self.task_store,
+            broker_id=self.broker_id,
+        )
+
     def stop_screencast(self) -> dict[str, Any]:
         return sessions.stop_screencast(self.store, task_store=self.task_store)
 

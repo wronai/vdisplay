@@ -9,6 +9,7 @@ from vdisplay.control.models import ControlBounds, ControlNode, ControlRole, Con
 from vdisplay.control.policy import ProviderRoutingDecision, ProviderScore
 from vdisplay.control.screenshot_verify import (
     _capture_via_agent,
+    _maybe_crop_capture,
     capture_control_screenshot,
     diff_png_bytes,
     verify_screenshot_pair,
@@ -75,6 +76,68 @@ def test_capture_via_agent_when_configured(monkeypatch: pytest.MonkeyPatch) -> N
     data, meta = captured
     assert data == png
     assert meta["method"] == "portal-screencast"
+
+
+def test_capture_via_agent_preserves_stream_region(monkeypatch: pytest.MonkeyPatch) -> None:
+    from PIL import Image
+
+    full = _png((20, 20, 20), size=(2560, 1600))
+    image = Image.open(io.BytesIO(full)).convert("RGB")
+    for x in range(2430, 2550):
+        for y in range(540, 650):
+            image.putpixel((x, y), (255, 0, 0))
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    png = buf.getvalue()
+
+    class FakeClient:
+        def capture_png_bytes(self, **kwargs):
+            return png, {
+                "method": "portal-screencast",
+                "screencast_full_frame": True,
+                "screencast_stream": True,
+                "region": {"x": 0, "y": 1932, "width": 2048, "height": 1280},
+                "width": 2560,
+                "height": 1600,
+            }
+
+    monkeypatch.setattr("vdisplay.agent_config.resolve_agent_url", lambda **kwargs: "http://127.0.0.1:8765")
+    monkeypatch.setattr("vdisplay.client.AgentClient", lambda url: FakeClient())
+
+    captured, meta = _capture_via_agent(display=":0", region=(1951, 2373, 744, 72))
+    assert captured == png
+    assert meta.get("screencast_stream_region") == {"x": 0, "y": 1932, "width": 2048, "height": 1280}
+    cropped, out_meta = _maybe_crop_capture((captured, meta), (1951, 2373, 744, 72))
+    assert out_meta.get("region_cropped_client") is True
+    assert out_meta.get("region_local", {}).get("width", 9999) < 2560
+
+
+def test_maybe_crop_capture_screencast_global_region() -> None:
+    from PIL import Image
+
+    full = _png((0, 0, 0), size=(2560, 1600))
+    image = Image.open(io.BytesIO(full)).convert("RGB")
+    for x in range(2400, 2500):
+        for y in range(540, 620):
+            image.putpixel((x, y), (255, 0, 0))
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    full = buf.getvalue()
+
+    meta = {
+        "screencast_full_frame": True,
+        "screencast_stream": True,
+        "screencast_stream_region": {"x": 0, "y": 1932, "width": 2048, "height": 1280},
+        "region": {"x": 0, "y": 1932, "width": 2048, "height": 1280},
+        "width": 2560,
+        "height": 1600,
+    }
+    cropped, out_meta = _maybe_crop_capture((full, meta), (1951, 2373, 744, 72))
+    assert out_meta.get("region_crop_failed") is not True
+    assert out_meta.get("region_cropped_client") is True
+    crop = Image.open(io.BytesIO(cropped))
+    assert crop.size[0] < 2560
+    assert crop.size[1] < 1600
 
 
 def test_capture_control_screenshot_uses_target_region() -> None:

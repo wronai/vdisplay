@@ -19,6 +19,7 @@ ACTION_RELAY_START: Final = "relay_start"
 ACTION_TERMINAL_START: Final = "terminal_start"
 ACTION_BROWSER_START: Final = "browser_start"
 ACTION_SCREENCAST_START: Final = "screencast_start"
+ACTION_SCREENCAST_ADOPT: Final = "screencast_adopt"
 ACTION_SCREENCAST_STOP: Final = "screencast_stop"
 ACTION_SCREENCAST_STATUS: Final = "screencast_status"
 ACTION_SESSION_STOP: Final = "session_stop"
@@ -47,6 +48,13 @@ ACTION_CONTROL_INVOKE: Final = "control_invoke"
 ACTION_CONTROL_FOCUS: Final = "control_focus"
 ACTION_CONTROL_SET_VALUE: Final = "control_set_value"
 
+ACTION_WEB_OVERVIEW: Final = "web_overview"
+ACTION_WEB_FRAMES: Final = "web_frames"
+ACTION_WEB_REPLAY_SESSIONS: Final = "web_replay_sessions"
+ACTION_WEB_REPLAY_START: Final = "web_replay_start"
+ACTION_WEB_REPLAY_STATUS: Final = "web_replay_status"
+ACTION_WEB_POINTER_CLICK: Final = "web_pointer_click"
+
 AGENT_ROUTES: Final = {
     "GET /health": ACTION_HEALTH,
     "GET /version": ACTION_VERSION,
@@ -60,6 +68,7 @@ AGENT_ROUTES: Final = {
     "POST /session/terminal/open": ACTION_TERMINAL_START,
     "POST /session/browser/open": ACTION_BROWSER_START,
     "POST /session/screencast/start": ACTION_SCREENCAST_START,
+    "POST /session/screencast/adopt": ACTION_SCREENCAST_ADOPT,
     "POST /session/screencast/stop": ACTION_SCREENCAST_STOP,
     "GET /session/screencast/status": ACTION_SCREENCAST_STATUS,
     "POST /session/{session_id}/stop": ACTION_SESSION_STOP,

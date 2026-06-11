@@ -271,3 +271,78 @@ def test_verifier_ocr_rescue_treats_capture_after_meta_as_dict(
     assert result.ocr is not None
     assert result.ocr.get("verified") is True
 
+
+def test_fuzzy_match_set_value_verification() -> None:
+    from vdisplay.control.verify import _handle_set_value_verification
+    from vdisplay.control.models import ControlNode, ControlRole, ControlSnapshot, ControlBounds
+
+    # Create target (map node/vision)
+    target = ControlNode(
+        id="map:chat-input",
+        backend="vision",
+        role=ControlRole.INPUT,
+        name="ai-chat-input",
+    )
+
+    # After snapshot has no node named "ai-chat-input", but has an INPUT node with expected text
+    input_node = ControlNode(
+        id="atspi:input:1",
+        backend="atspi",
+        role=ControlRole.INPUT,
+        name="",
+        text_value="Summarize open file",
+    )
+    after = ControlSnapshot(
+        backend="atspi",
+        window_id=None,
+        app_label=None,
+        nodes={"atspi:input:1": input_node},
+        root_ids=["atspi:input:1"],
+    )
+
+    res = _handle_set_value_verification(
+        after=after,
+        target=target,
+        scope_root="",
+        expected_value="Summarize open file",
+    )
+    assert res.get("text_value") is not None
+    assert res["text_value"]["after"] == "Summarize open file"
+
+
+def test_vision_dual_verify_rescue() -> None:
+    from vdisplay.control.verifier import VerifierPipeline, VerifyContext, VerifySpec
+    from vdisplay.control.models import ControlNode, ControlRole, ControlSnapshot, ControlBounds
+
+    spec = VerifySpec(mode="hybrid", expected_text="Summarize open file", min_confidence=0.8)
+
+    # Semantic verify fails, but visual verify passes
+    ctx = VerifyContext(
+        action_provider=type("FP", (), {"name": "vision"})(),
+        before_snapshot=ControlSnapshot(backend="vision", window_id=None, app_label=None, nodes={}, root_ids=[]),
+        target=ControlNode(
+            id="map:chat-input",
+            backend="vision",
+            role=ControlRole.INPUT,
+            name="ai-chat-input",
+        ),
+        action="set_value",
+        selector=ControlSelector(text_contains="Summarize open file"),
+        display=":99",
+        value="Summarize open file",
+        verify_semantic=True,
+        verify_screenshot=True,
+        verify_mode="hybrid",
+        spec=spec,
+    )
+
+    pipeline = VerifierPipeline()
+    # Mock evaluate runs: semantic fails (None/False), visual succeeds (True)
+    pipeline._run_semantic_if_needed = lambda ctx: ({"verified": False}, False)
+    pipeline._run_visual_if_needed = lambda ctx, spec, semantic_ok: ({"verified": True}, True)
+    pipeline._maybe_ocr_rescue = lambda ctx, spec, val, val_ok: (val, val_ok, None)
+
+    result = pipeline.verify_after_action(ctx)
+    assert result.verified is True
+    assert "visual verify passed" in result.reasons
+

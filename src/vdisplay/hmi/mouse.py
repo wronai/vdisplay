@@ -49,6 +49,15 @@ def _parse_device_blocks(devices_path: Path) -> list[dict[str, object]]:
     return blocks
 
 
+def _is_mouse_handler(tokens: list[str]) -> bool:
+    return any(token.startswith("mouse") for token in tokens)
+
+
+def _is_pointer_name(name: str) -> bool:
+    lowered = name.lower()
+    return any(token in lowered for token in ("mouse", "pointer", "trackball", "touchpad", "trackpoint"))
+
+
 def _mouse_device_paths(*, devices_path: Path | None = None) -> list[Path]:
     devices = devices_path or Path("/proc/bus/input/devices")
     primary: list[Path] = []
@@ -59,9 +68,8 @@ def _mouse_device_paths(*, devices_path: Path | None = None) -> list[Path]:
         handlers = str(block.get("handlers") or "")
         has_rel = bool(block.get("has_rel"))
         tokens = handlers.split()
-        lowered = name.lower()
-        has_mouse_handler = any(token.startswith("mouse") for token in tokens)
-        is_pointer_name = any(token in lowered for token in ("mouse", "pointer", "trackball", "touchpad", "trackpoint"))
+        has_mouse_handler = _is_mouse_handler(tokens)
+        is_pointer_name = _is_pointer_name(name)
         if not has_mouse_handler and not (has_rel and is_pointer_name):
             continue
         for token in tokens:
@@ -161,7 +169,7 @@ class MouseWatcher:
             pos = (self._x, self._y)
         self._queue.put(MouseMove(x=pos[0], y=pos[1], source="evdev"))
 
-    def _run(self, paths: list[Path]) -> None:
+    def _open_device_fds(self, paths: list[Path]) -> dict[int, Path] | None:
         fds: dict[int, Path] = {}
         for path in paths:
             try:
@@ -171,35 +179,49 @@ class MouseWatcher:
                     self._queue.put(
                         "mouse: permission denied for /dev/input — re-login after: sudo usermod -aG input $USER"
                     )
-                    return
+                    return None
                 continue
             fds[fd] = path
 
         if not fds:
             self._queue.put("mouse: could not open any /dev/input/event* nodes")
+            return None
+        return fds
+
+    def _process_event(self, ev_type: int, code: int, value: int) -> None:
+        if ev_type == EV_REL:
+            if code == REL_X:
+                self._apply_rel(value, 0)
+            elif code == REL_Y:
+                self._apply_rel(0, value)
+        elif ev_type == EV_ABS:
+            self._apply_abs(code, value)
+
+    def _read_events_from_fd(self, fd: int, event_struct: struct.Struct) -> bool:
+        try:
+            while True:
+                chunk = os.read(fd, event_struct.size * 64)
+                if not chunk:
+                    return True
+                for offset in range(0, len(chunk) - event_struct.size + 1, event_struct.size):
+                    _sec, _usec, ev_type, code, value = event_struct.unpack_from(chunk, offset)
+                    self._process_event(ev_type, code, value)
+        except BlockingIOError:
+            return True
+        except OSError:
+            return False
+        return True
+
+    def _run(self, paths: list[Path]) -> None:
+        fds = self._open_device_fds(paths)
+        if fds is None:
             return
 
         event_struct = struct.Struct("llHHi")
         while not self._stop.is_set():
             readable, _, _ = select.select(list(fds.keys()), [], [], 0.2)
             for fd in readable:
-                try:
-                    while True:
-                        chunk = os.read(fd, event_struct.size * 64)
-                        if not chunk:
-                            break
-                        for offset in range(0, len(chunk) - event_struct.size + 1, event_struct.size):
-                            _sec, _usec, ev_type, code, value = event_struct.unpack_from(chunk, offset)
-                            if ev_type == EV_REL:
-                                if code == REL_X:
-                                    self._apply_rel(value, 0)
-                                elif code == REL_Y:
-                                    self._apply_rel(0, value)
-                            elif ev_type == EV_ABS:
-                                self._apply_abs(code, value)
-                except BlockingIOError:
-                    continue
-                except OSError:
+                if not self._read_events_from_fd(fd, event_struct):
                     break
 
         for fd in fds:

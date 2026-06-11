@@ -125,8 +125,19 @@ def register_routes(
                 timeout_s=float(payload.get("timeout_s", 120)),
                 multiple=payload.get("multiple"),
             ),
-            record_verb=CommandVerb.SCREENSHOT,
+            record_verb=CommandVerb.SCREENCAST_START,
         )
+
+    @app.post("/session/screencast/adopt")
+    def session_screencast_adopt(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime(S.ACTION_SCREENCAST_ADOPT, broker.adopt_screencast(body))
+        except Exception as exc:
+            return json_error(S.ACTION_SCREENCAST_ADOPT, exc)
 
     @app.post("/session/screencast/stop")
     def session_screencast_stop(

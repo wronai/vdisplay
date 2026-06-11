@@ -13,6 +13,17 @@ from .routes import register_all_routes
 
 def create_app(runtime: AgentRuntime | None = None):
     os.environ["VDISPLAY_AGENT_BROKER"] = "1"
+    try:
+        from vdisplay.capture.portal_screencast import ensure_portal_session_env, portal_session_env_status
+
+        ensure_portal_session_env()
+        ok, hint = portal_session_env_status()
+        if not ok:
+            import sys
+
+            print(f"vdisplay-agent: WARN — {hint}", file=sys.stderr)
+    except Exception:
+        pass
 
     app = FastAPI(title="vdisplay-agent", version=__version__)
     broker = runtime or AgentRuntime()

@@ -4,7 +4,6 @@ import argparse
 
 from ..application.commands import CommandVerb
 from ..application.executor import execute
-from ..application.services import session as session_svc
 from ..exceptions import VDisplayError
 from .common import (
     add_control_selector_args,
@@ -91,15 +90,23 @@ def _run_control(args: argparse.Namespace, verb: CommandVerb) -> int:
 
 
 def _handle_browser_open(args: argparse.Namespace) -> int:
+    from ..application.commands import CommandRequest, CommandVerb
+
     engine = getattr(args, "vendor", None) or getattr(args, "engine", None)
-    print_json(
-        session_svc.browser_open(
-            url=args.url,
-            session_id=args.session_id,
-            headless=not getattr(args, "headed", False),
-            engine=engine,
+    result = execute(
+        CommandRequest(
+            verb=CommandVerb.BROWSER_OPEN,
+            request_source="cli",
+            browser_url=args.url,
+            browser_session_id=args.session_id,
+            browser_headless=not getattr(args, "headed", False),
+            browser_engine=engine,
         )
     )
+    print_json(result.data if result.ok else result.to_dict())
+    if not result.ok:
+        message = result.error.message if result.error else "browser open failed"
+        raise VDisplayError(message)
     return 0
 
 

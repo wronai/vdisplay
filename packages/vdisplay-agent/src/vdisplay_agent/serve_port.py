@@ -11,6 +11,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Iterable
 
 
@@ -75,6 +76,32 @@ def find_listener_pids(port: int) -> list[int]:
     return sorted({pid for pid in pids if pid != current})
 
 
+def _cmdline(pid: int) -> str:
+    try:
+        raw = Path(f"/proc/{pid}/cmdline").read_bytes()
+    except OSError:
+        return ""
+    return raw.replace(b"\x00", b" ").decode("utf-8", errors="replace").strip()
+
+
+def _is_vdisplay_agent_pid(pid: int) -> bool:
+    cmd = _cmdline(pid).lower()
+    return "vdisplay-agent" in cmd or "vdisplay_agent" in cmd
+
+
+def _partition_listener_pids(pids: Iterable[int]) -> tuple[list[int], list[int]]:
+    agent: list[int] = []
+    other: list[int] = []
+    for pid in pids:
+        if pid == os.getpid():
+            continue
+        if _is_vdisplay_agent_pid(pid):
+            agent.append(pid)
+        else:
+            other.append(pid)
+    return sorted(agent), sorted(other)
+
+
 def _probe_is_vdisplay_agent(host: str, port: int) -> bool:
     url = f"http://{host}:{port}/health"
     try:
@@ -130,8 +157,21 @@ def ensure_broker_port_free(host: str, port: int) -> None:
     if not pids:
         return
 
-    if _probe_is_vdisplay_agent(host, port):
-        stop_pids(pids, host=host, port=port)
+    agent_pids, other_pids = _partition_listener_pids(pids)
+    if agent_pids:
+        stop_pids(agent_pids, host=host, port=port)
+        try:
+            from vdisplay.agent_config import reset_agent_probe_cache
+
+            reset_agent_probe_cache()
+        except ImportError:
+            pass
+        if not find_listener_pids(port):
+            return
+        agent_pids, other_pids = _partition_listener_pids(find_listener_pids(port))
+
+    if other_pids and _probe_is_vdisplay_agent(host, port):
+        stop_pids(other_pids, host=host, port=port)
         try:
             from vdisplay.agent_config import reset_agent_probe_cache
 
@@ -140,7 +180,11 @@ def ensure_broker_port_free(host: str, port: int) -> None:
             pass
         return
 
-    raise RuntimeError(
-        f"Port {host}:{port} is already in use (pids={pids}). "
-        "Stop that process or use --port."
-    )
+    remaining = find_listener_pids(port)
+    if remaining:
+        _, foreign = _partition_listener_pids(remaining)
+        blockers = foreign or remaining
+        raise RuntimeError(
+            f"Port {host}:{port} is already in use (pids={blockers}). "
+            "Stop that process or use --port."
+        )

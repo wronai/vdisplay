@@ -1,0 +1,170 @@
+automation:
+- id: auto-monitors
+  title: List connected monitors
+  status: done
+  priority: high
+  monitor: DP-1
+  handler: vdisplay monitors
+  last_run_note: "{\n  \"requested_display\": \":0\",\n  \"resolved_display\": \"\
+    :0\",\n  \"monitor_count\": 3,\n  \"monitors\": [\n    {\n      \"name\": \"DP-2\"\
+    ,\n      \"connected\": true,\n      \"primary\": true,\n      \"geometry\": \"\
+    4320x7680+4096+0\",\n      \"monitor_index\": 0,\n      \"label\": \"DP-2\",\n\
+    \      \"geometry_mm\": \"4320/700x7680/390+4096+0\",\n      \"geometry_px\":\
+    \ \"4320x7680+4096+0\",\n      \"width\": 4320,\n      \"height\": 7680,\n   \
+    \   \"x\": 4096,\n      \"y\": 0,\n      \"rotation\": \"left\",\n      \"rotation_degrees\"\
+    : 90,\n      \"width_px\": 4320,\n      \"height_px\": 7680,\n      \"width_mm\"\
+    : 700,\n      \"height_mm\": 390,\n      \"geometry_x\": 4096,\n      \"geometry_y\"\
+    : 0,\n      \"diagonal_in\": 31.5,\n      \"monitor_id\": 0,\n      \"nl\": \"\
+    Primary monitor DP-2 (4320\\u00d77680, rotated left (90\\u00b0)). No user application\
+    \ windows detected via X11 (internal/helper windows only, or native Wayland apps\
+    \ not listed).\"\n    },\n    {\n      \"name\": \"HDMI-1\",\n      \"connected\"\
+    : true,\n      \"primary\": false,\n      \"geometry\": \"4096x2560+0+3864\",\n\
+    \      \"monitor_index\": 1,\n      \"label\": \"HDMI-1\",\n      \"geometry_mm\"\
+    : \"4096/300x2560/260+0+3864\",\n      \"geometry_px\": \"4096x2560+0+3864\",\n\
+    \      \"width\": 4096,\n      \"height\": 2560,\n      \"x\": 0,\n      \"y\"\
+    : 3864,\n      \"rotation\": \"normal\",\n      \"rotation_degrees\": 0,\n   \
+    \   \"width_px\": 4096,\n      \"height_px\": 2560,\n      \"width_mm\": 300,\n\
+    \      \"height_mm\": 260,\n      \"geometry_x\": 0,\n      \"geometry_y\": 3864,\n\
+    \      \"diagonal_in\": 15.6,\n      \"monitor_id\": 1,\n      \"nl\": \"monitor\
+    \ HDMI-1 (4096\\u00d72560). No visible application windows detected.\"\n    },\n\
+    \    {\n      \"name\": \"DP-1\",\n      \"connected\": true,\n      \"primary\"\
+    : false,\n      \"geometry\": \"4096x2560+0+1304\",\n      \"monitor_index\":\
+    \ 2,\n      \"label\": \"DP-1\",\n      \"geometry_mm\": \"4096/610x2560/350+0+1304\"\
+    ,\n      \"geometry_px\": \"4096x2560+0+1304\",\n      \"width\": 4096,\n    \
+    \  \"height\": 2560,\n      \"x\": 0,\n      \"y\": 1304,\n      \"rotation\"\
+    : \"normal\",\n      \"rotation_degrees\": 0,\n      \"width_px\": 4096,\n   \
+    \   \"height_px\": 2560,\n      \"width_mm\": 610,\n      \"height_mm\": 350,\n\
+    \      \"geometry_x\": 0,\n      \"geometry_y\": 1304,\n      \"diagonal_in\"\
+    : 27.7,\n      \"monitor_id\": 2,\n      \"nl\": \"monitor DP-1 (4096\\u00d72560).\
+    \ No user application windows detected via X11 (internal/helper windows only,\
+    \ or native Wayland apps not listed).\"\n    }\n  ]\n}"
+- id: auto-screenshot-dp1
+  title: Capture DP-1 screenshot
+  status: done
+  priority: normal
+  monitor: DP-1
+  handler: vdisplay screenshot -o /tmp/vdisplay-dp1.png --mode virtual
+  last_run_note: "{\n  \"saved\": \"/tmp/vdisplay-dp1.png\",\n  \"mode\": \"virtual\"\
+    ,\n  \"info\": {\n    \"kind\": \"virtual\",\n    \"backend\": \"linux-xvfb\"\
+    ,\n    \"active\": true,\n    \"width\": 1280,\n    \"height\": 720,\n    \"source\"\
+    : null,\n    \"target\": null,\n    \"metadata\": {\n      \"display\": \":99\"\
+    ,\n      \"owns_display\": true\n    }\n  },\n  \"img2nl\": {\n    \"ok\": true,\n\
+    \    \"text\": \"Zrzut 1280\\u00d7720 px \\u2014 wykryto 1 element\\u00f3w UI\
+    \ (window=1).\\n- okno na \\u015brodku: (0,0)\\u2013(1280,720), 1280\\u00d7720\
+    \ px, kolor #000000, pewno\\u015b\\u0107 90%\",\n    \"locale\": \"pl\",\n   \
+    \ \"scene_class\": \"vql_detection\",\n    \"source\": \"img2vql\",\n    \"metadata\"\
+    : {\n      \"detection\": {\n        \"ok\": true,\n        \"path\": \"/tmp/vdisplay-dp1.png\"\
+    ,\n        \"width\": 1280,\n        \"height\": 720,\n        \"element_count\"\
+    : 1,\n        \"by_role\": {\n          \"window\": 1\n        },\n        \"\
+    elements\": [\n          {\n            \"id\": \"window_0\",\n            \"\
+    role\": \"window\",\n            \"bbox\": [\n              0,\n             \
+    \ 0,\n              1280,\n              720\n            ],\n            \"bbox_norm\"\
+    : [\n              0.0,\n              0.0,\n              1.0,\n            \
+    \  1.0\n            ],\n            \"center\": [\n              640.0,\n    \
+    \          360.0\n            ],\n            \"width\": 1280,\n            \"\
+    height\": 720,\n            \"color\": \"#000000\",\n            \"confidence\"\
+    : 0.9,\n            \"label\": \"window region 1\",\n            \"location\"\
+    : \"center\",\n            \"metadata\": {\n              \"bbox_norm\": [\n \
+    \               0.0,\n                0.0,\n                1.0,\n           \
+    \     1.0\n              ],\n              \"area_ratio\": 1.0,\n            \
+    \  \"source\": \"color_region\"\n            }\n          }\n        ]\n     \
+    \ }\n    }\n  },\n  \"nl\": \"Zrzut 1280\\u00d7720 px \\u2014 wykryto 1 element\\\
+    u00f3w UI (window=1).\\n- okno na \\u015brodku: (0,0)\\u2013(1280,720), 1280\\\
+    u00d7720 px, kolor #000000, pewno\\u015b\\u0107 90%\",\n  \"screen_context\":\
+    \ {\n    \"fingerprint\": \"4800af851d0a98a8\",\n    \"artifacts\": {\n      \"\
+    vql\": \"/tmp/vdisplay-dp1.png.vql.json\",\n      \"context\": \"/tmp/vdisplay-dp1.png.context.json\"\
+    \n    },\n    \"nl\": \"Zrzut 1280\\u00d7720 px \\u2014 wykryto 1 element\\u00f3w\
+    \ UI (window=1).\\n- okno na \\u015brodku: (0,0)\\u2013(1280,720), 1280\\u00d7720\
+    \ px, kolor #000000, pewno\\u015b\\u0107 90%\",\n    \"path\": \"/tmp/vdisplay-dp1.png.context.json\"\
+    \n  },\n  \"screen_context_path\": \"/tmp/vdisplay-dp1.png.context.json\",\n \
+    \ \"vql\": {\n    \"path\": \"/tmp/vdisplay-dp1.png.vql.json\",\n    \"reverse\"\
+    : {\n      \"mode\": \"layout_reconstruction\",\n      \"canvas\": {\n       \
+    \ \"width\": 0,\n        \"height\": 0\n      },\n      \"nl\": \"Zrzut 1280\\\
+    u00d7720 px \\u2014 wykryto 1 element\\u00f3w UI (window=1).\\n- okno na \\u015brodku:\
+    \ (0,0)\\u2013(1280,720), 1280\\u00d7720 px, kolor #000000, pewno\\u015b\\u0107\
+    \ 90%\",\n      \"layers\": [],\n      \"prompt_block\": \"Zrzut 1280\\u00d7720\
+    \ px \\u2014 wykryto 1 element\\u00f3w UI (window=1).\\n- okno na \\u015brodku:\
+    \ (0,0)\\u2013(1280,720), 1280\\u00d7720 px, kolor #000000, pewno\\u015b\\u0107\
+    \ 90%\",\n      \"scene_class\": \"vql_detection\"\n    }\n  },\n  \"imgl\": {\n\
+    \    \"ok\": true,\n    \"element_count\": null,\n    \"window_count\": null\n\
+    \  }\n}"
+- id: auto-terminal
+  title: Open broker terminal session
+  status: done
+  priority: normal
+  handler: TERMINAL_OPEN SESSION_ID auto-shell COMMAND bash ROWS 30 COLS 120
+  last_run_note: "{\n  \"session_id\": \"auto-shell\",\n  \"mode\": \"terminal\",\n\
+    \  \"command\": \"bash\",\n  \"title\": \"bash\",\n  \"rows\": 30,\n  \"cols\"\
+    : 120,\n  \"ok\": true\n}"
+- id: auto-browser
+  title: Open example.com in Playwright
+  status: done
+  priority: normal
+  monitor: HDMI-1
+  handler: BROWSER_OPEN URL https://example.com SESSION_ID auto-web HEADED true
+  last_run_note: "{\n  \"session_id\": \"auto-web\",\n  \"mode\": \"browser\",\n \
+    \ \"url\": \"https://example.com\",\n  \"title\": \"Example Domain\",\n  \"headless\"\
+    : false,\n  \"engine\": \"chromium\",\n  \"profile_id\": \"browser_chromium\"\
+    ,\n  \"ok\": true\n}"
+- id: auto-pycharm
+  title: Send PyCharm AI prompt
+  status: done
+  priority: low
+  monitor: DP-2
+  map: maps/pycharm-chat.json
+  handler: vdisplay ide prompt --ide pycharm --map maps/pycharm-chat.json --text "Summarize
+    open file"
+  last_run_note: "{\n  \"ok\": true,\n  \"app_id\": \"pycharm\",\n  \"backend\": \"\
+    vision\",\n  \"chars\": 19,\n  \"submit\": false,\n  \"map_path\": \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\"\
+    ,\n  \"map_manifest\": \"/home/tom/github/wronai/vdisplay/maps/templates/pycharm-chat.manifest.json\"\
+    ,\n  \"wait_window\": {\n    \"ok\": false,\n    \"app_id\": \"pycharm\",\n  \
+    \  \"focused\": false,\n    \"error\": \"no control matched selector: ControlSelector(role='window',\
+    \ name=None, name_contains=None, app='pycharm', window_id=None, window_title='PyCharm',\
+    \ index=0, backend=None, environment=None, text=None, text_contains=None, value=None,\
+    \ accessibility_id=None, path=None, dom_css=None, dom_xpath=None, terminal_line=None,\
+    \ terminal_col=None, session_id=None, vision_anchor=None, vision_template=None,\
+    \ vision_anchor_rel=None, vision_target=None, vision_min_confidence=None, extra={})\"\
+    ,\n    \"timeout_seconds\": 3.0,\n    \"note\": \"continuing with GUI map (AT-SPI\
+    \ window focus not required)\"\n  },\n  \"message\": \"typed via vdisplay ide\
+    \ prompt\",\n  \"selector\": {\n    \"display\": null,\n    \"backend\": \"vision\"\
+    ,\n    \"app\": \"pycharm\",\n    \"window_title\": \"PyCharm\",\n    \"map_path\"\
+    : \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\",\n    \"map_scope\"\
+    : null,\n    \"map_target\": \"ai-chat-input\"\n  },\n  \"focus_error\": \"no\
+    \ control matched selector: ControlSelector(role='window', name=None, name_contains=None,\
+    \ app='pycharm', window_id=None, window_title='PyCharm', index=0, backend=None,\
+    \ environment=None, text=None, text_contains=None, value=None, accessibility_id=None,\
+    \ path=None, dom_css=None, dom_xpath=None, terminal_line=None, terminal_col=None,\
+    \ session_id=None, vision_anchor=None, vision_template=None, vision_anchor_rel=None,\
+    \ vision_target=None, vision_min_confidence=None, extra={})\",\n  \"typed\": {\n\
+    \    \"ok\": true,\n    \"element_id\": \"map:ai-chat-input\",\n    \"value\"\
+    : \"Summarize open file\",\n    \"method\": \"ydotool-paste\",\n    \"action\"\
+    : \"set_value\",\n    \"map_path\": \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\"\
+    ,\n    \"map_target\": \"ai-chat-input\",\n    \"selector\": {\n      \"role\"\
+    : null,\n      \"name\": null,\n      \"name_contains\": null,\n      \"app\"\
+    : null,\n      \"window_id\": null,\n      \"window_title\": null,\n      \"index\"\
+    : 0,\n      \"backend\": \"vision\",\n      \"environment\": null,\n      \"text\"\
+    : null,\n      \"text_contains\": null,\n      \"value\": null,\n      \"accessibility_id\"\
+    : null,\n      \"path\": null,\n      \"dom_css\": null,\n      \"dom_xpath\"\
+    : null,\n      \"terminal_line\": null,\n      \"terminal_col\": null,\n     \
+    \ \"session_id\": null,\n      \"vision_anchor\": \"Ask\",\n      \"vision_template\"\
+    : null,\n      \"vision_anchor_rel\": null,\n      \"vision_target\": null,\n\
+    \      \"vision_min_confidence\": null,\n      \"extra\": {\n        \"map_path\"\
+    : \"/home/tom/github/wronai/vdisplay/maps/pycharm-chat.json\",\n        \"map_target\"\
+    : \"ai-chat-input\"\n      }\n    },\n    \"target\": {\n      \"id\": \"map:ai-chat-input\"\
+    ,\n      \"backend\": \"vision\",\n      \"role\": \"input\",\n      \"name\"\
+    : \"ai-chat-input\",\n      \"description\": null,\n      \"window_id\": null,\n\
+    \      \"app_label\": null,\n      \"window_title\": null,\n      \"provider_ref\"\
+    : null,\n      \"state\": {\n        \"map\": true,\n        \"map_element_id\"\
+    : \"ai-chat-input\",\n        \"raw_bounds\": {\n          \"x\": 1540,\n    \
+    \      \"y\": 1617,\n          \"width\": 720,\n          \"height\": 24\n   \
+    \     },\n        \"action_bounds\": {\n          \"x\": 1540,\n          \"y\"\
+    : 1605,\n          \"width\": 720,\n          \"height\": 48\n        },\n   \
+    \     \"click_point\": {\n          \"x\": 1900,\n          \"y\": 1629\n    \
+    \    },\n        \"anchor\": \"Ask\",\n        \"capture\": {\n          \"bytes\"\
+    : 663827,\n          \"display\": \":0\",\n          \"height\": 1600,\n     \
+    \     \"method\": \"portal-screencast\",\n          \"monitor\": 1,\n        \
+    \  \"monitor_name\": \"DP-2\",\n          \"ok\": true,\n          \"path\": \"\
+    /tmp/vdisplay-map-lflci9zu/frame.png\",\n          \"region\": {\n           \
+    \ \"height\": 1280,\n            \"width\": 2048,\n            \"x\": 0,\n   \
+    \         \"y\": 1932\n          },\n          \"rotation\": \"left\",\n     \
+    \     \"screencast_full_frame\": true,\n          \"screenca"

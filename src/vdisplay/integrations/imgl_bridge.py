@@ -39,9 +39,12 @@ def analyze_with_imgl(
 
     from imgl import ImglConfig, analyze, scene_to_json
 
-    config = ImglConfig(
-        skip_blank_check=os.environ.get("VDISPLAY_IMGL_SKIP_BLANK", "").strip().lower() in {"1", "true", "yes"},
-    )
+    try:
+        config = ImglConfig(
+            skip_blank_check=os.environ.get("VDISPLAY_IMGL_SKIP_BLANK", "").strip().lower() in {"1", "true", "yes"},
+        )
+    except TypeError:
+        config = ImglConfig()
     lang_value = lang or os.environ.get("VDISPLAY_IMGL_LANG", "eng+pol")
 
     try:
@@ -65,9 +68,7 @@ def analyze_with_imgl(
     }
 
 
-def attach_imgl_to_context(ctx: ScreenContext, *, lang: str | None = None) -> ScreenContext:
-    if not ctx.image_path:
-        return ctx
+def _try_imgl_vdisplay_context(ctx: ScreenContext, lang: str | None) -> bool:
     try:
         from imgl.vdisplay_context import from_vdisplay_context
 
@@ -76,9 +77,17 @@ def attach_imgl_to_context(ctx: ScreenContext, *, lang: str | None = None) -> Sc
             ctx.imgl = {**ctx.imgl, **merged, "source": "imgl"}
             if merged.get("scene"):
                 ctx.imgl["scene"] = merged["scene"]
-            return ctx
+            return True
     except ImportError:
         pass
+    return False
+
+
+def attach_imgl_to_context(ctx: ScreenContext, *, lang: str | None = None) -> ScreenContext:
+    if not ctx.image_path:
+        return ctx
+    if _try_imgl_vdisplay_context(ctx, lang):
+        return ctx
     result = analyze_with_imgl(ctx.image_path, lang=lang)
     ctx.imgl = {**ctx.imgl, **result}
     if result.get("ok") and not ctx.nl:
@@ -91,26 +100,26 @@ def attach_imgl_to_context(ctx: ScreenContext, *, lang: str | None = None) -> Sc
     return ctx
 
 
-def ocr_boxes_from_imgl(image_path: str | Path, *, lang: str | None = None) -> list[Any]:
-    """Return vdisplay OcrTextBox list from IMGL scene OCR."""
+def _imgl_item_to_ocr_box(item: dict[str, Any]) -> "OcrTextBox":
     from ..control.models import ControlBounds
     from ..control.vision_ocr import OcrTextBox
 
+    bbox = item.get("bbox") or {}
+    x = int(bbox.get("x") or 0)
+    y = int(bbox.get("y") or 0)
+    w = int(bbox.get("w") or bbox.get("width") or 0)
+    h = int(bbox.get("h") or bbox.get("height") or 0)
+    return OcrTextBox(
+        text=str(item.get("text") or ""),
+        bounds=ControlBounds(x=x, y=y, width=w, height=h),
+        confidence=float(item.get("confidence") or 0.0),
+    )
+
+
+def ocr_boxes_from_imgl(image_path: str | Path, *, lang: str | None = None) -> list[Any]:
+    """Return vdisplay OcrTextBox list from IMGL scene OCR."""
     result = analyze_with_imgl(image_path, lang=lang, use_cache=True)
     if not result.get("ok"):
         raise RuntimeError(result.get("error") or "imgl analyze failed")
-    boxes: list[OcrTextBox] = []
-    for item in (result.get("scene") or {}).get("ocr_boxes") or []:
-        bbox = item.get("bbox") or {}
-        x = int(bbox.get("x") or 0)
-        y = int(bbox.get("y") or 0)
-        w = int(bbox.get("w") or bbox.get("width") or 0)
-        h = int(bbox.get("h") or bbox.get("height") or 0)
-        boxes.append(
-            OcrTextBox(
-                text=str(item.get("text") or ""),
-                bounds=ControlBounds(x=x, y=y, width=w, height=h),
-                confidence=float(item.get("confidence") or 0.0),
-            )
-        )
-    return boxes
+    items = (result.get("scene") or {}).get("ocr_boxes") or []
+    return [_imgl_item_to_ocr_box(item) for item in items]

@@ -20,21 +20,29 @@ def describe_backend() -> str:
     return os.environ.get("VDISPLAY_DESCRIBE_BACKEND", "auto").strip().lower() or "auto"
 
 
-def _nl_from_imgl_scene(scene: dict[str, Any] | None) -> str:
-    if not isinstance(scene, dict):
-        return ""
+def _extract_window_titles(scene: dict[str, Any]) -> list[str]:
     windows = scene.get("windows") or []
     titles = [str(item.get("title") or "").strip() for item in windows if isinstance(item, dict)]
-    titles = [title for title in titles if title]
-    if titles:
-        return f"Screen with windows: {', '.join(titles[:5])}."
+    return [title for title in titles if title]
+
+
+def _extract_element_labels(scene: dict[str, Any]) -> list[str]:
     elements = scene.get("elements") or []
     labels = [
         str(item.get("text") or item.get("label") or "").strip()
         for item in elements
         if isinstance(item, dict)
     ]
-    labels = [label for label in labels if label]
+    return [label for label in labels if label]
+
+
+def _nl_from_imgl_scene(scene: dict[str, Any] | None) -> str:
+    if not isinstance(scene, dict):
+        return ""
+    titles = _extract_window_titles(scene)
+    if titles:
+        return f"Screen with windows: {', '.join(titles[:5])}."
+    labels = _extract_element_labels(scene)
     if labels:
         return f"UI elements: {', '.join(labels[:8])}."
     return ""

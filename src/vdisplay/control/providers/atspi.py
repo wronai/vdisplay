@@ -51,7 +51,13 @@ def _vdisplay_src_path() -> Path:
     return root.parent if root.name == "vdisplay" and (root.parent / "vdisplay").is_dir() else root
 
 
-def _run_subprocess(payload: dict[str, Any], *, timeout_s: float = 60) -> dict[str, Any]:
+def _run_subprocess(payload: dict[str, Any], *, timeout_s: float | None = None) -> dict[str, Any]:
+    if timeout_s is None:
+        raw = os.environ.get("VDISPLAY_ATSPI_TIMEOUT_S", "12")
+        try:
+            timeout_s = max(1.0, float(raw))
+        except ValueError:
+            timeout_s = 12.0
     src_path = _vdisplay_src_path()
     env = os.environ.copy()
     env["PYTHONPATH"] = str(src_path) + os.pathsep + env.get("PYTHONPATH", "")
@@ -65,14 +71,17 @@ try:
 except Exception as exc:
     print(json.dumps({"ok": False, "error": str(exc)}))
 '''
-    completed = subprocess.run(
-        [_system_python(), "-c", script, json.dumps(payload)],
-        capture_output=True,
-        text=True,
-        timeout=timeout_s,
-        check=False,
-        env=env,
-    )
+    try:
+        completed = subprocess.run(
+            [_system_python(), "-c", script, json.dumps(payload)],
+            capture_output=True,
+            text=True,
+            timeout=timeout_s,
+            check=False,
+            env=env,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise VDisplayError(f"atspi subprocess timed out after {timeout_s}s") from exc
     try:
         result = json.loads((completed.stdout or "").strip() or "{}")
     except json.JSONDecodeError as exc:

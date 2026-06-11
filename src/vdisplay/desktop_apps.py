@@ -153,12 +153,11 @@ _COMMON_SUBMIT_SELECTORS: tuple[dict[str, str], ...] = (
     {"role": "button", "name_contains": "Run"},
 )
 
-_CURSOR_CHAT_SELECTORS: tuple[dict[str, str], ...] = _COMMON_CHAT_SELECTORS + (
-    {"role": "text", "name_contains": "Ask"},
-    {"role": "text", "name_contains": "Composer"},
+_CURSOR_CHAT_SELECTORS: tuple[dict[str, str], ...] = (
     {"environment": "vision", "vision_anchor": "Ask", "vision_anchor_rel": "below"},
     {"environment": "vision", "vision_anchor": "Chat", "vision_anchor_rel": "below"},
-)
+    {"environment": "vision", "vision_anchor": "Composer", "vision_anchor_rel": "below"},
+) + _COMMON_CHAT_SELECTORS
 
 _PYCHARM_CHAT_SELECTORS: tuple[dict[str, str], ...] = (
     {"role": "entry", "name_contains": "Chat"},
@@ -306,6 +305,34 @@ def chat_selectors_for(app_id: str) -> tuple[dict[str, str], ...]:
     return get_desktop_app(app_id).chat_selectors or _COMMON_CHAT_SELECTORS
 
 
+def prompt_chat_selectors_for(
+    app_id: str,
+    *,
+    backend: str,
+    map_path: str | None = None,
+) -> tuple[dict[str, str], ...]:
+    """Selectors for ``ide prompt`` — avoid slow AT-SPI probes on native Wayland vision IDEs."""
+    selectors = chat_selectors_for(app_id)
+    if map_path:
+        return selectors
+    app = get_desktop_app(app_id)
+    from .hmi.pointer import is_wayland_session
+
+    vision_only = (
+        is_wayland_session()
+        and app.preferred_backend == "vision"
+        and backend in {"auto", "vision"}
+    )
+    if not vision_only:
+        return selectors
+    vision = tuple(
+        spec
+        for spec in selectors
+        if spec.get("environment") == "vision" or spec.get("vision_anchor")
+    )
+    return vision or selectors
+
+
 def submit_selectors_for(app_id: str) -> tuple[dict[str, str], ...]:
     return get_desktop_app(app_id).submit_selectors or _COMMON_SUBMIT_SELECTORS
 
@@ -430,6 +457,7 @@ __all__ = [
     "map_input_target_candidates",
     "map_submit_target_candidates",
     "map_target_candidates",
+    "prompt_chat_selectors_for",
     "resolve_map_path",
     "submit_selectors_for",
 ]

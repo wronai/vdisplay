@@ -420,84 +420,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-9b933356
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in src/vdisplay/models.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/models.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-0e175631
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in src/vdisplay/utils.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/utils.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-f126120c
-    name: Fix magic-numbers issues
-    description: Resolve 2 magic-numbers issues in src/vdisplay/utils.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/utils.py
-    rule_id: magic-numbers
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-73ef63f9
-    name: Fix smart-return-type issues
-    description: Resolve 2 smart-return-type issues in tests/test_capture_xwd.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_capture_xwd.py
-    rule_id: smart-return-type
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-3f8287b2
-    name: Fix string-concat issues
-    description: Resolve 1 string-concat issues in tests/test_capture_xwd.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_capture_xwd.py
-    rule_id: string-concat
-    count: 1
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-949b60cc
-    name: Fix unused-imports issues
-    description: Resolve 4 unused-imports issues in tests/test_capture_xwd.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - tests/test_capture_xwd.py
-    rule_id: unused-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-74fd3f8a
     name: Fix unused-imports issues
     description: Resolve 2 unused-imports issues in packages/cli2vdisplay/src/cli2vdisplay/cli.py
@@ -1018,149 +940,6 @@ sprints:
     model_hints:
       planning: balanced
       implementation: balanced
-  - id: ticket-d4bc4bb6
-    name: Fix string-concat issues
-    description: Resolve 4 string-concat issues in src/vdisplay/nl.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - src/vdisplay/nl.py
-    rule_id: string-concat
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-6aa68d86
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in src/vdisplay/nl.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/nl.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b8e6fd0e
-    name: Fix relative-imports issues
-    description: Resolve 2 relative-imports issues in src/vdisplay/nlp.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/nlp.py
-    rule_id: relative-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-f60368ec
-    name: Fix string-concat issues
-    description: Resolve 2 string-concat issues in src/vdisplay/nlp.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/nlp.py
-    rule_id: string-concat
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-4c9ad6b9
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in src/vdisplay/nlp.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/nlp.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-30618d18
-    name: Fix relative-imports issues
-    description: Resolve 4 relative-imports issues in src/vdisplay/payloads.py
-    task_type: prefactor
-    priority: medium
-    estimate: 2d
-    files:
-    - src/vdisplay/payloads.py
-    rule_id: relative-imports
-    count: 4
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-d9ad4975
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in src/vdisplay/payloads.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - src/vdisplay/payloads.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-87773354
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in tests/test_capture_crop.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_capture_crop.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-966763b1
-    name: Fix smart-return-type issues
-    description: Resolve 2 smart-return-type issues in tests/test_cli_commands.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_cli_commands.py
-    rule_id: smart-return-type
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-b104c395
-    name: Fix unused-imports issues
-    description: Resolve 2 unused-imports issues in tests/test_cli_commands.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_cli_commands.py
-    rule_id: unused-imports
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
-  - id: ticket-96ea26a7
-    name: Fix llm-hallucinations issues
-    description: Resolve 2 llm-hallucinations issues in tests/test_cli_commands.py
-    task_type: prefactor
-    priority: medium
-    estimate: 1d
-    files:
-    - tests/test_cli_commands.py
-    rule_id: llm-hallucinations
-    count: 2
-    model_hints:
-      planning: balanced
-      implementation: balanced
   - id: ticket-bc4fbaac
     name: Fix relative-imports issues
     description: Resolve 2 relative-imports issues in packages/vdisplay-agent/src/vdisplay_agent/__init__.py
@@ -1314,6 +1093,227 @@ sprints:
     - packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py
     rule_id: relative-imports
     count: 6
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-bcbe643a
+    name: Fix smart-return-type issues
+    description: Resolve 4 smart-return-type issues in brain/scratch_test_screencast.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - brain/scratch_test_screencast.py
+    rule_id: smart-return-type
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6cc80612
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in brain/scratch_test_screencast.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - brain/scratch_test_screencast.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-af23c88d
+    name: Fix ai-boilerplate issues
+    description: Resolve 1 ai-boilerplate issues in brain/scratch_test_screencast.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - brain/scratch_test_screencast.py
+    rule_id: ai-boilerplate
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-6999d4f3
+    name: Fix smart-return-type issues
+    description: Resolve 1 smart-return-type issues in brain/scratch_find_pycharm_chat.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - brain/scratch_find_pycharm_chat.py
+    rule_id: smart-return-type
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-5bd60d40
+    name: Fix string-concat issues
+    description: Resolve 1 string-concat issues in brain/scratch_find_pycharm_chat.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - brain/scratch_find_pycharm_chat.py
+    rule_id: string-concat
+    count: 1
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-04e917a7
+    name: Fix unused-imports issues
+    description: Resolve 4 unused-imports issues in brain/scratch_find_pycharm_chat.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - brain/scratch_find_pycharm_chat.py
+    rule_id: unused-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-9b0f98c6
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in brain/scratch_find_pycharm_chat.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - brain/scratch_find_pycharm_chat.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d3e935f5
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/vdisplay-agent/src/vdisplay_agent/audit_context.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/audit_context.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a02dc343
+    name: Fix relative-imports issues
+    description: Resolve 2 relative-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py
+    rule_id: relative-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-1a55d814
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a593ae35
+    name: Fix relative-imports issues
+    description: Resolve 4 relative-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    task_type: prefactor
+    priority: medium
+    estimate: 2d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    rule_id: relative-imports
+    count: 4
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-138556fd
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-a97d6bd2
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-d033c132
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-2d0b5e98
+    name: Fix magic-numbers issues
+    description: Resolve 2 magic-numbers issues in packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py
+    rule_id: magic-numbers
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-33ae9859
+    name: Fix unused-imports issues
+    description: Resolve 2 unused-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py
+    task_type: prefactor
+    priority: medium
+    estimate: 1d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py
+    rule_id: unused-imports
+    count: 2
+    model_hints:
+      planning: balanced
+      implementation: balanced
+  - id: ticket-4c144418
+    name: Fix relative-imports issues
+    description: Resolve 10 relative-imports issues in packages/vdisplay-agent/src/vdisplay_agent/routes/control.py
+    task_type: prefactor
+    priority: high
+    estimate: 2d
+    files:
+    - packages/vdisplay-agent/src/vdisplay_agent/routes/control.py
+    rule_id: relative-imports
+    count: 10
     model_hints:
       planning: balanced
       implementation: balanced

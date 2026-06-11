@@ -26,7 +26,7 @@ def register(sub: argparse._SubParsersAction) -> None:
         choices=["desktop", "strict", "unattended", "best-effort"],
         default="desktop",
     )
-    start.add_argument("--interval", type=float, default=1.0)
+    start.add_argument("--interval", type=float, default=5.0)
     start.add_argument("--source", help="Monitor name (e.g. DP-2)")
     start.add_argument("--out-dir", default="./captures")
     start.add_argument("--max-frames", type=int, default=None)

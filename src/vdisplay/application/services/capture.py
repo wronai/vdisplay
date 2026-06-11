@@ -115,6 +115,35 @@ def capture_screenshot_local(
     return meta
 
 
+def _ensure_wayland_screencast(client) -> None:
+    from ...capture.linux_xwd import _is_wayland_session
+
+    if not _is_wayland_session():
+        return
+    status = client.screencast_status()
+    if status.get("active") and status.get("ready"):
+        return
+    import sys
+
+    print(
+        "vdisplay: starting ScreenCast — in the GNOME portal choose All Screens",
+        file=sys.stderr,
+    )
+    from .screencast_cli import start_screencast_via_agent
+
+    started = start_screencast_via_agent(
+        client,
+        interactive=True,
+        timeout_s=120.0,
+        multiple=True,
+    )
+    if not (started.get("active") and started.get("ready")):
+        raise VDisplayError(
+            f"screencast start failed: {started.get('error') or started}. "
+            "Run: vdisplay agent screencast start"
+        )
+
+
 def _capture_via_agent(
     client,
     *,
@@ -148,6 +177,8 @@ def _capture_via_agent(
             return payload
         finally:
             client.stop_session(session_id)
+
+    _ensure_wayland_screencast(client)
 
     if all_monitors:
         directory = out_dir or "."

@@ -142,6 +142,27 @@ Tasks survive broker introspection across restarts. Orphan `running` tasks from 
 | POST | `/window/adopt` | Relay adopt window |
 | POST | `/window/release` | Relay release window |
 
+### Web console
+
+Browser dashboard for multi-monitor supervision and capture control. Guide: [guides/web-console.md](guides/web-console.md).
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/web` | HTML console (monitors, tasks, windows, replay) |
+| GET | `/api/web/overview` | Aggregated broker state for dashboard |
+| GET | `/api/web/frame/{monitor_name}` | PNG frame for one monitor |
+| GET | `/api/web/frames` | All monitor frames (JSON) |
+| POST | `/api/web/screencast/start` | Start ScreenCast from console (`multiple: true` default) |
+| POST | `/api/web/sampler/start` | Start sampler from console (`all_monitors: true` default) |
+| GET | `/api/web/replay/sessions` | List `.vdisplay` audit sessions |
+| POST | `/api/web/replay/start` | Queue session replay (runs CONTROL_* steps in background) |
+| GET | `/api/web/replay/status/{job_id}` | Replay job status |
+
+```bash
+xdg-open http://127.0.0.1:8765/web
+curl -s http://127.0.0.1:8765/api/web/overview | jq '.data.monitors.monitor_count'
+```
+
 Quick checks:
 
 ```bash

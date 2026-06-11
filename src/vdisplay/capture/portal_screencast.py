@@ -18,6 +18,25 @@ from ..exceptions import VDisplayError
 
 _ACTIVE: PortalScreenCastSession | None = None
 _LOCK = threading.Lock()
+_KNOWN_SESSION_PATHS: set[str] = set()
+
+
+def _remember_screencast_path(session_path: str) -> None:
+    path = str(session_path or "").strip()
+    if path:
+        _KNOWN_SESSION_PATHS.add(path)
+
+
+def _forget_screencast_path(session_path: str) -> None:
+    path = str(session_path or "").strip()
+    if path:
+        _KNOWN_SESSION_PATHS.discard(path)
+
+
+def _purge_stale_screencast_sessions() -> None:
+    for path in list(_KNOWN_SESSION_PATHS):
+        _close_screencast_session(path)
+        _KNOWN_SESSION_PATHS.discard(path)
 
 
 def get_active_screencast() -> PortalScreenCastSession | None:
@@ -31,6 +50,49 @@ def _set_active(session: PortalScreenCastSession | None) -> None:
         _ACTIVE = session
 
 
+def ensure_portal_session_env() -> dict[str, str]:
+    """Fill missing GUI session vars so xdg-desktop-portal can show dialogs."""
+    uid = os.getuid()
+    runtime = os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{uid}"
+    updates: dict[str, str] = {}
+    if not os.environ.get("XDG_RUNTIME_DIR") and os.path.isdir(runtime):
+        updates["XDG_RUNTIME_DIR"] = runtime
+    bus_path = f"{runtime}/bus"
+    if not os.environ.get("DBUS_SESSION_BUS_ADDRESS") and os.path.exists(bus_path):
+        updates["DBUS_SESSION_BUS_ADDRESS"] = f"unix:path={bus_path}"
+    if not os.environ.get("WAYLAND_DISPLAY"):
+        for name in ("wayland-1", "wayland-0"):
+            if os.path.exists(f"{runtime}/{name}"):
+                updates["WAYLAND_DISPLAY"] = name
+                break
+    if not os.environ.get("DISPLAY"):
+        updates["DISPLAY"] = ":0"
+    for key, value in updates.items():
+        os.environ[key] = value
+    return updates
+
+
+def portal_session_env_status() -> tuple[bool, str]:
+    """Return whether portal ScreenCast can reach the user's session bus."""
+    ensure_portal_session_env()
+    runtime = os.environ.get("XDG_RUNTIME_DIR", "")
+    dbus_addr = os.environ.get("DBUS_SESSION_BUS_ADDRESS", "")
+    if not dbus_addr:
+        return (
+            False,
+            "DBUS_SESSION_BUS_ADDRESS is missing — start vdisplay-agent serve from a local "
+            "GUI terminal (not SSH/Cursor sandbox), or export DBUS_SESSION_BUS_ADDRESS.",
+        )
+    bus_path = dbus_addr.removeprefix("unix:path=")
+    if bus_path and not os.path.exists(bus_path):
+        return (
+            False,
+            f"session bus not found at {bus_path} — run from your desktop session "
+            f"(XDG_RUNTIME_DIR={runtime or 'unset'}).",
+        )
+    return True, ""
+
+
 @dataclass
 class PortalScreenCastSession:
     """Hold an open portal ScreenCast session and grab PNG frames from PipeWire."""
@@ -42,6 +104,7 @@ class PortalScreenCastSession:
     pipewire_fd: int | None = None
     active: bool = False
     source: str = "xdg-portal-screencast"
+    _portal_bus: Any = field(default=None, repr=False, compare=False)
 
     @property
     def is_ready(self) -> bool:
@@ -64,6 +127,7 @@ class PortalScreenCastSession:
         self.stream_targets = self._parse_stream_targets(payload)
         fd = payload.get("pipewire_fd")
         self.pipewire_fd = int(fd) if fd is not None else None
+        self._portal_bus = payload.get("_portal_bus")
         self.active = True
         _set_active(self)
         return {
@@ -74,6 +138,70 @@ class PortalScreenCastSession:
             "source": self.source,
             "has_pipewire_fd": bool(self.session_path),
         }
+
+    @classmethod
+    def from_portal_payload(
+        cls,
+        payload: dict[str, Any],
+        *,
+        verify_remote: bool = True,
+    ) -> PortalScreenCastSession:
+        """Adopt an existing portal ScreenCast session opened in another process."""
+        ensure_portal_session_env()
+        ok, hint = portal_session_env_status()
+        if not ok:
+            raise VDisplayError(hint)
+
+        session_path = str(payload.get("session_path") or "").strip()
+        if not session_path:
+            raise VDisplayError("adopt screencast requires session_path")
+
+        session = cls()
+        session.session_path = session_path
+        session.streams = list(payload.get("streams") or [])
+        session.node_ids = [int(n) for n in payload.get("node_ids") or [] if str(n).isdigit()]
+        session.stream_targets = [str(item) for item in payload.get("stream_targets") or []]
+        if not session.node_ids:
+            session.node_ids = session._parse_node_ids(payload)
+        if not session.stream_targets:
+            session.stream_targets = session._parse_stream_targets(payload)
+        if not session.node_ids:
+            raise VDisplayError("adopt screencast requires node_ids or streams")
+
+        fd = payload.get("pipewire_fd")
+        session.pipewire_fd = int(fd) if fd is not None else None
+        session.active = True
+
+        if verify_remote:
+            probe_fd: int | None = None
+            try:
+                if session.pipewire_fd is not None and session.pipewire_fd >= 0:
+                    probe_fd = os.dup(session.pipewire_fd)
+                else:
+                    probe_fd = _open_screencast_pipewire_fd(session_path)
+            except VDisplayError as exc:
+                msg = str(exc).lower()
+                if "invalid session" in msg or "access denied" in msg:
+                    # Probe from adopter failed (e.g. session created in CLI process,
+                    # DBus/app-id differences, or prior invalidation). Still register
+                    # the metadata the local start provided. First real capture will
+                    # retry the fd open. Prevents adopt from hard-failing with
+                    # "Invalid session".
+                    session.pipewire_fd = None
+                    _set_active(session)
+                    return session
+                raise VDisplayError(f"adopted screencast session not usable: {exc}") from exc
+            finally:
+                if probe_fd is not None and probe_fd >= 0:
+                    os.close(probe_fd)
+
+        _set_active(session)
+        return session
+
+    def detach_local(self) -> None:
+        """Stop tracking this session in-process without closing the portal session."""
+        if _set_active_if_self(self):
+            _set_active(None)
 
     def _parse_node_ids(self, payload: dict[str, Any]) -> list[int]:
         node_ids = [int(n) for n in payload.get("node_ids") or [] if str(n).isdigit()]
@@ -105,20 +233,35 @@ class PortalScreenCastSession:
     def capture_png(self, *, node_index: int = 0) -> bytes:
         if not self.is_ready:
             raise VDisplayError("screencast session not ready — POST /session/screencast/start first")
-        if node_index < 0 or node_index >= len(self.node_ids):
-            raise VDisplayError(f"invalid screencast node_index {node_index}")
-        serial = None
-        if node_index < len(self.streams):
-            serial = _stream_serial(self.streams[node_index].get("properties") or {})
-        fd = _open_screencast_pipewire_fd(self.session_path)
+        timeout_s = _pipewire_capture_timeout_s()
+        errors: list[str] = []
+        indices = [node_index]
+        for index in range(len(self.node_ids)):
+            if index not in indices:
+                indices.append(index)
+        fd = _screencast_pipewire_fd(self)
         try:
-            return _capture_pipewire_stream(
-                pipewire_fd=fd,
-                node_id=self.node_ids[node_index],
-                target_object=serial,
-            )
+            for index in indices:
+                if index < 0 or index >= len(self.node_ids):
+                    continue
+                properties: dict[str, Any] = {}
+                if index < len(self.streams):
+                    properties = self.streams[index].get("properties") or {}
+                portal_id = properties.get("id")
+                try:
+                    return _capture_pipewire_stream(
+                        pipewire_fd=fd,
+                        node_id=self.node_ids[index],
+                        target_object=_stream_serial(properties),
+                        portal_stream_id=str(portal_id) if portal_id is not None else None,
+                        timeout_s=timeout_s,
+                    )
+                except VDisplayError as exc:
+                    errors.append(f"node[{index}]={self.node_ids[index]}: {exc}")
         finally:
             os.close(fd)
+        detail = "; ".join(errors) or "no pipewire nodes"
+        raise VDisplayError(f"screencast frame capture failed ({detail})")
 
     def stop(self) -> dict[str, Any]:
         was_active = self.active
@@ -130,13 +273,16 @@ class PortalScreenCastSession:
         self.node_ids = []
         self.stream_targets = []
         self.pipewire_fd = None
+        self._portal_bus = None
         if fd is not None:
             _close_pipewire_fd(fd)
         if _set_active_if_self(self):
             _set_active(None)
-        if was_active and path:
+        if path:
+            _remember_screencast_path(path)
             _close_screencast_session(path)
-        return {"ok": True, "stopped": was_active, "session_path": path}
+            _forget_screencast_path(path)
+        return {"ok": True, "stopped": bool(path) or was_active, "session_path": path}
 
 
 def _set_active_if_self(session: PortalScreenCastSession) -> bool:
@@ -147,10 +293,26 @@ def _set_active_if_self(session: PortalScreenCastSession) -> bool:
 def _screencast_multiple(explicit: bool | None) -> bool:
     if explicit is not None:
         return explicit
-    return os.environ.get("VDISPLAY_SCREENCAST_MULTIPLE", "").strip().lower() in {
-        "1",
-        "true",
-        "yes",
+    disabled = os.environ.get("VDISPLAY_SCREENCAST_MULTIPLE", "").strip().lower()
+    if disabled in {"0", "false", "no"}:
+        return False
+    # Default: request All Screens — required for multi-monitor web console.
+    return True
+
+
+def prepare_portal_screencast_start() -> None:
+    """Close stale portal ScreenCast sessions before opening a new one."""
+    stop_screencast_session()
+    _purge_stale_screencast_sessions()
+
+
+def screencast_adopt_payload(session: PortalScreenCastSession) -> dict[str, Any]:
+    """Serialize a portal session for POST /session/screencast/adopt."""
+    return {
+        "session_path": session.session_path,
+        "streams": session.streams,
+        "node_ids": session.node_ids,
+        "stream_targets": session.stream_targets,
     }
 
 
@@ -162,6 +324,7 @@ def start_screencast_session(
 ) -> PortalScreenCastSession:
     from .linux_xwd import is_blank_png
 
+    ensure_portal_session_env()
     existing = get_active_screencast()
     if existing is not None and existing.is_ready:
         try:
@@ -170,9 +333,8 @@ def start_screencast_session(
                 return existing
         except VDisplayError:
             pass
-        invalidate_screencast_session(existing)
-    elif existing is not None:
-        invalidate_screencast_session(existing)
+    stop_screencast_session()
+    prepare_portal_screencast_start()
     session = PortalScreenCastSession()
     session.start(interactive=interactive, timeout_s=timeout_s, multiple=multiple)
     return session
@@ -183,6 +345,27 @@ def stop_screencast_session() -> dict[str, Any]:
     if session is None:
         return {"ok": True, "stopped": False}
     return session.stop()
+
+
+def _is_retryable_screencast_error(error: str | None) -> bool:
+    if not error:
+        return False
+    lowered = error.lower()
+    return (
+        "before starting" in lowered
+        or "session already started" in lowered
+        or "sources already selected" in lowered
+        or "stale portal session" in lowered
+        or "invalid session" in lowered
+    )
+
+
+def _pipewire_capture_timeout_s() -> float:
+    raw = os.environ.get("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", "20")
+    try:
+        return max(2.0, min(60.0, float(raw)))
+    except ValueError:
+        return 20.0
 
 
 def invalidate_screencast_session(session: PortalScreenCastSession | None) -> None:
@@ -226,6 +409,14 @@ def _ensure_portal_deps() -> None:
             sys.path.append(path)
 
 
+def _screencast_pipewire_fd(session: PortalScreenCastSession) -> int:
+    """Prefer the fd acquired at screencast Start; reopen via portal if needed."""
+    fd = session.pipewire_fd
+    if fd is not None and fd >= 0:
+        return os.dup(fd)
+    return _open_screencast_pipewire_fd(session.session_path)
+
+
 def _open_screencast_pipewire_fd(session_path: str) -> int:
     """Open a fresh PipeWire fd for an active portal ScreenCast session."""
     try:
@@ -262,18 +453,40 @@ def _start_screencast(
         _ensure_portal_deps()
         import dbus  # noqa: F401
         from gi.repository import GLib  # noqa: F401
-
-        return _start_screencast_impl(
-            interactive=interactive,
-            timeout_s=timeout_s,
-            multiple=allow_multiple,
-        )
     except ImportError:
         return _start_screencast_subprocess(
             interactive=interactive,
             timeout_s=timeout_s,
             multiple=allow_multiple,
         )
+
+    payload = _start_screencast_impl(
+        interactive=interactive,
+        timeout_s=timeout_s,
+        multiple=allow_multiple,
+    )
+    if payload.get("ok"):
+        return payload
+    for attempt in range(4):
+        if not _is_retryable_screencast_error(payload.get("error")):
+            return payload
+        session_path = str(payload.get("session_path") or "")
+        if session_path:
+            _close_screencast_session(session_path)
+            _forget_screencast_path(session_path)
+        _purge_stale_screencast_sessions()
+        stop_screencast_session()
+        import time
+
+        time.sleep(0.25 * (attempt + 1))
+        payload = _start_screencast_impl(
+            interactive=interactive,
+            timeout_s=timeout_s,
+            multiple=allow_multiple,
+        )
+        if payload.get("ok"):
+            return payload
+    return payload
 
 
 def _portal_request_path(bus, token: str) -> str:
@@ -288,6 +501,7 @@ def _stream_properties(raw: Any) -> dict[str, Any]:
 
 
 def _stream_serial(properties: dict[str, Any]) -> str | None:
+    """PipeWire object.serial for PW_KEY_TARGET_OBJECT (ScreenCast v6+)."""
     serial = properties.get("pipewire-serial")
     if serial is not None:
         return str(int(serial))
@@ -305,7 +519,49 @@ def screencast_stream_region(session: PortalScreenCastSession | None) -> dict[st
     streams = list(getattr(session, "streams", None) or [])
     if not streams:
         return None
-    properties = streams[0].get("properties") or {}
+    return _stream_properties_region(streams[0].get("properties") or {})
+
+
+def screencast_stream_region_for_monitor(
+    session: PortalScreenCastSession | None,
+    monitor: dict[str, Any],
+) -> dict[str, int] | None:
+    """Best-matching portal stream region for a monitor (position + size overlap)."""
+    if session is None:
+        return None
+    streams = list(getattr(session, "streams", None) or [])
+    if not streams:
+        return None
+
+    mx = int(monitor.get("x") or 0)
+    my = int(monitor.get("y") or 0)
+    mw = int(monitor.get("width") or 0)
+    mh = int(monitor.get("height") or 0)
+    if mw <= 0 or mh <= 0:
+        return screencast_stream_region(session)
+
+    best: dict[str, int] | None = None
+    best_area = 0
+    for stream in streams:
+        region = _stream_properties_region(stream.get("properties") or {})
+        if region is None:
+            continue
+        sx = region["x"]
+        sy = region["y"]
+        sw = region["width"]
+        sh = region["height"]
+        ix = max(mx, sx)
+        iy = max(my, sy)
+        ir = min(mx + mw, sx + sw)
+        ib = min(my + mh, sy + sh)
+        area = max(0, ir - ix) * max(0, ib - iy)
+        if area > best_area:
+            best_area = area
+            best = region
+    return best or screencast_stream_region(session)
+
+
+def _stream_properties_region(properties: dict[str, Any]) -> dict[str, int] | None:
     position = properties.get("position") or [0, 0]
     size = properties.get("size") or []
     if len(position) < 2 or len(size) < 2:
@@ -348,6 +604,64 @@ def _close_pipewire_fd(fd: int) -> None:
         pass
 
 
+def _portal_response_error(code: int, operation: str) -> str | None:
+    if code == 0:
+        return None
+    if code == 1:
+        return f"user cancelled {operation}"
+    if code == 2:
+        if operation == "screencast source selection":
+            return (
+                "screencast denied (Screen Recording permission missing). "
+                "GNOME: Settings → Privacy → Screen Recording → enable vdisplay-agent."
+            )
+        if operation == "screencast session creation":
+            return (
+                "screencast session creation denied (portal rejected CreateSession). "
+                "GNOME: Settings → Privacy → Screen Recording → enable python3 and "
+                "vdisplay-agent, then retry from a local GUI terminal (not SSH)."
+            )
+        return f"{operation} denied"
+    return f"{operation.capitalize()} failed with response={code}"
+
+
+def _parse_start_streams(results: dict[str, Any]) -> tuple[list[int], list[str], list[dict[str, Any]]] | None:
+    streams = results.get("streams") or []
+    parsed_streams: list[dict[str, Any]] = []
+    node_ids: list[int] = []
+    stream_targets: list[str] = []
+    for item in streams:
+        if isinstance(item, (list, tuple)) and item:
+            node_id = int(item[0])
+            properties = _stream_properties(item[1] if len(item) > 1 else {})
+            node_ids.append(node_id)
+            stream_targets.append(_stream_target(node_id, properties))
+            parsed_streams.append({"node_id": node_id, "properties": properties})
+    if not node_ids:
+        return None
+    return node_ids, stream_targets, parsed_streams
+
+
+def _open_pipewire_fd(screencast, session_path: str) -> int | None:
+    try:
+        import dbus
+
+        fd = _dbus_fd(
+            screencast.OpenPipeWireRemote(
+                session_path,
+                dbus.Dictionary({}, signature="sv"),
+            )
+        )
+    except Exception:
+        return None
+    if fd < 0:
+        return None
+    owned_fd = os.dup(fd)
+    os.close(fd)
+    _ensure_fd_inheritable(owned_fd)
+    return owned_fd
+
+
 def _start_screencast_impl(
     *,
     interactive: bool,
@@ -364,6 +678,7 @@ def _start_screencast_impl(
     state: dict[str, Any] = {"ok": False, "stage": "create", "session_path": ""}
     loop = GLib.MainLoop()
     token_counter = {"n": 0}
+    _purge_stale_screencast_sessions()
 
     def next_token(label: str) -> str:
         token_counter["n"] += 1
@@ -375,46 +690,19 @@ def _start_screencast_impl(
         loop.quit()
 
     def on_start(response, results) -> None:
-        code = int(response)
-        if code != 0:
-            if code == 1:
-                fail("user cancelled screencast start")
-            elif code == 2:
-                fail("screencast start denied")
-            else:
-                fail(f"Start failed with response={code}")
+        error = _portal_response_error(int(response), "screencast start")
+        if error:
+            fail(error)
             return
-        streams = results.get("streams") or []
-        parsed_streams: list[dict[str, Any]] = []
-        node_ids: list[int] = []
-        stream_targets: list[str] = []
-        for item in streams:
-            if isinstance(item, (list, tuple)) and item:
-                node_id = int(item[0])
-                properties = _stream_properties(item[1] if len(item) > 1 else {})
-                node_ids.append(node_id)
-                stream_targets.append(_stream_target(node_id, properties))
-                parsed_streams.append({"node_id": node_id, "properties": properties})
-        if not node_ids:
+        parsed = _parse_start_streams(results)
+        if parsed is None:
             fail("screencast Start returned no pipewire streams")
             return
-        try:
-            fd = _dbus_fd(
-                screencast.OpenPipeWireRemote(
-                    state["session_path"],
-                    dbus.Dictionary({}, signature="sv"),
-                )
-            )
-        except Exception as exc:
-            fail(f"OpenPipeWireRemote failed: {exc}")
+        node_ids, stream_targets, parsed_streams = parsed
+        owned_fd = _open_pipewire_fd(screencast, state["session_path"])
+        if owned_fd is None:
+            fail("OpenPipeWireRemote failed or returned no fd")
             return
-        if fd < 0:
-            fail("OpenPipeWireRemote returned no fd")
-            return
-        # Dup before the dbus/GLib loop exits — the portal fd is closed otherwise.
-        owned_fd = os.dup(fd)
-        os.close(fd)
-        _ensure_fd_inheritable(owned_fd)
         state["streams"] = parsed_streams
         state["node_ids"] = node_ids
         state["stream_targets"] = stream_targets
@@ -423,22 +711,14 @@ def _start_screencast_impl(
         loop.quit()
 
     def on_select(response, results) -> None:
-        code = int(response)
-        if code != 0:
-            if code == 1:
-                fail("user cancelled screencast source selection")
-            elif code == 2:
-                fail(
-                    "screencast denied (Screen Recording permission missing). "
-                    "GNOME: Settings → Privacy → Screen Recording → enable vdisplay-agent."
-                )
-            else:
-                fail(f"SelectSources failed with response={code}")
+        error = _portal_response_error(int(response), "screencast source selection")
+        if error:
+            fail(error)
             return
         state["stage"] = "start"
         start_token = next_token("start")
         start_path = _portal_request_path(bus, start_token)
-        _listen_portal_request(bus, start_path, on_start)
+        listen(start_path, on_start)
         try:
             screencast.Start(
                 state["session_path"],
@@ -446,31 +726,28 @@ def _start_screencast_impl(
                 {"handle_token": start_token},
             )
         except Exception as exc:
-            fail(f"screencast Start failed: {exc}")
+            msg = str(exc)
+            if "session already started" in msg.lower():
+                _close_screencast_session(state["session_path"])
+                fail(f"screencast Start failed: stale portal session — close and retry ({exc})")
+            else:
+                fail(f"screencast Start failed: {exc}")
 
     def on_create(response, results) -> None:
-        code = int(response)
-        if code != 0:
-            if code == 1:
-                fail("user cancelled screencast session creation")
-            elif code == 2:
-                fail(
-                    "screencast session creation denied (portal rejected CreateSession). "
-                    "GNOME: Settings → Privacy → Screen Recording → enable python3 and "
-                    "vdisplay-agent, then retry from a local GUI terminal (not SSH)."
-                )
-            else:
-                fail(f"CreateSession failed with response={code}")
+        error = _portal_response_error(int(response), "screencast session creation")
+        if error:
+            fail(error)
             return
         session_path = str(results.get("session_handle") or "")
         if not session_path:
             fail("CreateSession returned no session_handle")
             return
         state["session_path"] = session_path
+        _remember_screencast_path(session_path)
         state["stage"] = "select"
         select_token = next_token("select")
         select_path = _portal_request_path(bus, select_token)
-        _listen_portal_request(bus, select_path, on_select)
+        listen(select_path, on_select)
         try:
             screencast.SelectSources(
                 session_path,
@@ -483,19 +760,34 @@ def _start_screencast_impl(
                 },
             )
         except Exception as exc:
-            if "Sources already selected" in str(exc):
+            msg = str(exc)
+            if "Sources already selected" in msg:
                 on_select(0, {})
+            elif "before starting" in msg.lower() or "invalid session" in msg.lower():
+                _close_screencast_session(session_path)
+                _forget_screencast_path(session_path)
+                fail(f"SelectSources failed: stale portal session — close and retry ({exc})")
             else:
                 fail(f"SelectSources failed: {exc}")
+
+    ensure_portal_session_env()
+    ok, hint = portal_session_env_status()
+    if not ok:
+        return {"ok": False, "error": hint}
 
     DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
     proxy = bus.get_object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
     screencast = dbus.Interface(proxy, dbus_interface="org.freedesktop.portal.ScreenCast")
 
+    pending_receivers: list[tuple[Any, str]] = []
+
+    def listen(request_path: str, callback) -> None:
+        _listen_portal_request(bus, request_path, callback, pending_receivers)
+
     create_token = next_token("create")
     create_path = _portal_request_path(bus, create_token)
-    _listen_portal_request(bus, create_path, on_create)
+    listen(create_path, on_create)
 
     import uuid
 
@@ -507,10 +799,14 @@ def _start_screencast_impl(
             }
         )
     except dbus.exceptions.DBusException as exc:
+        _purge_portal_request_receivers(bus, pending_receivers)
         return {"ok": False, "error": f"CreateSession failed: {exc}"}
 
     GLib.timeout_add_seconds(max(1, int(timeout_s)), lambda: fail(f"screencast timed out after {timeout_s}s") or False)
-    loop.run()
+    try:
+        loop.run()
+    finally:
+        _purge_portal_request_receivers(bus, pending_receivers)
 
     if state.get("ok"):
         return {
@@ -520,35 +816,119 @@ def _start_screencast_impl(
             "node_ids": state.get("node_ids") or [],
             "stream_targets": state.get("stream_targets") or [],
             "pipewire_fd": state.get("pipewire_fd"),
+            "_portal_bus": bus,
         }
-    return {"ok": False, "error": state.get("error") or "screencast failed"}
+    payload = {"ok": False, "error": state.get("error") or "screencast failed"}
+    if state.get("session_path"):
+        payload["session_path"] = state["session_path"]
+    return payload
 
 
-def _listen_portal_request(bus, request_path, callback) -> None:
+def _remove_portal_request_receiver(bus, handler, request_path: str) -> None:
+    try:
+        bus.remove_signal_receiver(
+            handler,
+            dbus_interface="org.freedesktop.portal.Request",
+            signal_name="Response",
+            path=str(request_path),
+        )
+    except Exception:
+        pass
+
+
+def _purge_portal_request_receivers(bus, pending: list[tuple[Any, str]]) -> None:
+    for handler, request_path in list(pending):
+        _remove_portal_request_receiver(bus, handler, request_path)
+    pending.clear()
+
+
+def _listen_portal_request(
+    bus,
+    request_path,
+    callback,
+    pending: list[tuple[Any, str]],
+) -> None:
+    path = str(request_path)
+
     def on_response(response, results) -> None:
+        _remove_portal_request_receiver(bus, on_response, path)
+        pending[:] = [(handler, req_path) for handler, req_path in pending if handler is not on_response]
         callback(response, results)
 
     bus.add_signal_receiver(
         on_response,
         dbus_interface="org.freedesktop.portal.Request",
         signal_name="Response",
-        path=str(request_path),
+        path=path,
     )
+    pending.append((on_response, path))
 
 
 def _close_screencast_session(session_path: str) -> None:
-    try:
-        import dbus
+    path = str(session_path or "").strip()
+    if not path:
+        return
+    import time
 
-        bus = dbus.SessionBus()
-        session = bus.get_object("org.freedesktop.portal.Desktop", session_path)
-        iface = dbus.Interface(session, dbus_interface="org.freedesktop.portal.Session")
-        iface.Close()
-    except Exception:
-        pass
+    for attempt in range(3):
+        try:
+            import dbus
+
+            bus = dbus.SessionBus()
+            session = bus.get_object("org.freedesktop.portal.Desktop", path)
+            iface = dbus.Interface(session, dbus_interface="org.freedesktop.portal.Session")
+            iface.Close()
+            return
+        except Exception:
+            if attempt < 2:
+                time.sleep(0.1 * (attempt + 1))
+
+
+def _retryable_capture_error(err: str) -> bool:
+    lowered = err.lower()
+    return (
+        "target not found" in lowered
+        or "timed out" in lowered
+        or "doesn't want to preroll" in lowered
+        or "waiting for frame" in lowered
+    )
 
 
 def _capture_pipewire_stream(
+    *,
+    pipewire_fd: int,
+    node_id: int,
+    target_object: str | None = None,
+    portal_stream_id: str | None = None,
+    timeout_s: float = 30.0,
+) -> bytes:
+    strategies: list[tuple[str, str | None]] = []
+    if target_object:
+        strategies.append((f"target-object={target_object}", target_object))
+    strategies.append((f"target-object={node_id}", str(node_id)))
+    if portal_stream_id and portal_stream_id not in {target_object, str(node_id)}:
+        strategies.append((f"target-object={portal_stream_id}", portal_stream_id))
+    strategies.append((f"path={node_id}", None))
+
+    per_try = max(4.0, min(timeout_s, timeout_s / max(1, len(strategies))))
+    errors: list[str] = []
+    for label, tobj in strategies:
+        try:
+            return _capture_pipewire_stream_once(
+                pipewire_fd=pipewire_fd,
+                node_id=node_id,
+                target_object=tobj,
+                timeout_s=per_try,
+            )
+        except VDisplayError as exc:
+            err = str(exc)
+            errors.append(f"{label}: {err[:160]}")
+            if not _retryable_capture_error(err):
+                raise
+    raise VDisplayError(f"gstreamer pipewire capture failed: {'; '.join(errors)}")
+
+
+def _capture_pipewire_stream_once(
     *,
     pipewire_fd: int,
     node_id: int,
@@ -662,6 +1042,12 @@ def _capture_pipewire_frame_gi_subprocess(
         return False
     if completed.returncode == 0 and out.is_file() and out.stat().st_size > 64:
         return True
+    if completed.stderr or completed.stdout:
+        hint = (completed.stderr or completed.stdout).strip().splitlines()[-1][:200]
+        if hint:
+            import sys
+
+            print(f"vdisplay: pipewire gi capture failed: {hint}", file=sys.stderr)
     return False
 
 
@@ -743,6 +1129,7 @@ def _start_screencast_subprocess(
 ) -> dict[str, Any]:
     src_path = _vdisplay_src_path()
     env = os.environ.copy()
+    env.update(ensure_portal_session_env())
     env["PYTHONPATH"] = str(src_path) + os.pathsep + env.get("PYTHONPATH", "")
     env.setdefault("VDISPLAY_AGENT_BROKER", "0")
     script = r'''
@@ -755,6 +1142,7 @@ result = _start_screencast_impl(interactive=interactive, timeout_s=timeout_s, mu
 if isinstance(result, dict) and result.get("pipewire_fd") is not None:
     result = dict(result)
     result.pop("pipewire_fd", None)
+    result.pop("_portal_bus", None)
 print(json.dumps(result))
 '''
     system_py = _system_python()

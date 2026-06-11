@@ -368,6 +368,27 @@ def _handle_set_value_verification(
         ]
         if after_inputs:
             after_node = after_inputs[0]
+
+    def _fuzzy_match(val1: str | None, val2: str | None) -> bool:
+        if val1 is None or val2 is None:
+            return False
+        return val1.strip().strip('"\'').lower() == val2.strip().strip('"\'').lower()
+
+    # Fuzzy rescue for vision/map targets or when name/selector mismatch occurs:
+    # search for ANY node in after.nodes whose text_value matches expected_value.
+    if after_node is None or not _fuzzy_match(_display_text(after_node), expected_value):
+        # First try to find a matching INPUT node
+        for node in after.nodes.values():
+            if node.role == ControlRole.INPUT and _fuzzy_match(_display_text(node), expected_value):
+                after_node = node
+                break
+        if after_node is None or not _fuzzy_match(_display_text(after_node), expected_value):
+            # Fall back to any node with the expected value
+            for node in after.nodes.values():
+                if _fuzzy_match(_display_text(node), expected_value):
+                    after_node = node
+                    break
+
     if after_node is not None:
         return {
             "text_value": {

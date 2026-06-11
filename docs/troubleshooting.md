@@ -217,3 +217,46 @@ Fix:
 pip install -e ".[pillow,dev]" -e packages/dsl2vdisplay
 python3 -c "import dsl2vdisplay.bus as b; print(b.__file__)"  # should point into packages/dsl2vdisplay/src
 ```
+
+## Web console
+
+Back to [guides/web-console.md](guides/web-console.md)
+
+### `/web` returns 404
+
+The running broker was started from an old install. Reinstall and restart:
+
+```bash
+pip install -e "packages/vdisplay-agent[serve]"
+pkill -f "vdisplay-agent serve"
+vdisplay-agent serve
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8765/web
+```
+
+On a dev checkout, also set `PYTHONPATH=src:packages/vdisplay-agent/src`.
+
+### Replay panel shows HTTP error
+
+Check that replay routes exist (agent must be recent):
+
+```bash
+curl -s http://127.0.0.1:8765/api/web/replay/sessions | jq .
+```
+
+404 means the agent process predates the web replay API — restart after upgrade.
+
+### Monitor tiles empty or frame capture 503
+
+Start persistent ScreenCast on the host (portal consent once):
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
+vdisplay agent screencast start
+curl -s http://127.0.0.1:8765/api/web/frame/DP-1 -o /tmp/test.png
+```
+
+Pick **All Screens** or the monitor where your IDE lives (e.g. DP-1 for PyCharm calibration).
+
+### Okna list missing PyCharm / native Wayland apps
+
+Expected on GNOME Wayland — the console lists XWayland windows. Use vision/map control for native apps. See [guides/wayland-control.md](guides/wayland-control.md).

@@ -95,6 +95,26 @@ class AgentClientApiMixin(AgentHttpTransport):
             body["multiple"] = multiple
         return self.request_json("POST", "/session/screencast/start", body=body)
 
+    def adopt_screencast(
+        self,
+        *,
+        session_path: str,
+        streams: list[dict[str, Any]] | None = None,
+        node_ids: list[int] | None = None,
+        stream_targets: list[str] | None = None,
+        multiple: bool | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"session_path": session_path}
+        if streams is not None:
+            body["streams"] = streams
+        if node_ids is not None:
+            body["node_ids"] = node_ids
+        if stream_targets is not None:
+            body["stream_targets"] = stream_targets
+        if multiple is not None:
+            body["multiple"] = multiple
+        return self.request_json("POST", "/session/screencast/adopt", body=body)
+
     def stop_screencast(self) -> dict[str, Any]:
         return self.request_json("POST", "/session/screencast/stop")
 
@@ -107,7 +127,7 @@ class AgentClientApiMixin(AgentHttpTransport):
     def sampler_start(
         self,
         *,
-        interval_s: float = 1.0,
+        interval_s: float = 5.0,
         mode: str = "desktop",
         source: str | None = None,
         display: str | None = None,

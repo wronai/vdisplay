@@ -39,8 +39,18 @@ def test_execute_health_local(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result.meta["route"] == "local"
 
 
-def test_execute_monitors_via_agent(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_execution_policy_routes_local_discovery_for_localhost_agent(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     monkeypatch.setenv("VDISPLAY_AGENT_URL", "http://127.0.0.1:8765")
+    monkeypatch.delenv("VDISPLAY_AGENT_FORCE_REMOTE", raising=False)
+    policy = ExecutionPolicy()
+    assert policy.route(CommandRequest(verb=CommandVerb.MONITORS)) == "local"
+    assert policy.route(CommandRequest(verb=CommandVerb.HEALTH)) == "agent"
+
+
+def test_execute_monitors_via_agent(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VDISPLAY_AGENT_URL", "http://10.0.0.5:8765")
 
     from vdisplay.application.commands import CommandResult
 
@@ -62,3 +72,23 @@ def test_execute_monitors_via_agent(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result.ok is True
     assert result.meta["route"] == "agent"
     assert result.data["monitor_count"] == 2
+
+
+def test_execute_monitors_local_when_localhost_agent_url(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VDISPLAY_AGENT_URL", "http://127.0.0.1:8765")
+    monkeypatch.delenv("VDISPLAY_AGENT_FORCE_REMOTE", raising=False)
+
+    monkeypatch.setattr(
+        "vdisplay.application.services.discovery.list_monitors_local",
+        lambda display, include_all=True: {
+            "requested_display": ":0",
+            "resolved_display": ":0",
+            "monitor_count": 1,
+            "monitors": [{"name": "DP-1"}],
+        },
+    )
+
+    result = execute(CommandRequest(verb=CommandVerb.MONITORS))
+    assert result.ok is True
+    assert result.meta["route"] == "local"
+    assert result.data["monitor_count"] == 1

@@ -248,6 +248,22 @@ class BrowserPlaywrightProvider(ControlProvider):
         app: str | None = None,
         max_depth: int = 8,
     ) -> ControlSnapshot:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(
+            self._snapshot,
+            window_id=window_id,
+            app=app,
+            max_depth=max_depth,
+        )
+
+    def _snapshot(
+        self,
+        *,
+        window_id: str | None = None,
+        app: str | None = None,
+        max_depth: int = 8,
+    ) -> ControlSnapshot:
         del max_depth
         page = self._page_for(app=app, window_id=window_id)
         window_title = page.title()
@@ -275,6 +291,11 @@ class BrowserPlaywrightProvider(ControlProvider):
         )
 
     def find(self, selector: ControlSelector) -> list[ControlNode]:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(self._find, selector)
+
+    def _find(self, selector: ControlSelector) -> list[ControlNode]:
         if selector.dom_css or selector.dom_xpath:
             page = self._page_for(app=selector.app, window_id=selector.window_id or selector.session_id)
             query = selector.dom_css or selector.dom_xpath
@@ -315,22 +336,42 @@ class BrowserPlaywrightProvider(ControlProvider):
         raise KeyError(f"unknown browser element: {element_id}")
 
     def invoke(self, element_id: str, *, action: str | None = None) -> dict[str, Any]:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(self._invoke, element_id, action=action)
+
+    def _invoke(self, element_id: str, *, action: str | None = None) -> dict[str, Any]:
         del action
         _, element = self._resolve_element(element_id)
         element.click()
         return {"ok": True, "action": "invoke", "element_id": element_id, "backend": self.name}
 
     def focus(self, element_id: str) -> dict[str, Any]:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(self._focus, element_id)
+
+    def _focus(self, element_id: str) -> dict[str, Any]:
         _, element = self._resolve_element(element_id)
         element.focus()
         return {"ok": True, "action": "focus", "element_id": element_id, "backend": self.name}
 
     def set_value(self, element_id: str, value: str) -> dict[str, Any]:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(self._set_value, element_id, value)
+
+    def _set_value(self, element_id: str, value: str) -> dict[str, Any]:
         _, element = self._resolve_element(element_id)
         element.fill(value)
         return {"ok": True, "action": "set_value", "element_id": element_id, "backend": self.name, "value": value}
 
     def bounds(self, element_id: str) -> ControlBounds | None:
+        from .browser_sync_executor import run_browser_sync
+
+        return run_browser_sync(self._bounds, element_id)
+
+    def _bounds(self, element_id: str) -> ControlBounds | None:
         _, element = self._resolve_element(element_id)
         return _bounds_from_box(element.bounding_box())
 

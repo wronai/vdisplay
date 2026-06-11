@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 
 from vdisplay.cli import build_parser, main
-from vdisplay.desktop_apps import DESKTOP_APPS
-from vdisplay.ide_prompt import open_desktop_app, send_ide_prompt
+from vdisplay.desktop_apps import DESKTOP_APPS, prompt_chat_selectors_for
+from vdisplay.ide_prompt import open_desktop_app, send_ide_prompt, wait_for_app_window
 
 
 def test_parser_has_app_and_ide_commands() -> None:
@@ -104,3 +104,29 @@ def test_send_ide_prompt_no_match(monkeypatch) -> None:
     result = send_ide_prompt(app_id="cursor", text="hello")
     assert result["ok"] is False
     assert "no chat input matched" in result["message"]
+
+
+def test_prompt_chat_selectors_prefers_vision_on_wayland(monkeypatch) -> None:
+    if "cursor" not in DESKTOP_APPS:
+        pytest.skip("cursor not installed on host")
+    monkeypatch.setenv("XDG_SESSION_TYPE", "wayland")
+    specs = prompt_chat_selectors_for("cursor", backend="vision", map_path=None)
+    assert specs
+    assert all(spec.get("environment") == "vision" for spec in specs)
+
+
+def test_wait_for_app_window_skips_native_wayland_cursor(monkeypatch) -> None:
+    if "cursor" not in DESKTOP_APPS:
+        pytest.skip("cursor not installed on host")
+    monkeypatch.setenv("XDG_SESSION_TYPE", "wayland")
+
+    def fail_focus(**kwargs):
+        raise AssertionError("control_focus should not run")
+
+    monkeypatch.setattr(
+        "vdisplay.application.services.control.control_focus",
+        fail_focus,
+    )
+    result = wait_for_app_window("cursor", backend="vision", map_path=None, timeout_seconds=1.0)
+    assert result["ok"] is True
+    assert result.get("skipped") is True

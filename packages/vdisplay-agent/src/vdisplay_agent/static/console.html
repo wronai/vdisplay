@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vdisplay console</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0f1117;
+      --panel: #171b24;
+      --border: #2a3142;
+      --text: #e8ecf4;
+      --muted: #8b95a8;
+      --accent: #5b9cff;
+      --ok: #3ecf8e;
+      --warn: #ffb020;
+      --err: #ff6b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font: 14px/1.45 system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+    .pill {
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .pill.ok { color: var(--ok); border-color: #2f6; }
+    .pill.err { color: var(--err); border-color: #a44; }
+    main { padding: 16px; display: grid; gap: 16px; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    button {
+      background: #243047;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    button.primary { background: #1c3f73; border-color: var(--accent); }
+    label { color: var(--muted); font-size: 12px; display: flex; gap: 6px; align-items: center; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 12px;
+    }
+    .desktop-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    .desktop-canvas {
+      position: relative;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      min-height: 280px;
+    }
+    .monitor-tile {
+      position: absolute;
+      box-sizing: border-box;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--panel);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .monitor-tile.primary { border-color: var(--accent); }
+    .monitor-tile h2 {
+      margin: 0;
+      padding: 6px 8px;
+      font-size: 11px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      flex: 0 0 auto;
+    }
+    .monitor-tile img {
+      flex: 1 1 auto;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: block;
+      background: #000;
+      object-fit: contain;
+      cursor: crosshair;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .card .body { padding: 12px; }
+    .monitor-tile .meta {
+      flex: 0 0 auto;
+      padding: 6px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      line-height: 1.35;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 8px 12px;
+      border-top: 1px solid var(--border);
+    }
+    #statusline { margin-left: auto; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header data-testid="console-header">
+    <h1 data-testid="console-title">vdisplay console</h1>
+    <span id="screencast-pill" class="pill" data-testid="screencast-pill">screencast …</span>
+    <span id="sampler-pill" class="pill" data-testid="sampler-pill">sampler …</span>
+    <span id="statusline" data-testid="statusline">loading</span>
+  </header>
+  <main data-testid="console-main">
+    <section class="card" data-testid="control-panel">
+      <h2>Sterowanie</h2>
+      <div class="body toolbar">
+        <button class="primary" id="btn-sc-start" data-testid="btn-screencast-start">ScreenCast start (All Screens)</button>
+        <button id="btn-sc-stop" data-testid="btn-screencast-stop">ScreenCast stop</button>
+        <button class="primary" id="btn-sampler-start" data-testid="btn-sampler-start">Sampler start (all monitors)</button>
+        <button id="btn-sampler-stop" data-testid="btn-sampler-stop">Sampler stop</button>
+        <label data-testid="auto-refresh-label"><input type="checkbox" id="auto-refresh" data-testid="auto-refresh" /> auto-odświeżanie</label>
+        <label data-testid="refresh-interval-label"><input type="number" id="refresh-s" data-testid="refresh-interval" value="5" min="2" step="1" style="width:64px" /> s</label>
+      </div>
+      <div class="hint" id="screencast-hint" data-testid="screencast-hint">
+        Wayland: przy ScreenCast wybierz <strong>All Screens</strong> (nie pojedynczy monitor).
+        Okna natywne Wayland (PyCharm) wymagają mapy vision — lista poniżej to głównie XWayland.
+      </div>
+    </section>
+
+    <section class="grid" id="monitors" data-testid="monitors-grid"></section>
+
+    <section class="grid">
+      <div class="card" data-testid="replay-panel">
+        <h2>Odtwarzanie (audit / .vdisplay)</h2>
+        <div class="body toolbar">
+          <button id="btn-replay-refresh" data-testid="btn-replay-refresh">Odśwież sesje</button>
+        </div>
+        <div class="body" id="replay-sessions" data-testid="replay-sessions"><em>brak nagrań</em></div>
+        <div class="hint">Odtwarza kroki CONTROL_* z katalogu sesji (koru drive, vdisplay CLI).</div>
+      </div>
+      <div class="card" data-testid="settings-panel">
+        <h2>Ustawienia podglądu</h2>
+        <div class="body" id="settings-body" data-testid="settings-body">
+          <p>Interwał odświeżania monitorów: <strong id="settings-interval-display" data-testid="settings-interval-display">5</strong> s</p>
+          <p>Token agenta: localStorage <code>vdisplay_agent_token</code></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" data-testid="tasks-panel">
+        <h2>Zadania (tasks)</h2>
+        <div class="body" id="tasks" data-testid="tasks-table"><em>brak</em></div>
+      </div>
+      <div class="card" data-testid="windows-panel">
+        <h2>Okna / aplikacje</h2>
+        <div class="body" id="windows" data-testid="windows-table"><em>brak</em></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const $ = (sel) => document.querySelector(sel);
+    const monitorsEl = $("#monitors");
+    const token = localStorage.getItem("vdisplay_agent_token") || "";
+    const headers = () => token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" };
+    let screencastReady = false;
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, { ...opts, headers: { ...headers(), ...(opts.headers || {}) } });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`${path} ${res.status}: ${text.slice(0, 200)}`);
+      }
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) return res.json();
+      return res;
+    }
+
+    function pill(el, ok, on, off) {
+      el.textContent = ok ? on : off;
+      el.className = "pill " + (ok ? "ok" : "err");
+    }
+
+    function formatMonitorMeta(m) {
+      const parts = [`${m.width || "?"}×${m.height || "?"}`];
+      if (m.diagonal_in) parts.push(`${m.diagonal_in}"`);
+      if (m.width_mm && m.height_mm) parts.push(`${m.width_mm}×${m.height_mm}mm`);
+      const rot = m.rotation && m.rotation !== "normal" ? ` rot=${m.rotation}` : "";
+      parts.push(`@ (${m.x || 0},${m.y || 0})${rot}`);
+      return parts.join(" · ");
+    }
+
+    function refreshMonitorImages(monitors) {
+      if (!screencastReady) return;
+      for (const m of monitors) {
+        const name = m.name || m.label || "monitor";
+        const img = document.querySelector(`img[data-monitor-name="${CSS.escape(name)}"]`);
+        if (img) {
+          img.src = `/api/web/frame/${encodeURIComponent(name)}?t=${Date.now()}`;
+        }
+        const meta = document.querySelector(`[data-testid="monitor-meta-${name}"]`);
+        if (meta) meta.textContent = formatMonitorMeta(m);
+      }
+    }
+
+    function renderMonitors(monitors) {
+      monitorsEl.innerHTML = "";
+      monitorsEl.className = "desktop-wrap";
+      if (!monitors.length) {
+        monitorsEl.innerHTML = `<div class="card"><div class="body">Brak monitorów — uruchom ScreenCast.</div></div>`;
+        return;
+      }
+
+      const xs = monitors.map((m) => Number(m.x) || 0);
+      const ys = monitors.map((m) => Number(m.y) || 0);
+      const rights = monitors.map((m, i) => xs[i] + (Number(m.width) || 1));
+      const bottoms = monitors.map((m, i) => ys[i] + (Number(m.height) || 1));
+      const minX = Math.min(...xs);
+      const minY = Math.min(...ys);
+      const spanW = Math.max(1, Math.max(...rights) - minX);
+      const spanH = Math.max(1, Math.max(...bottoms) - minY);
+
+      const canvas = document.createElement("div");
+      canvas.className = "desktop-canvas";
+      canvas.setAttribute("data-testid", "desktop-canvas");
+      canvas.style.aspectRatio = `${spanW} / ${spanH}`;
+
+      for (const m of monitors) {
+        const name = m.name || m.label || "monitor";
+        const tile = document.createElement("article");
+        tile.className = "monitor-tile" + (m.primary ? " primary" : "");
+        tile.setAttribute("data-testid", `monitor-tile-${name}`);
+        const leftPct = ((Number(m.x) || 0) - minX) / spanW * 100;
+        const topPct = ((Number(m.y) || 0) - minY) / spanH * 100;
+        const widthPct = (Number(m.width) || 1) / spanW * 100;
+        const heightPct = (Number(m.height) || 1) / spanH * 100;
+        tile.style.left = `${leftPct}%`;
+        tile.style.top = `${topPct}%`;
+        tile.style.width = `${widthPct}%`;
+        tile.style.height = `${heightPct}%`;
+
+        const title = document.createElement("h2");
+        title.textContent = name;
+        tile.appendChild(title);
+
+        const img = document.createElement("img");
+        img.alt = name;
+        img.className = "monitor-canvas";
+        img.setAttribute("data-testid", `monitor-image-${name}`);
+        img.setAttribute("data-monitor-name", name);
+        if (screencastReady) {
+          img.src = `/api/web/frame/${encodeURIComponent(name)}?t=${Date.now()}`;
+        } else {
+          img.removeAttribute("src");
+          img.style.background = "var(--surface2, #2a2a2a)";
+        }
+        img.addEventListener("click", (event) => onMonitorClick(event, name));
+        tile.appendChild(img);
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.setAttribute("data-testid", `monitor-meta-${name}`);
+        meta.textContent = formatMonitorMeta(m);
+        tile.appendChild(meta);
+
+        canvas.appendChild(tile);
+      }
+      monitorsEl.appendChild(canvas);
+    }
+
+    function renderTable(rows, cols) {
+      if (!rows.length) return "<em>brak</em>";
+      const head = cols.map((c) => `<th>${c.label}</th>`).join("");
+      const body = rows.map((row) => `<tr>${cols.map((c) => `<td>${c.render(row)}</td>`).join("")}</tr>`).join("");
+      return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    async function refresh() {
+      try {
+        const payload = await api("/api/web/overview");
+        const data = payload.data || payload;
+        const sc = data.screencast || {};
+        const sm = data.sampler || {};
+        screencastReady = !!(sc.active && sc.ready);
+        pill($("#screencast-pill"), screencastReady, "screencast ready", "screencast off");
+        pill($("#sampler-pill"), sm.running, "sampler on", "sampler off");
+        const hint = $("#screencast-hint");
+        if (hint) {
+          if (sc.active && sc.ready && sc.multiple === false) {
+            hint.innerHTML =
+              "<strong>Uwaga:</strong> ScreenCast obejmuje tylko jeden monitor " +
+              `(stream ${JSON.stringify((sc.streams || [])[0]?.properties?.size || "?")}). ` +
+              "Zatrzymaj i uruchom ponownie z <strong>All Screens</strong>.";
+            hint.style.color = "var(--warn)";
+          } else if (sc.active && sc.ready) {
+            hint.innerHTML =
+              "ScreenCast aktywny. Układ kafelków odzwierciedla pozycje xrandr; przekątna w mm z EDID.";
+            hint.style.color = "var(--muted)";
+          } else {
+            hint.innerHTML =
+              "Wayland: kliknij <strong>ScreenCast start</strong>, potem w portalu GNOME wybierz <strong>All Screens</strong>.";
+            hint.style.color = "var(--muted)";
+          }
+        }
+        const mons = data.monitors?.monitors || [];
+        if (mons.length && monitorsEl.querySelector(".desktop-canvas")) {
+          refreshMonitorImages(mons);
+        } else {
+          renderMonitors(mons);
+        }
+        const tasks = (data.tasks?.tasks || data.tasks?.items || []);
+        $("#tasks").innerHTML = renderTable(tasks, [
+          { label: "id", render: (r) => r.task_id || r.id || "?" },
+          { label: "kind", render: (r) => r.kind || "" },
+          { label: "status", render: (r) => r.status || "" },
+        ]);
+        const wins = (data.windows?.windows || []);
+        $("#windows").innerHTML = renderTable(wins.slice(0, 40), [
+          { label: "app", render: (r) => r.app_label || r.app || "" },
+          { label: "title", render: (r) => (r.title || r.name || "").slice(0, 60) },
+          { label: "geo", render: (r) => `${r.width || "?"}×${r.height || "?"} @ ${r.x || 0},${r.y || 0}` },
+        ]);
+        $("#statusline").textContent = `ok ${new Date().toLocaleTimeString()}`;
+        const settingsEl = $("#settings-interval-display");
+        if (settingsEl) settingsEl.textContent = String($("#refresh-s").value || "5");
+      } catch (err) {
+        $("#statusline").textContent = String(err.message || err);
+      }
+    }
+
+    async function onMonitorClick(event, monitorName) {
+      const img = event.currentTarget;
+      if (!img.naturalWidth || !img.naturalHeight) return;
+      const rect = img.getBoundingClientRect();
+      const scaleX = img.naturalWidth / rect.width;
+      const scaleY = img.naturalHeight / rect.height;
+      const localX = Math.round((event.clientX - rect.left) * scaleX);
+      const localY = Math.round((event.clientY - rect.top) * scaleY);
+      $("#statusline").textContent = `click ${monitorName} @ ${localX},${localY} …`;
+      try {
+        const payload = await api("/api/web/pointer/click", {
+          method: "POST",
+          body: JSON.stringify({
+            monitor_name: monitorName,
+            x: localX,
+            y: localY,
+            coord_space: "png",
+            button: 1,
+          }),
+        });
+        const data = payload.data || payload;
+        $("#statusline").textContent = `click ok ${monitorName} → (${data.global_x},${data.global_y}) ${data.method || ""}`;
+      } catch (err) {
+        $("#statusline").textContent = String(err.message || err);
+      }
+    }
+
+    async function refreshReplay() {
+      try {
+        const payload = await api("/api/web/replay/sessions");
+        const data = payload.data || payload;
+        const rows = data.sessions || [];
+        if (!rows.length) {
+          $("#replay-sessions").innerHTML = "<em>brak nagrań</em>";
+          return;
+        }
+        $("#replay-sessions").innerHTML = renderTable(rows, [
+          { label: "session", render: (r) => r.session_id || "?" },
+          { label: "steps", render: (r) => String(r.steps ?? 0) },
+          { label: "akcja", render: (r) => `<button data-testid="btn-replay-${r.session_id}" data-session-id="${r.session_id}">Odtwórz</button>` },
+        ]);
+        $("#replay-sessions").querySelectorAll("button[data-session-id]").forEach((btn) => {
+          btn.onclick = async () => {
+            const sessionId = btn.getAttribute("data-session-id");
+            await api("/api/web/replay/start", {
+              method: "POST",
+              body: JSON.stringify({ session_id: sessionId }),
+            });
+            await refresh();
+          };
+        });
+      } catch (err) {
+        $("#replay-sessions").textContent = String(err.message || err);
+      }
+    }
+
+    $("#btn-sc-start").onclick = async () => {
+      await api("/api/web/screencast/start", { method: "POST", body: "{}" });
+      await refresh();
+    };
+    $("#btn-sc-stop").onclick = async () => {
+      await api("/session/screencast/stop", { method: "POST", body: "{}" });
+      await refresh();
+    };
+    $("#btn-sampler-start").onclick = async () => {
+      await api("/api/web/sampler/start", {
+        method: "POST",
+        body: JSON.stringify({ interval_s: 5.0, all_monitors: true, out_dir: "./captures-web" }),
+      });
+      await refresh();
+    };
+    $("#btn-sampler-stop").onclick = async () => {
+      await api("/sampler/stop", { method: "POST", body: "{}" });
+      await refresh();
+    };
+    $("#btn-replay-refresh").onclick = refreshReplay;
+
+    function syncIntervalDisplay() {
+      const el = $("#settings-interval-display");
+      const val = $("#refresh-s")?.value || "5";
+      if (el) el.textContent = String(val);
+    }
+
+    let timer = null;
+    function schedule() {
+      if (timer) clearInterval(timer);
+      if (!$("#auto-refresh").checked) return;
+      const sec = Math.max(2, parseFloat($("#refresh-s").value || "5"));
+      timer = setInterval(refresh, sec * 1000);
+    }
+    $("#auto-refresh").onchange = schedule;
+    const refreshInput = $("#refresh-s");
+    refreshInput.addEventListener("input", syncIntervalDisplay);
+    refreshInput.addEventListener("change", () => {
+      syncIntervalDisplay();
+      schedule();
+    });
+    refresh();
+    refreshReplay();
+    schedule();
+  </script>
+</body>
+</html>

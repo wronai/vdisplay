@@ -253,7 +253,7 @@ class KeyboardWatcher:
             )
         )
 
-    def _run(self, paths: list[Path]) -> None:
+    def _open_fds(self, paths: list[Path]) -> dict[int, Path]:
         fds: dict[int, Path] = {}
         for path in paths:
             try:
@@ -263,10 +263,13 @@ class KeyboardWatcher:
                     self._emit(
                         "keyboard: permission denied for /dev/input — add user to group 'input' or run with sufficient privileges"
                     )
-                    return
+                    return {}
                 continue
             fds[fd] = path
+        return fds
 
+    def _run(self, paths: list[Path]) -> None:
+        fds = self._open_fds(paths)
         if not fds:
             self._emit("keyboard: could not open any /dev/input/event* nodes")
             return

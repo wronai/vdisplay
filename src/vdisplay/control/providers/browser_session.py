@@ -89,48 +89,73 @@ class BrowserSessionRegistry:
         engine: str | None = None,
         page: Any | None = None,
     ) -> BrowserSession:
-        from ..browser_engine import normalize_browser_engine
+        from .browser_sync_executor import run_browser_sync
 
-        resolved_engine = normalize_browser_engine(engine).value
-        sid = session_id or new_session_id()
-        if sid in self._sessions:
-            raise VDisplayError(f"browser session already exists: {sid}")
-
-        from ..browser_session_store import (
-            detached_sessions_enabled,
-            launch_detached_chromium,
-            session_available,
+        return run_browser_sync(
+            self._open,
+            url,
+            session_id=session_id,
+            headless=headless,
+            title=title,
+            engine=engine,
+            page=page,
         )
 
-        if page is None and self._tracks_detached_sessions() and session_available(sid):
-            return self._attach(sid)
+    def _maybe_reuse_existing_session(
+        self,
+        sid: str,
+        *,
+        url: str,
+        title: str | None,
+    ) -> BrowserSession | None:
+        existing = self._sessions.get(sid)
+        if existing is None or existing.page is None or not existing._alive:
+            if existing is not None:
+                self._sessions.pop(sid, None)
+            return None
+        if url and url.startswith(("http://", "https://", "file://")):
+            current_url = getattr(existing.page, "url", "") or ""
+            if current_url != url:
+                existing.page.goto(url)
+            existing.url = url
+            title_fn = getattr(existing.page, "title", None)
+            existing.title = title or (title_fn() if callable(title_fn) else existing.title)
+        return existing
 
-        if page is not None:
-            session = BrowserSession(
-                session_id=sid,
-                url=url,
-                title=title or getattr(page, "title", lambda: None)(),
-                headless=headless,
-                engine=resolved_engine,
-                page=page,
-            )
-            self._sessions[sid] = session
-            return session
+    def _create_mock_session(
+        self,
+        sid: str,
+        *,
+        url: str,
+        title: str | None,
+        headless: bool,
+        engine: str,
+        page: Any,
+    ) -> BrowserSession:
+        session = BrowserSession(
+            session_id=sid,
+            url=url,
+            title=title or getattr(page, "title", lambda: None)(),
+            headless=headless,
+            engine=engine,
+            page=page,
+        )
+        self._sessions[sid] = session
+        return session
 
-        from .browser_playwright import _playwright_available
-
-        ready, reason = _playwright_available()
-        if not ready:
-            raise VDisplayError(reason)
-
-        if detached_sessions_enabled() and resolved_engine != "firefox":
-            meta = launch_detached_chromium(session_id=sid, url=url, headless=headless)
-            return self._attach(sid, meta=meta, title=title)
-
+    def _launch_playwright_sync(
+        self,
+        sid: str,
+        *,
+        url: str,
+        title: str | None,
+        headless: bool,
+        engine: str,
+    ) -> BrowserSession:
         from playwright.sync_api import sync_playwright
 
         playwright = sync_playwright().start()
-        if resolved_engine == "firefox":
+        if engine == "firefox":
             browser = playwright.firefox.launch(headless=headless)
         else:
             browser = playwright.chromium.launch(headless=headless)
@@ -142,7 +167,7 @@ class BrowserSessionRegistry:
             url=url,
             title=title or browser_page.title(),
             headless=headless,
-            engine=resolved_engine,
+            engine=engine,
             page=browser_page,
             _playwright=playwright,
             _browser=browser,
@@ -150,7 +175,69 @@ class BrowserSessionRegistry:
         self._sessions[sid] = session
         return session
 
+    def _open(
+        self,
+        url: str,
+        *,
+        session_id: str | None = None,
+        headless: bool = True,
+        title: str | None = None,
+        engine: str | None = None,
+        page: Any | None = None,
+    ) -> BrowserSession:
+        from ..browser_engine import normalize_browser_engine
+        from ..browser_session_store import (
+            detached_sessions_enabled,
+            launch_detached_chromium,
+            session_available,
+        )
+        from .browser_playwright import _playwright_available
+        from .browser_sync_executor import in_browser_thread, run_browser_sync
+
+        resolved_engine = normalize_browser_engine(engine).value
+        sid = session_id or new_session_id()
+
+        reused = self._maybe_reuse_existing_session(sid, url=url, title=title)
+        if reused is not None:
+            return reused
+
+        if page is None and self._tracks_detached_sessions() and session_available(sid):
+            return self._attach(sid)
+
+        if page is not None:
+            return self._create_mock_session(
+                sid, url=url, title=title, headless=headless, engine=resolved_engine, page=page
+            )
+
+        ready, reason = _playwright_available()
+        if not ready:
+            raise VDisplayError(reason)
+
+        if detached_sessions_enabled() and resolved_engine != "firefox":
+            meta = launch_detached_chromium(session_id=sid, url=url, headless=headless)
+            return self._attach(sid, meta=meta, title=title)
+
+        if in_browser_thread():
+            return self._launch_playwright_sync(
+                sid, url=url, title=title, headless=headless, engine=resolved_engine
+            )
+        return run_browser_sync(
+            self._launch_playwright_sync,
+            sid,
+            url=url,
+            title=title,
+            headless=headless,
+            engine=resolved_engine,
+        )
+
     def _attach(self, session_id: str, *, meta: Any = None, title: str | None = None) -> BrowserSession | None:
+        from .browser_sync_executor import in_browser_thread, run_browser_sync
+
+        if in_browser_thread():
+            return self._attach_impl(session_id, meta=meta, title=title)
+        return run_browser_sync(self._attach_impl, session_id, meta=meta, title=title)
+
+    def _load_and_validate_meta(self, session_id: str, meta: Any = None) -> Any | None:
         from ..browser_session_store import load_meta, process_alive, remove_meta
 
         record = meta or load_meta(session_id)
@@ -159,14 +246,16 @@ class BrowserSessionRegistry:
         if not process_alive(record.pid):
             remove_meta(session_id)
             return None
+        return record
 
+    def _connect_cdp_browser(self, record: Any, session_id: str) -> Any:
         from .browser_playwright import _playwright_available
+        from ..browser_session_store import remove_meta
+        from playwright.sync_api import sync_playwright
 
         ready, reason = _playwright_available()
         if not ready:
             raise VDisplayError(reason)
-
-        from playwright.sync_api import sync_playwright
 
         playwright = sync_playwright().start()
         try:
@@ -175,7 +264,9 @@ class BrowserSessionRegistry:
             playwright.stop()
             remove_meta(session_id)
             raise VDisplayError(f"failed to attach browser session {session_id!r}: {exc}") from exc
+        return browser, playwright
 
+    def _resolve_page_from_browser(self, browser: Any, record: Any) -> Any:
         page = None
         for context in browser.contexts:
             if context.pages:
@@ -186,6 +277,15 @@ class BrowserSessionRegistry:
             page = context.new_page()
             if record.url:
                 page.goto(record.url)
+        return page
+
+    def _attach_impl(self, session_id: str, *, meta: Any = None, title: str | None = None) -> BrowserSession | None:
+        record = self._load_and_validate_meta(session_id, meta)
+        if record is None:
+            return None
+
+        browser, playwright = self._connect_cdp_browser(record, session_id)
+        page = self._resolve_page_from_browser(browser, record)
 
         session = BrowserSession(
             session_id=session_id,
@@ -227,6 +327,11 @@ class BrowserSessionRegistry:
         return session
 
     def close(self, session_id: str) -> None:
+        from .browser_sync_executor import run_browser_sync
+
+        run_browser_sync(self._close, session_id)
+
+    def _close(self, session_id: str) -> None:
         from ..browser_session_store import stop_detached
 
         session = self._sessions.pop(session_id, None)

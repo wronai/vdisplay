@@ -38,9 +38,14 @@ def register(sub: argparse._SubParsersAction) -> None:
         help="Portal dialog timeout in seconds (default: 120)",
     )
     sc_start.add_argument(
+        "--single-monitor",
+        action="store_true",
+        help="Capture one monitor only (portal: pick a single screen)",
+    )
+    sc_start.add_argument(
         "--all-monitors",
         action="store_true",
-        help="Request all monitors in one ScreenCast stream (portal: pick All Screens)",
+        help=argparse.SUPPRESS,
     )
     sc_start.set_defaults(func=handle, sc_action="start")
 
@@ -59,7 +64,7 @@ def register(sub: argparse._SubParsersAction) -> None:
     browser_open.set_defaults(func=handle)
 
 
-def _agent_client():
+def _agent_client(*, timeout: float | None = None):
     from ..agent_config import resolve_agent_url
     from ..client import AgentClient
 
@@ -68,14 +73,17 @@ def _agent_client():
         raise VDisplayError(
             "Set VDISPLAY_AGENT_URL (e.g. http://127.0.0.1:8765) or start: vdisplay-agent serve"
         )
-    return AgentClient(url)
+    kwargs: dict[str, float] = {}
+    if timeout is not None:
+        kwargs["timeout"] = timeout
+    return AgentClient(url, **kwargs)
 
 
 def handle(args: argparse.Namespace) -> int:
     if args.action == "serve":
         return _handle_serve(args)
     if args.action == "health":
-        print_json(_agent_client().health())
+        print_json(_agent_client(timeout=5.0).health())
         return 0
     if args.action == "browser-open":
         return _handle_browser_open(args)
@@ -136,20 +144,44 @@ def _handle_browser_open(args: argparse.Namespace) -> int:
 
 
 def _handle_screencast(args: argparse.Namespace) -> int:
-    client = _agent_client()
+    fast = _agent_client(timeout=5.0)
     if args.sc_action == "start":
+        status = fast.screencast_status()
+        if status.get("active") and status.get("ready"):
+            print_json({**status, "ok": True, "reused": True})
+            return 0
+        import sys
+
+        print(
+            "vdisplay: waiting for GNOME Screen Recording portal — choose All Screens",
+            file=sys.stderr,
+        )
+        multiple = False if args.single_monitor else True
+        if args.no_interactive:
+            print_json(
+                _agent_client(timeout=120.0).start_screencast(
+                    interactive=False,
+                    timeout_s=args.timeout,
+                    multiple=multiple,
+                )
+            )
+            return 0
+
+        from ..application.services.screencast_cli import start_screencast_via_agent
+
         print_json(
-            client.start_screencast(
-                interactive=not args.no_interactive,
+            start_screencast_via_agent(
+                _agent_client(timeout=120.0),
+                interactive=True,
                 timeout_s=args.timeout,
-                multiple=True if args.all_monitors else None,
+                multiple=multiple,
             )
         )
         return 0
     if args.sc_action == "stop":
-        print_json(client.stop_screencast())
+        print_json(fast.stop_screencast())
         return 0
     if args.sc_action == "status":
-        print_json(client.screencast_status())
+        print_json(fast.screencast_status())
         return 0
     raise VDisplayError(f"unsupported screencast action: {args.sc_action}")

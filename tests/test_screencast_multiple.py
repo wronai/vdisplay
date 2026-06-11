@@ -12,8 +12,8 @@ def test_screencast_multiple_explicit() -> None:
 
 def test_screencast_multiple_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("VDISPLAY_SCREENCAST_MULTIPLE", raising=False)
+    assert _screencast_multiple(None) is True
+    monkeypatch.setenv("VDISPLAY_SCREENCAST_MULTIPLE", "0")
     assert _screencast_multiple(None) is False
-    monkeypatch.setenv("VDISPLAY_SCREENCAST_MULTIPLE", "1")
-    assert _screencast_multiple(None) is True
-    monkeypatch.setenv("VDISPLAY_SCREENCAST_MULTIPLE", "yes")
-    assert _screencast_multiple(None) is True
+    monkeypatch.setenv("VDISPLAY_SCREENCAST_MULTIPLE", "false")
+    assert _screencast_multiple(None) is False

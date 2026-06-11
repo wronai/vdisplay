@@ -225,9 +225,36 @@ def _execute_map_action(
     expected_verify_text = value or verify_label or element.identity.anchor_text
 
     from ...control.providers.vision import VisionStubProvider
+    from ...control.registry import default_provider_registry
 
     provider = VisionStubProvider(display=display)
-    before_snapshot = provider.snapshot()
+    
+    selector = ControlSelector(
+        backend="vision",
+        vision_anchor=element.identity.anchor_text,
+        extra={"map_path": map_path, "map_target": map_target},
+    )
+    routing = evaluate_provider_routing(
+        backend="vision",
+        selector=selector,
+        display=display,
+        verify_semantic=verify,
+        verify_screenshot=screenshot_verify,
+    )
+    verify_provider_name = routing.verify_provider or "vision"
+    
+    if verify_provider_name != "vision":
+        try:
+            verify_provider = default_provider_registry().build(
+                verify_provider_name,
+                display=display,
+            )
+            before_snapshot = verify_provider.snapshot()
+        except Exception:
+            before_snapshot = provider.snapshot()
+    else:
+        before_snapshot = provider.snapshot()
+
     before_png, screenshot_capture_meta = _capture_before_state(
         display=display,
         target=target,
@@ -240,11 +267,7 @@ def _execute_map_action(
     settle_s = _control_settle_seconds(verify=verify, screenshot_verify=effective_screenshot_verify)
     if settle_s:
         time.sleep(settle_s)
-    selector = ControlSelector(
-        backend="vision",
-        vision_anchor=element.identity.anchor_text,
-        extra={"map_path": map_path, "map_target": map_target},
-    )
+
     verification = VerifierPipeline().verify_after_action(
         VerifyContext(
             action_provider=provider,
@@ -262,15 +285,9 @@ def _execute_map_action(
             verify_semantic=verify_semantic,
             verify_screenshot=effective_screenshot_verify,
             verify_mode=resolved_verify_mode,
+            verify_provider=verify_provider_name,
             map_element=element,
         )
-    )
-    routing = evaluate_provider_routing(
-        backend="vision",
-        selector=selector,
-        display=display,
-        verify_semantic=verify,
-        verify_screenshot=screenshot_verify,
     )
     return _build_action_payload(
         action=action,
@@ -641,6 +658,46 @@ def _build_verify_phases(verification_dict: dict[str, Any]) -> list[dict[str, An
     return phases
 
 
+def _build_selector_target_dicts(selector: Any, target: Any) -> tuple[dict[str, Any], dict[str, Any]]:
+    selector_dict = selector.to_dict() if hasattr(selector, "to_dict") else dict(getattr(selector, "__dict__", {}) or {})
+    target_dict = target.to_dict() if hasattr(target, "to_dict") else dict(target or {})
+    return selector_dict, target_dict
+
+
+def _build_verify_block(
+    verification_dict: dict[str, Any],
+    routing_dict: dict[str, Any],
+    verify: bool,
+    screenshot_verify: bool,
+    result: dict[str, Any],
+    action: str,
+    selector: Any,
+) -> dict[str, Any]:
+    verify_phases = _build_verify_phases(verification_dict)
+    required = required_phases_from_context(
+        action=action,
+        verify=verify,
+        screenshot_verify=screenshot_verify,
+        verify_mode=str(verification_dict.get("mode") or routing_dict.get("verify_mode") or "semantic"),
+        selector=selector if hasattr(selector, "to_dict") else None,
+        map_element=result.get("map_element"),
+    )
+    confidence = verification_dict.get("confidence")
+    if confidence is None:
+        confidence = aggregate_confidence(verification_dict)
+
+    return {
+        "requested": verify,
+        "screenshot_verify": screenshot_verify,
+        "mode": verification_dict.get("mode"),
+        "verified": verification_dict.get("verified"),
+        "confidence": confidence,
+        "reasons": list(verification_dict.get("reasons") or []),
+        "phases": verify_phases,
+        "required_phases": required,
+    }
+
+
 def _build_control_diagnostics(
     *,
     action: str,
@@ -655,25 +712,13 @@ def _build_control_diagnostics(
 ) -> dict[str, Any]:
     routing_dict = routing.to_dict() if hasattr(routing, "to_dict") else dict(routing or {})
     verification_dict = verification.to_dict() if hasattr(verification, "to_dict") else dict(verification or {})
-    selector_dict = selector.to_dict() if hasattr(selector, "to_dict") else dict(getattr(selector, "__dict__", {}) or {})
-    target_dict = target.to_dict() if hasattr(target, "to_dict") else dict(target or {})
+    selector_dict, target_dict = _build_selector_target_dicts(selector, target)
 
     actuation = _build_actuation_dict(result)
     map_block = _build_map_block(result, selector_dict)
-    verify_phases = _build_verify_phases(verification_dict)
+    verify_block = _build_verify_block(verification_dict, routing_dict, verify, screenshot_verify, result, action, selector)
 
     lifecycle = state.to_dict() if isinstance(state, ControlActionState) else None
-    required = required_phases_from_context(
-        action=action,
-        verify=verify,
-        screenshot_verify=screenshot_verify,
-        verify_mode=str(verification_dict.get("mode") or routing_dict.get("verify_mode") or "semantic"),
-        selector=selector if hasattr(selector, "to_dict") else None,
-        map_element=result.get("map_element"),
-    )
-    confidence = verification_dict.get("confidence")
-    if confidence is None:
-        confidence = aggregate_confidence(verification_dict)
 
     control_block: dict[str, Any] = {
         "action": action,
@@ -682,16 +727,7 @@ def _build_control_diagnostics(
         "map": map_block,
         "routing": routing_dict,
         "actuation": actuation,
-        "verify": {
-            "requested": verify,
-            "screenshot_verify": screenshot_verify,
-            "mode": verification_dict.get("mode"),
-            "verified": verification_dict.get("verified"),
-            "confidence": confidence,
-            "reasons": list(verification_dict.get("reasons") or []),
-            "phases": verify_phases,
-            "required_phases": required,
-        },
+        "verify": verify_block,
     }
     if lifecycle:
         control_block.update(
@@ -813,10 +849,29 @@ def _execute_action_once(
         verify_semantic=verify,
         verify_screenshot=screenshot_verify,
     )
-    before_snapshot = provider.snapshot(
-        app=selector.app or session_id,
-        window_id=selector.window_id or session_id,
-    )
+    verify_provider_name = routing.verify_provider or provider.name
+    if verify_provider_name != provider.name:
+        from ...control.registry import default_provider_registry
+        try:
+            verify_provider = default_provider_registry().build(
+                verify_provider_name,
+                display=display,
+                session_id=session_id,
+            )
+            before_snapshot = verify_provider.snapshot(
+                app=selector.app or session_id,
+                window_id=selector.window_id or session_id,
+            )
+        except Exception:
+            before_snapshot = provider.snapshot(
+                app=selector.app or session_id,
+                window_id=selector.window_id or session_id,
+            )
+    else:
+        before_snapshot = provider.snapshot(
+            app=selector.app or session_id,
+            window_id=selector.window_id or session_id,
+        )
     target = _resolve_target(provider, before_snapshot, selector)
     if target is None:
         raise VDisplayError(f"no control matched selector: {selector}")

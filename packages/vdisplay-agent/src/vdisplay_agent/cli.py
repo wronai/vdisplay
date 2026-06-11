@@ -29,8 +29,19 @@ def main(argv: list[str] | None = None) -> int:
         except RuntimeError as exc:
             raise SystemExit(str(exc)) from exc
 
+        try:
+            from vdisplay.capture.portal_screencast import ensure_portal_session_env, portal_session_env_status
+
+            ensure_portal_session_env()
+            ok, hint = portal_session_env_status()
+            if not ok:
+                print(f"vdisplay-agent: WARN — {hint}", file=__import__("sys").stderr)
+        except Exception:
+            pass
+
         print(
-            "Wayland host capture: run `vdisplay agent screencast start` after each serve",
+            "Wayland host capture: start vdisplay-agent serve from a local GUI terminal "
+            "(same session as GNOME), then: vdisplay agent screencast start",
             file=__import__("sys").stderr,
         )
         app = create_app()

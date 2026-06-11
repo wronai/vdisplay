@@ -17,6 +17,7 @@
 | Guide | Question |
 |-------|----------|
 | [guides/agent-broker.md](guides/agent-broker.md) | Local vs broker? Screencast order? |
+| [guides/web-console.md](guides/web-console.md) | Multi-monitor web dashboard at `/web`? |
 | [guides/desktop-control-today.md](guides/desktop-control-today.md) | What works today, gaps, PyCharm prompt, koru fallback |
 | [guides/wayland-control.md](guides/wayland-control.md) | Native Wayland / PyCharm / canvas? |
 | [guides/gui-map-pack.md](guides/gui-map-pack.md) | Build and refresh GUI map? |

@@ -109,6 +109,13 @@ def test_browser_open_enables_dom_provider_eligibility(monkeypatch: pytest.Monke
 
     registry = default_registry()
     registry.close_all()
+    # Prevent detached/persisted browser sessions (from e2e runs etc.) from making
+    # list_ids() report "open" sessions. The before-check must see a clean "no browser
+    # sessions" state so that dom_css selectors do not enable browser provider eligibility
+    # until an explicit open for a session.
+    monkeypatch.setattr(
+        "vdisplay.control.browser_session_store.process_alive", lambda pid: False
+    )
     monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "ok"))
 
     def fake_open(self, url, *, session_id=None, headless=True, title=None, engine=None, page=None):

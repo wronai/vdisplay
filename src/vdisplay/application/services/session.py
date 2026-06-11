@@ -252,25 +252,29 @@ def browser_open(
 ) -> dict[str, Any]:
     from ...control.browser_engine import normalize_browser_engine
     from ...control.providers.browser_session import default_registry
+    from ...control.providers.browser_sync_executor import run_browser_sync
 
     registry = default_registry()
     resolved_engine = normalize_browser_engine(engine).value
-    if page is not None:
-        session = registry.open_mock(
-            page,
-            url=url,
-            session_id=session_id,
-            title=title,
-            engine=resolved_engine,
-        )
-    else:
-        session = registry.open(
+
+    def _open() -> Any:
+        if page is not None:
+            return registry.open_mock(
+                page,
+                url=url,
+                session_id=session_id,
+                title=title,
+                engine=resolved_engine,
+            )
+        return registry.open(
             url,
             session_id=session_id,
             headless=headless,
             title=title,
             engine=resolved_engine,
         )
+
+    session = _open() if page is not None else run_browser_sync(_open)
     return {
         "ok": True,
         "session_id": session.session_id,

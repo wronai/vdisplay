@@ -20,8 +20,8 @@ Cross-platform virtual display orchestration with virtual and mirror sessions
 ## Metadata
 
 - **name**: `vdisplay`
-- **version**: `0.1.15`
-- **python_requires**: `>=3.10`
+- **version**: `0.1.20`
+- **python_requires**: `>=3.10,<3.14`
 - **license**: Apache-2.0
 - **ai_model**: `openrouter/qwen/qwen3-coder-next`
 - **ecosystem**: SUMD + DOQL + testql + taskfile
@@ -40,7 +40,7 @@ SUMD (description) → DOQL/source (code) → taskfile (automation) → testql (
 
 app {
   name: vdisplay;
-  version: 0.1.15;
+  version: 0.1.20;
 }
 
 dependencies {
@@ -56,6 +56,9 @@ dependencies {
   terminal: "pyte>=0.8.1, pexpect>=4.9, wcwidth>=0.2.13";
   agent: "vdisplay-agent, fastapi>=0.110, uvicorn>=0.27, sqlmodel>=0.0.22";
   img2nl: img2nl[analyze];
+  imgl: imgl;
+  vql: "vql, img2vql; sys_platform == "linux"";
+  observe: "imgl, vql, img2vql; sys_platform == "linux"";
 }
 
 interface[type="api"] {
@@ -75,7 +78,7 @@ tests {
 }
 
 env_vars {
-  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, XDG_CURRENT_DESKTOP, DESKTOP_SESSION, VDISPLAY_BROWSER_DETACHED, VDISPLAY_VISION_LLM_MODE, VDISPLAY_VISION_LLM_MODALITIES, VDISPLAY_VISION_LLM, VDISPLAY_VISION_LLM_TIMEOUT_S, VDISPLAY_VISION_LLM_ENABLED, VDISPLAY_CONTROL_FOCUS_MS, VDISPLAY_CONTROL_POINTER_SETTLE_MS, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_SESSION_DIR, VDISPLAY_SESSION, VDISPLAY_SESSION_ID, YDOTOOL_SOCKET, VDISPLAY_ALLOW_YDOTOOL_TYPING, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_CONTROL_SETTLE_MS, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
+  keys: OPENROUTER_API_KEY, LLM_MODEL, VDISPLAY_AGENT_AUTO, VDISPLAY_AGENT_HOST, VDISPLAY_AGENT_PORT, VDISPLAY_AGENT_URL, VDISPLAY_AGENT_TOKEN, VDISPLAY_AGENT_BROKER, DISPLAY, XDG_SESSION_TYPE, VDISPLAY_SESSION_DIR, VDISPLAY_VISION_BACKEND, VDISPLAY_OCR_CACHE, VDISPLAY_SCREEN_CONTEXT_JSON, VDISPLAY_SCREEN_CONTEXT_PATH, XDG_CURRENT_DESKTOP, DESKTOP_SESSION, VDISPLAY_VISION_PREVIEW, VDISPLAY_CONTROL_MAX_ATTEMPTS, VDISPLAY_CONTROL_RETRY_DELAY_MS, VDISPLAY_CONTROL_RETRY_STRATEGIES, VDISPLAY_CONTROL_RETRY, VDISPLAY_BROWSER_DETACHED, VDISPLAY_VISION_LLM_MODE, VDISPLAY_VISION_LLM_MODALITIES, VDISPLAY_VISION_LLM, VDISPLAY_VISION_LLM_TIMEOUT_S, VDISPLAY_VISION_LLM_ENABLED, VDISPLAY_CONTROL_FOCUS_MS, VDISPLAY_CONTROL_POINTER_SETTLE_MS, WAYLAND_DISPLAY, VDISPLAY_SCREENCAST_MULTIPLE, VDISPLAY_SCREENCAST_CURSOR, VDISPLAY_SESSION, VDISPLAY_SESSION_ID, VDISPLAY_AGENT_AUDIT_DELEGATE, VDISPLAY_EVENT_STORE, VDISPLAY_PROJECTIONS, VDISPLAY_VQL, VDISPLAY_OBSERVE_CACHE, VDISPLAY_SESSION_BASE, VDISPLAY_OBSERVE, VDISPLAY_OBSERVE_VQL, VDISPLAY_OBSERVE_SIDECAR, VDISPLAY_IMGL, VDISPLAY_IMGL_SKIP_BLANK, VDISPLAY_IMGL_LANG, YDOTOOL_SOCKET, VDISPLAY_ALLOW_YDOTOOL_TYPING, VDISPLAY_IMG2NL, VDISPLAY_IMG2NL_LOCALE, VDISPLAY_DESCRIBE_BACKEND, VDISPLAY_CONTROL_SETTLE_MS, XDG_CONFIG_HOME, VDISPLAY_EVENT_FORMAT, VDISPLAY_CAPTURE_ALLOW_PORTAL, PYTEST_CURRENT_TEST;
 }
 
 deploy {
@@ -86,7 +89,7 @@ environment[name="local"] {
   runtime: docker-compose;
   env_file: .env;
   template_file: .env.example;
-  python_version: >=3.10;
+  python_version: >=3.10,<3.14;
   vars: LLM_MODEL, OPENROUTER_API_KEY;
   runtime_llm: OPENROUTER_API_KEY;
 }
@@ -130,7 +133,7 @@ ASSERT_EXIT_CODE 0
 ```yaml
 project:
   name: vdisplay
-  version: 0.1.15
+  version: 0.1.20
   env: local
 ```
 
@@ -186,15 +189,17 @@ pip install -e .[dev]
 ### `project/map.toon.yaml`
 
 ```toon markpact:analysis path=project/map.toon.yaml
-# vdisplay | 306f 37874L | python:296,shell:9,less:1 | 2026-06-10
-# stats: 1479 func | 142 cls | 306 mod | CC̄=3.9 | critical:84 | cycles:0
-# alerts[5]: CC test_sampler_creates_persisted_task=18; CC describe_screenshot_nl=14; CC dispatch=14; CC diagnose_control=14; CC _capture_all_from_screencast=14
-# hotspots[5]: _start_screencast_impl fan=33; create_app fan=22; _portal_impl fan=22; register_routes fan=21; snapshot_dict fan=21
+# vdisplay | 367f 48381L | python:357,shell:9,less:1 | 2026-06-10
+# stats: 1830 func | 168 cls | 367 mod | CC̄=4.2 | critical:137 | cycles:0
+# alerts[5]: CC sample_pointer=42; CC build_map_health=38; CC run_hmi_watch=38; CC context_to_vql_program=34; CC render_readme=31
+# hotspots[5]: _start_screencast_impl fan=34; run_hmi_watch fan=27; register_routes fan=24; execute fan=23; create_app fan=22
 # evolution: baseline
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[306]:
-  app.doql.less,55
+M[367]:
+  app.doql.less,58
   brain/scratch_atspi.py,19
+  brain/scratch_find_pycharm_chat.py,81
+  brain/scratch_test_screencast.py,124
   examples/agent-broker/broker_demo.py,58
   examples/agent-broker/run.sh,27
   examples/ci-agent/agent.py,74
@@ -237,17 +242,20 @@ M[306]:
   packages/uri2vdisplay/src/uri2vdisplay/cli.py,31
   packages/uri2vdisplay/src/uri2vdisplay/decode.py,32
   packages/vdisplay-agent/src/vdisplay_agent/__init__.py,8
+  packages/vdisplay-agent/src/vdisplay_agent/audit_context.py,58
   packages/vdisplay-agent/src/vdisplay_agent/cli.py,44
   packages/vdisplay-agent/src/vdisplay_agent/envelope.py,86
   packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py,16
+  packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py,93
+  packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py,28
   packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py,25
-  packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py,33
-  packages/vdisplay-agent/src/vdisplay_agent/routes/control.py,123
+  packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py,36
+  packages/vdisplay-agent/src/vdisplay_agent/routes/control.py,191
   packages/vdisplay-agent/src/vdisplay_agent/routes/health.py,77
   packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py,48
-  packages/vdisplay-agent/src/vdisplay_agent/routes/session.py,137
+  packages/vdisplay-agent/src/vdisplay_agent/routes/session.py,165
   packages/vdisplay-agent/src/vdisplay_agent/routes/tasks.py,70
-  packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py,42
+  packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py,53
   packages/vdisplay-agent/src/vdisplay_agent/runtime.py,146
   packages/vdisplay-agent/src/vdisplay_agent/schemas.py,85
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py,147
@@ -255,43 +263,54 @@ M[306]:
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py,6
   packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py,57
   packages/vdisplay-agent/src/vdisplay_agent/services/capture.py,97
-  packages/vdisplay-agent/src/vdisplay_agent/services/control.py,114
+  packages/vdisplay-agent/src/vdisplay_agent/services/control.py,117
   packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py,20
   packages/vdisplay-agent/src/vdisplay_agent/services/relay.py,33
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py,184
   packages/vdisplay-agent/src/vdisplay_agent/services/sessions.py,263
-  packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py,182
+  packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py,191
   packages/vdisplay-agent/src/vdisplay_agent/services/windows.py,32
   packages/vdisplay-agent/src/vdisplay_agent/session_store.py,66
   packages/vdisplay-agent/src/vdisplay_agent/task_store.py,198
   project.sh,59
   src/vdisplay/__init__.py,13
-  src/vdisplay/agent_config.py,72
+  src/vdisplay/agent_config.py,94
   src/vdisplay/agent_dispatch.py,31
   src/vdisplay/agent_envelope.py,18
   src/vdisplay/api.py,194
   src/vdisplay/application/__init__.py,15
   src/vdisplay/application/artifacts.py,103
-  src/vdisplay/application/commands.py,371
+  src/vdisplay/application/commands.py,19
   src/vdisplay/application/errors.py,40
-  src/vdisplay/application/executor.py,68
+  src/vdisplay/application/event_store.py,115
+  src/vdisplay/application/events.py,429
+  src/vdisplay/application/executor.py,109
+  src/vdisplay/application/gui_map_events.py,92
   src/vdisplay/application/handlers/__init__.py,7
-  src/vdisplay/application/handlers/agent.py,242
+  src/vdisplay/application/handlers/agent.py,244
   src/vdisplay/application/handlers/control.py,73
   src/vdisplay/application/handlers/local.py,292
+  src/vdisplay/application/models.py,214
+  src/vdisplay/application/parsers.py,320
+  src/vdisplay/application/projections/__init__.py,84
+  src/vdisplay/application/projections/backend_scores.py,214
+  src/vdisplay/application/projections/map_health.py,148
+  src/vdisplay/application/proto/__init__.py,32
+  src/vdisplay/application/proto/codec.py,247
   src/vdisplay/application/runtime.py,87
   src/vdisplay/application/services/__init__.py,4
   src/vdisplay/application/services/capture.py,183
-  src/vdisplay/application/services/control.py,764
+  src/vdisplay/application/services/control.py,991
   src/vdisplay/application/services/discovery.py,240
-  src/vdisplay/application/services/img2nl_enrich.py,125
+  src/vdisplay/application/services/img2nl_enrich.py,238
   src/vdisplay/application/services/info.py,52
-  src/vdisplay/application/services/map.py,276
+  src/vdisplay/application/services/map.py,313
   src/vdisplay/application/services/sampler.py,110
   src/vdisplay/application/services/sampler_loop.py,281
   src/vdisplay/application/services/session.py,327
-  src/vdisplay/application/session_context.py,33
-  src/vdisplay/application/session_recorder.py,501
+  src/vdisplay/application/session_context.py,125
+  src/vdisplay/application/session_recorder.py,1018
+  src/vdisplay/application/verbs.py,63
   src/vdisplay/backends/__init__.py,2
   src/vdisplay/backends/base.py,65
   src/vdisplay/backends/linux_x11_mirror.py,260
@@ -300,11 +319,11 @@ M[306]:
   src/vdisplay/backends/mirror_stub.py,35
   src/vdisplay/capture/__init__.py,16
   src/vdisplay/capture/base.py,10
-  src/vdisplay/capture/host.py,556
+  src/vdisplay/capture/host.py,589
   src/vdisplay/capture/linux_xwd.py,321
   src/vdisplay/capture/policy.py,141
   src/vdisplay/capture/portal.py,222
-  src/vdisplay/capture/portal_screencast.py,780
+  src/vdisplay/capture/portal_screencast.py,783
   src/vdisplay/capture/providers/__init__.py,4
   src/vdisplay/capture/providers/base.py,23
   src/vdisplay/capture/providers/drm.py,93
@@ -314,27 +333,35 @@ M[306]:
   src/vdisplay/capture/providers/x11.py,36
   src/vdisplay/cli.py,37
   src/vdisplay/cli_handlers.py,35
-  src/vdisplay/client.py,423
-  src/vdisplay/commands/__init__.py,47
+  src/vdisplay/client.py,50
+  src/vdisplay/client_api.py,211
+  src/vdisplay/client_http.py,97
+  src/vdisplay/client_routes.py,129
+  src/vdisplay/commands/__init__.py,57
   src/vdisplay/commands/agent.py,156
   src/vdisplay/commands/all_cmd.py,47
+  src/vdisplay/commands/app.py,60
   src/vdisplay/commands/common.py,138
   src/vdisplay/commands/control.py,160
   src/vdisplay/commands/diagnose.py,54
+  src/vdisplay/commands/hmi.py,100
+  src/vdisplay/commands/ide.py,116
   src/vdisplay/commands/info.py,17
   src/vdisplay/commands/io.py,8
   src/vdisplay/commands/map.py,99
   src/vdisplay/commands/mirror.py,54
   src/vdisplay/commands/monitors.py,20
   src/vdisplay/commands/nlp.py,24
+  src/vdisplay/commands/observe.py,93
   src/vdisplay/commands/relay.py,111
   src/vdisplay/commands/sampler.py,133
   src/vdisplay/commands/screenshot.py,54
-  src/vdisplay/commands/session.py,80
+  src/vdisplay/commands/session.py,258
   src/vdisplay/commands/virtual.py,82
   src/vdisplay/commands/windows.py,30
   src/vdisplay/control/__init__.py,70
   src/vdisplay/control/action_bounds.py,25
+  src/vdisplay/control/action_state.py,70
   src/vdisplay/control/base.py,70
   src/vdisplay/control/browser_engine.py,56
   src/vdisplay/control/browser_session_store.py,197
@@ -367,29 +394,47 @@ M[306]:
   src/vdisplay/control/providers/vision/provider.py,716
   src/vdisplay/control/providers/x11.py,151
   src/vdisplay/control/registry.py,118
+  src/vdisplay/control/retry_policy.py,182
   src/vdisplay/control/router.py,272
   src/vdisplay/control/routing_semantics.py,159
-  src/vdisplay/control/scoring.py,802
-  src/vdisplay/control/screenshot_verify.py,266
+  src/vdisplay/control/scoring.py,812
+  src/vdisplay/control/screenshot_verify.py,381
   src/vdisplay/control/selector.py,348
   src/vdisplay/control/session.py,217
   src/vdisplay/control/session_kind.py,16
   src/vdisplay/control/timing.py,24
-  src/vdisplay/control/verifier.py,568
+  src/vdisplay/control/verifier.py,591
   src/vdisplay/control/verify.py,499
+  src/vdisplay/control/verify_policy.py,95
   src/vdisplay/control/verify_strategy.py,17
   src/vdisplay/control/vision_disambiguate.py,79
   src/vdisplay/control/vision_llm.py,237
-  src/vdisplay/control/vision_ocr.py,316
-  src/vdisplay/control/vision_preview.py,239
-  src/vdisplay/control/vision_template.py,259
+  src/vdisplay/control/vision_ocr.py,366
+  src/vdisplay/control/vision_preview.py,364
+  src/vdisplay/control/vision_template.py,281
+  src/vdisplay/desktop_apps.py,435
   src/vdisplay/discovery.py,364
   src/vdisplay/exceptions.py,11
+  src/vdisplay/hmi/__init__.py,6
+  src/vdisplay/hmi/capture.py,28
+  src/vdisplay/hmi/context.py,107
+  src/vdisplay/hmi/keyboard.py,298
+  src/vdisplay/hmi/mouse.py,210
+  src/vdisplay/hmi/pointer.py,511
+  src/vdisplay/hmi/watch.py,255
+  src/vdisplay/ide_prompt.py,469
   src/vdisplay/input/__init__.py,12
-  src/vdisplay/input/coords.py,220
+  src/vdisplay/input/coords.py,354
   src/vdisplay/input/linux_xdotool.py,69
   src/vdisplay/input/linux_ydotool.py,115
   src/vdisplay/input/resolve.py,28
+  src/vdisplay/integrations/__init__.py,12
+  src/vdisplay/integrations/imgl_bridge.py,117
+  src/vdisplay/integrations/observe_cache.py,214
+  src/vdisplay/integrations/pipeline.py,139
+  src/vdisplay/integrations/screen_context.py,165
+  src/vdisplay/integrations/vision_backend.py,172
+  src/vdisplay/integrations/vql_bridge.py,285
   src/vdisplay/models.py,27
   src/vdisplay/nl.py,159
   src/vdisplay/nlp.py,159
@@ -412,10 +457,12 @@ M[306]:
   tests/fixtures/run_gtk_demo.sh,12
   tests/test_agent.py,44
   tests/test_agent_api_contract.py,43
+  tests/test_agent_audit_session.py,253
   tests/test_agent_browser_session.py,60
-  tests/test_agent_client.py,119
+  tests/test_agent_client.py,139
   tests/test_agent_dispatch.py,53
   tests/test_agent_integration.py,68
+  tests/test_agent_outputs_nl.py,39
   tests/test_agent_sampler.py,66
   tests/test_agent_serve_port.py,67
   tests/test_agent_tasks.py,130
@@ -430,8 +477,11 @@ M[306]:
   tests/test_cli_commands.py,97
   tests/test_cli_control_args.py,103
   tests/test_cli_session.py,109
+  tests/test_client_http.py,65
   tests/test_client_request.py,43
+  tests/test_client_routes.py,47
   tests/test_command_contract.py,71
+  tests/test_control_action_state.py,29
   tests/test_control_agent.py,36
   tests/test_control_app_matching.py,49
   tests/test_control_atspi.py,52
@@ -439,55 +489,69 @@ M[306]:
   tests/test_control_browser_session.py,56
   tests/test_control_browser_verify.py,39
   tests/test_control_capabilities.py,84
+  tests/test_control_diagnostics.py,89
   tests/test_control_executor.py,71
   tests/test_control_gtk_demo.py,207
   tests/test_control_plugins.py,107
   tests/test_control_policy.py,39
   tests/test_control_policy_v2.py,135
-  tests/test_control_screenshot_verify.py,227
+  tests/test_control_retry_policy.py,82
+  tests/test_control_screenshot_verify.py,290
   tests/test_control_selector.py,36
   tests/test_control_selector_v2.py,88
-  tests/test_control_set_value_verify.py,153
+  tests/test_control_set_value_verify.py,274
   tests/test_control_settle.py,53
   tests/test_control_terminal.py,184
   tests/test_control_timing.py,28
   tests/test_control_verifier_hybrid.py,200
   tests/test_control_verify.py,265
+  tests/test_control_verify_policy.py,38
   tests/test_control_x11.py,81
-  tests/test_coords_rotation.py,39
+  tests/test_coords_rotation.py,78
   tests/test_cross_platform_providers.py,179
+  tests/test_describe_backend.py,29
+  tests/test_desktop_apps.py,87
   tests/test_dsl_browser_open.py,176
   tests/test_dsl_terminal_control.py,42
   tests/test_dsl_terminal_open.py,69
+  tests/test_event_store.py,121
   tests/test_example_control_plugin.py,103
   tests/test_example_uia_ax_plugins.py,145
   tests/test_execution_policy.py,65
   tests/test_gui_map.py,373
   tests/test_gui_map_diff.py,210
+  tests/test_hmi_watch.py,237
   tests/test_host_capture.py,43
   tests/test_host_capture_errors.py,37
+  tests/test_ide_prompt.py,107
   tests/test_img2nl_enrich.py,102
   tests/test_import.py,23
   tests/test_linux_xvfb_integration.py,22
   tests/test_mirror_primary.py,43
   tests/test_nl.py,145
   tests/test_nlp_pipeline.py,67
+  tests/test_observe_cache.py,137
   tests/test_outputs_rotation.py,35
   tests/test_portal_screencast.py,146
   tests/test_profile_inference.py,79
+  tests/test_projections.py,209
+  tests/test_proto_codec.py,119
   tests/test_relay_release.py,66
   tests/test_relay_window_region.py,70
   tests/test_routing_semantics.py,239
   tests/test_sampler_policy.py,91
   tests/test_sampler_recovery.py,100
+  tests/test_screen_context.py,71
   tests/test_screencast_multiple.py,20
   tests/test_screenshot_meta.py,54
   tests/test_screenshot_routing.py,105
   tests/test_session_catalog.py,72
-  tests/test_session_recorder.py,112
+  tests/test_session_maps_cli.py,151
+  tests/test_session_recorder.py,358
   tests/test_uia_invoke.py,98
   tests/test_vision_anchor_matching.py,153
   tests/test_vision_anchor_visible_verify.py,126
+  tests/test_vision_backend.py,36
   tests/test_vision_llm.py,181
   tests/test_vision_multimatch_disambiguation.py,159
   tests/test_vision_ocr_invoke.py,189
@@ -501,6 +565,12 @@ M[306]:
   tree.sh,2
 D:
   brain/scratch_atspi.py:
+  brain/scratch_find_pycharm_chat.py:
+    e: dump_tree
+    dump_tree(accessible;path;depth)
+  brain/scratch_test_screencast.py:
+    e: test_screencast
+    test_screencast()
   examples/agent-broker/broker_demo.py:
     e: main
     main()
@@ -694,6 +764,11 @@ D:
     e: uri_to_dsl
     uri_to_dsl(uri)
   packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
+  packages/vdisplay-agent/src/vdisplay_agent/audit_context.py:
+    e: audit_context_from_headers,audit_context_from_fastapi_headers,apply_audit_env
+    audit_context_from_headers()
+    audit_context_from_fastapi_headers(headers)
+    apply_audit_env(ctx)
   packages/vdisplay-agent/src/vdisplay_agent/cli.py:
     e: main
     main(argv)
@@ -711,6 +786,14 @@ D:
   packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py:
     e: register_all_routes
     register_all_routes(app;broker)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py:
+    e: execute_audit_route,execute_audited_service,_json_from_command_result
+    execute_audit_route(action;verb;body)
+    execute_audited_service(action;body)
+    _json_from_command_result(action;result)
+  packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py:
+    e: read_audit_headers
+    read_audit_headers(audit_session_id;audit_session_dir;audit_request_id;audit_request_source)
   packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py:
     e: expected_token,make_check_auth
     expected_token()
@@ -838,10 +921,11 @@ D:
     task_to_dict(task)
   src/vdisplay/__init__.py:
   src/vdisplay/agent_config.py:
-    e: agent_auto_enabled,reset_agent_probe_cache,_default_agent_base,_probe_agent_url,_probe_default_agent,resolve_agent_url,resolve_agent_token,use_agent
+    e: agent_auto_enabled,reset_agent_probe_cache,_default_agent_base,_is_vdisplay_agent_health,_probe_agent_url,_probe_default_agent,resolve_agent_url,resolve_agent_token,use_agent
     agent_auto_enabled()
     reset_agent_probe_cache()
     _default_agent_base()
+    _is_vdisplay_agent_health(payload)
     _probe_agent_url(base_url)
     _probe_default_agent()
     resolve_agent_url(explicit)
@@ -874,25 +958,50 @@ D:
     artifacts_from_control(data)
     build_artifacts(cmd;data)
   src/vdisplay/application/commands.py:
-    e: _resolve_browser_engine_from_dsl,_control_session_id_from_dsl,_control_fields_from_dsl,_terminal_fields_from_dsl,_browser_fields_from_dsl,CommandVerb,ArtifactRef,CommandRequest,CommandResult
-    CommandVerb:
-    ArtifactRef: to_dict(0)
-    CommandRequest: action(0),from_dsl(2)
-    CommandResult: to_dict(0),to_dsl_result(0),success(1),failure(1)
-    _resolve_browser_engine_from_dsl(cmd)
-    _control_session_id_from_dsl(cmd;verb)
-    _control_fields_from_dsl(cmd)
-    _terminal_fields_from_dsl(cmd;verb)
-    _browser_fields_from_dsl(cmd;verb)
   src/vdisplay/application/errors.py:
     e: error_from_exception,ErrorCode,ApplicationError
     ErrorCode:
     ApplicationError: to_dict(0)
     error_from_exception(exc)
+  src/vdisplay/application/event_store.py:
+    e: event_store_enabled,resolve_event_session_root,append_event,append_events,read_events,EventStore
+    EventStore: __init__(1),append(1),append_many(1),_maybe_append_protobuf(1),_maybe_append_protobuf_many(1),read_all(0),_maybe_refresh_projections(0)
+    event_store_enabled()
+    resolve_event_session_root(cmd)
+    append_event(session_root;event)
+    append_events(session_root;events)
+    read_events(session_root)
+  src/vdisplay/application/events.py:
+    e: _now_ms,_event_id,session_started,command_received,command_completed,step_recorded,_create_planned_event,_create_executed_event,_create_verification_event,_create_retry_event,_create_recovery_event,control_events_from_diagnostics,gui_map_built,gui_map_drift_detected,map_events_from_diagnostics,DomainEvent
+    DomainEvent: to_dict(0),from_dict(2)
+    _now_ms()
+    _event_id()
+    session_started()
+    command_received(cmd)
+    command_completed(cmd;result)
+    step_recorded()
+    _create_planned_event(session_id;request_id;verb;control;routing)
+    _create_executed_event(session_id;request_id;verb;control;ok)
+    _create_verification_event(session_id;request_id;verb;verify;ok)
+    _create_retry_event(session_id;request_id;verb;control)
+    _create_recovery_event(session_id;request_id;verb;control)
+    control_events_from_diagnostics()
+    gui_map_built()
+    gui_map_drift_detected()
+    map_events_from_diagnostics()
   src/vdisplay/application/executor.py:
-    e: _maybe_enrich_screenshot,execute
+    e: _audit_record_on_client,_emit_command_received,_emit_command_completed,_maybe_enrich_screenshot,execute
+    _audit_record_on_client(route)
+    _emit_command_received(cmd)
+    _emit_command_completed(cmd;result)
     _maybe_enrich_screenshot(cmd;data)
     execute(cmd)
+  src/vdisplay/application/gui_map_events.py:
+    e: _session_id,emit_gui_map_event,record_gui_map_built,record_gui_map_drift
+    _session_id(session_root)
+    emit_gui_map_event(event)
+    record_gui_map_built()
+    record_gui_map_drift()
   src/vdisplay/application/handlers/__init__.py:
   src/vdisplay/application/handlers/agent.py:
     e: _strip_ok,_health,_info,_monitors,_windows,_all,_capabilities,_validate,_screenshot,_virtual_start,_terminal_open,_browser_open,_mirror,_adopt,_release,_diagnose_control,_controls_list,_controls_find,_control_click,_control_focus,_control_set_value,execute_agent
@@ -947,6 +1056,65 @@ D:
     _control_focus(cmd)
     _control_set_value(cmd)
     execute_local(cmd)
+  src/vdisplay/application/models.py:
+    e: ArtifactRef,CommandRequest,CommandResult
+    ArtifactRef: to_dict(0)
+    CommandRequest: action(0),from_dsl(2),from_agent_body(3)
+    CommandResult: to_dict(0),to_dsl_result(0),success(1),failure(1)
+  src/vdisplay/application/parsers.py:
+    e: _resolve_browser_engine_from_dsl,_control_session_id_from_dsl,_control_fields_from_dsl,_terminal_fields_from_dsl,_browser_fields_from_dsl,parse_dsl,parse_agent_control_body,_parse_terminal_open_from_agent,_parse_browser_open_from_agent,_parse_virtual_start_from_agent,_parse_adopt_release_from_agent,parse_agent_body
+    _resolve_browser_engine_from_dsl(cmd)
+    _control_session_id_from_dsl(cmd;verb)
+    _control_fields_from_dsl(cmd)
+    _terminal_fields_from_dsl(cmd;verb)
+    _browser_fields_from_dsl(cmd;verb)
+    parse_dsl(cmd)
+    parse_agent_control_body(verb;body)
+    _parse_terminal_open_from_agent(request;body)
+    _parse_browser_open_from_agent(request;body)
+    _parse_virtual_start_from_agent(request;body)
+    _parse_adopt_release_from_agent(request;body)
+    parse_agent_body(verb;body)
+  src/vdisplay/application/projections/__init__.py:
+    e: refresh_projections,build_control_state
+    refresh_projections(session_root)
+    build_control_state(events)
+  src/vdisplay/application/projections/backend_scores.py:
+    e: _score_bucket,_apply_outcome,_routing_from_event,_handle_backend_score_updated,build_backend_scores,global_backend_scores_path,load_global_backend_scores,load_session_backend_scores,merge_backend_scores,resolve_active_session_root,load_merged_backend_scores,provider_score_prior,load_backend_scores
+    _score_bucket(scores)
+    _apply_outcome(bucket)
+    _routing_from_event(event)
+    _handle_backend_score_updated(event;scores)
+    build_backend_scores(events)
+    global_backend_scores_path()
+    load_global_backend_scores()
+    load_session_backend_scores(session_root)
+    merge_backend_scores()
+    resolve_active_session_root()
+    load_merged_backend_scores()
+    provider_score_prior(provider)
+    load_backend_scores(session_root)
+  src/vdisplay/application/projections/map_health.py:
+    e: _ensure_map_entry,_apply_drift_payload,build_map_health,load_map_health
+    _ensure_map_entry(health;map_path)
+    _apply_drift_payload(entry)
+    build_map_health(events)
+    load_map_health(session_root)
+  src/vdisplay/application/proto/__init__.py:
+  src/vdisplay/application/proto/codec.py:
+    e: event_format,protobuf_events_enabled,encode_event_envelope,decode_event_envelope,encode_event_line_base64,decode_event_line_base64,read_length_delimited_events,TraceContext,Artifact,DomainEventEnvelope,CommandEnvelope,ResultEnvelope
+    TraceContext: to_dict(0),from_dict(2)
+    Artifact: to_dict(0),from_dict(2)
+    DomainEventEnvelope: to_dict(0),from_domain_event(2),to_domain_event_dict(0)
+    CommandEnvelope: to_dict(0)
+    ResultEnvelope: to_dict(0)
+    event_format()
+    protobuf_events_enabled()
+    encode_event_envelope(envelope)
+    decode_event_envelope(data)
+    encode_event_line_base64(envelope)
+    decode_event_line_base64(line)
+    read_length_delimited_events(path)
   src/vdisplay/application/runtime.py:
     e: agent_client_optional,agent_client_required,prefer_agent,resolve_apps_only,get_execution_policy,ExecutionPolicy
     ExecutionPolicy: route(1),meta_for(1)  # Decide whether a command runs via vdisplay-agent or in-proce
@@ -964,7 +1132,7 @@ D:
     _capture_via_agent(client)
     capture_screenshot_via_client(client)
   src/vdisplay/application/services/control.py:
-    e: _resolve_verify_mode,_control_settle_seconds,_apply_selector_overrides,_selector_from_kwargs,_provider_kwargs,_resolve_target,_load_map_pack,_resolve_map_target,_map_find_payload,_execute_map_action,list_control_plugins,diagnose_control,controls_list,_attach_vision_preview,controls_find,control_click,control_focus,control_set_value,_perform_action,_capture_before_state,_build_action_payload,_execute_action,_build_tree
+    e: _resolve_verify_mode,_control_settle_seconds,_apply_selector_overrides,_selector_from_kwargs,_provider_kwargs,_resolve_target,_load_map_pack,_resolve_map_target,_map_find_payload,_execute_map_action,list_control_plugins,diagnose_control,controls_list,_attach_vision_preview,controls_find,control_click,control_focus,control_set_value,_perform_action,_capture_before_state,_build_actuation_dict,_build_map_block,_build_verify_phases,_build_control_diagnostics,_build_action_payload,_execute_action_once,_execute_action,_build_tree
     _resolve_verify_mode()
     _control_settle_seconds()
     _apply_selector_overrides(selector)
@@ -985,7 +1153,12 @@ D:
     control_set_value()
     _perform_action(provider;action;target;value)
     _capture_before_state()
+    _build_actuation_dict(result)
+    _build_map_block(result;selector_dict)
+    _build_verify_phases(verification_dict)
+    _build_control_diagnostics()
     _build_action_payload()
+    _execute_action_once()
     _execute_action()
     _build_tree(snapshot)
   src/vdisplay/application/services/discovery.py:
@@ -1002,11 +1175,16 @@ D:
     diagnose_unattended(display)
     _sampler_hint(contract)
   src/vdisplay/application/services/img2nl_enrich.py:
-    e: img2nl_enabled,img2nl_locale,_image_path,describe_screenshot_image,_maybe_vision_llm_enrich,enrich_screenshot_payload
+    e: img2nl_enabled,img2nl_locale,describe_backend,_nl_from_imgl_scene,_describe_via_imgl,_describe_via_vql,describe_screenshot_image,_describe_via_img2nl,_image_path,_maybe_vision_llm_enrich,enrich_screenshot_payload
     img2nl_enabled()
     img2nl_locale()
-    _image_path(payload)
+    describe_backend()
+    _nl_from_imgl_scene(scene)
+    _describe_via_imgl(image_path)
+    _describe_via_vql(image_path)
     describe_screenshot_image(image_path)
+    _describe_via_img2nl(path)
+    _image_path(payload)
     _maybe_vision_llm_enrich(image_path)
     enrich_screenshot_payload(payload)
   src/vdisplay/application/services/info.py:
@@ -1053,14 +1231,21 @@ D:
     terminal_open()
     unsupported_session_action(kind;action)
   src/vdisplay/application/session_context.py:
-    e: apply_cli_session_args,enrich_command_request
+    e: apply_cli_session_args,enrich_command_request,agent_audit_delegated,ensure_audit_session_dir,audit_headers_for_command,current_audit_headers,bind_audit_command,audit_context_from_mapping,AuditContext
+    AuditContext: should_record(0)
     apply_cli_session_args(args)
     enrich_command_request(cmd)
+    agent_audit_delegated()
+    ensure_audit_session_dir(cmd)
+    audit_headers_for_command(cmd)
+    current_audit_headers()
+    bind_audit_command(cmd)
+    audit_context_from_mapping(headers)
   src/vdisplay/application/session_recorder.py:
-    e: session_recording_enabled,_redact_env,_collect_env_snapshot,_slugify,_default_session_name,resolve_session_root,get_session_recorder,record_execution,request_to_dict,result_to_dict,collect_artifacts,_artifacts_from_data,_collect_top_level_artifacts,_collect_block_artifacts,_collect_routing_artifacts,copy_artifact,extract_diagnostics,_build_summary,_utc_now,render_readme,StepRecord,SessionDocument,SessionRecorder
+    e: session_recording_enabled,_redact_env,_collect_env_snapshot,_slugify,_default_session_name,resolve_session_root,get_session_recorder,record_execution,request_to_dict,result_to_dict,collect_artifacts,_artifacts_from_data,_collect_top_level_artifacts,_collect_block_artifacts,_collect_routing_artifacts,copy_artifact,extract_diagnostics,_add_base_fields,_add_map_block,_add_routing_block,_add_verification_block,_add_actuation_block,_add_lifecycle_blocks,_synthesize_control_block,_verification_to_verify_block,_merge_diagnostics,_legacy_control_diagnostics,command_request_to_dsl_text,resolve_map_path,archive_map_artifacts,_reprocess_steps,_reprocess_events,_update_session_files,reprocess_session_diagnostics,discover_session_dirs,load_session_document,export_session_zip,_build_summary,_utc_now,render_readme,StepRecord,SessionDocument,SessionRecorder
     StepRecord:
     SessionDocument: to_dict(0)
-    SessionRecorder: __init__(1),session_dir(0),_load_or_create_document(0),record(2),flush(0)
+    SessionRecorder: __init__(1),session_dir(0),_load_or_create_document(0),record(2),_emit_step_events(4),flush(0)
     session_recording_enabled()
     _redact_env(env)
     _collect_env_snapshot()
@@ -1078,9 +1263,32 @@ D:
     _collect_routing_artifacts(data;add)
     copy_artifact(step_dir;artifact)
     extract_diagnostics(result)
+    _add_base_fields(data;block)
+    _add_map_block(data;block)
+    _add_routing_block(data;block)
+    _add_verification_block(data;block)
+    _add_actuation_block(data;block)
+    _add_lifecycle_blocks(data;block)
+    _synthesize_control_block(data)
+    _verification_to_verify_block(verification)
+    _merge_diagnostics(primary;overlay)
+    _legacy_control_diagnostics(data)
+    command_request_to_dsl_text(cmd)
+    resolve_map_path(cmd;result;diagnostics)
+    archive_map_artifacts(session_root;cmd;result;diagnostics)
+    _reprocess_steps(doc;session_dir)
+    _reprocess_events(doc;session_dir;diagnostics_by_request)
+    _update_session_files(doc;session_dir)
+    reprocess_session_diagnostics(session_dir)
+    discover_session_dirs()
+    load_session_document(session_dir)
+    export_session_zip(session_dir;output)
     _build_summary(steps)
     _utc_now()
     render_readme(doc)
+  src/vdisplay/application/verbs.py:
+    e: CommandVerb
+    CommandVerb:
   src/vdisplay/backends/__init__.py:
   src/vdisplay/backends/base.py:
     e: BaseBackend
@@ -1257,14 +1465,22 @@ D:
     screenshot_payload()
     dispatch_cli(args)
   src/vdisplay/client.py:
-    e: _route_outputs_query,_route_windows_query,_route_control_command,_route_terminal_open,_route_browser_open,_route_command,AgentClient
-    AgentClient: __init__(1),_request(2),_send(2),_build_request(2),_http_error_message(1),_raise_on_error(1),_normalize_payload(1),request(1),health(0),capabilities(0),diagnostics(0),outputs(0),windows(0),start_virtual(0),start_mirror(0),start_relay(0),browser_open(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),sampler_start(0),sampler_stop(0),sampler_status(0),diagnose_control(0),list_controls(1),find_controls(1),invoke_control(1),focus_control(1),set_control_value(1),capture_frame(0),capture_png_bytes(0),adopt_window(0),release_window(0)  # HTTP client for the local vdisplay-agent broker.
+    e: AgentClient
+    AgentClient: _request(2),request(1)  # HTTP client for the local vdisplay-agent broker.
+  src/vdisplay/client_api.py:
+    e: AgentClientApiMixin
+    AgentClientApiMixin: health(0),capabilities(0),diagnostics(0),outputs(0),windows(0),start_virtual(0),start_mirror(0),start_relay(0),browser_open(0),start_screencast(0),stop_screencast(0),screencast_status(0),stop_session(1),sampler_start(0),sampler_stop(0),sampler_status(0),diagnose_control(0),list_controls(1),find_controls(1),invoke_control(1),focus_control(1),set_control_value(1),capture_frame(0),capture_png_bytes(0),adopt_window(0),release_window(0)  # Convenience methods mapping to broker REST endpoints.
+  src/vdisplay/client_http.py:
+    e: AgentHttpTransport
+    AgentHttpTransport: __init__(1),request_json(2),send(2),build_request(2),http_error_message(1),raise_on_error(1),normalize_payload(1)  # Low-level JSON HTTP client for vdisplay-agent.
+  src/vdisplay/client_routes.py:
+    e: _route_outputs_query,_route_windows_query,_route_control_command,_route_terminal_open,_route_browser_open,route_command
     _route_outputs_query(cmd)
     _route_windows_query(cmd)
     _route_control_command(verb;body)
     _route_terminal_open(cmd)
     _route_browser_open(cmd)
-    _route_command(cmd)
+    route_command(cmd)
   src/vdisplay/commands/__init__.py:
     e: register_all
     register_all(sub)
@@ -1282,6 +1498,10 @@ D:
     handle(args)
     register_outputs(sub)
     handle_outputs(args)
+  src/vdisplay/commands/app.py:
+    e: register,handle
+    register(sub)
+    handle(args)
   src/vdisplay/commands/common.py:
     e: add_display_arg,add_all_arg,add_window_filter_args,include_all_from_args,add_control_selector_args,add_map_args,add_preview_args,control_selector_kwargs_from_args,control_selector_kwargs_for_service
     add_display_arg(parser)
@@ -1309,6 +1529,14 @@ D:
     e: register,handle
     register(sub)
     handle(args)
+  src/vdisplay/commands/hmi.py:
+    e: register,handle
+    register(sub)
+    handle(args)
+  src/vdisplay/commands/ide.py:
+    e: register,handle
+    register(sub)
+    handle(args)
   src/vdisplay/commands/info.py:
     e: register,handle
     register(sub)
@@ -1332,6 +1560,10 @@ D:
     e: register,handle
     register(sub)
     handle(args)
+  src/vdisplay/commands/observe.py:
+    e: register,handle_observe
+    register(sub)
+    handle_observe(args)
   src/vdisplay/commands/relay.py:
     e: register,handle_list_windows,handle
     register(sub)
@@ -1352,9 +1584,15 @@ D:
     register(sub)
     handle(args)
   src/vdisplay/commands/session.py:
-    e: add_root_session_args,command_request_from_control_args
+    e: add_root_session_args,register,command_request_from_control_args,_resolve_session_dir,handle_list,handle_show,handle_export,handle_reprocess
     add_root_session_args(parser)
+    register(sub)
     command_request_from_control_args(args;verb)
+    _resolve_session_dir(args)
+    handle_list(args)
+    handle_show(args)
+    handle_export(args)
+    handle_reprocess(args)
   src/vdisplay/commands/virtual.py:
     e: register,handle
     register(sub)
@@ -1368,6 +1606,11 @@ D:
     e: action_bounds_for_vision,click_point_for_vision
     action_bounds_for_vision(bounds)
     click_point_for_vision(bounds)
+  src/vdisplay/control/action_state.py:
+    e: phase_from_payload,ControlActionPhase,ControlActionState
+    ControlActionPhase:
+    ControlActionState: new(2),advance(1),to_dict(0)
+    phase_from_payload(payload)
   src/vdisplay/control/base.py:
     e: ControlProvider
     ControlProvider: available(0),snapshot(0),find(1),invoke(1),focus(1),set_value(2),bounds(1),capabilities(0),verify_modes(0),session_kind(0)
@@ -1663,6 +1906,17 @@ D:
     _build_terminal()
     _build_vision()
     default_provider_registry()
+  src/vdisplay/control/retry_policy.py:
+    e: retry_enabled,next_action,apply_retry_decision,attach_retry_metadata,_routing_dict,_map_dict,_next_fallback_provider,RetryDecision,RetryPolicy
+    RetryDecision: to_dict(0)
+    RetryPolicy: from_env(1)
+    retry_enabled()
+    next_action(state;payload)
+    apply_retry_decision(decision)
+    attach_retry_metadata(state;decision)
+    _routing_dict(payload)
+    _map_dict(payload)
+    _next_fallback_provider(routing;current)
   src/vdisplay/control/router.py:
     e: _eligible_for_profile,_select_winner,default_router,RouteResult,ControlRouter
     RouteResult: to_dict(0)
@@ -1723,8 +1977,10 @@ D:
     _verify_hybrid(candidates;action_provider)
     select_verify_provider(candidates)
   src/vdisplay/control/screenshot_verify.py:
-    e: _region_from_bounds,enrich_screencast_stream_meta,_resolve_screencast_stream_region,_region_from_agent_screencast_status,capture_control_screenshot,_target_region,_maybe_crop_capture,_capture_via_agent,diff_png_bytes,verify_screenshot_pair
+    e: _region_from_bounds,stream_bounds_from_meta,global_point_in_stream_bounds,enrich_screencast_stream_meta,_resolve_screencast_stream_region,_region_from_agent_screencast_status,capture_control_screenshot,_target_region,_maybe_crop_capture,_capture_via_agent,diff_png_bytes,_diff_png_bytes_local,verify_screenshot_pair
     _region_from_bounds(bounds)
+    stream_bounds_from_meta(meta)
+    global_point_in_stream_bounds(global_x;global_y;capture_meta)
     enrich_screencast_stream_meta(meta)
     _resolve_screencast_stream_region()
     _region_from_agent_screencast_status()
@@ -1733,6 +1989,7 @@ D:
     _maybe_crop_capture(payload;region)
     _capture_via_agent()
     diff_png_bytes(before;after)
+    _diff_png_bytes_local(before;after)
     verify_screenshot_pair(before;after)
   src/vdisplay/control/selector.py:
     e: _infer_selector_environment,_normalize,_role_matches,_app_matches,_window_title_matches,_name_matches,_text_matches,_terminal_line_matches,_terminal_col_matches,_score,find_matches,pick_match,parse_role,_apply_attr,parse_selector,ControlSelector
@@ -1809,6 +2066,13 @@ D:
     _add_diff_nodes(diff)
     verify_action_result()
     _is_verified(action;state_diff)
+  src/vdisplay/control/verify_policy.py:
+    e: _get_base_phases,required_phases,aggregate_confidence,required_phases_from_context,_dedupe
+    _get_base_phases(verify;screenshot_verify;mode)
+    required_phases()
+    aggregate_confidence(phase_results)
+    required_phases_from_context()
+    _dedupe(items)
   src/vdisplay/control/verify_strategy.py:
     e: VerifyStrategy
     VerifyStrategy:
@@ -1837,10 +2101,12 @@ D:
     verify_text_in_region(png;expected_text)
     summarize_region(png)
   src/vdisplay/control/vision_ocr.py:
-    e: ocr_available,ocr_png,_normalize,_box_matches,_match_by_vision_anchor,_match_by_text_fields,match_selector_boxes,ocr_find_selector,_vertical_overlap,_horizontal_overlap,anchor_spatial_relation,_find_anchor_boxes,anchor_spatial_find,anchor_based_find,ocr_anchor_combined_find,OcrTextBox
+    e: ocr_available,ocr_png,_ocr_from_screen_context_cache,_ocr_png_local,_normalize,_box_matches,_match_by_vision_anchor,_match_by_text_fields,match_selector_boxes,ocr_find_selector,_vertical_overlap,_horizontal_overlap,anchor_spatial_relation,_find_anchor_boxes,anchor_spatial_find,anchor_based_find,ocr_anchor_combined_find,OcrTextBox
     OcrTextBox: to_dict(0)
     ocr_available()
     ocr_png(png)
+    _ocr_from_screen_context_cache()
+    _ocr_png_local(png)
     _normalize(value)
     _box_matches(box;needle)
     _match_by_vision_anchor(boxes;selector)
@@ -1855,7 +2121,7 @@ D:
     anchor_based_find(boxes)
     ocr_anchor_combined_find(png)
   src/vdisplay/control/vision_preview.py:
-    e: preview_available,action_pick_index,_match_kind,preview_matches_from_nodes,confidence_color,render_match_overlay,build_vision_preview,write_preview_png,decode_preview_png,PreviewMatch,VisionPreviewDebug
+    e: preview_available,action_pick_index,_match_kind,preview_matches_from_nodes,confidence_color,preview_backend,_prefer_imgl_annotate,_preview_matches_to_catalog,_render_match_overlay_imgl_annotate,render_match_overlay,_render_match_overlay_local,build_vision_preview,write_preview_png,decode_preview_png,PreviewMatch,VisionPreviewDebug
     PreviewMatch: to_dict(0)
     VisionPreviewDebug: to_dict(0)
     preview_available()
@@ -1863,22 +2129,52 @@ D:
     _match_kind(node)
     preview_matches_from_nodes(nodes)
     confidence_color(confidence)
+    preview_backend()
+    _prefer_imgl_annotate()
+    _preview_matches_to_catalog(matches)
+    _render_match_overlay_imgl_annotate(png;matches)
     render_match_overlay(png;matches)
+    _render_match_overlay_local(png;matches)
     build_vision_preview(png;nodes)
     write_preview_png(png;path)
     decode_preview_png(payload)
   src/vdisplay/control/vision_template.py:
-    e: template_available,load_template_png,_png_to_gray_array,match_template,_dedupe_matches,_search_region_for_relation,template_find_selector,match_template_bounds,template_anchor_find,TemplateMatch
+    e: template_available,load_template_png,_png_to_gray_array,match_template,_match_template_local,_dedupe_matches,_search_region_for_relation,template_find_selector,match_template_bounds,template_anchor_find,TemplateMatch
     TemplateMatch: to_dict(0)
     template_available()
     load_template_png(source)
     _png_to_gray_array(png)
     match_template(png;template_png)
+    _match_template_local(png;template_png)
     _dedupe_matches(matches)
     _search_region_for_relation(anchor;rel)
     template_find_selector(png;selector)
     match_template_bounds(png;template_path;anchor_box;relation)
     template_anchor_find(png)
+  src/vdisplay/desktop_apps.py:
+    e: _desktop_launch,_binary_launch,_xwayland_variant,_variants_for,_template_path,_expand_variants,_build_registry,list_desktop_apps,get_desktop_app,ide_hints_for,chat_selectors_for,submit_selectors_for,_is_gui_map_file,map_manifest_path,_default_map_candidates,resolve_map_path,map_input_target_candidates,map_submit_target_candidates,map_target_candidates,launch_env_for,LaunchVariant,DesktopApp
+    LaunchVariant: to_dict(0)  # One way to start an application.
+    DesktopApp: to_dict(0),default_variant(0),variant(1)  # Known desktop/IDE app with launch commands and control hints
+    _desktop_launch(desktop_id)
+    _binary_launch(binary)
+    _xwayland_variant(base)
+    _variants_for()
+    _template_path(name)
+    _expand_variants(base)
+    _build_registry()
+    list_desktop_apps()
+    get_desktop_app(app_id)
+    ide_hints_for(app_id)
+    chat_selectors_for(app_id)
+    submit_selectors_for(app_id)
+    _is_gui_map_file(path)
+    map_manifest_path(app_id)
+    _default_map_candidates(app_id)
+    resolve_map_path(app_id;explicit)
+    map_input_target_candidates(app_id;explicit)
+    map_submit_target_candidates(app_id;explicit)
+    map_target_candidates(app_id;explicit)
+    launch_env_for(variant)
   src/vdisplay/discovery.py:
     e: resolve_host_display,_display_socket_exists,_looks_like_xvfb_only,list_outputs,_attach_output_nl,_list_monitors,_parse_xrandr_query,_merge_output_metadata,list_windows,find_window_suggestions,diagnose_display,_display_hint,list_monitors,window_discovery_meta
     resolve_host_display(preferred)
@@ -1900,14 +2196,80 @@ D:
     VDisplayError:
     BackendNotAvailableError:
     CapabilityError:
+  src/vdisplay/hmi/__init__.py:
+  src/vdisplay/hmi/capture.py:
+    e: capture_mouse_xy,PointerCaptureError
+    PointerCaptureError:  # Raised when no live absolute pointer source is available.
+    capture_mouse_xy()
+  src/vdisplay/hmi/context.py:
+    e: pick_context_coordinates,_point_in_window,WindowContextResolver
+    WindowContextResolver: __init__(0),resolve(3),_windows_cached(0),_window_by_id(1)  # Resolve window/app under pointer with short-lived window lis
+    pick_context_coordinates(sources)
+    _point_in_window(window;x;y)
+  src/vdisplay/hmi/keyboard.py:
+    e: _event_device_paths,_decode_char,_key_name,KeyEvent,KeyboardWatcher
+    KeyEvent:
+    KeyboardWatcher: __init__(0),typed_buffer(0),start(0),stop(0),drain(0),_emit(1),_handle_key(2),_run(1)  # Background evdev reader pushing :class:`KeyEvent` objects to
+    _event_device_paths()
+    _decode_char(code)
+    _key_name(code)
+  src/vdisplay/hmi/mouse.py:
+    e: _parse_device_blocks,_mouse_device_paths,MouseMove,MouseWatcher
+    MouseMove:
+    MouseWatcher: __init__(0),position(0),relative_only(0),move_count(0),seed(2),start(0),stop(0),drain(0),_ensure_origin(0),_apply_rel(2),_apply_abs(2),_run(1)  # Track pointer position from evdev relative/absolute motion e
+    _parse_device_blocks(devices_path)
+    _mouse_device_paths()
+  src/vdisplay/hmi/pointer.py:
+    e: is_wayland_session,pointer_probe_errors,_session_env,_parse_xdotool_shell,probe_xdotool,probe_gnome_shell_pointer,probe_gtk_subprocess,probe_all_sources,_trustworthy_absolute,probe_absolute_pointer,_window_title,monitor_at,_pick_primary,_stale_sources,_enrich_pointer_context,sample_pointer,PointerSample
+    PointerSample: primary_label(0)
+    is_wayland_session()
+    pointer_probe_errors()
+    _session_env()
+    _parse_xdotool_shell(text)
+    probe_xdotool()
+    probe_gnome_shell_pointer()
+    probe_gtk_subprocess()
+    probe_all_sources()
+    _trustworthy_absolute(source;xy)
+    probe_absolute_pointer()
+    _window_title(window_id)
+    monitor_at(x;y)
+    _pick_primary(sources)
+    _stale_sources(history)
+    _enrich_pointer_context(sample_kwargs)
+    sample_pointer()
+  src/vdisplay/hmi/watch.py:
+    e: _ts,_format_screen,_truncate,_print_pointer_line,_print_key_event,_print_mouse_move,_seed_mouse,run_hmi_watch
+    _ts()
+    _format_screen(monitor)
+    _truncate(text;limit)
+    _print_pointer_line(sample)
+    _print_key_event(event)
+    _print_mouse_move(move;stream)
+    _seed_mouse(mouse_watcher)
+    run_hmi_watch()
+  src/vdisplay/ide_prompt.py:
+    e: open_desktop_app,wait_for_app_window,_find_map_target,_find_first_selector,_submit_via_keyboard,_handle_wait_window,_handle_focus_window,_handle_submit,send_ide_prompt
+    open_desktop_app(app_id)
+    wait_for_app_window(app_id)
+    _find_map_target(map_path;targets)
+    _find_first_selector()
+    _submit_via_keyboard()
+    _handle_wait_window(app;resolved_map;display;wait_timeout;result)
+    _handle_focus_window(app;display)
+    _handle_submit(app;display;effective_backend;resolved_map;map_scope)
+    send_ide_prompt()
   src/vdisplay/input/__init__.py:
   src/vdisplay/input/coords.py:
-    e: global_pointer_coords,_global_from_region,_global_from_monitor,_local_to_region_coords,_rotate_local_to_region,_aspect_mismatch,_rotation_for_monitor,_monitor_by_name
+    e: global_pointer_coords,_global_from_region,_global_from_monitor,_local_to_region_coords,_rotate_local_to_region,_region_rel_to_local,global_point_to_capture_local,global_region_to_capture_local,_aspect_mismatch,_rotation_for_monitor,_monitor_by_name
     global_pointer_coords(local_x;local_y;capture_meta)
     _global_from_region(local_x;local_y)
     _global_from_monitor(local_x;local_y)
     _local_to_region_coords(local_x;local_y)
     _rotate_local_to_region(local_x;local_y)
+    _region_rel_to_local(rel_x;rel_y)
+    global_point_to_capture_local(global_x;global_y;capture_meta)
+    global_region_to_capture_local(region;capture_meta)
     _aspect_mismatch(monitor_w;monitor_h;png_w;png_h)
     _rotation_for_monitor(display;name)
     _monitor_by_name(display;name)
@@ -1922,6 +2284,56 @@ D:
     e: resolve_pointer_input,PointerInput
     PointerInput: move(2),click(1),type_text(1)
     resolve_pointer_input()
+  src/vdisplay/integrations/__init__.py:
+  src/vdisplay/integrations/imgl_bridge.py:
+    e: imgl_enabled,imgl_available,analyze_with_imgl,attach_imgl_to_context,ocr_boxes_from_imgl
+    imgl_enabled()
+    imgl_available()
+    analyze_with_imgl(image_path)
+    attach_imgl_to_context(ctx)
+    ocr_boxes_from_imgl(image_path)
+  src/vdisplay/integrations/observe_cache.py:
+    e: observe_cache_enabled,session_artifacts_root,cache_dir,vql_cache_dir,_cache_path,load_cached_context,store_context_cache,merge_cached_analysis,map_drift_blocks_cache,evaluate_map_drift,ocr_boxes_from_cached_context
+    observe_cache_enabled()
+    session_artifacts_root()
+    cache_dir(session_root)
+    vql_cache_dir(session_root)
+    _cache_path(fingerprint;session_root)
+    load_cached_context(fingerprint)
+    store_context_cache(ctx)
+    merge_cached_analysis(ctx;cached)
+    map_drift_blocks_cache(ctx)
+    evaluate_map_drift(ctx;png)
+    ocr_boxes_from_cached_context(ctx)
+  src/vdisplay/integrations/pipeline.py:
+    e: observe_enabled,observe_screen,enrich_capture_payload
+    observe_enabled()
+    observe_screen()
+    enrich_capture_payload(payload)
+  src/vdisplay/integrations/screen_context.py:
+    e: screen_context_from_capture,load_environment_snapshot,ScreenContext
+    ScreenContext: to_dict(0),from_dict(2),merge_capture_meta(1),attach_diagnostics(1),attach_map_path(1),compute_fingerprint(0),sidecar_path(1),write_sidecar(0)  # Portable snapshot of what vdisplay knows about one screen im
+    screen_context_from_capture(payload)
+    load_environment_snapshot()
+  src/vdisplay/integrations/vision_backend.py:
+    e: vision_backend,prefer_imgl_backend,prefer_imgl_ocr,ocr_png,match_template,diff_png_bytes,render_match_overlay
+    vision_backend()
+    prefer_imgl_backend()
+    prefer_imgl_ocr()
+    ocr_png(png)
+    match_template(png;template_png)
+    diff_png_bytes(before;after)
+    render_match_overlay(png;matches)
+  src/vdisplay/integrations/vql_bridge.py:
+    e: vql_enabled,vql_available,_capture_block,_environment_block,context_to_vql_program,reverse_generation_descriptor,_enrich_render_intent,write_vql_artifacts
+    vql_enabled()
+    vql_available()
+    _capture_block(ctx)
+    _environment_block(ctx)
+    context_to_vql_program(ctx)
+    reverse_generation_descriptor(ctx)
+    _enrich_render_intent(ctx;descriptor)
+    write_vql_artifacts(ctx)
   src/vdisplay/models.py:
     e: Capabilities,SessionInfo
     Capabilities:
@@ -2061,15 +2473,25 @@ D:
     test_agent_version_envelope(agent_client)
     test_agent_capabilities_envelope(agent_client)
     test_flatten_envelope_for_sdk()
+  tests/test_agent_audit_session.py:
+    e: test_audit_headers_for_command_includes_session_dir,test_client_sends_audit_headers,test_broker_records_control_step_with_audit_headers,test_broker_records_browser_open_with_audit_headers,test_broker_records_virtual_start_with_audit_headers,test_broker_records_window_adopt_with_audit_headers,test_executor_skips_client_record_when_agent_audit_delegated
+    test_audit_headers_for_command_includes_session_dir(monkeypatch;tmp_path)
+    test_client_sends_audit_headers(monkeypatch;tmp_path)
+    test_broker_records_control_step_with_audit_headers(agent_client;monkeypatch;tmp_path)
+    test_broker_records_browser_open_with_audit_headers(agent_client;monkeypatch;tmp_path)
+    test_broker_records_virtual_start_with_audit_headers(agent_client;monkeypatch;tmp_path)
+    test_broker_records_window_adopt_with_audit_headers(agent_client;monkeypatch;tmp_path)
+    test_executor_skips_client_record_when_agent_audit_delegated(monkeypatch;tmp_path)
   tests/test_agent_browser_session.py:
     e: agent_client_with_browser,test_agent_browser_open_list_stop
     agent_client_with_browser(monkeypatch)
     test_agent_browser_open_list_stop(agent_client_with_browser)
   tests/test_agent_client.py:
-    e: test_use_agent_false_by_default,test_resolve_agent_url_auto_detects_live_agent,test_client_unreachable_raises,test_probe_retries_after_initial_miss,test_flatten_agent_envelope_without_vdisplay_agent_package,test_client_flattens_agent_envelope,test_virtual_screenshot_routes_local_when_agent_up
+    e: test_use_agent_false_by_default,test_resolve_agent_url_auto_detects_live_agent,test_client_unreachable_raises,test_probe_rejects_non_vdisplay_health,test_probe_retries_after_initial_miss,test_flatten_agent_envelope_without_vdisplay_agent_package,test_client_flattens_agent_envelope,test_virtual_screenshot_routes_local_when_agent_up
     test_use_agent_false_by_default(monkeypatch)
     test_resolve_agent_url_auto_detects_live_agent(live_agent_url;monkeypatch)
     test_client_unreachable_raises(monkeypatch)
+    test_probe_rejects_non_vdisplay_health(monkeypatch)
     test_probe_retries_after_initial_miss(monkeypatch)
     test_flatten_agent_envelope_without_vdisplay_agent_package()
     test_client_flattens_agent_envelope(monkeypatch)
@@ -2084,6 +2506,9 @@ D:
     test_dsl_dispatch_round_trip(live_agent_url;monkeypatch)
     test_rest2vdisplay_round_trip(live_agent_url;monkeypatch)
     test_virtual_screenshot_round_trip(live_agent_url;monkeypatch;tmp_path)
+  tests/test_agent_outputs_nl.py:
+    e: test_list_outputs_payload_enriches_monitor_nl
+    test_list_outputs_payload_enriches_monitor_nl(monkeypatch)
   tests/test_agent_sampler.py:
     e: test_agent_sampler_start_status_stop
     test_agent_sampler_start_status_stop(agent_client;tmp_path;monkeypatch)
@@ -2178,11 +2603,23 @@ D:
     test_artifacts_from_control_preview_and_diff(tmp_path)
     test_executor_records_control_cli_step(monkeypatch;tmp_path)
     test_build_artifacts_for_screenshot_verb(tmp_path)
+  tests/test_client_http.py:
+    e: test_build_request_includes_auth_and_json_body,test_request_json_flattens_envelope,test_raise_on_error_payload,test_http_error_message_prefers_json_detail
+    test_build_request_includes_auth_and_json_body()
+    test_request_json_flattens_envelope(monkeypatch)
+    test_raise_on_error_payload()
+    test_http_error_message_prefers_json_detail()
   tests/test_client_request.py:
     e: test_route_command_health,test_route_command_windows_query,test_request_delegates_to_http
     test_route_command_health()
     test_route_command_windows_query()
     test_request_delegates_to_http(monkeypatch)
+  tests/test_client_routes.py:
+    e: test_route_command_virtual_start_body,test_route_command_diagnose_control_display_query,test_route_command_browser_open_body,test_route_command_unknown_verb_raises
+    test_route_command_virtual_start_body()
+    test_route_command_diagnose_control_display_query()
+    test_route_command_browser_open_body()
+    test_route_command_unknown_verb_raises()
   tests/test_command_contract.py:
     e: test_command_request_from_dsl_monitors,test_command_request_from_dsl_apps_only,test_command_result_envelope_success,test_command_result_envelope_failure,test_command_request_from_dsl_control_click,test_command_result_to_dsl_result
     test_command_request_from_dsl_monitors()
@@ -2191,6 +2628,11 @@ D:
     test_command_result_envelope_failure()
     test_command_request_from_dsl_control_click()
     test_command_result_to_dsl_result()
+  tests/test_control_action_state.py:
+    e: test_control_action_state_roundtrip,test_phase_from_payload_verified,test_phase_from_payload_failed
+    test_control_action_state_roundtrip()
+    test_phase_from_payload_verified()
+    test_phase_from_payload_failed()
   tests/test_control_agent.py:
     e: test_agent_control_diagnostics,test_agent_controls_list
     test_agent_control_diagnostics(agent_client;monkeypatch)
@@ -2229,6 +2671,11 @@ D:
     test_element_capabilities_roundtrip()
     test_control_node_serializes_capabilities_and_actions()
     test_atspi_snapshot_deserializes_actions_and_capabilities(monkeypatch)
+  tests/test_control_diagnostics.py:
+    e: test_build_control_diagnostics_includes_routing_and_map,_FakeRouting,_FakeVerification
+    _FakeRouting: to_dict(0)
+    _FakeVerification: to_dict(0)
+    test_build_control_diagnostics_includes_routing_and_map()
   tests/test_control_executor.py:
     e: test_executor_control_click_local,test_executor_controls_find_local,test_executor_diagnose_control_local
     test_executor_control_click_local(monkeypatch)
@@ -2273,14 +2720,22 @@ D:
     test_rank_providers_orders_by_score(monkeypatch)
     test_diagnose_control_includes_routing(monkeypatch)
     test_routing_decision_serializes(monkeypatch)
+  tests/test_control_retry_policy.py:
+    e: test_next_action_fallback_backend,test_next_action_rotates_on_second_failure,test_next_action_exhausted,test_apply_retry_decision_does_not_duplicate_backend_kwarg
+    test_next_action_fallback_backend()
+    test_next_action_rotates_on_second_failure()
+    test_next_action_exhausted()
+    test_apply_retry_decision_does_not_duplicate_backend_kwarg()
   tests/test_control_screenshot_verify.py:
-    e: _png,test_diff_png_detects_change,test_diff_png_identical_is_not_verified,test_diff_png_small_change_on_large_frame,test_verify_screenshot_pair_payload,test_capture_via_agent_when_configured,test_capture_control_screenshot_uses_target_region,test_execute_action_screenshot_verify_only,test_execute_action_dual_verify_requires_both
+    e: _png,test_diff_png_detects_change,test_diff_png_identical_is_not_verified,test_diff_png_small_change_on_large_frame,test_verify_screenshot_pair_payload,test_capture_via_agent_when_configured,test_capture_via_agent_preserves_stream_region,test_maybe_crop_capture_screencast_global_region,test_capture_control_screenshot_uses_target_region,test_execute_action_screenshot_verify_only,test_execute_action_dual_verify_requires_both
     _png(color)
     test_diff_png_detects_change()
     test_diff_png_identical_is_not_verified()
     test_diff_png_small_change_on_large_frame()
     test_verify_screenshot_pair_payload()
     test_capture_via_agent_when_configured(monkeypatch)
+    test_capture_via_agent_preserves_stream_region(monkeypatch)
+    test_maybe_crop_capture_screencast_global_region()
     test_capture_control_screenshot_uses_target_region()
     test_execute_action_screenshot_verify_only(monkeypatch)
     test_execute_action_dual_verify_requires_both(monkeypatch)
@@ -2298,10 +2753,12 @@ D:
     test_find_by_accessibility_id_and_text()
     test_active_fields_per_environment()
   tests/test_control_set_value_verify.py:
-    e: test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision,test_build_action_payload_fails_ok_when_verify_false,test_control_set_value_verify_mode_ocr_contains
+    e: test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision,test_build_action_payload_fails_ok_when_verify_false,test_control_set_value_verify_mode_ocr_contains,test_verifier_pipeline_ocr_contains_no_before_png,test_verifier_ocr_rescue_treats_capture_after_meta_as_dict
     test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision()
     test_build_action_payload_fails_ok_when_verify_false()
     test_control_set_value_verify_mode_ocr_contains(monkeypatch)
+    test_verifier_pipeline_ocr_contains_no_before_png(monkeypatch)
+    test_verifier_ocr_rescue_treats_capture_after_meta_as_dict(monkeypatch)
   tests/test_control_settle.py:
     e: test_control_settle_seconds_zero_without_verify,test_control_settle_seconds_default_with_verify,test_control_settle_seconds_from_env,test_terminal_set_value_verify_with_settle_env
     test_control_settle_seconds_zero_without_verify()
@@ -2349,15 +2806,22 @@ D:
     test_collect_changed_nodes_flattens_diff()
     test_verify_detects_focus_change_without_value_change()
     test_verify_fails_when_nothing_changes()
+  tests/test_control_verify_policy.py:
+    e: test_required_phases_ocr_contains,test_required_phases_hybrid,test_aggregate_confidence_average
+    test_required_phases_ocr_contains()
+    test_required_phases_hybrid()
+    test_aggregate_confidence_average()
   tests/test_control_x11.py:
     e: test_x11_set_value_clicks_before_typing,test_x11_invoke_clicks_center,_FakeInput
     _FakeInput: __init__(0),move(2),click(1),type_text(1)
     test_x11_set_value_clicks_before_typing(monkeypatch)
     test_x11_invoke_clicks_center(monkeypatch)
   tests/test_coords_rotation.py:
-    e: test_global_pointer_coords_rotated_left_aspect_mismatch,test_global_pointer_coords_monitor_1to1_on_normal_rotation
+    e: test_global_pointer_coords_rotated_left_aspect_mismatch,test_global_pointer_coords_monitor_1to1_on_normal_rotation,test_global_region_to_capture_local_screencast_stream,test_global_point_roundtrip_screencast_stream
     test_global_pointer_coords_rotated_left_aspect_mismatch()
     test_global_pointer_coords_monitor_1to1_on_normal_rotation(monkeypatch)
+    test_global_region_to_capture_local_screencast_stream()
+    test_global_point_roundtrip_screencast_stream()
   tests/test_cross_platform_providers.py:
     e: _mock_linux_readiness,_mock_platform,test_builtin_provider_count_includes_cross_platform_stubs,test_uia_stub_unavailable_on_linux,test_ax_stub_unavailable_on_linux,test_linux_desktop_routes_atspi_not_uia_or_ax,test_windows_desktop_routes_uia,test_macos_desktop_routes_ax,test_native_windows_profile_only_on_windows_host,test_uia_find_by_accessibility_id
     _mock_linux_readiness(monkeypatch)
@@ -2370,6 +2834,19 @@ D:
     test_macos_desktop_routes_ax(monkeypatch)
     test_native_windows_profile_only_on_windows_host(monkeypatch)
     test_uia_find_by_accessibility_id()
+  tests/test_describe_backend.py:
+    e: test_describe_backend_prefers_imgl
+    test_describe_backend_prefers_imgl(monkeypatch;tmp_path)
+  tests/test_desktop_apps.py:
+    e: test_list_desktop_apps_returns_profiles,test_get_desktop_app_aliases,test_ide_hints_for_known_app,test_launch_env_for_xwayland_unsets_wayland,test_variant_xwayland_alias,test_unknown_app_raises,test_resolve_map_path_ignores_manifest,test_resolve_map_path_finds_project_map
+    test_list_desktop_apps_returns_profiles()
+    test_get_desktop_app_aliases()
+    test_ide_hints_for_known_app()
+    test_launch_env_for_xwayland_unsets_wayland()
+    test_variant_xwayland_alias()
+    test_unknown_app_raises()
+    test_resolve_map_path_ignores_manifest(tmp_path)
+    test_resolve_map_path_finds_project_map()
   tests/test_dsl_browser_open.py:
     e: test_parse_browser_open_session_alias,test_parse_browser_open_line,test_browser_open_schema_requires_url,test_command_request_from_dsl_browser_open,test_to_text_roundtrip_browser_open,test_dispatch_browser_open_local,test_browser_open_e2e_local,test_browser_open_enables_dom_provider_eligibility,test_agent_client_browser_open_route,test_dispatch_browser_open_via_executor
     test_parse_browser_open_session_alias()
@@ -2392,6 +2869,14 @@ D:
     test_dispatch_terminal_open_local(monkeypatch)
     test_terminal_open_e2e_local()
     test_dispatch_terminal_open_via_executor(monkeypatch)
+  tests/test_event_store.py:
+    e: test_event_store_disabled_without_session,test_event_store_enabled_with_session,test_event_store_append_and_read,test_executor_writes_index_jsonl,test_projections_backend_scores_from_control_events,test_refresh_projections_writes_files
+    test_event_store_disabled_without_session(monkeypatch)
+    test_event_store_enabled_with_session(monkeypatch)
+    test_event_store_append_and_read(tmp_path)
+    test_executor_writes_index_jsonl(monkeypatch;tmp_path)
+    test_projections_backend_scores_from_control_events()
+    test_refresh_projections_writes_files(tmp_path)
   tests/test_example_control_plugin.py:
     e: _reset_plugins,test_echo_provider_contract,test_register_plugin_via_entry_point_helper,test_unregister_echo_restores_builtin_count,test_echo_routing_eligible_with_forced_backend
     _reset_plugins()
@@ -2442,6 +2927,24 @@ D:
     test_build_gui_map_scoped_crop_filters_outside_boxes(monkeypatch)
     test_map_capture_prefers_agent_screencast(monkeypatch)
     test_map_capture_requires_screencast_when_agent_running(monkeypatch)
+  tests/test_hmi_watch.py:
+    e: test_parser_has_hmi_watch,test_monitor_at_finds_output,test_decode_char_shift,test_keyboard_watcher_emits_typed_chars,test_mouse_watcher_tracks_relative_motion_without_seed,test_probe_absolute_rejects_gtk_origin_on_wayland,test_capture_mouse_xy_falls_back_to_xdotool_hint,test_capture_mouse_xy_prefers_vdisplay_probe,test_pick_context_coordinates_prefers_live_gnome,test_pick_context_coordinates_uses_stale_xdotool_hint,test_sample_pointer_enriches_screen_and_app,test_sample_pointer_prefers_gnome_on_wayland,test_sample_pointer_rejects_stale_xdotool_only,test_probe_absolute_skips_xdotool_on_wayland,test_run_hmi_watch_jsonl,test_event_device_paths_parses_proc_input
+    test_parser_has_hmi_watch()
+    test_monitor_at_finds_output()
+    test_decode_char_shift()
+    test_keyboard_watcher_emits_typed_chars()
+    test_mouse_watcher_tracks_relative_motion_without_seed()
+    test_probe_absolute_rejects_gtk_origin_on_wayland(monkeypatch)
+    test_capture_mouse_xy_falls_back_to_xdotool_hint(monkeypatch)
+    test_capture_mouse_xy_prefers_vdisplay_probe(monkeypatch)
+    test_pick_context_coordinates_prefers_live_gnome()
+    test_pick_context_coordinates_uses_stale_xdotool_hint()
+    test_sample_pointer_enriches_screen_and_app(monkeypatch)
+    test_sample_pointer_prefers_gnome_on_wayland(monkeypatch)
+    test_sample_pointer_rejects_stale_xdotool_only(monkeypatch)
+    test_probe_absolute_skips_xdotool_on_wayland(monkeypatch)
+    test_run_hmi_watch_jsonl(monkeypatch)
+    test_event_device_paths_parses_proc_input(tmp_path)
   tests/test_host_capture.py:
     e: test_capture_host_png_prefers_mirror
     test_capture_host_png_prefers_mirror(monkeypatch)
@@ -2449,6 +2952,14 @@ D:
     e: test_host_capture_error_mentions_screencast_on_wayland,test_capture_host_png_records_inactive_screencast
     test_host_capture_error_mentions_screencast_on_wayland(monkeypatch)
     test_capture_host_png_records_inactive_screencast(monkeypatch)
+  tests/test_ide_prompt.py:
+    e: test_parser_has_app_and_ide_commands,test_app_list_command,test_ide_list_command,test_open_desktop_app_uses_subprocess,test_send_ide_prompt_happy_path,test_send_ide_prompt_no_match
+    test_parser_has_app_and_ide_commands()
+    test_app_list_command(monkeypatch)
+    test_ide_list_command(monkeypatch)
+    test_open_desktop_app_uses_subprocess(monkeypatch)
+    test_send_ide_prompt_happy_path(monkeypatch)
+    test_send_ide_prompt_no_match(monkeypatch)
   tests/test_img2nl_enrich.py:
     e: _make_png,test_enrich_screenshot_payload_adds_nl,test_execute_screenshot_enriches_when_img2nl_available,test_execute_screenshot_skip_img2nl
     _make_png(width;height;color)
@@ -2485,6 +2996,14 @@ D:
     test_run_nl_prompt_dsl_only()
     test_run_nl_prompt_full_pipeline(monkeypatch)
     test_dsl2vdisplay_monitors_matches_payload(monkeypatch)
+  tests/test_observe_cache.py:
+    e: test_store_and_load_cached_context,test_merge_cached_analysis_skips_imgl_rerun,test_map_drift_blocks_cache_on_refresh_required,test_map_drift_allows_cosmetic_drift,test_observe_screen_uses_cache_on_second_pass,test_ocr_png_reads_cached_sidecar
+    test_store_and_load_cached_context(tmp_path;monkeypatch)
+    test_merge_cached_analysis_skips_imgl_rerun()
+    test_map_drift_blocks_cache_on_refresh_required()
+    test_map_drift_allows_cosmetic_drift()
+    test_observe_screen_uses_cache_on_second_pass(tmp_path;monkeypatch)
+    test_ocr_png_reads_cached_sidecar(tmp_path;monkeypatch)
   tests/test_outputs_rotation.py:
     e: test_rotation_degrees_mapping,test_parse_xrandr_query_rotation_from_sample
     test_rotation_degrees_mapping()
@@ -2512,6 +3031,23 @@ D:
     test_profile_boost_prefers_browser_for_web_spa(monkeypatch)
     test_router_includes_application_profile(monkeypatch)
     test_profile_for_builtin_ids()
+  tests/test_projections.py:
+    e: test_build_map_health_from_gui_map_events,test_build_map_health_from_step_diagnostics,test_merge_backend_scores_accumulates,test_provider_score_prior_boosts_reliable_backend,test_rank_providers_applies_backend_score_prior,test_refresh_projections_writes_map_health,test_backend_scores_from_control_action_planned,test_backend_scores_from_verification_event
+    test_build_map_health_from_gui_map_events()
+    test_build_map_health_from_step_diagnostics()
+    test_merge_backend_scores_accumulates()
+    test_provider_score_prior_boosts_reliable_backend()
+    test_rank_providers_applies_backend_score_prior(monkeypatch)
+    test_refresh_projections_writes_map_health(tmp_path)
+    test_backend_scores_from_control_action_planned()
+    test_backend_scores_from_verification_event()
+  tests/test_proto_codec.py:
+    e: test_domain_event_envelope_roundtrip,test_event_line_base64_roundtrip,test_event_store_writes_index_pb,test_read_length_delimited_multiple_events,test_json_index_still_human_readable
+    test_domain_event_envelope_roundtrip()
+    test_event_line_base64_roundtrip()
+    test_event_store_writes_index_pb(monkeypatch;tmp_path)
+    test_read_length_delimited_multiple_events(tmp_path)
+    test_json_index_still_human_readable(monkeypatch;tmp_path)
   tests/test_relay_release.py:
     e: _toolbox_states,test_state_matches_app_jetbrains,test_select_adopted_for_release_by_app_includes_frame,test_stash_roundtrip
     _toolbox_states()
@@ -2552,6 +3088,12 @@ D:
     test_is_screencast_recoverable_error()
     test_sampler_recovers_from_blank_screencast(tmp_path;monkeypatch)
     test_sampler_marks_reconsent_when_recovery_fails(tmp_path;monkeypatch)
+  tests/test_screen_context.py:
+    e: test_screen_context_from_capture_builds_fingerprint,test_context_to_vql_program_includes_capture_and_reverse,test_observe_screen_writes_sidecar,test_observe_enabled_explicit_flag
+    test_screen_context_from_capture_builds_fingerprint(tmp_path)
+    test_context_to_vql_program_includes_capture_and_reverse(tmp_path)
+    test_observe_screen_writes_sidecar(monkeypatch;tmp_path)
+    test_observe_enabled_explicit_flag(monkeypatch)
   tests/test_screencast_multiple.py:
     e: test_screencast_multiple_explicit,test_screencast_multiple_env
     test_screencast_multiple_explicit()
@@ -2575,11 +3117,23 @@ D:
     test_build_catalog_from_agent_store()
     test_build_catalog_local_terminal()
     test_merge_catalogs_dedupes_by_id()
+  tests/test_session_maps_cli.py:
+    e: _sample_map,test_archive_map_artifacts_copies_json_and_md,test_executor_archives_map_in_session,test_session_cli_list_show_export
+    _sample_map(path)
+    test_archive_map_artifacts_copies_json_and_md(tmp_path)
+    test_executor_archives_map_in_session(monkeypatch;tmp_path)
+    test_session_cli_list_show_export(tmp_path;monkeypatch)
   tests/test_session_recorder.py:
-    e: test_session_recording_disabled_by_default,test_executor_writes_session_dir,test_collect_artifacts_from_explicit_and_data,test_render_readme_includes_routing
+    e: test_session_recording_disabled_by_default,test_executor_writes_session_dir,test_collect_artifacts_from_explicit_and_data,test_executor_records_control_diagnostics,test_executor_records_flat_mock_control_diagnostics,test_reprocess_session_diagnostics_backfills_control,test_extract_diagnostics_synthesizes_control_from_flat_mock,test_extract_diagnostics_diagnose_control_backend,test_control_events_from_flat_mock_diagnostics,test_render_readme_includes_routing
     test_session_recording_disabled_by_default(monkeypatch)
     test_executor_writes_session_dir(monkeypatch;tmp_path)
     test_collect_artifacts_from_explicit_and_data(tmp_path)
+    test_executor_records_control_diagnostics(monkeypatch;tmp_path)
+    test_executor_records_flat_mock_control_diagnostics(monkeypatch;tmp_path)
+    test_reprocess_session_diagnostics_backfills_control(monkeypatch;tmp_path)
+    test_extract_diagnostics_synthesizes_control_from_flat_mock()
+    test_extract_diagnostics_diagnose_control_backend()
+    test_control_events_from_flat_mock_diagnostics()
     test_render_readme_includes_routing()
   tests/test_uia_invoke.py:
     e: _ok_button,_name_field,test_uia_deps_unavailable_on_linux,test_uia_find_element_by_name,test_uia_find_by_accessibility_id,test_uia_click_invoke_pattern,test_uia_set_value,test_uia_focus,test_uia_fallback_when_unavailable_on_linux
@@ -2611,6 +3165,11 @@ D:
     test_anchor_visible_ocr_anchor_found(monkeypatch)
     test_select_verify_provider_vision_uses_anchor_visible()
     test_anchor_visible_template_found(monkeypatch;tmp_path)
+  tests/test_vision_backend.py:
+    e: _png,test_diff_png_bytes_local_path,test_match_template_local_path
+    _png(color)
+    test_diff_png_bytes_local_path(monkeypatch)
+    test_match_template_local_path(monkeypatch)
   tests/test_vision_llm.py:
     e: _png,test_vision_llm_fallback_enabled_requires_mode_and_key,test_verify_text_in_region_parses_yes,test_verifier_vision_llm_fallback_only_when_ocr_fails,test_verifier_skips_vision_llm_when_ocr_succeeds
     _png(color)
@@ -2700,11 +3259,13 @@ D:
 
 ```prolog markpact:analysis path=project/logic.pl
 % ── Project Metadata ─────────────────────────────────────
-project_metadata('vdisplay', '0.1.15', 'python').
+project_metadata('vdisplay', '0.1.20', 'python').
 
 % ── Project Files ────────────────────────────────────────
-project_file('app.doql.less', 55, 'less').
+project_file('app.doql.less', 58, 'less').
 project_file('brain/scratch_atspi.py', 19, 'python').
+project_file('brain/scratch_find_pycharm_chat.py', 81, 'python').
+project_file('brain/scratch_test_screencast.py', 124, 'python').
 project_file('examples/agent-broker/broker_demo.py', 58, 'python').
 project_file('examples/agent-broker/run.sh', 27, 'shell').
 project_file('examples/ci-agent/agent.py', 74, 'python').
@@ -2747,17 +3308,20 @@ project_file('packages/rest2vdisplay/src/rest2vdisplay/cli.py', 36, 'python').
 project_file('packages/uri2vdisplay/src/uri2vdisplay/cli.py', 31, 'python').
 project_file('packages/uri2vdisplay/src/uri2vdisplay/decode.py', 32, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/__init__.py', 8, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/audit_context.py', 58, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/cli.py', 44, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 86, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py', 16, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py', 93, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py', 28, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 25, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 33, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 123, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 36, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 191, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/health.py', 77, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py', 48, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 137, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 165, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/tasks.py', 70, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 42, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 53, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/runtime.py', 146, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/schemas.py', 85, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', 147, 'python').
@@ -2765,43 +3329,54 @@ project_file('packages/vdisplay-agent/src/vdisplay_agent/server.py', 31, 'python
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py', 6, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/capabilities.py', 57, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/capture.py', 97, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 114, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/services/control.py', 117, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/outputs.py', 20, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/relay.py', 33, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py', 184, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/sessions.py', 263, 'python').
-project_file('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 182, 'python').
+project_file('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 191, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/services/windows.py', 32, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/session_store.py', 66, 'python').
 project_file('packages/vdisplay-agent/src/vdisplay_agent/task_store.py', 198, 'python').
 project_file('project.sh', 59, 'shell').
 project_file('src/vdisplay/__init__.py', 13, 'python').
-project_file('src/vdisplay/agent_config.py', 72, 'python').
+project_file('src/vdisplay/agent_config.py', 94, 'python').
 project_file('src/vdisplay/agent_dispatch.py', 31, 'python').
 project_file('src/vdisplay/agent_envelope.py', 18, 'python').
 project_file('src/vdisplay/api.py', 194, 'python').
 project_file('src/vdisplay/application/__init__.py', 15, 'python').
 project_file('src/vdisplay/application/artifacts.py', 103, 'python').
-project_file('src/vdisplay/application/commands.py', 371, 'python').
+project_file('src/vdisplay/application/commands.py', 19, 'python').
 project_file('src/vdisplay/application/errors.py', 40, 'python').
-project_file('src/vdisplay/application/executor.py', 68, 'python').
+project_file('src/vdisplay/application/event_store.py', 115, 'python').
+project_file('src/vdisplay/application/events.py', 429, 'python').
+project_file('src/vdisplay/application/executor.py', 109, 'python').
+project_file('src/vdisplay/application/gui_map_events.py', 92, 'python').
 project_file('src/vdisplay/application/handlers/__init__.py', 7, 'python').
-project_file('src/vdisplay/application/handlers/agent.py', 242, 'python').
+project_file('src/vdisplay/application/handlers/agent.py', 244, 'python').
 project_file('src/vdisplay/application/handlers/control.py', 73, 'python').
 project_file('src/vdisplay/application/handlers/local.py', 292, 'python').
+project_file('src/vdisplay/application/models.py', 214, 'python').
+project_file('src/vdisplay/application/parsers.py', 320, 'python').
+project_file('src/vdisplay/application/projections/__init__.py', 84, 'python').
+project_file('src/vdisplay/application/projections/backend_scores.py', 214, 'python').
+project_file('src/vdisplay/application/projections/map_health.py', 148, 'python').
+project_file('src/vdisplay/application/proto/__init__.py', 32, 'python').
+project_file('src/vdisplay/application/proto/codec.py', 247, 'python').
 project_file('src/vdisplay/application/runtime.py', 87, 'python').
 project_file('src/vdisplay/application/services/__init__.py', 4, 'python').
 project_file('src/vdisplay/application/services/capture.py', 183, 'python').
-project_file('src/vdisplay/application/services/control.py', 764, 'python').
+project_file('src/vdisplay/application/services/control.py', 991, 'python').
 project_file('src/vdisplay/application/services/discovery.py', 240, 'python').
-project_file('src/vdisplay/application/services/img2nl_enrich.py', 125, 'python').
+project_file('src/vdisplay/application/services/img2nl_enrich.py', 238, 'python').
 project_file('src/vdisplay/application/services/info.py', 52, 'python').
-project_file('src/vdisplay/application/services/map.py', 276, 'python').
+project_file('src/vdisplay/application/services/map.py', 313, 'python').
 project_file('src/vdisplay/application/services/sampler.py', 110, 'python').
 project_file('src/vdisplay/application/services/sampler_loop.py', 281, 'python').
 project_file('src/vdisplay/application/services/session.py', 327, 'python').
-project_file('src/vdisplay/application/session_context.py', 33, 'python').
-project_file('src/vdisplay/application/session_recorder.py', 501, 'python').
+project_file('src/vdisplay/application/session_context.py', 125, 'python').
+project_file('src/vdisplay/application/session_recorder.py', 1018, 'python').
+project_file('src/vdisplay/application/verbs.py', 63, 'python').
 project_file('src/vdisplay/backends/__init__.py', 2, 'python').
 project_file('src/vdisplay/backends/base.py', 65, 'python').
 project_file('src/vdisplay/backends/linux_x11_mirror.py', 260, 'python').
@@ -2810,11 +3385,11 @@ project_file('src/vdisplay/backends/linux_xvfb.py', 165, 'python').
 project_file('src/vdisplay/backends/mirror_stub.py', 35, 'python').
 project_file('src/vdisplay/capture/__init__.py', 16, 'python').
 project_file('src/vdisplay/capture/base.py', 10, 'python').
-project_file('src/vdisplay/capture/host.py', 556, 'python').
+project_file('src/vdisplay/capture/host.py', 589, 'python').
 project_file('src/vdisplay/capture/linux_xwd.py', 321, 'python').
 project_file('src/vdisplay/capture/policy.py', 141, 'python').
 project_file('src/vdisplay/capture/portal.py', 222, 'python').
-project_file('src/vdisplay/capture/portal_screencast.py', 780, 'python').
+project_file('src/vdisplay/capture/portal_screencast.py', 783, 'python').
 project_file('src/vdisplay/capture/providers/__init__.py', 4, 'python').
 project_file('src/vdisplay/capture/providers/base.py', 23, 'python').
 project_file('src/vdisplay/capture/providers/drm.py', 93, 'python').
@@ -2824,27 +3399,35 @@ project_file('src/vdisplay/capture/providers/mss.py', 69, 'python').
 project_file('src/vdisplay/capture/providers/x11.py', 36, 'python').
 project_file('src/vdisplay/cli.py', 37, 'python').
 project_file('src/vdisplay/cli_handlers.py', 35, 'python').
-project_file('src/vdisplay/client.py', 423, 'python').
-project_file('src/vdisplay/commands/__init__.py', 47, 'python').
+project_file('src/vdisplay/client.py', 50, 'python').
+project_file('src/vdisplay/client_api.py', 211, 'python').
+project_file('src/vdisplay/client_http.py', 97, 'python').
+project_file('src/vdisplay/client_routes.py', 129, 'python').
+project_file('src/vdisplay/commands/__init__.py', 57, 'python').
 project_file('src/vdisplay/commands/agent.py', 156, 'python').
 project_file('src/vdisplay/commands/all_cmd.py', 47, 'python').
+project_file('src/vdisplay/commands/app.py', 60, 'python').
 project_file('src/vdisplay/commands/common.py', 138, 'python').
 project_file('src/vdisplay/commands/control.py', 160, 'python').
 project_file('src/vdisplay/commands/diagnose.py', 54, 'python').
+project_file('src/vdisplay/commands/hmi.py', 100, 'python').
+project_file('src/vdisplay/commands/ide.py', 116, 'python').
 project_file('src/vdisplay/commands/info.py', 17, 'python').
 project_file('src/vdisplay/commands/io.py', 8, 'python').
 project_file('src/vdisplay/commands/map.py', 99, 'python').
 project_file('src/vdisplay/commands/mirror.py', 54, 'python').
 project_file('src/vdisplay/commands/monitors.py', 20, 'python').
 project_file('src/vdisplay/commands/nlp.py', 24, 'python').
+project_file('src/vdisplay/commands/observe.py', 93, 'python').
 project_file('src/vdisplay/commands/relay.py', 111, 'python').
 project_file('src/vdisplay/commands/sampler.py', 133, 'python').
 project_file('src/vdisplay/commands/screenshot.py', 54, 'python').
-project_file('src/vdisplay/commands/session.py', 80, 'python').
+project_file('src/vdisplay/commands/session.py', 258, 'python').
 project_file('src/vdisplay/commands/virtual.py', 82, 'python').
 project_file('src/vdisplay/commands/windows.py', 30, 'python').
 project_file('src/vdisplay/control/__init__.py', 70, 'python').
 project_file('src/vdisplay/control/action_bounds.py', 25, 'python').
+project_file('src/vdisplay/control/action_state.py', 70, 'python').
 project_file('src/vdisplay/control/base.py', 70, 'python').
 project_file('src/vdisplay/control/browser_engine.py', 56, 'python').
 project_file('src/vdisplay/control/browser_session_store.py', 197, 'python').
@@ -2877,29 +3460,47 @@ project_file('src/vdisplay/control/providers/vision/__init__.py', 4, 'python').
 project_file('src/vdisplay/control/providers/vision/provider.py', 716, 'python').
 project_file('src/vdisplay/control/providers/x11.py', 151, 'python').
 project_file('src/vdisplay/control/registry.py', 118, 'python').
+project_file('src/vdisplay/control/retry_policy.py', 182, 'python').
 project_file('src/vdisplay/control/router.py', 272, 'python').
 project_file('src/vdisplay/control/routing_semantics.py', 159, 'python').
-project_file('src/vdisplay/control/scoring.py', 802, 'python').
-project_file('src/vdisplay/control/screenshot_verify.py', 266, 'python').
+project_file('src/vdisplay/control/scoring.py', 812, 'python').
+project_file('src/vdisplay/control/screenshot_verify.py', 381, 'python').
 project_file('src/vdisplay/control/selector.py', 348, 'python').
 project_file('src/vdisplay/control/session.py', 217, 'python').
 project_file('src/vdisplay/control/session_kind.py', 16, 'python').
 project_file('src/vdisplay/control/timing.py', 24, 'python').
-project_file('src/vdisplay/control/verifier.py', 568, 'python').
+project_file('src/vdisplay/control/verifier.py', 591, 'python').
 project_file('src/vdisplay/control/verify.py', 499, 'python').
+project_file('src/vdisplay/control/verify_policy.py', 95, 'python').
 project_file('src/vdisplay/control/verify_strategy.py', 17, 'python').
 project_file('src/vdisplay/control/vision_disambiguate.py', 79, 'python').
 project_file('src/vdisplay/control/vision_llm.py', 237, 'python').
-project_file('src/vdisplay/control/vision_ocr.py', 316, 'python').
-project_file('src/vdisplay/control/vision_preview.py', 239, 'python').
-project_file('src/vdisplay/control/vision_template.py', 259, 'python').
+project_file('src/vdisplay/control/vision_ocr.py', 366, 'python').
+project_file('src/vdisplay/control/vision_preview.py', 364, 'python').
+project_file('src/vdisplay/control/vision_template.py', 281, 'python').
+project_file('src/vdisplay/desktop_apps.py', 435, 'python').
 project_file('src/vdisplay/discovery.py', 364, 'python').
 project_file('src/vdisplay/exceptions.py', 11, 'python').
+project_file('src/vdisplay/hmi/__init__.py', 6, 'python').
+project_file('src/vdisplay/hmi/capture.py', 28, 'python').
+project_file('src/vdisplay/hmi/context.py', 107, 'python').
+project_file('src/vdisplay/hmi/keyboard.py', 298, 'python').
+project_file('src/vdisplay/hmi/mouse.py', 210, 'python').
+project_file('src/vdisplay/hmi/pointer.py', 511, 'python').
+project_file('src/vdisplay/hmi/watch.py', 255, 'python').
+project_file('src/vdisplay/ide_prompt.py', 469, 'python').
 project_file('src/vdisplay/input/__init__.py', 12, 'python').
-project_file('src/vdisplay/input/coords.py', 220, 'python').
+project_file('src/vdisplay/input/coords.py', 354, 'python').
 project_file('src/vdisplay/input/linux_xdotool.py', 69, 'python').
 project_file('src/vdisplay/input/linux_ydotool.py', 115, 'python').
 project_file('src/vdisplay/input/resolve.py', 28, 'python').
+project_file('src/vdisplay/integrations/__init__.py', 12, 'python').
+project_file('src/vdisplay/integrations/imgl_bridge.py', 117, 'python').
+project_file('src/vdisplay/integrations/observe_cache.py', 214, 'python').
+project_file('src/vdisplay/integrations/pipeline.py', 139, 'python').
+project_file('src/vdisplay/integrations/screen_context.py', 165, 'python').
+project_file('src/vdisplay/integrations/vision_backend.py', 172, 'python').
+project_file('src/vdisplay/integrations/vql_bridge.py', 285, 'python').
 project_file('src/vdisplay/models.py', 27, 'python').
 project_file('src/vdisplay/nl.py', 159, 'python').
 project_file('src/vdisplay/nlp.py', 159, 'python').
@@ -2922,10 +3523,12 @@ project_file('tests/fixtures/gtk_demo_app.py', 61, 'python').
 project_file('tests/fixtures/run_gtk_demo.sh', 12, 'shell').
 project_file('tests/test_agent.py', 44, 'python').
 project_file('tests/test_agent_api_contract.py', 43, 'python').
+project_file('tests/test_agent_audit_session.py', 253, 'python').
 project_file('tests/test_agent_browser_session.py', 60, 'python').
-project_file('tests/test_agent_client.py', 119, 'python').
+project_file('tests/test_agent_client.py', 139, 'python').
 project_file('tests/test_agent_dispatch.py', 53, 'python').
 project_file('tests/test_agent_integration.py', 68, 'python').
+project_file('tests/test_agent_outputs_nl.py', 39, 'python').
 project_file('tests/test_agent_sampler.py', 66, 'python').
 project_file('tests/test_agent_serve_port.py', 67, 'python').
 project_file('tests/test_agent_tasks.py', 130, 'python').
@@ -2940,8 +3543,11 @@ project_file('tests/test_capture_xwd.py', 53, 'python').
 project_file('tests/test_cli_commands.py', 97, 'python').
 project_file('tests/test_cli_control_args.py', 103, 'python').
 project_file('tests/test_cli_session.py', 109, 'python').
+project_file('tests/test_client_http.py', 65, 'python').
 project_file('tests/test_client_request.py', 43, 'python').
+project_file('tests/test_client_routes.py', 47, 'python').
 project_file('tests/test_command_contract.py', 71, 'python').
+project_file('tests/test_control_action_state.py', 29, 'python').
 project_file('tests/test_control_agent.py', 36, 'python').
 project_file('tests/test_control_app_matching.py', 49, 'python').
 project_file('tests/test_control_atspi.py', 52, 'python').
@@ -2949,55 +3555,69 @@ project_file('tests/test_control_browser.py', 52, 'python').
 project_file('tests/test_control_browser_session.py', 56, 'python').
 project_file('tests/test_control_browser_verify.py', 39, 'python').
 project_file('tests/test_control_capabilities.py', 84, 'python').
+project_file('tests/test_control_diagnostics.py', 89, 'python').
 project_file('tests/test_control_executor.py', 71, 'python').
 project_file('tests/test_control_gtk_demo.py', 207, 'python').
 project_file('tests/test_control_plugins.py', 107, 'python').
 project_file('tests/test_control_policy.py', 39, 'python').
 project_file('tests/test_control_policy_v2.py', 135, 'python').
-project_file('tests/test_control_screenshot_verify.py', 227, 'python').
+project_file('tests/test_control_retry_policy.py', 82, 'python').
+project_file('tests/test_control_screenshot_verify.py', 290, 'python').
 project_file('tests/test_control_selector.py', 36, 'python').
 project_file('tests/test_control_selector_v2.py', 88, 'python').
-project_file('tests/test_control_set_value_verify.py', 153, 'python').
+project_file('tests/test_control_set_value_verify.py', 274, 'python').
 project_file('tests/test_control_settle.py', 53, 'python').
 project_file('tests/test_control_terminal.py', 184, 'python').
 project_file('tests/test_control_timing.py', 28, 'python').
 project_file('tests/test_control_verifier_hybrid.py', 200, 'python').
 project_file('tests/test_control_verify.py', 265, 'python').
+project_file('tests/test_control_verify_policy.py', 38, 'python').
 project_file('tests/test_control_x11.py', 81, 'python').
-project_file('tests/test_coords_rotation.py', 39, 'python').
+project_file('tests/test_coords_rotation.py', 78, 'python').
 project_file('tests/test_cross_platform_providers.py', 179, 'python').
+project_file('tests/test_describe_backend.py', 29, 'python').
+project_file('tests/test_desktop_apps.py', 87, 'python').
 project_file('tests/test_dsl_browser_open.py', 176, 'python').
 project_file('tests/test_dsl_terminal_control.py', 42, 'python').
 project_file('tests/test_dsl_terminal_open.py', 69, 'python').
+project_file('tests/test_event_store.py', 121, 'python').
 project_file('tests/test_example_control_plugin.py', 103, 'python').
 project_file('tests/test_example_uia_ax_plugins.py', 145, 'python').
 project_file('tests/test_execution_policy.py', 65, 'python').
 project_file('tests/test_gui_map.py', 373, 'python').
 project_file('tests/test_gui_map_diff.py', 210, 'python').
+project_file('tests/test_hmi_watch.py', 237, 'python').
 project_file('tests/test_host_capture.py', 43, 'python').
 project_file('tests/test_host_capture_errors.py', 37, 'python').
+project_file('tests/test_ide_prompt.py', 107, 'python').
 project_file('tests/test_img2nl_enrich.py', 102, 'python').
 project_file('tests/test_import.py', 23, 'python').
 project_file('tests/test_linux_xvfb_integration.py', 22, 'python').
 project_file('tests/test_mirror_primary.py', 43, 'python').
 project_file('tests/test_nl.py', 145, 'python').
 project_file('tests/test_nlp_pipeline.py', 67, 'python').
+project_file('tests/test_observe_cache.py', 137, 'python').
 project_file('tests/test_outputs_rotation.py', 35, 'python').
 project_file('tests/test_portal_screencast.py', 146, 'python').
 project_file('tests/test_profile_inference.py', 79, 'python').
+project_file('tests/test_projections.py', 209, 'python').
+project_file('tests/test_proto_codec.py', 119, 'python').
 project_file('tests/test_relay_release.py', 66, 'python').
 project_file('tests/test_relay_window_region.py', 70, 'python').
 project_file('tests/test_routing_semantics.py', 239, 'python').
 project_file('tests/test_sampler_policy.py', 91, 'python').
 project_file('tests/test_sampler_recovery.py', 100, 'python').
+project_file('tests/test_screen_context.py', 71, 'python').
 project_file('tests/test_screencast_multiple.py', 20, 'python').
 project_file('tests/test_screenshot_meta.py', 54, 'python').
 project_file('tests/test_screenshot_routing.py', 105, 'python').
 project_file('tests/test_session_catalog.py', 72, 'python').
-project_file('tests/test_session_recorder.py', 112, 'python').
+project_file('tests/test_session_maps_cli.py', 151, 'python').
+project_file('tests/test_session_recorder.py', 358, 'python').
 project_file('tests/test_uia_invoke.py', 98, 'python').
 project_file('tests/test_vision_anchor_matching.py', 153, 'python').
 project_file('tests/test_vision_anchor_visible_verify.py', 126, 'python').
+project_file('tests/test_vision_backend.py', 36, 'python').
 project_file('tests/test_vision_llm.py', 181, 'python').
 project_file('tests/test_vision_multimatch_disambiguation.py', 159, 'python').
 project_file('tests/test_vision_ocr_invoke.py', 189, 'python').
@@ -3011,6 +3631,8 @@ project_file('tests/test_windows_dedupe.py', 26, 'python').
 project_file('tree.sh', 2, 'shell').
 
 % ── Python Functions ─────────────────────────────────────
+python_function('brain/scratch_find_pycharm_chat.py', 'dump_tree', 3, 22, 11).
+python_function('brain/scratch_test_screencast.py', 'test_screencast', 0, 2, 21).
 python_function('examples/agent-broker/broker_demo.py', 'main', 0, 9, 17).
 python_function('examples/ci-agent/agent.py', '_load_common', 0, 4, 6).
 python_function('examples/ci-agent/agent.py', 'main', 0, 3, 19).
@@ -3131,6 +3753,9 @@ python_function('packages/rest2vdisplay/src/rest2vdisplay/app.py', 'create_app',
 python_function('packages/rest2vdisplay/src/rest2vdisplay/cli.py', 'main', 0, 3, 9).
 python_function('packages/uri2vdisplay/src/uri2vdisplay/cli.py', 'main', 1, 4, 10).
 python_function('packages/uri2vdisplay/src/uri2vdisplay/decode.py', 'uri_to_dsl', 1, 7, 10).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/audit_context.py', 'audit_context_from_headers', 0, 1, 1).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/audit_context.py', 'audit_context_from_fastapi_headers', 1, 1, 1).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/audit_context.py', 'apply_audit_env', 1, 7, 5).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/cli.py', 'main', 1, 4, 14).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'agent_meta', 0, 1, 0).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'success', 2, 2, 1).
@@ -3142,16 +3767,20 @@ python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'json_
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'strip_ok', 1, 1, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/envelope.py', 'flatten_envelope', 1, 6, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py', 'register_all_routes', 2, 2, 3).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py', 'execute_audit_route', 3, 3, 6).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py', 'execute_audited_service', 2, 5, 15).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py', '_json_from_command_result', 2, 8, 5).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_headers.py', 'read_audit_headers', 4, 1, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 'expected_token', 0, 2, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/auth.py', 'make_check_auth', 1, 1, 4).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 'register_routes', 3, 1, 6).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 'register_routes', 3, 1, 12).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py', 'register_routes', 3, 1, 5).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/control.py', 'register_routes', 3, 1, 11).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/health.py', '_control_api_enabled', 1, 2, 2).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/health.py', 'register_routes', 3, 1, 11).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/sampler.py', 'register_routes', 3, 1, 11).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 'register_routes', 3, 1, 21).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/session.py', 'register_routes', 3, 1, 24).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/tasks.py', 'register_routes', 3, 1, 13).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 'register_routes', 3, 1, 7).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/routes/windows.py', 'register_routes', 3, 1, 5).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_pid_alive', 1, 3, 1).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_parse_ss_pids', 1, 2, 4).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/serve_port.py', '_pids_from_ss', 1, 3, 2).
@@ -3203,7 +3832,7 @@ python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'get_task', 2, 2, 3).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'heartbeat_task', 2, 2, 3).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'stop_task', 2, 5, 4).
-python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'register_session_task', 1, 2, 5).
+python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'register_session_task', 1, 4, 7).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'unregister_session_task', 2, 1, 1).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'begin_sampler_task', 1, 2, 3).
 python_function('packages/vdisplay-agent/src/vdisplay_agent/services/tasks.py', 'touch_sampler_task', 2, 1, 1).
@@ -3218,7 +3847,8 @@ python_function('packages/vdisplay-agent/src/vdisplay_agent/task_store.py', 'tas
 python_function('src/vdisplay/agent_config.py', 'agent_auto_enabled', 0, 1, 3).
 python_function('src/vdisplay/agent_config.py', 'reset_agent_probe_cache', 0, 1, 0).
 python_function('src/vdisplay/agent_config.py', '_default_agent_base', 0, 3, 2).
-python_function('src/vdisplay/agent_config.py', '_probe_agent_url', 1, 3, 2).
+python_function('src/vdisplay/agent_config.py', '_is_vdisplay_agent_health', 1, 6, 5).
+python_function('src/vdisplay/agent_config.py', '_probe_agent_url', 1, 5, 6).
 python_function('src/vdisplay/agent_config.py', '_probe_default_agent', 0, 3, 3).
 python_function('src/vdisplay/agent_config.py', 'resolve_agent_url', 1, 6, 5).
 python_function('src/vdisplay/agent_config.py', 'resolve_agent_token', 0, 3, 2).
@@ -3236,14 +3866,36 @@ python_function('src/vdisplay/application/artifacts.py', '_append_unique', 3, 3,
 python_function('src/vdisplay/application/artifacts.py', 'artifacts_from_screenshot', 1, 8, 6).
 python_function('src/vdisplay/application/artifacts.py', 'artifacts_from_control', 1, 13, 7).
 python_function('src/vdisplay/application/artifacts.py', 'build_artifacts', 2, 3, 2).
-python_function('src/vdisplay/application/commands.py', '_resolve_browser_engine_from_dsl', 1, 5, 6).
-python_function('src/vdisplay/application/commands.py', '_control_session_id_from_dsl', 2, 2, 1).
-python_function('src/vdisplay/application/commands.py', '_control_fields_from_dsl', 1, 9, 4).
-python_function('src/vdisplay/application/commands.py', '_terminal_fields_from_dsl', 2, 2, 1).
-python_function('src/vdisplay/application/commands.py', '_browser_fields_from_dsl', 2, 2, 3).
 python_function('src/vdisplay/application/errors.py', 'error_from_exception', 1, 4, 3).
+python_function('src/vdisplay/application/event_store.py', 'event_store_enabled', 0, 3, 4).
+python_function('src/vdisplay/application/event_store.py', 'resolve_event_session_root', 1, 5, 9).
+python_function('src/vdisplay/application/event_store.py', 'append_event', 2, 1, 2).
+python_function('src/vdisplay/application/event_store.py', 'append_events', 2, 1, 2).
+python_function('src/vdisplay/application/event_store.py', 'read_events', 1, 1, 2).
+python_function('src/vdisplay/application/events.py', '_now_ms', 0, 1, 2).
+python_function('src/vdisplay/application/events.py', '_event_id', 0, 1, 1).
+python_function('src/vdisplay/application/events.py', 'session_started', 0, 1, 4).
+python_function('src/vdisplay/application/events.py', 'command_received', 1, 1, 4).
+python_function('src/vdisplay/application/events.py', 'command_completed', 2, 5, 6).
+python_function('src/vdisplay/application/events.py', 'step_recorded', 0, 1, 3).
+python_function('src/vdisplay/application/events.py', '_create_planned_event', 5, 5, 5).
+python_function('src/vdisplay/application/events.py', '_create_executed_event', 5, 6, 5).
+python_function('src/vdisplay/application/events.py', '_create_verification_event', 5, 7, 5).
+python_function('src/vdisplay/application/events.py', '_create_retry_event', 4, 3, 5).
+python_function('src/vdisplay/application/events.py', '_create_recovery_event', 4, 3, 5).
+python_function('src/vdisplay/application/events.py', 'control_events_from_diagnostics', 0, 10, 8).
+python_function('src/vdisplay/application/events.py', 'gui_map_built', 0, 2, 3).
+python_function('src/vdisplay/application/events.py', 'gui_map_drift_detected', 0, 3, 4).
+python_function('src/vdisplay/application/events.py', 'map_events_from_diagnostics', 0, 14, 8).
+python_function('src/vdisplay/application/executor.py', '_audit_record_on_client', 1, 3, 2).
+python_function('src/vdisplay/application/executor.py', '_emit_command_received', 1, 2, 3).
+python_function('src/vdisplay/application/executor.py', '_emit_command_completed', 2, 2, 3).
 python_function('src/vdisplay/application/executor.py', '_maybe_enrich_screenshot', 2, 3, 2).
-python_function('src/vdisplay/application/executor.py', 'execute', 1, 6, 15).
+python_function('src/vdisplay/application/executor.py', 'execute', 1, 13, 23).
+python_function('src/vdisplay/application/gui_map_events.py', '_session_id', 1, 4, 5).
+python_function('src/vdisplay/application/gui_map_events.py', 'emit_gui_map_event', 1, 4, 5).
+python_function('src/vdisplay/application/gui_map_events.py', 'record_gui_map_built', 0, 2, 4).
+python_function('src/vdisplay/application/gui_map_events.py', 'record_gui_map_drift', 0, 6, 9).
 python_function('src/vdisplay/application/handlers/agent.py', '_strip_ok', 1, 1, 2).
 python_function('src/vdisplay/application/handlers/agent.py', '_health', 2, 1, 1).
 python_function('src/vdisplay/application/handlers/agent.py', '_info', 2, 3, 2).
@@ -3265,7 +3917,7 @@ python_function('src/vdisplay/application/handlers/agent.py', '_controls_find', 
 python_function('src/vdisplay/application/handlers/agent.py', '_control_click', 2, 1, 3).
 python_function('src/vdisplay/application/handlers/agent.py', '_control_focus', 2, 1, 3).
 python_function('src/vdisplay/application/handlers/agent.py', '_control_set_value', 2, 1, 3).
-python_function('src/vdisplay/application/handlers/agent.py', 'execute_agent', 1, 2, 4).
+python_function('src/vdisplay/application/handlers/agent.py', 'execute_agent', 1, 2, 5).
 python_function('src/vdisplay/application/handlers/control.py', 'control_selector_kwargs', 1, 1, 0).
 python_function('src/vdisplay/application/handlers/control.py', 'control_service_kwargs', 1, 3, 3).
 python_function('src/vdisplay/application/handlers/control.py', 'control_selector_only_kwargs', 1, 2, 2).
@@ -3291,6 +3943,44 @@ python_function('src/vdisplay/application/handlers/local.py', '_control_click', 
 python_function('src/vdisplay/application/handlers/local.py', '_control_focus', 1, 1, 2).
 python_function('src/vdisplay/application/handlers/local.py', '_control_set_value', 1, 2, 3).
 python_function('src/vdisplay/application/handlers/local.py', 'execute_local', 1, 2, 3).
+python_function('src/vdisplay/application/parsers.py', '_resolve_browser_engine_from_dsl', 1, 5, 6).
+python_function('src/vdisplay/application/parsers.py', '_control_session_id_from_dsl', 2, 2, 1).
+python_function('src/vdisplay/application/parsers.py', '_control_fields_from_dsl', 1, 9, 4).
+python_function('src/vdisplay/application/parsers.py', '_terminal_fields_from_dsl', 2, 2, 1).
+python_function('src/vdisplay/application/parsers.py', '_browser_fields_from_dsl', 2, 2, 3).
+python_function('src/vdisplay/application/parsers.py', 'parse_dsl', 1, 7, 12).
+python_function('src/vdisplay/application/parsers.py', 'parse_agent_control_body', 2, 11, 6).
+python_function('src/vdisplay/application/parsers.py', '_parse_terminal_open_from_agent', 2, 1, 2).
+python_function('src/vdisplay/application/parsers.py', '_parse_browser_open_from_agent', 2, 3, 4).
+python_function('src/vdisplay/application/parsers.py', '_parse_virtual_start_from_agent', 2, 3, 3).
+python_function('src/vdisplay/application/parsers.py', '_parse_adopt_release_from_agent', 2, 7, 3).
+python_function('src/vdisplay/application/parsers.py', 'parse_agent_body', 2, 12, 7).
+python_function('src/vdisplay/application/projections/__init__.py', 'refresh_projections', 1, 4, 8).
+python_function('src/vdisplay/application/projections/__init__.py', 'build_control_state', 1, 5, 5).
+python_function('src/vdisplay/application/projections/backend_scores.py', '_score_bucket', 1, 1, 2).
+python_function('src/vdisplay/application/projections/backend_scores.py', '_apply_outcome', 1, 3, 2).
+python_function('src/vdisplay/application/projections/backend_scores.py', '_routing_from_event', 1, 12, 3).
+python_function('src/vdisplay/application/projections/backend_scores.py', '_handle_backend_score_updated', 2, 11, 6).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'build_backend_scores', 1, 15, 6).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'global_backend_scores_path', 0, 2, 6).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'load_global_backend_scores', 0, 4, 5).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'load_session_backend_scores', 1, 6, 8).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'merge_backend_scores', 0, 10, 7).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'resolve_active_session_root', 0, 5, 5).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'load_merged_backend_scores', 0, 2, 4).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'provider_score_prior', 1, 11, 4).
+python_function('src/vdisplay/application/projections/backend_scores.py', 'load_backend_scores', 1, 2, 6).
+python_function('src/vdisplay/application/projections/map_health.py', '_ensure_map_entry', 2, 1, 1).
+python_function('src/vdisplay/application/projections/map_health.py', '_apply_drift_payload', 1, 15, 7).
+python_function('src/vdisplay/application/projections/map_health.py', 'build_map_health', 1, 38, 8).
+python_function('src/vdisplay/application/projections/map_health.py', 'load_map_health', 1, 2, 7).
+python_function('src/vdisplay/application/proto/codec.py', 'event_format', 0, 2, 3).
+python_function('src/vdisplay/application/proto/codec.py', 'protobuf_events_enabled', 0, 1, 1).
+python_function('src/vdisplay/application/proto/codec.py', 'encode_event_envelope', 1, 2, 5).
+python_function('src/vdisplay/application/proto/codec.py', 'decode_event_envelope', 1, 14, 11).
+python_function('src/vdisplay/application/proto/codec.py', 'encode_event_line_base64', 1, 1, 3).
+python_function('src/vdisplay/application/proto/codec.py', 'decode_event_line_base64', 1, 1, 3).
+python_function('src/vdisplay/application/proto/codec.py', 'read_length_delimited_events', 1, 3, 6).
 python_function('src/vdisplay/application/runtime.py', 'agent_client_optional', 0, 2, 2).
 python_function('src/vdisplay/application/runtime.py', 'agent_client_required', 0, 2, 3).
 python_function('src/vdisplay/application/runtime.py', 'prefer_agent', 0, 1, 1).
@@ -3321,8 +4011,13 @@ python_function('src/vdisplay/application/services/control.py', 'control_focus',
 python_function('src/vdisplay/application/services/control.py', 'control_set_value', 0, 1, 1).
 python_function('src/vdisplay/application/services/control.py', '_perform_action', 4, 9, 8).
 python_function('src/vdisplay/application/services/control.py', '_capture_before_state', 0, 4, 1).
-python_function('src/vdisplay/application/services/control.py', '_build_action_payload', 0, 13, 6).
-python_function('src/vdisplay/application/services/control.py', '_execute_action', 0, 8, 19).
+python_function('src/vdisplay/application/services/control.py', '_build_actuation_dict', 1, 3, 0).
+python_function('src/vdisplay/application/services/control.py', '_build_map_block', 2, 6, 1).
+python_function('src/vdisplay/application/services/control.py', '_build_verify_phases', 1, 3, 2).
+python_function('src/vdisplay/application/services/control.py', '_build_control_diagnostics', 0, 17, 14).
+python_function('src/vdisplay/application/services/control.py', '_build_action_payload', 0, 14, 7).
+python_function('src/vdisplay/application/services/control.py', '_execute_action_once', 0, 8, 19).
+python_function('src/vdisplay/application/services/control.py', '_execute_action', 0, 14, 18).
 python_function('src/vdisplay/application/services/control.py', '_build_tree', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', '_run_discovery', 1, 3, 2).
 python_function('src/vdisplay/application/services/discovery.py', 'list_monitors', 1, 1, 2).
@@ -3337,16 +4032,21 @@ python_function('src/vdisplay/application/services/discovery.py', 'diagnose_unat
 python_function('src/vdisplay/application/services/discovery.py', '_sampler_hint', 1, 3, 0).
 python_function('src/vdisplay/application/services/img2nl_enrich.py', 'img2nl_enabled', 0, 1, 3).
 python_function('src/vdisplay/application/services/img2nl_enrich.py', 'img2nl_locale', 0, 2, 2).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', 'describe_backend', 0, 2, 3).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', '_nl_from_imgl_scene', 1, 17, 5).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', '_describe_via_imgl', 1, 10, 5).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', '_describe_via_vql', 1, 7, 8).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', 'describe_screenshot_image', 1, 11, 7).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', '_describe_via_img2nl', 1, 9, 6).
 python_function('src/vdisplay/application/services/img2nl_enrich.py', '_image_path', 1, 3, 2).
-python_function('src/vdisplay/application/services/img2nl_enrich.py', 'describe_screenshot_image', 1, 10, 9).
 python_function('src/vdisplay/application/services/img2nl_enrich.py', '_maybe_vision_llm_enrich', 1, 4, 7).
-python_function('src/vdisplay/application/services/img2nl_enrich.py', 'enrich_screenshot_payload', 1, 12, 8).
+python_function('src/vdisplay/application/services/img2nl_enrich.py', 'enrich_screenshot_payload', 1, 14, 10).
 python_function('src/vdisplay/application/services/info.py', 'platform_info', 0, 6, 10).
 python_function('src/vdisplay/application/services/map.py', '_prepare_capture_meta', 0, 4, 8).
-python_function('src/vdisplay/application/services/map.py', 'map_build', 0, 6, 8).
+python_function('src/vdisplay/application/services/map.py', 'map_build', 0, 7, 11).
 python_function('src/vdisplay/application/services/map.py', 'map_show', 0, 3, 3).
-python_function('src/vdisplay/application/services/map.py', 'map_diff', 0, 3, 5).
-python_function('src/vdisplay/application/services/map.py', 'map_refresh', 0, 7, 6).
+python_function('src/vdisplay/application/services/map.py', 'map_diff', 0, 5, 6).
+python_function('src/vdisplay/application/services/map.py', 'map_refresh', 0, 10, 11).
 python_function('src/vdisplay/application/services/map.py', '_capture', 0, 7, 6).
 python_function('src/vdisplay/application/services/map.py', '_capture_via_agent', 0, 4, 11).
 python_function('src/vdisplay/application/services/map.py', '_monitor_index', 2, 5, 5).
@@ -3372,6 +4072,12 @@ python_function('src/vdisplay/application/services/session.py', 'terminal_open',
 python_function('src/vdisplay/application/services/session.py', 'unsupported_session_action', 2, 1, 1).
 python_function('src/vdisplay/application/session_context.py', 'apply_cli_session_args', 1, 3, 4).
 python_function('src/vdisplay/application/session_context.py', 'enrich_command_request', 1, 6, 5).
+python_function('src/vdisplay/application/session_context.py', 'agent_audit_delegated', 0, 1, 3).
+python_function('src/vdisplay/application/session_context.py', 'ensure_audit_session_dir', 1, 4, 9).
+python_function('src/vdisplay/application/session_context.py', 'audit_headers_for_command', 1, 5, 6).
+python_function('src/vdisplay/application/session_context.py', 'current_audit_headers', 0, 2, 2).
+python_function('src/vdisplay/application/session_context.py', 'bind_audit_command', 1, 1, 2).
+python_function('src/vdisplay/application/session_context.py', 'audit_context_from_mapping', 1, 3, 5).
 python_function('src/vdisplay/application/session_recorder.py', 'session_recording_enabled', 0, 2, 3).
 python_function('src/vdisplay/application/session_recorder.py', '_redact_env', 1, 5, 3).
 python_function('src/vdisplay/application/session_recorder.py', '_collect_env_snapshot', 0, 3, 2).
@@ -3388,10 +4094,30 @@ python_function('src/vdisplay/application/session_recorder.py', '_collect_top_le
 python_function('src/vdisplay/application/session_recorder.py', '_collect_block_artifacts', 2, 7, 3).
 python_function('src/vdisplay/application/session_recorder.py', '_collect_routing_artifacts', 2, 3, 3).
 python_function('src/vdisplay/application/session_recorder.py', 'copy_artifact', 2, 6, 8).
-python_function('src/vdisplay/application/session_recorder.py', 'extract_diagnostics', 1, 5, 4).
-python_function('src/vdisplay/application/session_recorder.py', '_build_summary', 1, 6, 7).
+python_function('src/vdisplay/application/session_recorder.py', 'extract_diagnostics', 1, 13, 7).
+python_function('src/vdisplay/application/session_recorder.py', '_add_base_fields', 2, 6, 2).
+python_function('src/vdisplay/application/session_recorder.py', '_add_map_block', 2, 3, 1).
+python_function('src/vdisplay/application/session_recorder.py', '_add_routing_block', 2, 5, 3).
+python_function('src/vdisplay/application/session_recorder.py', '_add_verification_block', 2, 5, 3).
+python_function('src/vdisplay/application/session_recorder.py', '_add_actuation_block', 2, 8, 2).
+python_function('src/vdisplay/application/session_recorder.py', '_add_lifecycle_blocks', 2, 3, 2).
+python_function('src/vdisplay/application/session_recorder.py', '_synthesize_control_block', 1, 1, 6).
+python_function('src/vdisplay/application/session_recorder.py', '_verification_to_verify_block', 1, 4, 4).
+python_function('src/vdisplay/application/session_recorder.py', '_merge_diagnostics', 2, 5, 3).
+python_function('src/vdisplay/application/session_recorder.py', '_legacy_control_diagnostics', 1, 5, 2).
+python_function('src/vdisplay/application/session_recorder.py', 'command_request_to_dsl_text', 1, 4, 4).
+python_function('src/vdisplay/application/session_recorder.py', 'resolve_map_path', 3, 7, 6).
+python_function('src/vdisplay/application/session_recorder.py', 'archive_map_artifacts', 4, 9, 16).
+python_function('src/vdisplay/application/session_recorder.py', '_reprocess_steps', 2, 8, 12).
+python_function('src/vdisplay/application/session_recorder.py', '_reprocess_events', 3, 13, 16).
+python_function('src/vdisplay/application/session_recorder.py', '_update_session_files', 2, 1, 5).
+python_function('src/vdisplay/application/session_recorder.py', 'reprocess_session_diagnostics', 1, 3, 12).
+python_function('src/vdisplay/application/session_recorder.py', 'discover_session_dirs', 0, 6, 6).
+python_function('src/vdisplay/application/session_recorder.py', 'load_session_document', 1, 13, 9).
+python_function('src/vdisplay/application/session_recorder.py', 'export_session_zip', 2, 4, 10).
+python_function('src/vdisplay/application/session_recorder.py', '_build_summary', 1, 8, 7).
 python_function('src/vdisplay/application/session_recorder.py', '_utc_now', 0, 1, 3).
-python_function('src/vdisplay/application/session_recorder.py', 'render_readme', 1, 13, 7).
+python_function('src/vdisplay/application/session_recorder.py', 'render_readme', 1, 31, 9).
 python_function('src/vdisplay/backends/linux_x11_mirror.py', '_require_xrandr', 0, 2, 2).
 python_function('src/vdisplay/backends/linux_x11_mirror.py', '_resolve_mirror_targets', 4, 3, 4).
 python_function('src/vdisplay/backends/linux_x11_mirror.py', '_try_mirror', 3, 5, 2).
@@ -3429,7 +4155,7 @@ python_function('src/vdisplay/capture/host.py', 'resolve_window_region', 1, 10, 
 python_function('src/vdisplay/capture/host.py', '_monitor_capture_region', 2, 4, 3).
 python_function('src/vdisplay/capture/host.py', '_capture_all_from_driver_full', 3, 7, 13).
 python_function('src/vdisplay/capture/host.py', '_capture_all_from_screencast', 4, 14, 15).
-python_function('src/vdisplay/capture/host.py', '_try_screencast_capture', 3, 11, 8).
+python_function('src/vdisplay/capture/host.py', '_try_screencast_capture', 3, 16, 12).
 python_function('src/vdisplay/capture/host.py', '_try_mirror_capture', 5, 5, 9).
 python_function('src/vdisplay/capture/host.py', '_try_driver_capture', 3, 6, 3).
 python_function('src/vdisplay/capture/host.py', 'capture_host_png', 0, 13, 12).
@@ -3485,7 +4211,7 @@ python_function('src/vdisplay/capture/portal_screencast.py', 'screencast_stream_
 python_function('src/vdisplay/capture/portal_screencast.py', '_ensure_fd_inheritable', 1, 1, 1).
 python_function('src/vdisplay/capture/portal_screencast.py', '_dbus_fd', 1, 5, 5).
 python_function('src/vdisplay/capture/portal_screencast.py', '_close_pipewire_fd', 1, 2, 1).
-python_function('src/vdisplay/capture/portal_screencast.py', '_start_screencast_impl', 0, 9, 33).
+python_function('src/vdisplay/capture/portal_screencast.py', '_start_screencast_impl', 0, 9, 34).
 python_function('src/vdisplay/capture/portal_screencast.py', '_listen_portal_request', 3, 1, 3).
 python_function('src/vdisplay/capture/portal_screencast.py', '_close_screencast_session', 1, 2, 4).
 python_function('src/vdisplay/capture/portal_screencast.py', '_capture_pipewire_stream', 0, 2, 9).
@@ -3510,12 +4236,12 @@ python_function('src/vdisplay/cli_handlers.py', 'windows_payload', 0, 1, 1).
 python_function('src/vdisplay/cli_handlers.py', 'all_payload', 0, 1, 1).
 python_function('src/vdisplay/cli_handlers.py', 'screenshot_payload', 0, 1, 2).
 python_function('src/vdisplay/cli_handlers.py', 'dispatch_cli', 1, 1, 2).
-python_function('src/vdisplay/client.py', '_route_outputs_query', 1, 4, 2).
-python_function('src/vdisplay/client.py', '_route_windows_query', 1, 6, 4).
-python_function('src/vdisplay/client.py', '_route_control_command', 2, 5, 0).
-python_function('src/vdisplay/client.py', '_route_terminal_open', 1, 4, 0).
-python_function('src/vdisplay/client.py', '_route_browser_open', 1, 4, 0).
-python_function('src/vdisplay/client.py', '_route_command', 1, 7, 7).
+python_function('src/vdisplay/client_routes.py', '_route_outputs_query', 1, 4, 2).
+python_function('src/vdisplay/client_routes.py', '_route_windows_query', 1, 6, 4).
+python_function('src/vdisplay/client_routes.py', '_route_control_command', 2, 5, 0).
+python_function('src/vdisplay/client_routes.py', '_route_terminal_open', 1, 4, 0).
+python_function('src/vdisplay/client_routes.py', '_route_browser_open', 1, 4, 0).
+python_function('src/vdisplay/client_routes.py', 'route_command', 1, 7, 7).
 python_function('src/vdisplay/commands/__init__.py', 'register_all', 1, 2, 1).
 python_function('src/vdisplay/commands/agent.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/agent.py', '_agent_client', 0, 2, 3).
@@ -3527,6 +4253,8 @@ python_function('src/vdisplay/commands/all_cmd.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/all_cmd.py', 'handle', 1, 1, 3).
 python_function('src/vdisplay/commands/all_cmd.py', 'register_outputs', 1, 1, 4).
 python_function('src/vdisplay/commands/all_cmd.py', 'handle_outputs', 1, 1, 3).
+python_function('src/vdisplay/commands/app.py', 'register', 1, 1, 4).
+python_function('src/vdisplay/commands/app.py', 'handle', 1, 6, 10).
 python_function('src/vdisplay/commands/common.py', 'add_display_arg', 1, 1, 1).
 python_function('src/vdisplay/commands/common.py', 'add_all_arg', 1, 1, 1).
 python_function('src/vdisplay/commands/common.py', 'add_window_filter_args', 1, 1, 2).
@@ -3548,6 +4276,10 @@ python_function('src/vdisplay/commands/control.py', '_handle_control_set_value',
 python_function('src/vdisplay/commands/control.py', 'handle', 1, 2, 2).
 python_function('src/vdisplay/commands/diagnose.py', 'register', 1, 1, 6).
 python_function('src/vdisplay/commands/diagnose.py', 'handle', 1, 5, 6).
+python_function('src/vdisplay/commands/hmi.py', 'register', 1, 1, 4).
+python_function('src/vdisplay/commands/hmi.py', 'handle', 1, 7, 5).
+python_function('src/vdisplay/commands/ide.py', 'register', 1, 1, 6).
+python_function('src/vdisplay/commands/ide.py', 'handle', 1, 8, 20).
 python_function('src/vdisplay/commands/info.py', 'register', 1, 1, 2).
 python_function('src/vdisplay/commands/info.py', 'handle', 1, 1, 2).
 python_function('src/vdisplay/commands/io.py', 'print_json', 1, 1, 2).
@@ -3559,6 +4291,8 @@ python_function('src/vdisplay/commands/monitors.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/monitors.py', 'handle', 1, 1, 3).
 python_function('src/vdisplay/commands/nlp.py', 'register', 1, 1, 3).
 python_function('src/vdisplay/commands/nlp.py', 'handle', 1, 2, 2).
+python_function('src/vdisplay/commands/observe.py', 'register', 1, 1, 3).
+python_function('src/vdisplay/commands/observe.py', 'handle_observe', 1, 9, 15).
 python_function('src/vdisplay/commands/relay.py', 'register', 1, 1, 6).
 python_function('src/vdisplay/commands/relay.py', 'handle_list_windows', 1, 1, 2).
 python_function('src/vdisplay/commands/relay.py', 'handle', 1, 5, 6).
@@ -3573,13 +4307,20 @@ python_function('src/vdisplay/commands/sampler.py', '_wait_for_sampler', 3, 9, 8
 python_function('src/vdisplay/commands/screenshot.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/screenshot.py', 'handle', 1, 1, 2).
 python_function('src/vdisplay/commands/session.py', 'add_root_session_args', 1, 1, 1).
+python_function('src/vdisplay/commands/session.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/session.py', 'command_request_from_control_args', 2, 8, 7).
+python_function('src/vdisplay/commands/session.py', '_resolve_session_dir', 1, 9, 10).
+python_function('src/vdisplay/commands/session.py', 'handle_list', 1, 3, 11).
+python_function('src/vdisplay/commands/session.py', 'handle_show', 1, 10, 14).
+python_function('src/vdisplay/commands/session.py', 'handle_export', 1, 3, 10).
+python_function('src/vdisplay/commands/session.py', 'handle_reprocess', 1, 2, 4).
 python_function('src/vdisplay/commands/virtual.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/virtual.py', 'handle', 1, 6, 7).
 python_function('src/vdisplay/commands/windows.py', 'register', 1, 1, 4).
 python_function('src/vdisplay/commands/windows.py', 'handle', 1, 1, 3).
 python_function('src/vdisplay/control/action_bounds.py', 'action_bounds_for_vision', 1, 2, 2).
 python_function('src/vdisplay/control/action_bounds.py', 'click_point_for_vision', 1, 1, 1).
+python_function('src/vdisplay/control/action_state.py', 'phase_from_payload', 1, 6, 1).
 python_function('src/vdisplay/control/browser_engine.py', 'normalize_browser_engine', 1, 3, 6).
 python_function('src/vdisplay/control/browser_engine.py', 'engine_profile_id', 1, 2, 3).
 python_function('src/vdisplay/control/browser_engine.py', 'browser_engine_profile', 1, 3, 1).
@@ -3753,6 +4494,13 @@ python_function('src/vdisplay/control/registry.py', '_build_x11', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_terminal', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', '_build_vision', 0, 1, 1).
 python_function('src/vdisplay/control/registry.py', 'default_provider_registry', 0, 1, 1).
+python_function('src/vdisplay/control/retry_policy.py', 'retry_enabled', 0, 4, 3).
+python_function('src/vdisplay/control/retry_policy.py', 'next_action', 2, 10, 8).
+python_function('src/vdisplay/control/retry_policy.py', 'apply_retry_decision', 1, 5, 1).
+python_function('src/vdisplay/control/retry_policy.py', 'attach_retry_metadata', 2, 1, 1).
+python_function('src/vdisplay/control/retry_policy.py', '_routing_dict', 1, 5, 3).
+python_function('src/vdisplay/control/retry_policy.py', '_map_dict', 1, 5, 2).
+python_function('src/vdisplay/control/retry_policy.py', '_next_fallback_provider', 2, 9, 5).
 python_function('src/vdisplay/control/router.py', '_eligible_for_profile', 2, 8, 2).
 python_function('src/vdisplay/control/router.py', '_select_winner', 2, 9, 7).
 python_function('src/vdisplay/control/router.py', 'default_router', 0, 2, 1).
@@ -3795,21 +4543,24 @@ python_function('src/vdisplay/control/scoring.py', '_x11_context_score', 1, 7, 1
 python_function('src/vdisplay/control/scoring.py', '_score_x11_provider', 2, 1, 4).
 python_function('src/vdisplay/control/scoring.py', '_score_vision_provider', 1, 6, 3).
 python_function('src/vdisplay/control/scoring.py', '_score_plugin_provider', 2, 11, 2).
-python_function('src/vdisplay/control/scoring.py', '_apply_routing_boosts', 3, 7, 4).
+python_function('src/vdisplay/control/scoring.py', '_apply_routing_boosts', 3, 10, 7).
 python_function('src/vdisplay/control/scoring.py', 'score_provider', 1, 10, 12).
 python_function('src/vdisplay/control/scoring.py', 'rank_providers', 0, 8, 11).
 python_function('src/vdisplay/control/scoring.py', '_verify_screenshot_only', 2, 4, 0).
 python_function('src/vdisplay/control/scoring.py', '_verify_hybrid', 2, 12, 1).
 python_function('src/vdisplay/control/scoring.py', 'select_verify_provider', 1, 9, 2).
 python_function('src/vdisplay/control/screenshot_verify.py', '_region_from_bounds', 1, 1, 1).
-python_function('src/vdisplay/control/screenshot_verify.py', 'enrich_screencast_stream_meta', 1, 4, 3).
+python_function('src/vdisplay/control/screenshot_verify.py', 'stream_bounds_from_meta', 1, 19, 4).
+python_function('src/vdisplay/control/screenshot_verify.py', 'global_point_in_stream_bounds', 3, 3, 2).
+python_function('src/vdisplay/control/screenshot_verify.py', 'enrich_screencast_stream_meta', 1, 6, 5).
 python_function('src/vdisplay/control/screenshot_verify.py', '_resolve_screencast_stream_region', 0, 2, 3).
 python_function('src/vdisplay/control/screenshot_verify.py', '_region_from_agent_screencast_status', 0, 14, 8).
 python_function('src/vdisplay/control/screenshot_verify.py', 'capture_control_screenshot', 0, 3, 7).
 python_function('src/vdisplay/control/screenshot_verify.py', '_target_region', 1, 5, 1).
-python_function('src/vdisplay/control/screenshot_verify.py', '_maybe_crop_capture', 2, 7, 4).
-python_function('src/vdisplay/control/screenshot_verify.py', '_capture_via_agent', 0, 6, 9).
-python_function('src/vdisplay/control/screenshot_verify.py', 'diff_png_bytes', 2, 13, 9).
+python_function('src/vdisplay/control/screenshot_verify.py', '_maybe_crop_capture', 2, 9, 8).
+python_function('src/vdisplay/control/screenshot_verify.py', '_capture_via_agent', 0, 5, 9).
+python_function('src/vdisplay/control/screenshot_verify.py', 'diff_png_bytes', 2, 4, 5).
+python_function('src/vdisplay/control/screenshot_verify.py', '_diff_png_bytes_local', 2, 13, 9).
 python_function('src/vdisplay/control/screenshot_verify.py', 'verify_screenshot_pair', 2, 1, 2).
 python_function('src/vdisplay/control/selector.py', '_infer_selector_environment', 1, 8, 0).
 python_function('src/vdisplay/control/selector.py', '_normalize', 1, 2, 2).
@@ -3866,6 +4617,11 @@ python_function('src/vdisplay/control/verify.py', '_handle_invoke_verification',
 python_function('src/vdisplay/control/verify.py', '_add_diff_nodes', 1, 3, 1).
 python_function('src/vdisplay/control/verify.py', 'verify_action_result', 0, 9, 13).
 python_function('src/vdisplay/control/verify.py', '_is_verified', 2, 12, 3).
+python_function('src/vdisplay/control/verify_policy.py', '_get_base_phases', 3, 7, 1).
+python_function('src/vdisplay/control/verify_policy.py', 'required_phases', 0, 10, 4).
+python_function('src/vdisplay/control/verify_policy.py', 'aggregate_confidence', 1, 12, 7).
+python_function('src/vdisplay/control/verify_policy.py', 'required_phases_from_context', 0, 1, 1).
+python_function('src/vdisplay/control/verify_policy.py', '_dedupe', 1, 3, 3).
 python_function('src/vdisplay/control/vision_disambiguate.py', 'item_confidence', 1, 3, 3).
 python_function('src/vdisplay/control/vision_disambiguate.py', 'filter_by_confidence', 1, 4, 5).
 python_function('src/vdisplay/control/vision_disambiguate.py', 'pick_by_index', 2, 3, 3).
@@ -3885,7 +4641,9 @@ python_function('src/vdisplay/control/vision_llm.py', 'query_vision_llm', 2, 9, 
 python_function('src/vdisplay/control/vision_llm.py', 'verify_text_in_region', 2, 12, 6).
 python_function('src/vdisplay/control/vision_llm.py', 'summarize_region', 1, 3, 2).
 python_function('src/vdisplay/control/vision_ocr.py', 'ocr_available', 0, 3, 1).
-python_function('src/vdisplay/control/vision_ocr.py', 'ocr_png', 1, 9, 15).
+python_function('src/vdisplay/control/vision_ocr.py', 'ocr_png', 1, 5, 6).
+python_function('src/vdisplay/control/vision_ocr.py', '_ocr_from_screen_context_cache', 0, 9, 10).
+python_function('src/vdisplay/control/vision_ocr.py', '_ocr_png_local', 1, 9, 15).
 python_function('src/vdisplay/control/vision_ocr.py', '_normalize', 1, 2, 2).
 python_function('src/vdisplay/control/vision_ocr.py', '_box_matches', 2, 3, 1).
 python_function('src/vdisplay/control/vision_ocr.py', '_match_by_vision_anchor', 2, 7, 5).
@@ -3904,19 +4662,45 @@ python_function('src/vdisplay/control/vision_preview.py', 'action_pick_index', 1
 python_function('src/vdisplay/control/vision_preview.py', '_match_kind', 1, 5, 1).
 python_function('src/vdisplay/control/vision_preview.py', 'preview_matches_from_nodes', 1, 7, 5).
 python_function('src/vdisplay/control/vision_preview.py', 'confidence_color', 1, 5, 0).
-python_function('src/vdisplay/control/vision_preview.py', 'render_match_overlay', 2, 10, 21).
+python_function('src/vdisplay/control/vision_preview.py', 'preview_backend', 0, 2, 3).
+python_function('src/vdisplay/control/vision_preview.py', '_prefer_imgl_annotate', 0, 4, 2).
+python_function('src/vdisplay/control/vision_preview.py', '_preview_matches_to_catalog', 1, 3, 3).
+python_function('src/vdisplay/control/vision_preview.py', '_render_match_overlay_imgl_annotate', 2, 2, 13).
+python_function('src/vdisplay/control/vision_preview.py', 'render_match_overlay', 2, 7, 8).
+python_function('src/vdisplay/control/vision_preview.py', '_render_match_overlay_local', 2, 10, 21).
 python_function('src/vdisplay/control/vision_preview.py', 'build_vision_preview', 2, 10, 10).
 python_function('src/vdisplay/control/vision_preview.py', 'write_preview_png', 2, 1, 6).
 python_function('src/vdisplay/control/vision_preview.py', 'decode_preview_png', 1, 2, 3).
 python_function('src/vdisplay/control/vision_template.py', 'template_available', 0, 2, 0).
 python_function('src/vdisplay/control/vision_template.py', 'load_template_png', 1, 7, 9).
 python_function('src/vdisplay/control/vision_template.py', '_png_to_gray_array', 1, 1, 5).
-python_function('src/vdisplay/control/vision_template.py', 'match_template', 2, 11, 17).
+python_function('src/vdisplay/control/vision_template.py', 'match_template', 2, 4, 5).
+python_function('src/vdisplay/control/vision_template.py', '_match_template_local', 2, 11, 17).
 python_function('src/vdisplay/control/vision_template.py', '_dedupe_matches', 1, 5, 3).
 python_function('src/vdisplay/control/vision_template.py', '_search_region_for_relation', 2, 8, 5).
 python_function('src/vdisplay/control/vision_template.py', 'template_find_selector', 2, 3, 3).
 python_function('src/vdisplay/control/vision_template.py', 'match_template_bounds', 4, 3, 4).
 python_function('src/vdisplay/control/vision_template.py', 'template_anchor_find', 1, 2, 10).
+python_function('src/vdisplay/desktop_apps.py', '_desktop_launch', 1, 2, 2).
+python_function('src/vdisplay/desktop_apps.py', '_binary_launch', 1, 3, 2).
+python_function('src/vdisplay/desktop_apps.py', '_xwayland_variant', 1, 1, 3).
+python_function('src/vdisplay/desktop_apps.py', '_variants_for', 0, 9, 7).
+python_function('src/vdisplay/desktop_apps.py', '_template_path', 1, 1, 1).
+python_function('src/vdisplay/desktop_apps.py', '_expand_variants', 1, 3, 4).
+python_function('src/vdisplay/desktop_apps.py', '_build_registry', 0, 8, 5).
+python_function('src/vdisplay/desktop_apps.py', 'list_desktop_apps', 0, 2, 2).
+python_function('src/vdisplay/desktop_apps.py', 'get_desktop_app', 1, 3, 6).
+python_function('src/vdisplay/desktop_apps.py', 'ide_hints_for', 1, 1, 1).
+python_function('src/vdisplay/desktop_apps.py', 'chat_selectors_for', 1, 2, 1).
+python_function('src/vdisplay/desktop_apps.py', 'submit_selectors_for', 1, 2, 1).
+python_function('src/vdisplay/desktop_apps.py', '_is_gui_map_file', 1, 6, 7).
+python_function('src/vdisplay/desktop_apps.py', 'map_manifest_path', 1, 3, 6).
+python_function('src/vdisplay/desktop_apps.py', '_default_map_candidates', 1, 5, 12).
+python_function('src/vdisplay/desktop_apps.py', 'resolve_map_path', 2, 5, 6).
+python_function('src/vdisplay/desktop_apps.py', 'map_input_target_candidates', 2, 4, 4).
+python_function('src/vdisplay/desktop_apps.py', 'map_submit_target_candidates', 2, 4, 4).
+python_function('src/vdisplay/desktop_apps.py', 'map_target_candidates', 2, 1, 1).
+python_function('src/vdisplay/desktop_apps.py', 'launch_env_for', 1, 3, 3).
 python_function('src/vdisplay/discovery.py', 'resolve_host_display', 1, 11, 6).
 python_function('src/vdisplay/discovery.py', '_display_socket_exists', 1, 2, 5).
 python_function('src/vdisplay/discovery.py', '_looks_like_xvfb_only', 1, 4, 4).
@@ -3931,16 +4715,96 @@ python_function('src/vdisplay/discovery.py', 'diagnose_display', 1, 10, 15).
 python_function('src/vdisplay/discovery.py', '_display_hint', 3, 3, 2).
 python_function('src/vdisplay/discovery.py', 'list_monitors', 1, 1, 1).
 python_function('src/vdisplay/discovery.py', 'window_discovery_meta', 1, 2, 1).
+python_function('src/vdisplay/hmi/capture.py', 'capture_mouse_xy', 0, 4, 5).
+python_function('src/vdisplay/hmi/context.py', 'pick_context_coordinates', 1, 8, 1).
+python_function('src/vdisplay/hmi/context.py', '_point_in_window', 3, 8, 2).
+python_function('src/vdisplay/hmi/keyboard.py', '_event_device_paths', 0, 12, 8).
+python_function('src/vdisplay/hmi/keyboard.py', '_decode_char', 1, 3, 1).
+python_function('src/vdisplay/hmi/keyboard.py', '_key_name', 1, 1, 1).
+python_function('src/vdisplay/hmi/mouse.py', '_parse_device_blocks', 1, 9, 7).
+python_function('src/vdisplay/hmi/mouse.py', '_mouse_device_paths', 0, 15, 12).
+python_function('src/vdisplay/hmi/pointer.py', 'is_wayland_session', 0, 2, 3).
+python_function('src/vdisplay/hmi/pointer.py', 'pointer_probe_errors', 0, 1, 0).
+python_function('src/vdisplay/hmi/pointer.py', '_session_env', 0, 3, 2).
+python_function('src/vdisplay/hmi/pointer.py', '_parse_xdotool_shell', 1, 3, 6).
+python_function('src/vdisplay/hmi/pointer.py', 'probe_xdotool', 0, 7, 6).
+python_function('src/vdisplay/hmi/pointer.py', 'probe_gnome_shell_pointer', 0, 13, 12).
+python_function('src/vdisplay/hmi/pointer.py', 'probe_gtk_subprocess', 0, 12, 10).
+python_function('src/vdisplay/hmi/pointer.py', 'probe_all_sources', 0, 8, 9).
+python_function('src/vdisplay/hmi/pointer.py', '_trustworthy_absolute', 2, 4, 0).
+python_function('src/vdisplay/hmi/pointer.py', 'probe_absolute_pointer', 0, 11, 5).
+python_function('src/vdisplay/hmi/pointer.py', '_window_title', 1, 8, 5).
+python_function('src/vdisplay/hmi/pointer.py', 'monitor_at', 2, 11, 4).
+python_function('src/vdisplay/hmi/pointer.py', '_pick_primary', 1, 4, 2).
+python_function('src/vdisplay/hmi/pointer.py', '_stale_sources', 1, 5, 4).
+python_function('src/vdisplay/hmi/pointer.py', '_enrich_pointer_context', 1, 10, 7).
+python_function('src/vdisplay/hmi/pointer.py', 'sample_pointer', 0, 42, 21).
+python_function('src/vdisplay/hmi/watch.py', '_ts', 0, 1, 2).
+python_function('src/vdisplay/hmi/watch.py', '_format_screen', 1, 6, 2).
+python_function('src/vdisplay/hmi/watch.py', '_truncate', 2, 2, 1).
+python_function('src/vdisplay/hmi/watch.py', '_print_pointer_line', 1, 11, 6).
+python_function('src/vdisplay/hmi/watch.py', '_print_key_event', 1, 2, 2).
+python_function('src/vdisplay/hmi/watch.py', '_print_mouse_move', 2, 3, 2).
+python_function('src/vdisplay/hmi/watch.py', '_seed_mouse', 1, 7, 7).
+python_function('src/vdisplay/hmi/watch.py', 'run_hmi_watch', 0, 38, 27).
+python_function('src/vdisplay/ide_prompt.py', 'open_desktop_app', 1, 3, 7).
+python_function('src/vdisplay/ide_prompt.py', 'wait_for_app_window', 1, 4, 6).
+python_function('src/vdisplay/ide_prompt.py', '_find_map_target', 2, 4, 8).
+python_function('src/vdisplay/ide_prompt.py', '_find_first_selector', 0, 10, 6).
+python_function('src/vdisplay/ide_prompt.py', '_submit_via_keyboard', 0, 5, 5).
+python_function('src/vdisplay/ide_prompt.py', '_handle_wait_window', 5, 8, 4).
+python_function('src/vdisplay/ide_prompt.py', '_handle_focus_window', 2, 2, 3).
+python_function('src/vdisplay/ide_prompt.py', '_handle_submit', 5, 11, 10).
+python_function('src/vdisplay/ide_prompt.py', 'send_ide_prompt', 0, 27, 19).
 python_function('src/vdisplay/input/coords.py', 'global_pointer_coords', 3, 10, 8).
 python_function('src/vdisplay/input/coords.py', '_global_from_region', 2, 12, 4).
 python_function('src/vdisplay/input/coords.py', '_global_from_monitor', 2, 11, 5).
 python_function('src/vdisplay/input/coords.py', '_local_to_region_coords', 2, 11, 3).
 python_function('src/vdisplay/input/coords.py', '_rotate_local_to_region', 2, 10, 1).
+python_function('src/vdisplay/input/coords.py', '_region_rel_to_local', 2, 23, 2).
+python_function('src/vdisplay/input/coords.py', 'global_point_to_capture_local', 3, 16, 7).
+python_function('src/vdisplay/input/coords.py', 'global_region_to_capture_local', 2, 21, 8).
 python_function('src/vdisplay/input/coords.py', '_aspect_mismatch', 4, 5, 1).
 python_function('src/vdisplay/input/coords.py', '_rotation_for_monitor', 2, 4, 3).
 python_function('src/vdisplay/input/coords.py', '_monitor_by_name', 2, 4, 4).
 python_function('src/vdisplay/input/linux_ydotool.py', '_ydotool_env', 0, 4, 3).
 python_function('src/vdisplay/input/resolve.py', 'resolve_pointer_input', 0, 4, 6).
+python_function('src/vdisplay/integrations/imgl_bridge.py', 'imgl_enabled', 0, 1, 3).
+python_function('src/vdisplay/integrations/imgl_bridge.py', 'imgl_available', 0, 3, 1).
+python_function('src/vdisplay/integrations/imgl_bridge.py', 'analyze_with_imgl', 1, 9, 13).
+python_function('src/vdisplay/integrations/imgl_bridge.py', 'attach_imgl_to_context', 1, 15, 6).
+python_function('src/vdisplay/integrations/imgl_bridge.py', 'ocr_boxes_from_imgl', 1, 15, 9).
+python_function('src/vdisplay/integrations/observe_cache.py', 'observe_cache_enabled', 0, 1, 3).
+python_function('src/vdisplay/integrations/observe_cache.py', 'session_artifacts_root', 0, 7, 9).
+python_function('src/vdisplay/integrations/observe_cache.py', 'cache_dir', 1, 3, 1).
+python_function('src/vdisplay/integrations/observe_cache.py', 'vql_cache_dir', 1, 3, 1).
+python_function('src/vdisplay/integrations/observe_cache.py', '_cache_path', 2, 3, 1).
+python_function('src/vdisplay/integrations/observe_cache.py', 'load_cached_context', 1, 6, 6).
+python_function('src/vdisplay/integrations/observe_cache.py', 'store_context_cache', 1, 6, 11).
+python_function('src/vdisplay/integrations/observe_cache.py', 'merge_cached_analysis', 2, 6, 4).
+python_function('src/vdisplay/integrations/observe_cache.py', 'map_drift_blocks_cache', 1, 20, 5).
+python_function('src/vdisplay/integrations/observe_cache.py', 'evaluate_map_drift', 2, 6, 9).
+python_function('src/vdisplay/integrations/observe_cache.py', 'ocr_boxes_from_cached_context', 1, 16, 7).
+python_function('src/vdisplay/integrations/pipeline.py', 'observe_enabled', 0, 4, 5).
+python_function('src/vdisplay/integrations/pipeline.py', 'observe_screen', 0, 22, 22).
+python_function('src/vdisplay/integrations/pipeline.py', 'enrich_capture_payload', 1, 13, 10).
+python_function('src/vdisplay/integrations/screen_context.py', 'screen_context_from_capture', 1, 9, 8).
+python_function('src/vdisplay/integrations/screen_context.py', 'load_environment_snapshot', 0, 3, 3).
+python_function('src/vdisplay/integrations/vision_backend.py', 'vision_backend', 0, 2, 3).
+python_function('src/vdisplay/integrations/vision_backend.py', 'prefer_imgl_backend', 0, 4, 2).
+python_function('src/vdisplay/integrations/vision_backend.py', 'prefer_imgl_ocr', 0, 1, 1).
+python_function('src/vdisplay/integrations/vision_backend.py', 'ocr_png', 1, 4, 7).
+python_function('src/vdisplay/integrations/vision_backend.py', 'match_template', 2, 5, 6).
+python_function('src/vdisplay/integrations/vision_backend.py', 'diff_png_bytes', 2, 4, 4).
+python_function('src/vdisplay/integrations/vision_backend.py', 'render_match_overlay', 2, 7, 10).
+python_function('src/vdisplay/integrations/vql_bridge.py', 'vql_enabled', 0, 1, 3).
+python_function('src/vdisplay/integrations/vql_bridge.py', 'vql_available', 0, 3, 1).
+python_function('src/vdisplay/integrations/vql_bridge.py', '_capture_block', 1, 3, 8).
+python_function('src/vdisplay/integrations/vql_bridge.py', '_environment_block', 1, 3, 4).
+python_function('src/vdisplay/integrations/vql_bridge.py', 'context_to_vql_program', 1, 34, 22).
+python_function('src/vdisplay/integrations/vql_bridge.py', 'reverse_generation_descriptor', 1, 9, 7).
+python_function('src/vdisplay/integrations/vql_bridge.py', '_enrich_render_intent', 2, 28, 8).
+python_function('src/vdisplay/integrations/vql_bridge.py', 'write_vql_artifacts', 1, 5, 13).
 python_function('src/vdisplay/nl.py', 'describe_window_nl', 1, 14, 3).
 python_function('src/vdisplay/nl.py', '_user_visible_app_labels', 1, 9, 5).
 python_function('src/vdisplay/nl.py', 'describe_output_nl', 2, 13, 5).
@@ -4036,11 +4900,19 @@ python_function('tests/test_agent_api_contract.py', 'test_agent_health_envelope'
 python_function('tests/test_agent_api_contract.py', 'test_agent_version_envelope', 1, 5, 2).
 python_function('tests/test_agent_api_contract.py', 'test_agent_capabilities_envelope', 1, 5, 2).
 python_function('tests/test_agent_api_contract.py', 'test_flatten_envelope_for_sdk', 0, 3, 2).
+python_function('tests/test_agent_audit_session.py', 'test_audit_headers_for_command_includes_session_dir', 2, 5, 5).
+python_function('tests/test_agent_audit_session.py', 'test_client_sends_audit_headers', 2, 5, 14).
+python_function('tests/test_agent_audit_session.py', 'test_broker_records_control_step_with_audit_headers', 3, 8, 7).
+python_function('tests/test_agent_audit_session.py', 'test_broker_records_browser_open_with_audit_headers', 3, 8, 9).
+python_function('tests/test_agent_audit_session.py', 'test_broker_records_virtual_start_with_audit_headers', 3, 3, 6).
+python_function('tests/test_agent_audit_session.py', 'test_broker_records_window_adopt_with_audit_headers', 3, 4, 6).
+python_function('tests/test_agent_audit_session.py', 'test_executor_skips_client_record_when_agent_audit_delegated', 2, 5, 8).
 python_function('tests/test_agent_browser_session.py', 'agent_client_with_browser', 1, 2, 8).
 python_function('tests/test_agent_browser_session.py', 'test_agent_browser_open_list_stop', 1, 7, 4).
 python_function('tests/test_agent_client.py', 'test_use_agent_false_by_default', 1, 4, 5).
 python_function('tests/test_agent_client.py', 'test_resolve_agent_url_auto_detects_live_agent', 2, 2, 6).
 python_function('tests/test_agent_client.py', 'test_client_unreachable_raises', 1, 1, 4).
+python_function('tests/test_agent_client.py', 'test_probe_rejects_non_vdisplay_health', 1, 2, 4).
 python_function('tests/test_agent_client.py', 'test_probe_retries_after_initial_miss', 1, 3, 6).
 python_function('tests/test_agent_client.py', 'test_flatten_agent_envelope_without_vdisplay_agent_package', 0, 3, 1).
 python_function('tests/test_agent_client.py', 'test_client_flattens_agent_envelope', 1, 2, 6).
@@ -4051,6 +4923,7 @@ python_function('tests/test_agent_integration.py', 'test_agent_client_round_trip
 python_function('tests/test_agent_integration.py', 'test_dsl_dispatch_round_trip', 2, 6, 2).
 python_function('tests/test_agent_integration.py', 'test_rest2vdisplay_round_trip', 2, 5, 7).
 python_function('tests/test_agent_integration.py', 'test_virtual_screenshot_round_trip', 3, 4, 7).
+python_function('tests/test_agent_outputs_nl.py', 'test_list_outputs_payload_enriches_monitor_nl', 1, 2, 3).
 python_function('tests/test_agent_sampler.py', 'test_agent_sampler_start_status_stop', 3, 12, 13).
 python_function('tests/test_agent_serve_port.py', 'test_parse_ss_pids', 0, 2, 1).
 python_function('tests/test_agent_serve_port.py', 'test_ensure_broker_port_free_no_listeners', 1, 1, 2).
@@ -4116,15 +4989,26 @@ python_function('tests/test_cli_session.py', 'test_artifacts_from_screenshot_pat
 python_function('tests/test_cli_session.py', 'test_artifacts_from_control_preview_and_diff', 1, 3, 3).
 python_function('tests/test_cli_session.py', 'test_executor_records_control_cli_step', 2, 5, 9).
 python_function('tests/test_cli_session.py', 'test_build_artifacts_for_screenshot_verb', 1, 2, 5).
+python_function('tests/test_client_http.py', 'test_build_request_includes_auth_and_json_body', 0, 6, 6).
+python_function('tests/test_client_http.py', 'test_request_json_flattens_envelope', 1, 3, 6).
+python_function('tests/test_client_http.py', 'test_raise_on_error_payload', 0, 1, 2).
+python_function('tests/test_client_http.py', 'test_http_error_message_prefers_json_detail', 0, 2, 2).
 python_function('tests/test_client_request.py', 'test_route_command_health', 0, 4, 2).
 python_function('tests/test_client_request.py', 'test_route_command_windows_query', 0, 7, 3).
 python_function('tests/test_client_request.py', 'test_request_delegates_to_http', 1, 4, 5).
+python_function('tests/test_client_routes.py', 'test_route_command_virtual_start_body', 0, 4, 2).
+python_function('tests/test_client_routes.py', 'test_route_command_diagnose_control_display_query', 0, 4, 2).
+python_function('tests/test_client_routes.py', 'test_route_command_browser_open_body', 0, 4, 2).
+python_function('tests/test_client_routes.py', 'test_route_command_unknown_verb_raises', 0, 1, 3).
 python_function('tests/test_command_contract.py', 'test_command_request_from_dsl_monitors', 0, 4, 1).
 python_function('tests/test_command_contract.py', 'test_command_request_from_dsl_apps_only', 0, 3, 1).
 python_function('tests/test_command_contract.py', 'test_command_result_envelope_success', 0, 5, 2).
 python_function('tests/test_command_contract.py', 'test_command_result_envelope_failure', 0, 4, 3).
 python_function('tests/test_command_contract.py', 'test_command_request_from_dsl_control_click', 0, 8, 1).
 python_function('tests/test_command_contract.py', 'test_command_result_to_dsl_result', 0, 4, 2).
+python_function('tests/test_control_action_state.py', 'test_control_action_state_roundtrip', 0, 4, 3).
+python_function('tests/test_control_action_state.py', 'test_phase_from_payload_verified', 0, 2, 1).
+python_function('tests/test_control_action_state.py', 'test_phase_from_payload_failed', 0, 2, 1).
 python_function('tests/test_control_agent.py', 'test_agent_control_diagnostics', 2, 7, 4).
 python_function('tests/test_control_agent.py', 'test_agent_controls_list', 2, 3, 3).
 python_function('tests/test_control_app_matching.py', '_node', 1, 1, 1).
@@ -4149,6 +5033,7 @@ python_function('tests/test_control_browser_verify.py', 'test_dom_verify_set_val
 python_function('tests/test_control_capabilities.py', 'test_element_capabilities_roundtrip', 0, 2, 3).
 python_function('tests/test_control_capabilities.py', 'test_control_node_serializes_capabilities_and_actions', 0, 5, 5).
 python_function('tests/test_control_capabilities.py', 'test_atspi_snapshot_deserializes_actions_and_capabilities', 1, 6, 1).
+python_function('tests/test_control_diagnostics.py', 'test_build_control_diagnostics_includes_routing_and_map', 0, 7, 6).
 python_function('tests/test_control_executor.py', 'test_executor_control_click_local', 1, 4, 3).
 python_function('tests/test_control_executor.py', 'test_executor_controls_find_local', 1, 4, 3).
 python_function('tests/test_control_executor.py', 'test_executor_diagnose_control_local', 1, 4, 3).
@@ -4181,12 +5066,18 @@ python_function('tests/test_control_policy_v2.py', 'test_explicit_backend_raises
 python_function('tests/test_control_policy_v2.py', 'test_rank_providers_orders_by_score', 1, 6, 4).
 python_function('tests/test_control_policy_v2.py', 'test_diagnose_control_includes_routing', 1, 8, 3).
 python_function('tests/test_control_policy_v2.py', 'test_routing_decision_serializes', 1, 5, 4).
+python_function('tests/test_control_retry_policy.py', 'test_next_action_fallback_backend', 0, 4, 3).
+python_function('tests/test_control_retry_policy.py', 'test_next_action_rotates_on_second_failure', 0, 4, 4).
+python_function('tests/test_control_retry_policy.py', 'test_next_action_exhausted', 0, 3, 4).
+python_function('tests/test_control_retry_policy.py', 'test_apply_retry_decision_does_not_duplicate_backend_kwarg', 0, 4, 2).
 python_function('tests/test_control_screenshot_verify.py', '_png', 1, 1, 4).
 python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_detects_change', 0, 3, 2).
 python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_identical_is_not_verified', 0, 3, 2).
 python_function('tests/test_control_screenshot_verify.py', 'test_diff_png_small_change_on_large_frame', 0, 2, 8).
 python_function('tests/test_control_screenshot_verify.py', 'test_verify_screenshot_pair_payload', 0, 3, 2).
 python_function('tests/test_control_screenshot_verify.py', 'test_capture_via_agent_when_configured', 1, 4, 5).
+python_function('tests/test_control_screenshot_verify.py', 'test_capture_via_agent_preserves_stream_region', 1, 7, 13).
+python_function('tests/test_control_screenshot_verify.py', 'test_maybe_crop_capture_screencast_global_region', 0, 7, 10).
 python_function('tests/test_control_screenshot_verify.py', 'test_capture_control_screenshot_uses_target_region', 0, 4, 4).
 python_function('tests/test_control_screenshot_verify.py', 'test_execute_action_screenshot_verify_only', 1, 5, 10).
 python_function('tests/test_control_screenshot_verify.py', 'test_execute_action_dual_verify_requires_both', 1, 4, 9).
@@ -4202,6 +5093,8 @@ python_function('tests/test_control_selector_v2.py', 'test_active_fields_per_env
 python_function('tests/test_control_set_value_verify.py', 'test_resolve_verify_mode_set_value_uses_ocr_contains_for_vision', 0, 4, 1).
 python_function('tests/test_control_set_value_verify.py', 'test_build_action_payload_fails_ok_when_verify_false', 0, 4, 6).
 python_function('tests/test_control_set_value_verify.py', 'test_control_set_value_verify_mode_ocr_contains', 1, 4, 9).
+python_function('tests/test_control_set_value_verify.py', 'test_verifier_pipeline_ocr_contains_no_before_png', 1, 4, 15).
+python_function('tests/test_control_set_value_verify.py', 'test_verifier_ocr_rescue_treats_capture_after_meta_as_dict', 1, 4, 17).
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_zero_without_verify', 0, 2, 1).
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_default_with_verify', 1, 2, 2).
 python_function('tests/test_control_settle.py', 'test_control_settle_seconds_from_env', 1, 2, 2).
@@ -4239,10 +5132,15 @@ python_function('tests/test_control_verify.py', 'test_snapshot_diff_alias_matche
 python_function('tests/test_control_verify.py', 'test_collect_changed_nodes_flattens_diff', 0, 4, 4).
 python_function('tests/test_control_verify.py', 'test_verify_detects_focus_change_without_value_change', 0, 3, 3).
 python_function('tests/test_control_verify.py', 'test_verify_fails_when_nothing_changes', 0, 3, 2).
+python_function('tests/test_control_verify_policy.py', 'test_required_phases_ocr_contains', 0, 2, 1).
+python_function('tests/test_control_verify_policy.py', 'test_required_phases_hybrid', 0, 3, 1).
+python_function('tests/test_control_verify_policy.py', 'test_aggregate_confidence_average', 0, 2, 1).
 python_function('tests/test_control_x11.py', 'test_x11_set_value_clicks_before_typing', 1, 5, 7).
 python_function('tests/test_control_x11.py', 'test_x11_invoke_clicks_center', 1, 4, 7).
 python_function('tests/test_coords_rotation.py', 'test_global_pointer_coords_rotated_left_aspect_mismatch', 0, 4, 1).
 python_function('tests/test_coords_rotation.py', 'test_global_pointer_coords_monitor_1to1_on_normal_rotation', 1, 4, 2).
+python_function('tests/test_coords_rotation.py', 'test_global_region_to_capture_local_screencast_stream', 0, 8, 2).
+python_function('tests/test_coords_rotation.py', 'test_global_point_roundtrip_screencast_stream', 0, 4, 3).
 python_function('tests/test_cross_platform_providers.py', '_mock_linux_readiness', 1, 1, 1).
 python_function('tests/test_cross_platform_providers.py', '_mock_platform', 1, 1, 2).
 python_function('tests/test_cross_platform_providers.py', 'test_builtin_provider_count_includes_cross_platform_stubs', 0, 4, 3).
@@ -4253,6 +5151,15 @@ python_function('tests/test_cross_platform_providers.py', 'test_windows_desktop_
 python_function('tests/test_cross_platform_providers.py', 'test_macos_desktop_routes_ax', 1, 6, 6).
 python_function('tests/test_cross_platform_providers.py', 'test_native_windows_profile_only_on_windows_host', 1, 5, 3).
 python_function('tests/test_cross_platform_providers.py', 'test_uia_find_by_accessibility_id', 0, 3, 7).
+python_function('tests/test_describe_backend.py', 'test_describe_backend_prefers_imgl', 2, 3, 4).
+python_function('tests/test_desktop_apps.py', 'test_list_desktop_apps_returns_profiles', 0, 5, 2).
+python_function('tests/test_desktop_apps.py', 'test_get_desktop_app_aliases', 0, 3, 2).
+python_function('tests/test_desktop_apps.py', 'test_ide_hints_for_known_app', 0, 4, 2).
+python_function('tests/test_desktop_apps.py', 'test_launch_env_for_xwayland_unsets_wayland', 0, 6, 6).
+python_function('tests/test_desktop_apps.py', 'test_variant_xwayland_alias', 0, 3, 4).
+python_function('tests/test_desktop_apps.py', 'test_unknown_app_raises', 0, 1, 2).
+python_function('tests/test_desktop_apps.py', 'test_resolve_map_path_ignores_manifest', 1, 4, 5).
+python_function('tests/test_desktop_apps.py', 'test_resolve_map_path_finds_project_map', 0, 6, 5).
 python_function('tests/test_dsl_browser_open.py', 'test_parse_browser_open_session_alias', 0, 3, 1).
 python_function('tests/test_dsl_browser_open.py', 'test_parse_browser_open_line', 0, 6, 1).
 python_function('tests/test_dsl_browser_open.py', 'test_browser_open_schema_requires_url', 0, 2, 3).
@@ -4269,6 +5176,12 @@ python_function('tests/test_dsl_terminal_open.py', 'test_command_request_from_ds
 python_function('tests/test_dsl_terminal_open.py', 'test_dispatch_terminal_open_local', 1, 4, 4).
 python_function('tests/test_dsl_terminal_open.py', 'test_terminal_open_e2e_local', 0, 4, 4).
 python_function('tests/test_dsl_terminal_open.py', 'test_dispatch_terminal_open_via_executor', 1, 3, 3).
+python_function('tests/test_event_store.py', 'test_event_store_disabled_without_session', 1, 2, 2).
+python_function('tests/test_event_store.py', 'test_event_store_enabled_with_session', 1, 2, 2).
+python_function('tests/test_event_store.py', 'test_event_store_append_and_read', 1, 4, 6).
+python_function('tests/test_event_store.py', 'test_executor_writes_index_jsonl', 2, 7, 8).
+python_function('tests/test_event_store.py', 'test_projections_backend_scores_from_control_events', 0, 3, 5).
+python_function('tests/test_event_store.py', 'test_refresh_projections_writes_files', 1, 3, 7).
 python_function('tests/test_example_control_plugin.py', '_reset_plugins', 0, 1, 2).
 python_function('tests/test_example_control_plugin.py', 'test_echo_provider_contract', 0, 7, 6).
 python_function('tests/test_example_control_plugin.py', 'test_register_plugin_via_entry_point_helper', 0, 7, 7).
@@ -4309,9 +5222,31 @@ python_function('tests/test_gui_map_diff.py', 'test_assess_map_drift_refresh_req
 python_function('tests/test_gui_map_diff.py', 'test_build_gui_map_scoped_crop_filters_outside_boxes', 1, 3, 7).
 python_function('tests/test_gui_map_diff.py', 'test_map_capture_prefers_agent_screencast', 1, 3, 4).
 python_function('tests/test_gui_map_diff.py', 'test_map_capture_requires_screencast_when_agent_running', 1, 1, 3).
+python_function('tests/test_hmi_watch.py', 'test_parser_has_hmi_watch', 0, 3, 1).
+python_function('tests/test_hmi_watch.py', 'test_monitor_at_finds_output', 0, 3, 1).
+python_function('tests/test_hmi_watch.py', 'test_decode_char_shift', 0, 3, 1).
+python_function('tests/test_hmi_watch.py', 'test_keyboard_watcher_emits_typed_chars', 0, 2, 2).
+python_function('tests/test_hmi_watch.py', 'test_mouse_watcher_tracks_relative_motion_without_seed', 0, 3, 2).
+python_function('tests/test_hmi_watch.py', 'test_probe_absolute_rejects_gtk_origin_on_wayland', 1, 2, 3).
+python_function('tests/test_hmi_watch.py', 'test_capture_mouse_xy_falls_back_to_xdotool_hint', 1, 2, 3).
+python_function('tests/test_hmi_watch.py', 'test_capture_mouse_xy_prefers_vdisplay_probe', 1, 2, 2).
+python_function('tests/test_hmi_watch.py', 'test_pick_context_coordinates_prefers_live_gnome', 0, 2, 1).
+python_function('tests/test_hmi_watch.py', 'test_pick_context_coordinates_uses_stale_xdotool_hint', 0, 2, 1).
+python_function('tests/test_hmi_watch.py', 'test_sample_pointer_enriches_screen_and_app', 1, 7, 4).
+python_function('tests/test_hmi_watch.py', 'test_sample_pointer_prefers_gnome_on_wayland', 1, 3, 3).
+python_function('tests/test_hmi_watch.py', 'test_sample_pointer_rejects_stale_xdotool_only', 1, 3, 3).
+python_function('tests/test_hmi_watch.py', 'test_probe_absolute_skips_xdotool_on_wayland', 1, 3, 5).
+python_function('tests/test_hmi_watch.py', 'test_run_hmi_watch_jsonl', 1, 6, 9).
+python_function('tests/test_hmi_watch.py', 'test_event_device_paths_parses_proc_input', 1, 3, 4).
 python_function('tests/test_host_capture.py', 'test_capture_host_png_prefers_mirror', 1, 4, 7).
 python_function('tests/test_host_capture_errors.py', 'test_host_capture_error_mentions_screencast_on_wayland', 1, 3, 2).
 python_function('tests/test_host_capture_errors.py', 'test_capture_host_png_records_inactive_screencast', 1, 2, 6).
+python_function('tests/test_ide_prompt.py', 'test_parser_has_app_and_ide_commands', 0, 3, 1).
+python_function('tests/test_ide_prompt.py', 'test_app_list_command', 1, 4, 6).
+python_function('tests/test_ide_prompt.py', 'test_ide_list_command', 1, 3, 6).
+python_function('tests/test_ide_prompt.py', 'test_open_desktop_app_uses_subprocess', 1, 5, 4).
+python_function('tests/test_ide_prompt.py', 'test_send_ide_prompt_happy_path', 1, 4, 3).
+python_function('tests/test_ide_prompt.py', 'test_send_ide_prompt_no_match', 1, 5, 5).
 python_function('tests/test_img2nl_enrich.py', '_make_png', 3, 1, 4).
 python_function('tests/test_img2nl_enrich.py', 'test_enrich_screenshot_payload_adds_nl', 2, 3, 5).
 python_function('tests/test_img2nl_enrich.py', 'test_execute_screenshot_enriches_when_img2nl_available', 2, 4, 7).
@@ -4335,6 +5270,12 @@ python_function('tests/test_nlp_pipeline.py', 'test_nl_to_dsl_windows', 0, 2, 1)
 python_function('tests/test_nlp_pipeline.py', 'test_run_nl_prompt_dsl_only', 0, 4, 1).
 python_function('tests/test_nlp_pipeline.py', 'test_run_nl_prompt_full_pipeline', 1, 6, 4).
 python_function('tests/test_nlp_pipeline.py', 'test_dsl2vdisplay_monitors_matches_payload', 1, 5, 4).
+python_function('tests/test_observe_cache.py', 'test_store_and_load_cached_context', 2, 6, 7).
+python_function('tests/test_observe_cache.py', 'test_merge_cached_analysis_skips_imgl_rerun', 0, 4, 3).
+python_function('tests/test_observe_cache.py', 'test_map_drift_blocks_cache_on_refresh_required', 0, 2, 2).
+python_function('tests/test_observe_cache.py', 'test_map_drift_allows_cosmetic_drift', 0, 2, 2).
+python_function('tests/test_observe_cache.py', 'test_observe_screen_uses_cache_on_second_pass', 2, 2, 6).
+python_function('tests/test_observe_cache.py', 'test_ocr_png_reads_cached_sidecar', 2, 3, 6).
 python_function('tests/test_outputs_rotation.py', 'test_rotation_degrees_mapping', 0, 5, 0).
 python_function('tests/test_outputs_rotation.py', 'test_parse_xrandr_query_rotation_from_sample', 0, 7, 3).
 python_function('tests/test_portal_screencast.py', '_make_png', 3, 1, 4).
@@ -4356,6 +5297,19 @@ python_function('tests/test_profile_inference.py', 'test_infer_vision_from_ancho
 python_function('tests/test_profile_inference.py', 'test_profile_boost_prefers_browser_for_web_spa', 1, 4, 3).
 python_function('tests/test_profile_inference.py', 'test_router_includes_application_profile', 1, 4, 4).
 python_function('tests/test_profile_inference.py', 'test_profile_for_builtin_ids', 0, 3, 1).
+python_function('tests/test_projections.py', 'test_build_map_health_from_gui_map_events', 0, 5, 3).
+python_function('tests/test_projections.py', 'test_build_map_health_from_step_diagnostics', 0, 3, 2).
+python_function('tests/test_projections.py', 'test_merge_backend_scores_accumulates', 0, 4, 1).
+python_function('tests/test_projections.py', 'test_provider_score_prior_boosts_reliable_backend', 0, 3, 2).
+python_function('tests/test_projections.py', 'test_rank_providers_applies_backend_score_prior', 1, 7, 5).
+python_function('tests/test_projections.py', 'test_refresh_projections_writes_map_health', 1, 4, 10).
+python_function('tests/test_projections.py', 'test_backend_scores_from_control_action_planned', 0, 2, 2).
+python_function('tests/test_projections.py', 'test_backend_scores_from_verification_event', 0, 2, 5).
+python_function('tests/test_proto_codec.py', 'test_domain_event_envelope_roundtrip', 0, 5, 4).
+python_function('tests/test_proto_codec.py', 'test_event_line_base64_roundtrip', 0, 2, 5).
+python_function('tests/test_proto_codec.py', 'test_event_store_writes_index_pb', 2, 5, 7).
+python_function('tests/test_proto_codec.py', 'test_read_length_delimited_multiple_events', 1, 4, 6).
+python_function('tests/test_proto_codec.py', 'test_json_index_still_human_readable', 2, 2, 7).
 python_function('tests/test_relay_release.py', '_toolbox_states', 0, 1, 1).
 python_function('tests/test_relay_release.py', 'test_state_matches_app_jetbrains', 0, 3, 2).
 python_function('tests/test_relay_release.py', 'test_select_adopted_for_release_by_app_includes_frame', 0, 2, 3).
@@ -4386,6 +5340,10 @@ python_function('tests/test_sampler_recovery.py', '_stub_contract', 1, 1, 2).
 python_function('tests/test_sampler_recovery.py', 'test_is_screencast_recoverable_error', 0, 4, 1).
 python_function('tests/test_sampler_recovery.py', 'test_sampler_recovers_from_blank_screencast', 2, 7, 12).
 python_function('tests/test_sampler_recovery.py', 'test_sampler_marks_reconsent_when_recovery_fails', 2, 5, 9).
+python_function('tests/test_screen_context.py', 'test_screen_context_from_capture_builds_fingerprint', 1, 4, 4).
+python_function('tests/test_screen_context.py', 'test_context_to_vql_program_includes_capture_and_reverse', 1, 5, 5).
+python_function('tests/test_screen_context.py', 'test_observe_screen_writes_sidecar', 2, 3, 8).
+python_function('tests/test_screen_context.py', 'test_observe_enabled_explicit_flag', 1, 3, 2).
 python_function('tests/test_screencast_multiple.py', 'test_screencast_multiple_explicit', 0, 3, 1).
 python_function('tests/test_screencast_multiple.py', 'test_screencast_multiple_env', 1, 4, 3).
 python_function('tests/test_screenshot_meta.py', 'test_describe_screenshot_nl', 0, 4, 1).
@@ -4399,9 +5357,19 @@ python_function('tests/test_session_catalog.py', 'test_parse_session_kind_legacy
 python_function('tests/test_session_catalog.py', 'test_build_catalog_from_agent_store', 0, 7, 6).
 python_function('tests/test_session_catalog.py', 'test_build_catalog_local_terminal', 0, 3, 6).
 python_function('tests/test_session_catalog.py', 'test_merge_catalogs_dedupes_by_id', 0, 3, 4).
+python_function('tests/test_session_maps_cli.py', '_sample_map', 1, 1, 8).
+python_function('tests/test_session_maps_cli.py', 'test_archive_map_artifacts_copies_json_and_md', 1, 6, 8).
+python_function('tests/test_session_maps_cli.py', 'test_executor_archives_map_in_session', 2, 4, 10).
+python_function('tests/test_session_maps_cli.py', 'test_session_cli_list_show_export', 2, 7, 14).
 python_function('tests/test_session_recorder.py', 'test_session_recording_disabled_by_default', 1, 2, 2).
-python_function('tests/test_session_recorder.py', 'test_executor_writes_session_dir', 2, 9, 10).
+python_function('tests/test_session_recorder.py', 'test_executor_writes_session_dir', 2, 10, 10).
 python_function('tests/test_session_recorder.py', 'test_collect_artifacts_from_explicit_and_data', 1, 4, 6).
+python_function('tests/test_session_recorder.py', 'test_executor_records_control_diagnostics', 2, 3, 8).
+python_function('tests/test_session_recorder.py', 'test_executor_records_flat_mock_control_diagnostics', 2, 7, 8).
+python_function('tests/test_session_recorder.py', 'test_reprocess_session_diagnostics_backfills_control', 2, 5, 7).
+python_function('tests/test_session_recorder.py', 'test_extract_diagnostics_synthesizes_control_from_flat_mock', 0, 5, 2).
+python_function('tests/test_session_recorder.py', 'test_extract_diagnostics_diagnose_control_backend', 0, 2, 2).
+python_function('tests/test_session_recorder.py', 'test_control_events_from_flat_mock_diagnostics', 0, 5, 1).
 python_function('tests/test_session_recorder.py', 'test_render_readme_includes_routing', 0, 3, 3).
 python_function('tests/test_uia_invoke.py', '_ok_button', 0, 1, 2).
 python_function('tests/test_uia_invoke.py', '_name_field', 0, 1, 2).
@@ -4427,6 +5395,9 @@ python_function('tests/test_vision_anchor_visible_verify.py', '_ctx', 0, 1, 6).
 python_function('tests/test_vision_anchor_visible_verify.py', 'test_anchor_visible_ocr_anchor_found', 1, 5, 9).
 python_function('tests/test_vision_anchor_visible_verify.py', 'test_select_verify_provider_vision_uses_anchor_visible', 0, 3, 2).
 python_function('tests/test_vision_anchor_visible_verify.py', 'test_anchor_visible_template_found', 2, 4, 18).
+python_function('tests/test_vision_backend.py', '_png', 1, 1, 5).
+python_function('tests/test_vision_backend.py', 'test_diff_png_bytes_local_path', 1, 2, 3).
+python_function('tests/test_vision_backend.py', 'test_match_template_local_path', 1, 2, 4).
 python_function('tests/test_vision_llm.py', '_png', 1, 1, 4).
 python_function('tests/test_vision_llm.py', 'test_vision_llm_fallback_enabled_requires_mode_and_key', 1, 4, 3).
 python_function('tests/test_vision_llm.py', 'test_verify_text_in_region_parses_yes', 1, 3, 3).
@@ -4593,20 +5564,45 @@ python_method('WindowRelaySession', 'release_window', 0, 1, 1).
 python_method('WindowRelaySession', 'list_adopted', 0, 1, 1).
 python_method('WindowRelaySession', 'info', 0, 1, 2).
 python_method('WindowRelaySession', 'capabilities', 0, 1, 2).
-python_class('src/vdisplay/application/commands.py', 'CommandVerb').
-python_class('src/vdisplay/application/commands.py', 'ArtifactRef').
+python_class('src/vdisplay/application/errors.py', 'ErrorCode').
+python_class('src/vdisplay/application/errors.py', 'ApplicationError').
+python_method('ApplicationError', 'to_dict', 0, 1, 0).
+python_class('src/vdisplay/application/event_store.py', 'EventStore').
+python_method('EventStore', '__init__', 1, 1, 0).
+python_method('EventStore', 'append', 1, 1, 7).
+python_method('EventStore', 'append_many', 1, 4, 7).
+python_method('EventStore', '_maybe_append_protobuf', 1, 2, 5).
+python_method('EventStore', '_maybe_append_protobuf_many', 1, 3, 5).
+python_method('EventStore', 'read_all', 0, 4, 7).
+python_method('EventStore', '_maybe_refresh_projections', 0, 3, 4).
+python_class('src/vdisplay/application/events.py', 'DomainEvent').
+python_method('DomainEvent', 'to_dict', 0, 1, 1).
+python_method('DomainEvent', 'from_dict', 2, 5, 7).
+python_class('src/vdisplay/application/models.py', 'ArtifactRef').
 python_method('ArtifactRef', 'to_dict', 0, 6, 0).
-python_class('src/vdisplay/application/commands.py', 'CommandRequest').
+python_class('src/vdisplay/application/models.py', 'CommandRequest').
 python_method('CommandRequest', 'action', 0, 3, 1).
-python_method('CommandRequest', 'from_dsl', 2, 7, 12).
-python_class('src/vdisplay/application/commands.py', 'CommandResult').
+python_method('CommandRequest', 'from_dsl', 2, 1, 1).
+python_method('CommandRequest', 'from_agent_body', 3, 1, 1).
+python_class('src/vdisplay/application/models.py', 'CommandResult').
 python_method('CommandResult', 'to_dict', 0, 6, 1).
 python_method('CommandResult', 'to_dsl_result', 0, 4, 2).
 python_method('CommandResult', 'success', 1, 4, 1).
 python_method('CommandResult', 'failure', 1, 5, 1).
-python_class('src/vdisplay/application/errors.py', 'ErrorCode').
-python_class('src/vdisplay/application/errors.py', 'ApplicationError').
-python_method('ApplicationError', 'to_dict', 0, 1, 0).
+python_class('src/vdisplay/application/proto/codec.py', 'TraceContext').
+python_method('TraceContext', 'to_dict', 0, 2, 0).
+python_method('TraceContext', 'from_dict', 2, 5, 2).
+python_class('src/vdisplay/application/proto/codec.py', 'Artifact').
+python_method('Artifact', 'to_dict', 0, 2, 1).
+python_method('Artifact', 'from_dict', 2, 5, 3).
+python_class('src/vdisplay/application/proto/codec.py', 'DomainEventEnvelope').
+python_method('DomainEventEnvelope', 'to_dict', 0, 2, 1).
+python_method('DomainEventEnvelope', 'from_domain_event', 2, 2, 5).
+python_method('DomainEventEnvelope', 'to_domain_event_dict', 0, 1, 0).
+python_class('src/vdisplay/application/proto/codec.py', 'CommandEnvelope').
+python_method('CommandEnvelope', 'to_dict', 0, 2, 2).
+python_class('src/vdisplay/application/proto/codec.py', 'ResultEnvelope').
+python_method('ResultEnvelope', 'to_dict', 0, 2, 1).
 python_class('src/vdisplay/application/runtime.py', 'ExecutionPolicy').
 python_method('ExecutionPolicy', 'route', 1, 6, 4).
 python_method('ExecutionPolicy', 'meta_for', 1, 2, 2).
@@ -4622,15 +5618,19 @@ python_method('SamplerLoop', 'status', 0, 1, 2).
 python_method('SamplerLoop', '_run', 0, 10, 9).
 python_method('SamplerLoop', '_capture_frame_iteration', 3, 5, 13).
 python_method('SamplerLoop', '_handle_capture_error', 1, 4, 2).
+python_class('src/vdisplay/application/session_context.py', 'AuditContext').
+python_method('AuditContext', 'should_record', 0, 2, 1).
 python_class('src/vdisplay/application/session_recorder.py', 'StepRecord').
 python_class('src/vdisplay/application/session_recorder.py', 'SessionDocument').
 python_method('SessionDocument', 'to_dict', 0, 2, 1).
 python_class('src/vdisplay/application/session_recorder.py', 'SessionRecorder').
 python_method('SessionRecorder', '__init__', 1, 1, 2).
 python_method('SessionRecorder', 'session_dir', 0, 1, 0).
-python_method('SessionRecorder', '_load_or_create_document', 0, 13, 17).
-python_method('SessionRecorder', 'record', 2, 5, 17).
+python_method('SessionRecorder', '_load_or_create_document', 0, 14, 18).
+python_method('SessionRecorder', 'record', 2, 10, 22).
+python_method('SessionRecorder', '_emit_step_events', 4, 3, 9).
 python_method('SessionRecorder', 'flush', 0, 1, 4).
+python_class('src/vdisplay/application/verbs.py', 'CommandVerb').
 python_class('src/vdisplay/backends/base.py', 'BaseBackend').
 python_method('BaseBackend', '__init__', 0, 1, 0).
 python_method('BaseBackend', 'capabilities', 0, 1, 1).
@@ -4719,40 +5719,48 @@ python_method('X11Provider', 'available', 0, 1, 0).
 python_method('X11Provider', 'capture_full', 0, 4, 5).
 python_method('X11Provider', 'capture_region', 1, 2, 3).
 python_class('src/vdisplay/client.py', 'AgentClient').
-python_method('AgentClient', '__init__', 1, 2, 2).
-python_method('AgentClient', '_request', 2, 2, 5).
-python_method('AgentClient', '_send', 2, 3, 6).
-python_method('AgentClient', '_build_request', 2, 3, 3).
-python_method('AgentClient', '_http_error_message', 1, 5, 5).
-python_method('AgentClient', '_raise_on_error', 1, 5, 4).
-python_method('AgentClient', '_normalize_payload', 1, 1, 1).
+python_method('AgentClient', '_request', 2, 1, 1).
 python_method('AgentClient', 'request', 1, 3, 7).
-python_method('AgentClient', 'health', 0, 1, 1).
-python_method('AgentClient', 'capabilities', 0, 1, 1).
-python_method('AgentClient', 'diagnostics', 0, 2, 1).
-python_method('AgentClient', 'outputs', 0, 4, 3).
-python_method('AgentClient', 'windows', 0, 4, 3).
-python_method('AgentClient', 'start_virtual', 0, 1, 1).
-python_method('AgentClient', 'start_mirror', 0, 1, 1).
-python_method('AgentClient', 'start_relay', 0, 1, 1).
-python_method('AgentClient', 'browser_open', 0, 4, 1).
-python_method('AgentClient', 'start_screencast', 0, 2, 1).
-python_method('AgentClient', 'stop_screencast', 0, 1, 1).
-python_method('AgentClient', 'screencast_status', 0, 1, 1).
-python_method('AgentClient', 'stop_session', 1, 1, 1).
-python_method('AgentClient', 'sampler_start', 0, 1, 1).
-python_method('AgentClient', 'sampler_stop', 0, 1, 1).
-python_method('AgentClient', 'sampler_status', 0, 1, 1).
-python_method('AgentClient', 'diagnose_control', 0, 2, 1).
-python_method('AgentClient', 'list_controls', 1, 2, 1).
-python_method('AgentClient', 'find_controls', 1, 1, 1).
-python_method('AgentClient', 'invoke_control', 1, 1, 1).
-python_method('AgentClient', 'focus_control', 1, 1, 1).
-python_method('AgentClient', 'set_control_value', 1, 1, 1).
-python_method('AgentClient', 'capture_frame', 0, 2, 1).
-python_method('AgentClient', 'capture_png_bytes', 0, 2, 6).
-python_method('AgentClient', 'adopt_window', 0, 1, 1).
-python_method('AgentClient', 'release_window', 0, 1, 1).
+python_class('src/vdisplay/client_api.py', 'AgentClientApiMixin').
+python_method('AgentClientApiMixin', 'health', 0, 1, 1).
+python_method('AgentClientApiMixin', 'capabilities', 0, 1, 1).
+python_method('AgentClientApiMixin', 'diagnostics', 0, 2, 1).
+python_method('AgentClientApiMixin', 'outputs', 0, 4, 3).
+python_method('AgentClientApiMixin', 'windows', 0, 4, 3).
+python_method('AgentClientApiMixin', 'start_virtual', 0, 1, 1).
+python_method('AgentClientApiMixin', 'start_mirror', 0, 1, 1).
+python_method('AgentClientApiMixin', 'start_relay', 0, 1, 1).
+python_method('AgentClientApiMixin', 'browser_open', 0, 4, 1).
+python_method('AgentClientApiMixin', 'start_screencast', 0, 2, 1).
+python_method('AgentClientApiMixin', 'stop_screencast', 0, 1, 1).
+python_method('AgentClientApiMixin', 'screencast_status', 0, 1, 1).
+python_method('AgentClientApiMixin', 'stop_session', 1, 1, 1).
+python_method('AgentClientApiMixin', 'sampler_start', 0, 1, 1).
+python_method('AgentClientApiMixin', 'sampler_stop', 0, 1, 1).
+python_method('AgentClientApiMixin', 'sampler_status', 0, 1, 1).
+python_method('AgentClientApiMixin', 'diagnose_control', 0, 2, 1).
+python_method('AgentClientApiMixin', 'list_controls', 1, 2, 1).
+python_method('AgentClientApiMixin', 'find_controls', 1, 1, 1).
+python_method('AgentClientApiMixin', 'invoke_control', 1, 1, 1).
+python_method('AgentClientApiMixin', 'focus_control', 1, 1, 1).
+python_method('AgentClientApiMixin', 'set_control_value', 1, 1, 1).
+python_method('AgentClientApiMixin', 'capture_frame', 0, 2, 1).
+python_method('AgentClientApiMixin', 'capture_png_bytes', 0, 2, 6).
+python_method('AgentClientApiMixin', 'adopt_window', 0, 1, 1).
+python_method('AgentClientApiMixin', 'release_window', 0, 1, 1).
+python_class('src/vdisplay/client_http.py', 'AgentHttpTransport').
+python_method('AgentHttpTransport', '__init__', 1, 2, 2).
+python_method('AgentHttpTransport', 'request_json', 2, 2, 5).
+python_method('AgentHttpTransport', 'send', 2, 3, 6).
+python_method('AgentHttpTransport', 'build_request', 2, 3, 5).
+python_method('AgentHttpTransport', 'http_error_message', 1, 5, 5).
+python_method('AgentHttpTransport', 'raise_on_error', 1, 5, 4).
+python_method('AgentHttpTransport', 'normalize_payload', 1, 1, 1).
+python_class('src/vdisplay/control/action_state.py', 'ControlActionPhase').
+python_class('src/vdisplay/control/action_state.py', 'ControlActionState').
+python_method('ControlActionState', 'new', 2, 2, 2).
+python_method('ControlActionState', 'advance', 1, 3, 3).
+python_method('ControlActionState', 'to_dict', 0, 1, 2).
 python_class('src/vdisplay/control/base.py', 'ControlProvider').
 python_method('ControlProvider', 'available', 0, 1, 0).
 python_method('ControlProvider', 'snapshot', 0, 1, 0).
@@ -5050,6 +6058,10 @@ python_method('ProviderRegistry', 'list_names', 0, 1, 1).
 python_method('ProviderRegistry', 'list_descriptors', 0, 2, 1).
 python_method('ProviderRegistry', 'get_descriptor', 1, 2, 2).
 python_method('ProviderRegistry', 'build', 1, 3, 5).
+python_class('src/vdisplay/control/retry_policy.py', 'RetryDecision').
+python_method('RetryDecision', 'to_dict', 0, 1, 0).
+python_class('src/vdisplay/control/retry_policy.py', 'RetryPolicy').
+python_method('RetryPolicy', 'from_env', 1, 6, 7).
 python_class('src/vdisplay/control/router.py', 'RouteResult').
 python_method('RouteResult', 'to_dict', 0, 2, 1).
 python_class('src/vdisplay/control/router.py', 'ControlRouter').
@@ -5090,7 +6102,7 @@ python_method('VerifierPipeline', '_verify_with_vision_rescue', 2, 13, 5).
 python_method('VerifierPipeline', '_verify_combined', 2, 1, 3).
 python_method('VerifierPipeline', '_run_semantic', 1, 11, 5).
 python_method('VerifierPipeline', '_run_visual', 2, 7, 5).
-python_method('VerifierPipeline', '_run_ocr', 3, 11, 14).
+python_method('VerifierPipeline', '_run_ocr', 3, 23, 18).
 python_method('VerifierPipeline', '_maybe_vision_llm_fallback', 2, 7, 5).
 python_method('VerifierPipeline', '_run_anchor_visible', 2, 10, 10).
 python_method('VerifierPipeline', '_aggregate', 0, 7, 3).
@@ -5105,9 +6117,47 @@ python_class('src/vdisplay/control/vision_preview.py', 'VisionPreviewDebug').
 python_method('VisionPreviewDebug', 'to_dict', 0, 8, 2).
 python_class('src/vdisplay/control/vision_template.py', 'TemplateMatch').
 python_method('TemplateMatch', 'to_dict', 0, 1, 1).
+python_class('src/vdisplay/desktop_apps.py', 'LaunchVariant').
+python_method('LaunchVariant', 'to_dict', 0, 2, 1).
+python_class('src/vdisplay/desktop_apps.py', 'DesktopApp').
+python_method('DesktopApp', 'to_dict', 0, 2, 2).
+python_method('DesktopApp', 'default_variant', 0, 1, 0).
+python_method('DesktopApp', 'variant', 1, 7, 5).
 python_class('src/vdisplay/exceptions.py', 'VDisplayError').
 python_class('src/vdisplay/exceptions.py', 'BackendNotAvailableError').
 python_class('src/vdisplay/exceptions.py', 'CapabilityError').
+python_class('src/vdisplay/hmi/capture.py', 'PointerCaptureError').
+python_class('src/vdisplay/hmi/context.py', 'WindowContextResolver').
+python_method('WindowContextResolver', '__init__', 0, 1, 3).
+python_method('WindowContextResolver', 'resolve', 3, 14, 6).
+python_method('WindowContextResolver', '_windows_cached', 0, 4, 3).
+python_method('WindowContextResolver', '_window_by_id', 1, 3, 2).
+python_class('src/vdisplay/hmi/keyboard.py', 'KeyEvent').
+python_class('src/vdisplay/hmi/keyboard.py', 'KeyboardWatcher').
+python_method('KeyboardWatcher', '__init__', 0, 1, 2).
+python_method('KeyboardWatcher', 'typed_buffer', 0, 1, 0).
+python_method('KeyboardWatcher', 'start', 0, 2, 3).
+python_method('KeyboardWatcher', 'stop', 0, 1, 1).
+python_method('KeyboardWatcher', 'drain', 0, 3, 2).
+python_method('KeyboardWatcher', '_emit', 1, 1, 1).
+python_method('KeyboardWatcher', '_handle_key', 2, 7, 4).
+python_method('KeyboardWatcher', '_run', 1, 15, 13).
+python_class('src/vdisplay/hmi/mouse.py', 'MouseMove').
+python_class('src/vdisplay/hmi/mouse.py', 'MouseWatcher').
+python_method('MouseWatcher', '__init__', 0, 1, 3).
+python_method('MouseWatcher', 'position', 0, 3, 0).
+python_method('MouseWatcher', 'relative_only', 0, 2, 0).
+python_method('MouseWatcher', 'move_count', 0, 1, 0).
+python_method('MouseWatcher', 'seed', 2, 1, 1).
+python_method('MouseWatcher', 'start', 0, 2, 3).
+python_method('MouseWatcher', 'stop', 0, 1, 1).
+python_method('MouseWatcher', 'drain', 0, 3, 2).
+python_method('MouseWatcher', '_ensure_origin', 0, 2, 0).
+python_method('MouseWatcher', '_apply_rel', 2, 3, 4).
+python_method('MouseWatcher', '_apply_abs', 2, 4, 4).
+python_method('MouseWatcher', '_run', 1, 18, 14).
+python_class('src/vdisplay/hmi/pointer.py', 'PointerSample').
+python_method('PointerSample', 'primary_label', 0, 15, 6).
 python_class('src/vdisplay/input/linux_xdotool.py', 'LinuxXdotoolInput').
 python_method('LinuxXdotoolInput', '__init__', 1, 1, 0).
 python_method('LinuxXdotoolInput', '_env', 0, 2, 0).
@@ -5131,6 +6181,15 @@ python_class('src/vdisplay/input/resolve.py', 'PointerInput').
 python_method('PointerInput', 'move', 2, 1, 0).
 python_method('PointerInput', 'click', 1, 1, 0).
 python_method('PointerInput', 'type_text', 1, 1, 0).
+python_class('src/vdisplay/integrations/screen_context.py', 'ScreenContext').
+python_method('ScreenContext', 'to_dict', 0, 2, 3).
+python_method('ScreenContext', 'from_dict', 2, 12, 7).
+python_method('ScreenContext', 'merge_capture_meta', 1, 4, 2).
+python_method('ScreenContext', 'attach_diagnostics', 1, 9, 3).
+python_method('ScreenContext', 'attach_map_path', 1, 5, 10).
+python_method('ScreenContext', 'compute_fingerprint', 0, 2, 8).
+python_method('ScreenContext', 'sidecar_path', 1, 1, 3).
+python_method('ScreenContext', 'write_sidecar', 0, 1, 7).
 python_class('src/vdisplay/models.py', 'Capabilities').
 python_class('src/vdisplay/models.py', 'SessionInfo').
 python_class('tests/fixtures/fake_browser.py', 'FakeElement').
@@ -5158,6 +6217,10 @@ python_method('_StubProvider', '__init__', 1, 1, 0).
 python_method('_StubProvider', 'available', 0, 1, 0).
 python_method('_StubProvider', 'capture_full', 0, 1, 0).
 python_method('_StubProvider', 'capture_region', 1, 1, 0).
+python_class('tests/test_control_diagnostics.py', '_FakeRouting').
+python_method('_FakeRouting', 'to_dict', 0, 1, 1).
+python_class('tests/test_control_diagnostics.py', '_FakeVerification').
+python_method('_FakeVerification', 'to_dict', 0, 1, 1).
 python_class('tests/test_control_gtk_demo.py', 'GtkDemoSession').
 python_class('tests/test_control_plugins.py', '_StubPluginProvider').
 python_method('_StubPluginProvider', 'available', 0, 1, 0).
@@ -5207,68 +6270,68 @@ sumd_interface('cli', '').
 
 ## Call Graph
 
-*465 nodes · 500 edges · 114 modules · CC̄=3.5*
+*470 nodes · 500 edges · 125 modules · CC̄=3.9*
 
 ### Hubs (by degree)
 
 | Function | CC | in | out | total |
 |----------|----|----|-----|-------|
-| `register_routes` *(in packages.vdisplay-agent.src.vdisplay_agent.routes.control)* | 1 | 0 | 53 | **53** |
+| `render_readme` *(in src.vdisplay.application.session_recorder)* | 31 ⚠ | 3 | 66 | **69** |
+| `register_routes` *(in packages.vdisplay-agent.src.vdisplay_agent.routes.control)* | 1 | 0 | 68 | **68** |
+| `print_json` *(in src.vdisplay.cli_handlers)* | 1 | 50 | 1 | **51** |
 | `pick_flag` *(in packages.dsl2vdisplay.src.dsl2vdisplay.grammar)* | 3 | 44 | 2 | **46** |
 | `register` *(in src.vdisplay.commands.control)* | 1 | 0 | 46 | **46** |
+| `handle` *(in src.vdisplay.commands.ide)* | 8 | 0 | 45 | **45** |
 | `create_app` *(in packages.rest2vdisplay.src.rest2vdisplay.app)* | 2 | 3 | 38 | **41** |
 | `dispatch` *(in packages.dsl2vdisplay.src.dsl2vdisplay.bus)* | 14 ⚠ | 13 | 27 | **40** |
-| `run_command` *(in src.vdisplay.utils)* | 2 | 33 | 4 | **37** |
-| `print_json` *(in src.vdisplay.cli_handlers)* | 1 | 36 | 1 | **37** |
-| `list_outputs` *(in src.vdisplay.discovery)* | 8 | 9 | 27 | **36** |
 
 ```toon markpact:analysis path=project/calls.toon.yaml
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.24s
-# nodes: 465 | edges: 500 | modules: 114
-# CC̄=3.5
+# generated in 0.23s
+# nodes: 470 | edges: 500 | modules: 125
+# CC̄=3.9
 
 HUBS[20]:
+  src.vdisplay.application.session_recorder.render_readme
+    CC=31  in:3  out:66  total:69
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
-    CC=1  in:0  out:53  total:53
+    CC=1  in:0  out:68  total:68
+  src.vdisplay.cli_handlers.print_json
+    CC=1  in:50  out:1  total:51
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
     CC=3  in:44  out:2  total:46
   src.vdisplay.commands.control.register
     CC=1  in:0  out:46  total:46
+  src.vdisplay.commands.ide.handle
+    CC=8  in:0  out:45  total:45
   packages.rest2vdisplay.src.rest2vdisplay.app.create_app
     CC=2  in:3  out:38  total:41
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
     CC=14  in:13  out:27  total:40
+  src.vdisplay.discovery.resolve_host_display
+    CC=11  in:30  out:7  total:37
   src.vdisplay.utils.run_command
     CC=2  in:33  out:4  total:37
-  src.vdisplay.cli_handlers.print_json
-    CC=1  in:36  out:1  total:37
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
+  src.vdisplay.ide_prompt.send_ide_prompt
+    CC=27  in:1  out:35  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
-  examples.host-relay.relay_demo.main
-    CC=11  in:0  out:33  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
+  src.vdisplay.application.executor.execute
+    CC=13  in:7  out:27  total:34
   packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
     CC=1  in:0  out:33  total:33
-  src.vdisplay.discovery.resolve_host_display
-    CC=11  in:26  out:7  total:33
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
+  examples.host-relay.relay_demo.main
+    CC=11  in:0  out:33  total:33
+  src.vdisplay.application.session_recorder.load_session_document
+    CC=13  in:4  out:29  total:33
+  src.vdisplay.control.descriptors.detect_platform_profile
+    CC=14  in:9  out:23  total:32
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
-  examples.control-plane.control_demo.run_browser_demo
-    CC=6  in:1  out:30  total:31
-  src.vdisplay.commands.map.handle
-    CC=7  in:0  out:31  total:31
-  examples.host-mirror.mirror_demo.main
-    CC=7  in:0  out:31  total:31
-  src.vdisplay.control.descriptors.detect_platform_profile
-    CC=14  in:8  out:23  total:31
-  src.vdisplay.agent_config.resolve_agent_url
-    CC=6  in:24  out:5  total:29
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
-    CC=5  in:21  out:8  total:29
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -5365,6 +6428,10 @@ MODULES:
     main  CC=4  out:13
   packages.uri2vdisplay.src.uri2vdisplay.decode  [1 funcs]
     uri_to_dsl  CC=7  out:12
+  packages.vdisplay-agent.src.vdisplay_agent.audit_context  [3 funcs]
+    apply_audit_env  CC=7  out:6
+    audit_context_from_fastapi_headers  CC=1  out:1
+    audit_context_from_headers  CC=1  out:1
   packages.vdisplay-agent.src.vdisplay_agent.cli  [1 funcs]
     main  CC=4  out:18
   packages.vdisplay-agent.src.vdisplay_agent.envelope  [7 funcs]
@@ -5377,13 +6444,19 @@ MODULES:
     success  CC=2  out:1
   packages.vdisplay-agent.src.vdisplay_agent.routes  [1 funcs]
     register_all_routes  CC=2  out:3
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute  [3 funcs]
+    _json_from_command_result  CC=8  out:6
+    execute_audit_route  CC=3  out:7
+    execute_audited_service  CC=5  out:17
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_headers  [1 funcs]
+    read_audit_headers  CC=1  out:5
   packages.vdisplay-agent.src.vdisplay_agent.routes.auth  [2 funcs]
     expected_token  CC=2  out:2
     make_check_auth  CC=1  out:5
   packages.vdisplay-agent.src.vdisplay_agent.routes.capture  [1 funcs]
-    register_routes  CC=1  out:6
+    register_routes  CC=1  out:5
   packages.vdisplay-agent.src.vdisplay_agent.routes.control  [1 funcs]
-    register_routes  CC=1  out:53
+    register_routes  CC=1  out:68
   packages.vdisplay-agent.src.vdisplay_agent.routes.health  [1 funcs]
     register_routes  CC=1  out:33
   packages.vdisplay-agent.src.vdisplay_agent.routes.sampler  [1 funcs]
@@ -5391,7 +6464,7 @@ MODULES:
   packages.vdisplay-agent.src.vdisplay_agent.routes.tasks  [1 funcs]
     register_routes  CC=1  out:27
   packages.vdisplay-agent.src.vdisplay_agent.routes.windows  [1 funcs]
-    register_routes  CC=1  out:12
+    register_routes  CC=1  out:10
   packages.vdisplay-agent.src.vdisplay_agent.runtime  [1 funcs]
     list_control_plugins  CC=1  out:1
   packages.vdisplay-agent.src.vdisplay_agent.serve_port  [8 funcs]
@@ -5415,7 +6488,7 @@ MODULES:
     _region_from_body  CC=8  out:13
     capture_frame  CC=3  out:6
   packages.vdisplay-agent.src.vdisplay_agent.services.control  [5 funcs]
-    _selector_kwargs  CC=1  out:20
+    _selector_kwargs  CC=1  out:23
     find_controls  CC=2  out:10
     focus_control  CC=2  out:9
     invoke_control  CC=2  out:11
@@ -5445,7 +6518,7 @@ MODULES:
     get_task  CC=2  out:3
     heartbeat_task  CC=2  out:3
     list_tasks  CC=3  out:4
-    register_session_task  CC=2  out:7
+    register_session_task  CC=4  out:10
     shutdown_tasks  CC=5  out:7
     stop_task  CC=5  out:5
     unregister_session_task  CC=1  out:1
@@ -5459,9 +6532,10 @@ MODULES:
     _utcnow  CC=1  out:1
     default_task_db_path  CC=3  out:9
     task_to_dict  CC=4  out:5
-  src.vdisplay.agent_config  [8 funcs]
+  src.vdisplay.agent_config  [9 funcs]
     _default_agent_base  CC=3  out:4
-    _probe_agent_url  CC=3  out:3
+    _is_vdisplay_agent_health  CC=6  out:9
+    _probe_agent_url  CC=5  out:7
     _probe_default_agent  CC=3  out:3
     agent_auto_enabled  CC=1  out:3
     reset_agent_probe_cache  CC=1  out:0
@@ -5473,10 +6547,9 @@ MODULES:
     dispatch_via_agent  CC=1  out:4
   src.vdisplay.agent_envelope  [1 funcs]
     flatten_agent_envelope  CC=6  out:3
-  src.vdisplay.api  [8 funcs]
+  src.vdisplay.api  [7 funcs]
     create  CC=6  out:8
     create  CC=4  out:6
-    info  CC=1  out:2
     create  CC=4  out:6
     _default_mirror_backend  CC=2  out:1
     _default_relay_backend  CC=2  out:1
@@ -5485,7 +6558,7 @@ MODULES:
   src.vdisplay.application.errors  [1 funcs]
     error_from_exception  CC=4  out:11
   src.vdisplay.application.executor  [1 funcs]
-    execute  CC=6  out:18
+    execute  CC=13  out:27
   src.vdisplay.application.handlers.control  [1 funcs]
     control_request_body  CC=3  out:3
   src.vdisplay.application.services.capture  [1 funcs]
@@ -5493,8 +6566,20 @@ MODULES:
   src.vdisplay.application.services.sampler  [2 funcs]
     run_sampler  CC=5  out:18
     start_sampler_via_agent  CC=1  out:1
-  src.vdisplay.application.session_context  [1 funcs]
+  src.vdisplay.application.session_context  [4 funcs]
     apply_cli_session_args  CC=3  out:6
+    audit_context_from_mapping  CC=3  out:12
+    current_audit_headers  CC=2  out:2
+    enrich_command_request  CC=6  out:5
+  src.vdisplay.application.session_recorder  [8 funcs]
+    discover_session_dirs  CC=6  out:7
+    export_session_zip  CC=4  out:10
+    extract_diagnostics  CC=13  out:28
+    load_session_document  CC=13  out:29
+    record_execution  CC=5  out:4
+    render_readme  CC=31  out:66
+    reprocess_session_diagnostics  CC=3  out:12
+    session_recording_enabled  CC=2  out:5
   src.vdisplay.backends.base  [1 funcs]
     save_screenshot  CC=1  out:3
   src.vdisplay.backends.linux_x11_mirror  [14 funcs]
@@ -5526,21 +6611,17 @@ MODULES:
     _display_candidates  CC=4  out:4
     _probe_display  CC=2  out:2
     _wait_for_display  CC=7  out:10
-  src.vdisplay.capture.host  [3 funcs]
+  src.vdisplay.capture.host  [2 funcs]
     capture_all_monitors  CC=8  out:12
-    capture_host_png  CC=13  out:18
     capture_host_to_file  CC=3  out:10
-  src.vdisplay.capture.linux_xwd  [5 funcs]
+  src.vdisplay.capture.linux_xwd  [3 funcs]
     _capture_xwd_png  CC=1  out:3
-    _crop_png  CC=2  out:15
     _is_wayland_session  CC=3  out:4
     capture_display_png  CC=2  out:2
-    is_blank_png  CC=8  out:14
-  src.vdisplay.capture.portal_screencast  [6 funcs]
+  src.vdisplay.capture.portal_screencast  [5 funcs]
     _screencast_multiple  CC=2  out:3
     get_active_screencast  CC=1  out:0
     invalidate_screencast_session  CC=4  out:4
-    screencast_stream_region  CC=11  out:11
     start_screencast_session  CC=6  out:7
     stop_screencast_session  CC=2  out:2
   src.vdisplay.capture.providers.engine  [1 funcs]
@@ -5550,23 +6631,34 @@ MODULES:
     main  CC=2  out:5
   src.vdisplay.cli_handlers  [1 funcs]
     print_json  CC=1  out:1
-  src.vdisplay.client  [9 funcs]
-    __init__  CC=2  out:2
-    _normalize_payload  CC=1  out:1
+  src.vdisplay.client  [1 funcs]
     request  CC=3  out:8
+  src.vdisplay.client_http  [3 funcs]
+    __init__  CC=2  out:2
+    build_request  CC=3  out:5
+    normalize_payload  CC=1  out:1
+  src.vdisplay.client_routes  [6 funcs]
     _route_browser_open  CC=4  out:0
-    _route_command  CC=7  out:7
     _route_control_command  CC=5  out:0
     _route_outputs_query  CC=4  out:3
     _route_terminal_open  CC=4  out:0
     _route_windows_query  CC=6  out:4
+    route_command  CC=7  out:7
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
+  src.vdisplay.commands.agent  [5 funcs]
+    _agent_client  CC=2  out:3
+    _handle_browser_open  CC=3  out:9
+    _handle_screencast  CC=5  out:8
+    _handle_serve  CC=5  out:11
+    handle  CC=5  out:7
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
     register  CC=1  out:4
     register_outputs  CC=1  out:4
+  src.vdisplay.commands.app  [1 funcs]
+    handle  CC=6  out:17
   src.vdisplay.commands.common  [9 funcs]
     add_all_arg  CC=1  out:1
     add_control_selector_args  CC=1  out:21
@@ -5590,6 +6682,9 @@ MODULES:
   src.vdisplay.commands.diagnose  [2 funcs]
     handle  CC=5  out:13
     register  CC=1  out:8
+  src.vdisplay.commands.ide  [2 funcs]
+    handle  CC=8  out:45
+    register  CC=1  out:17
   src.vdisplay.commands.info  [1 funcs]
     handle  CC=1  out:2
   src.vdisplay.commands.map  [1 funcs]
@@ -5601,6 +6696,8 @@ MODULES:
     register  CC=1  out:4
   src.vdisplay.commands.nlp  [1 funcs]
     handle  CC=2  out:4
+  src.vdisplay.commands.observe  [1 funcs]
+    handle_observe  CC=9  out:25
   src.vdisplay.commands.relay  [2 funcs]
     handle  CC=5  out:9
     handle_list_windows  CC=1  out:2
@@ -5616,14 +6713,22 @@ MODULES:
   src.vdisplay.commands.screenshot  [2 funcs]
     handle  CC=1  out:2
     register  CC=1  out:14
-  src.vdisplay.commands.session  [2 funcs]
+  src.vdisplay.commands.session  [7 funcs]
+    _resolve_session_dir  CC=9  out:21
     add_root_session_args  CC=1  out:2
     command_request_from_control_args  CC=8  out:32
+    handle_export  CC=3  out:12
+    handle_list  CC=3  out:14
+    handle_reprocess  CC=2  out:4
+    handle_show  CC=10  out:21
   src.vdisplay.commands.virtual  [1 funcs]
     handle  CC=6  out:9
   src.vdisplay.commands.windows  [2 funcs]
     handle  CC=1  out:3
     register  CC=1  out:4
+  src.vdisplay.control.action_bounds  [2 funcs]
+    action_bounds_for_vision  CC=2  out:4
+    click_point_for_vision  CC=1  out:1
   src.vdisplay.control.base  [3 funcs]
     capabilities  CC=2  out:2
     session_kind  CC=2  out:1
@@ -5633,8 +6738,6 @@ MODULES:
     engine_profile_id  CC=2  out:3
     normalize_browser_engine  CC=3  out:6
     resolve_session_browser_engine  CC=3  out:4
-  src.vdisplay.control.browser_session_store  [1 funcs]
-    session_available  CC=3  out:3
   src.vdisplay.control.descriptors  [5 funcs]
     all_provider_descriptors  CC=1  out:2
     all_selector_extensions  CC=1  out:0
@@ -5647,6 +6750,12 @@ MODULES:
     resolve_route  CC=2  out:2
   src.vdisplay.control.gui_map  [1 funcs]
     save_gui_map  CC=1  out:4
+  src.vdisplay.control.gui_map_build  [5 funcs]
+    _maybe_crop_png  CC=6  out:1
+    _prepare_ocr_boxes_for_build  CC=4  out:10
+    _translate_ocr_boxes  CC=4  out:3
+    element_from_ocr_box  CC=9  out:11
+    tile_fingerprint  CC=4  out:13
   src.vdisplay.control.gui_map_export  [1 funcs]
     write_map_artifacts  CC=4  out:14
   src.vdisplay.control.plugins  [10 funcs]
@@ -5662,86 +6771,61 @@ MODULES:
     unregister_control_provider  CC=4  out:6
   src.vdisplay.control.policy  [1 funcs]
     assess_control_capability  CC=7  out:9
-  src.vdisplay.control.profile_inference  [3 funcs]
-    infer_application_profile  CC=6  out:10
-    profile_for  CC=3  out:2
-    profile_provider_boost  CC=6  out:4
-  src.vdisplay.control.providers.ax_impl  [1 funcs]
-    ax_deps_available  CC=3  out:0
-  src.vdisplay.control.providers.browser_playwright  [1 funcs]
-    _playwright_available  CC=3  out:1
   src.vdisplay.control.providers.browser_session  [1 funcs]
     open  CC=14  out:21
   src.vdisplay.control.providers.terminal_session  [1 funcs]
     default_registry  CC=1  out:0
-  src.vdisplay.control.providers.uia_impl  [1 funcs]
-    uia_deps_available  CC=3  out:0
-  src.vdisplay.control.registry  [4 funcs]
+  src.vdisplay.control.registry  [1 funcs]
     build  CC=3  out:6
-    get_descriptor  CC=2  out:2
-    register  CC=2  out:1
-    default_provider_registry  CC=1  out:1
   src.vdisplay.control.router  [1 funcs]
     default_router  CC=2  out:1
-  src.vdisplay.control.routing_semantics  [1 funcs]
-    build_routing_semantics  CC=1  out:8
-  src.vdisplay.control.scoring  [37 funcs]
-    _all_provider_names  CC=3  out:4
-    _apply_routing_boosts  CC=7  out:6
-    _atspi_ready  CC=2  out:3
-    _ax_ready  CC=2  out:2
-    _base_score  CC=2  out:1
-    _browser_context_score  CC=4  out:4
-    _browser_ready  CC=2  out:2
-    _browser_session_check  CC=6  out:4
-    _browser_session_ready  CC=5  out:5
-    _is_browser_context  CC=3  out:1
-  src.vdisplay.control.screenshot_verify  [10 funcs]
-    _capture_via_agent  CC=6  out:9
-    _maybe_crop_capture  CC=7  out:4
-    _region_from_agent_screencast_status  CC=14  out:17
-    _region_from_bounds  CC=1  out:2
-    _resolve_screencast_stream_region  CC=2  out:3
-    _target_region  CC=5  out:1
-    capture_control_screenshot  CC=3  out:8
-    diff_png_bytes  CC=13  out:15
-    enrich_screencast_stream_meta  CC=4  out:4
-    verify_screenshot_pair  CC=1  out:4
-  src.vdisplay.control.session  [8 funcs]
-    _safe_capabilities  CC=4  out:4
-    _safe_info  CC=4  out:4
+  src.vdisplay.control.session  [2 funcs]
     build_catalog_from_agent_store  CC=11  out:17
-    build_catalog_local  CC=4  out:12
-    metadata_from_agent_record  CC=1  out:12
-    metadata_from_browser_session  CC=1  out:5
-    metadata_from_terminal_session  CC=1  out:6
     parse_session_kind  CC=3  out:5
-  src.vdisplay.control.vision_disambiguate  [4 funcs]
+  src.vdisplay.control.verify_policy  [4 funcs]
+    _dedupe  CC=3  out:3
+    _get_base_phases  CC=7  out:3
+    required_phases  CC=10  out:6
+    required_phases_from_context  CC=1  out:1
+  src.vdisplay.control.vision_disambiguate  [3 funcs]
     filter_by_confidence  CC=4  out:5
     item_confidence  CC=3  out:4
     pick_by_index  CC=3  out:3
-    resolve_vision_matches  CC=1  out:4
-  src.vdisplay.control.vision_ocr  [15 funcs]
+  src.vdisplay.control.vision_ocr  [17 funcs]
     _box_matches  CC=3  out:2
     _find_anchor_boxes  CC=1  out:2
     _horizontal_overlap  CC=2  out:0
     _match_by_text_fields  CC=13  out:4
     _match_by_vision_anchor  CC=7  out:5
     _normalize  CC=2  out:2
+    _ocr_from_screen_context_cache  CC=9  out:16
+    _ocr_png_local  CC=9  out:18
     _vertical_overlap  CC=2  out:0
     anchor_based_find  CC=1  out:1
-    anchor_spatial_find  CC=10  out:11
-    anchor_spatial_relation  CC=10  out:6
-  src.vdisplay.control.vision_preview  [6 funcs]
+  src.vdisplay.control.vision_preview  [11 funcs]
     _match_kind  CC=5  out:3
+    _prefer_imgl_annotate  CC=4  out:2
+    _preview_matches_to_catalog  CC=3  out:9
+    _render_match_overlay_imgl_annotate  CC=2  out:13
+    _render_match_overlay_local  CC=10  out:25
     action_pick_index  CC=2  out:2
     build_vision_preview  CC=10  out:13
     preview_available  CC=2  out:0
+    preview_backend  CC=2  out:3
     preview_matches_from_nodes  CC=7  out:5
-    render_match_overlay  CC=10  out:25
-  src.vdisplay.control.vision_template  [2 funcs]
+  src.vdisplay.control.vision_template  [1 funcs]
     template_anchor_find  CC=2  out:11
-    template_available  CC=2  out:0
+  src.vdisplay.desktop_apps  [18 funcs]
+    _binary_launch  CC=3  out:2
+    _build_registry  CC=8  out:20
+    _default_map_candidates  CC=5  out:18
+    _desktop_launch  CC=2  out:2
+    _expand_variants  CC=3  out:4
+    _is_gui_map_file  CC=6  out:8
+    _variants_for  CC=9  out:11
+    _xwayland_variant  CC=1  out:3
+    chat_selectors_for  CC=2  out:1
+    get_desktop_app  CC=3  out:6
   src.vdisplay.discovery  [13 funcs]
     _attach_output_nl  CC=2  out:3
     _display_hint  CC=3  out:2
@@ -5753,6 +6837,17 @@ MODULES:
     diagnose_display  CC=10  out:19
     find_window_suggestions  CC=2  out:2
     list_monitors  CC=1  out:1
+  src.vdisplay.ide_prompt  [2 funcs]
+    open_desktop_app  CC=3  out:8
+    send_ide_prompt  CC=27  out:35
+  src.vdisplay.integrations.observe_cache  [1 funcs]
+    ocr_boxes_from_cached_context  CC=16  out:21
+  src.vdisplay.integrations.pipeline  [1 funcs]
+    observe_screen  CC=22  out:28
+  src.vdisplay.integrations.vision_backend  [1 funcs]
+    prefer_imgl_backend  CC=4  out:2
+  src.vdisplay.integrations.vql_bridge  [1 funcs]
+    reverse_generation_descriptor  CC=9  out:13
   src.vdisplay.nl  [8 funcs]
     _user_visible_app_labels  CC=9  out:9
     assign_windows_to_monitors  CC=3  out:6

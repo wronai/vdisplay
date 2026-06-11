@@ -31,8 +31,16 @@ def _strip_ok(payload: dict[str, Any]) -> dict[str, Any]:
     return data
 
 
+def _require_agent_data(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
+    result = client.request(cmd)
+    if not result.ok:
+        message = result.error.message if result.error else "agent request failed"
+        raise VDisplayError(message)
+    return dict(result.data or {})
+
+
 def _health(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return client.request(cmd).data
+    return _require_agent_data(client, cmd)
 
 
 def _info(client: AgentClient, _cmd: CommandRequest) -> dict[str, Any]:
@@ -44,11 +52,11 @@ def _info(client: AgentClient, _cmd: CommandRequest) -> dict[str, Any]:
 
 
 def _monitors(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return _strip_ok(client.request(cmd).data)
+    return _strip_ok(_require_agent_data(client, cmd))
 
 
 def _windows(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return _strip_ok(client.request(cmd).data)
+    return _strip_ok(_require_agent_data(client, cmd))
 
 
 def _all(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
@@ -78,7 +86,7 @@ def _all(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
 
 
 def _capabilities(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return _strip_ok(client.request(cmd).data)
+    return _strip_ok(_require_agent_data(client, cmd))
 
 
 def _validate(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
@@ -121,15 +129,15 @@ def _screenshot(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
 
 
 def _virtual_start(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return client.request(cmd).data
+    return _require_agent_data(client, cmd)
 
 
 def _terminal_open(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return client.request(cmd).data
+    return _require_agent_data(client, cmd)
 
 
 def _browser_open(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
-    return client.request(cmd).data
+    return _require_agent_data(client, cmd)
 
 
 def _mirror(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:

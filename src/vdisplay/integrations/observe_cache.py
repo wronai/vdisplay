@@ -114,23 +114,14 @@ def merge_cached_analysis(ctx: ScreenContext, cached: ScreenContext) -> ScreenCo
     return ctx
 
 
-def map_drift_blocks_cache(ctx: ScreenContext) -> bool:
-    """Return True when GUI map drift suggests skipping cached OCR/analysis."""
-    if not ctx.map_pack:
-        return False
-    verify = ctx.verify or {}
-    drift = verify.get("map_drift") or verify.get("gui_map_drift")
-    if not isinstance(drift, dict):
-        return False
-
+def _drift_recommends_refresh(drift: dict[str, Any]) -> bool:
     recommendation = str(drift.get("recommendation") or "").lower()
     if recommendation == "refresh_required":
         return True
-
+    if drift.get("drifted") is True and drift.get("actionable") is True:
+        return True
     status = str(drift.get("status") or drift.get("summary") or "").lower()
     if status in {"refresh_required", "drift", "bounds", "missing", "fingerprint"}:
-        return True
-    if drift.get("drifted") is True and drift.get("actionable") is True:
         return True
     summary = drift.get("summary")
     if isinstance(summary, dict):
@@ -141,6 +132,17 @@ def map_drift_blocks_cache(ctx: ScreenContext) -> bool:
     if int(drift.get("missing") or drift.get("missing_count") or 0) > 0:
         return True
     return False
+
+
+def map_drift_blocks_cache(ctx: ScreenContext) -> bool:
+    """Return True when GUI map drift suggests skipping cached OCR/analysis."""
+    if not ctx.map_pack:
+        return False
+    verify = ctx.verify or {}
+    drift = verify.get("map_drift") or verify.get("gui_map_drift")
+    if not isinstance(drift, dict):
+        return False
+    return _drift_recommends_refresh(drift)
 
 
 def evaluate_map_drift(
@@ -185,6 +187,22 @@ def evaluate_map_drift(
         return ctx.verify["map_drift"]
 
 
+def _item_to_ocr_box(item: dict[str, Any]) -> "OcrTextBox":
+    from ..control.models import ControlBounds
+    from ..control.vision_ocr import OcrTextBox
+
+    bbox = item.get("bbox") or {}
+    x = int(bbox.get("x") or 0)
+    y = int(bbox.get("y") or 0)
+    w = int(bbox.get("w") or bbox.get("width") or 0)
+    h = int(bbox.get("h") or bbox.get("height") or 0)
+    return OcrTextBox(
+        text=str(item.get("text") or ""),
+        bounds=ControlBounds(x=x, y=y, width=w, height=h),
+        confidence=float(item.get("confidence") or 0.0),
+    )
+
+
 def ocr_boxes_from_cached_context(ctx: ScreenContext) -> list[Any] | None:
     """Return OCR boxes from cached IMGL scene when available."""
     if not ctx.imgl.get("ok"):
@@ -193,21 +211,4 @@ def ocr_boxes_from_cached_context(ctx: ScreenContext) -> list[Any] | None:
     ocr_boxes = scene.get("ocr_boxes") or []
     if not ocr_boxes:
         return None
-    from ..control.models import ControlBounds
-    from ..control.vision_ocr import OcrTextBox
-
-    boxes: list[OcrTextBox] = []
-    for item in ocr_boxes:
-        bbox = item.get("bbox") or {}
-        x = int(bbox.get("x") or 0)
-        y = int(bbox.get("y") or 0)
-        w = int(bbox.get("w") or bbox.get("width") or 0)
-        h = int(bbox.get("h") or bbox.get("height") or 0)
-        boxes.append(
-            OcrTextBox(
-                text=str(item.get("text") or ""),
-                bounds=ControlBounds(x=x, y=y, width=w, height=h),
-                confidence=float(item.get("confidence") or 0.0),
-            )
-        )
-    return boxes or None
+    return [_item_to_ocr_box(item) for item in ocr_boxes] or None

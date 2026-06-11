@@ -19,15 +19,21 @@ from .screen_context import ScreenContext, load_environment_snapshot, screen_con
 from .vql_bridge import vql_enabled, write_vql_artifacts
 
 
-def observe_enabled() -> bool:
+def _observe_flag() -> bool | None:
     flag = os.environ.get("VDISPLAY_OBSERVE", "").strip().lower()
     if flag in {"1", "true", "yes", "on"}:
         return True
     if flag in {"0", "false", "no", "off"}:
         return False
+    return None
+
+
+def observe_enabled() -> bool:
+    explicit = _observe_flag()
+    if explicit is not None:
+        return explicit
     from .imgl_bridge import imgl_available
     from .vql_bridge import vql_available
-
     return imgl_available() or vql_available()
 
 
@@ -88,29 +94,7 @@ def observe_screen(
     return ctx
 
 
-def enrich_capture_payload(
-    payload: dict[str, Any],
-    *,
-    diagnostics: dict[str, Any] | None = None,
-    map_path: str | None = None,
-) -> dict[str, Any]:
-    """Attach ScreenContext sidecar fields to a capture/result payload."""
-    if not observe_enabled():
-        return payload
-
-    image_path = payload.get("path") or payload.get("saved")
-    if not image_path or not Path(str(image_path)).is_file():
-        return payload
-
-    ctx = observe_screen(
-        image_path=str(image_path),
-        capture_meta=payload,
-        diagnostics=diagnostics,
-        map_path=map_path,
-        include_vql=os.environ.get("VDISPLAY_OBSERVE_VQL", "1").strip().lower() not in {"0", "false", "no"},
-        write_sidecar=os.environ.get("VDISPLAY_OBSERVE_SIDECAR", "1").strip().lower() not in {"0", "false", "no"},
-    )
-
+def _build_enriched_payload(ctx: ScreenContext, payload: dict[str, Any]) -> dict[str, Any]:
     enriched = dict(payload)
     enriched["screen_context"] = {
         "fingerprint": ctx.fingerprint,
@@ -136,3 +120,32 @@ def enrich_capture_payload(
     if ctx.nl and not enriched.get("nl"):
         enriched["nl"] = ctx.nl
     return enriched
+
+
+def _env_bool(key: str, default: str = "1") -> bool:
+    return os.environ.get(key, default).strip().lower() not in {"0", "false", "no"}
+
+
+def enrich_capture_payload(
+    payload: dict[str, Any],
+    *,
+    diagnostics: dict[str, Any] | None = None,
+    map_path: str | None = None,
+) -> dict[str, Any]:
+    """Attach ScreenContext sidecar fields to a capture/result payload."""
+    if not observe_enabled():
+        return payload
+
+    image_path = payload.get("path") or payload.get("saved")
+    if not image_path or not Path(str(image_path)).is_file():
+        return payload
+
+    ctx = observe_screen(
+        image_path=str(image_path),
+        capture_meta=payload,
+        diagnostics=diagnostics,
+        map_path=map_path,
+        include_vql=_env_bool("VDISPLAY_OBSERVE_VQL"),
+        write_sidecar=_env_bool("VDISPLAY_OBSERVE_SIDECAR"),
+    )
+    return _build_enriched_payload(ctx, payload)

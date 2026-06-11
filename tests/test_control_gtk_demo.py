@@ -19,6 +19,7 @@ APP_LABEL = "gtk_demo_app.py"
 DEFAULT_WINDOW_TITLE = "vdisplay-gtk-demo"
 POLL_INTERVAL_S = 0.5
 STARTUP_TIMEOUT_S = 30.0
+_ATSPI_POLL_TIMEOUT_S = 3.0
 
 
 @dataclass(frozen=True)
@@ -49,6 +50,13 @@ def _find_selector(*, window_title: str) -> dict[str, str]:
 
 
 def _find_increment(*, window_title: str) -> dict[str, object] | None:
+    # Scope the short poll timeout *only* to readiness probes. This affects the
+    # env read inside atspi._run_subprocess for the subprocess.run(..., timeout=...).
+    # We do NOT want to force 3s on the "real" controls_find calls in the test bodies
+    # (or other atspi tests sharing the process), only on the waiter that expects
+    # quick-fail when the target app/widget is not yet on the bus.
+    old_timeout = os.environ.get("VDISPLAY_ATSPI_TIMEOUT_S")
+    os.environ["VDISPLAY_ATSPI_TIMEOUT_S"] = str(_ATSPI_POLL_TIMEOUT_S)
     try:
         payload = controls_find(
             backend="atspi",
@@ -56,8 +64,16 @@ def _find_increment(*, window_title: str) -> dict[str, object] | None:
             name="Increment",
             **_find_selector(window_title=window_title),
         )
-    except VDisplayError:
+    except Exception:
+        # Transient snapshot / a11y errors (timeouts, dbind, BackendNotAvailable during poll,
+        # VDisplayError "no match", raw TimeoutExpired etc.) are expected while the demo
+        # is still starting or when AT-SPI is sluggish. Treat as "not ready yet".
         return None
+    finally:
+        if old_timeout is None:
+            os.environ.pop("VDISPLAY_ATSPI_TIMEOUT_S", None)
+        else:
+            os.environ["VDISPLAY_ATSPI_TIMEOUT_S"] = old_timeout
     if payload.get("selected"):
         return payload
     return None
@@ -65,11 +81,18 @@ def _find_increment(*, window_title: str) -> dict[str, object] | None:
 
 def _wait_for_gtk_demo(*, proc: subprocess.Popen[str], window_title: str, timeout_s: float) -> bool:
     deadline = time.monotonic() + timeout_s
+    # Give the child a moment to start and register with a11y before first expensive snapshot poll.
+    time.sleep(0.2)
     while time.monotonic() < deadline:
         if proc.poll() is not None:
             return False
-        if _find_increment(window_title=window_title) is not None:
-            return True
+        try:
+            if _find_increment(window_title=window_title) is not None:
+                return True
+        except Exception:
+            # Never let a11y snapshot problems escape the waiter; the outer deadline will
+            # cause a clean skip instead of ERROR at setup of the gtk_demo tests.
+            pass
         time.sleep(POLL_INTERVAL_S)
     return False
 
@@ -77,7 +100,11 @@ def _wait_for_gtk_demo(*, proc: subprocess.Popen[str], window_title: str, timeou
 def _ensure_gtk_demo_ready(session: GtkDemoSession) -> None:
     if session.proc.poll() is not None:
         pytest.skip("GTK demo process exited before test")
-    if _find_increment(window_title=session.window_title) is None:
+    try:
+        found = _find_increment(window_title=session.window_title) is not None
+    except Exception:
+        found = False
+    if not found:
         if not _wait_for_gtk_demo(
             proc=session.proc,
             window_title=session.window_title,
@@ -99,6 +126,9 @@ def gtk_demo_session() -> GtkDemoSession:
         "GDK_BACKEND": "x11",
         "DISPLAY": os.environ.get("DISPLAY", ":0"),
         "VDISPLAY_GTK_DEMO_TITLE": window_title,
+        # Note: VDISPLAY_ATSPI_TIMEOUT_S is not needed for the demo itself (it does not
+        # spawn atspi dispatch); the short timeout for polling snapshots is scoped inside
+        # _find_increment for the *test* process that performs the controls_find calls.
     }
     proc = subprocess.Popen(
         ["/usr/bin/python3", str(DEMO_SCRIPT)],

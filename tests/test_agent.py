@@ -23,6 +23,40 @@ def test_agent_capabilities(agent_client) -> None:
     assert "virtual" in payload["data"]["session_modes"]
 
 
+def test_agent_capture_recovers_missing_screencast(
+    agent_client,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    client, runtime = agent_client
+    calls = {"n": 0}
+
+    def fake_capture_host_to_file(path, **kwargs):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise __import__("vdisplay.exceptions", fromlist=["VDisplayError"]).VDisplayError(
+                "portal-screencast: no active session"
+            )
+        out = __import__("pathlib").Path(path)
+        out.write_bytes(b"\x89PNG\r\n\x1a\n" + b"x" * 200)
+        return {"path": str(out), "method": "portal-screencast", "bytes": out.stat().st_size}
+
+    monkeypatch.setattr("vdisplay_agent.services.capture.capture_host_to_file", fake_capture_host_to_file)
+    monkeypatch.setattr(
+        "vdisplay_agent.services.capture.try_recover_screencast",
+        lambda store, **kwargs: setattr(store, "screencast", object()) or True,
+    )
+
+    out = tmp_path / "host.png"
+    payload = client.post(
+        "/capture/frame",
+        json={"output": str(out), "source": "DP-1", "monitor": 1},
+    ).json()
+    assert payload["ok"] is True
+    assert calls["n"] == 2
+    assert out.is_file()
+
+
 @pytest.mark.skipif(shutil.which("Xvfb") is None, reason="Xvfb not installed")
 @pytest.mark.skipif(shutil.which("xwd") is None, reason="xwd not installed")
 def test_agent_virtual_session_capture(agent_client, tmp_path) -> None:

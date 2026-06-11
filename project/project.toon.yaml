@@ -1,52 +1,52 @@
-# vdisplay | 1783 func | 216f | 42177L | python | 2026-06-10
+# vdisplay | 2007 func | 242f | 46426L | python | 2026-06-11
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.9  critical=145 (limit:10)  dup=1  cycles=0
+  CC̄=3.9  critical=158 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      run_hmi_watch = 39 (limit:15)
-  !!! cc_exceeded      build_map_health = 38 (limit:15)
-  !!! high_fan_out     _start_screencast_impl = 38 (limit:10)
-  !!! cc_exceeded      context_to_vql_program = 34 (limit:15)
-  !!! cc_exceeded      render_readme = 31 (limit:15)
-  !!! cc_exceeded      sample_pointer = 31 (limit:15)
-  !!! high_fan_out     context_to_vql_program = 29 (limit:10)
+  !!! high_fan_out     _start_screencast_impl = 42 (limit:10)
+  !!! high_fan_out     register_routes = 33 (limit:10)
   !!! cc_exceeded      _enrich_render_intent = 28 (limit:15)
-  !!! high_fan_out     run_hmi_watch = 28 (limit:10)
-  !!! cc_exceeded      send_ide_prompt = 27 (limit:15)
+  !!! high_fan_out     register_routes = 26 (limit:10)
+  !!! high_fan_out     BrowserSessionRegistry._open = 26 (limit:10)
+  !!! high_fan_out     SessionRecorder.record = 26 (limit:10)
+  !!! high_fan_out     execute = 25 (limit:10)
+  !!! high_fan_out     start_sampler = 24 (limit:10)
+  !!! high_fan_out     snapshot_dict = 24 (limit:10)
+  !!! high_fan_out     create_app = 23 (limit:10)
 
-MODULES[303] (top by size):
+MODULES[334] (top by size):
   M[maps/pycharm-chat.json] 1588L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/application/session_recorder.py] 1018L C:3 F:46 CC↑31 D:6 (python)
-  M[src/vdisplay/application/services/control.py] 991L C:0 F:28 CC↑17 D:0 (python)
+  M[src/vdisplay/application/services/control.py] 1010L C:0 F:30 CC↑14 D:0 (python)
+  M[src/vdisplay/capture/portal_screencast.py] 982L C:1 F:44 CC↑15 D:8 (python)
   M[src/vdisplay/control/scoring.py] 811L C:2 F:40 CC↑12 D:6 (python)
   M[maps/pycharm-chat-fresh.json] 795L C:0 F:0 CC↑0 D:0 (json)
-  M[src/vdisplay/capture/portal_screencast.py] 782L C:1 F:34 CC↑11 D:6 (python)
+  M[src/vdisplay/application/session_recorder.py] 763L C:3 F:34 CC↑14 D:6 (python)
   M[src/vdisplay/control/providers/vision/provider.py] 715L C:1 F:37 CC↑12 D:0 (python)
-  M[src/vdisplay/control/verifier.py] 590L C:3 F:24 CC↑23 D:1 (python)
-  M[src/vdisplay/capture/host.py] 555L C:0 F:15 CC↑14 D:6 (python)
+  M[src/vdisplay/control/verifier.py] 619L C:3 F:30 CC↑13 D:1 (python)
+  M[src/vdisplay/ide_prompt.py] 601L C:0 F:17 CC↑15 D:12 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/control/gui_map_diff.py] 500L C:3 F:18 CC↑14 D:2 (python)
   M[src/vdisplay/control/verify.py] 498L C:0 F:21 CC↑12 D:1 (python)
   M[src/vdisplay/backends/linux_x11_relay.py] 478L C:2 F:24 CC↑12 D:0 (python)
   M[src/vdisplay/control/descriptors.py] 464L C:5 F:11 CC↑14 D:10 (python)
-  LANGS: python:239/json:25/toml:11/shell:7/other:5/yml:5/yaml:5/proto:4/txt:2
+  LANGS: python:269/json:25/toml:11/shell:7/yaml:6/other:5/yml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
-  ★ _start_screencast_impl fan=38  // Orchestrates 38 calls
-  ★ context_to_vql_program fan=29  // Build or merge a VQLProgram-compatible dict from ScreenContext.
-  ★ run_hmi_watch fan=28  // Stream pointer position and keyboard events until interrupted.
+  ★ _start_screencast_impl fan=42  // Orchestrates 42 calls
+  ★ register_routes fan=33  // Orchestrates 33 calls
   ★ register_routes fan=26  // Orchestrates 26 calls
+  ★ BrowserSessionRegistry._open fan=26  // Orchestrates 26 calls
   ★ SessionRecorder.record fan=26  // Orchestrates 26 calls
 
 REFACTOR[15]:
-  [1] H/L Split build_map_health (CC=38)
-  [2] H/L Split context_to_vql_program (CC=34)
-  [3] H/L Split _enrich_render_intent (CC=28)
-  [4] H/L Split send_ide_prompt (CC=27)
-  [5] H/L Split render_readme (CC=31)
+  [1] H/L Split _enrich_render_intent (CC=28)
+  [2] H/H Split god module src/vdisplay/capture/portal_screencast.py (982L, 1 classes)
+  [3] H/H Split god module src/vdisplay/ide_prompt.py (601L, 0 classes)
+  [4] H/H Split god module src/vdisplay/application/services/control.py (1010L, 0 classes)
+  [5] H/H Split god module src/vdisplay/application/session_recorder.py (763L, 3 classes)
 
 EVOLUTION:
-  2026-06-10 CC̄=3.9 crit=145 42177L // Automated analysis
+  2026-06-11 CC̄=3.9 crit=158 46426L // Automated analysis

@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.10] - 2026-06-10
 
 ### Fixed
+- Fix smart-return-type issues (ticket-bcbe643a)
+- Fix unused-imports issues (ticket-6cc80612)
+- Fix ai-boilerplate issues (ticket-af23c88d)
+- Fix smart-return-type issues (ticket-6999d4f3)
+- Fix string-concat issues (ticket-5bd60d40)
+- Fix unused-imports issues (ticket-04e917a7)
+- Fix magic-numbers issues (ticket-9b0f98c6)
+- Fix unused-imports issues (ticket-d3e935f5)
+- Fix relative-imports issues (ticket-a02dc343)
+- Fix unused-imports issues (ticket-1a55d814)
+- Fix relative-imports issues (ticket-a593ae35)
+- Fix unused-imports issues (ticket-138556fd)
+- Fix magic-numbers issues (ticket-a97d6bd2)
+- Fix unused-imports issues (ticket-d033c132)
+- Fix magic-numbers issues (ticket-2d0b5e98)
+- Fix unused-imports issues (ticket-33ae9859)
+- Fix relative-imports issues (ticket-4c144418)
+
+## [0.1.10] - 2026-06-10
+
+### Fixed
 - Fix unused-imports issues (ticket-0c1eb72e)
 - Fix magic-numbers issues (ticket-6a84c34d)
 - Fix unused-imports issues (ticket-0c0af9db)
@@ -19,6 +40,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Web console** (`/web`) — multi-monitor dashboard in vdisplay-agent: overview, frame API, screencast/sampler controls, replay executor for CONTROL_* audit steps
+- **`capture/coordinate_map.py`** — unified desktop ↔ PNG coordinate mapping (re-exported from `input/coords`)
+- **`application/replay.py`** — replay `.vdisplay` session steps; web console background jobs
+- **`application/services/web_pointer.py`** — web console monitor click → desktop pointer (via `coordinate_map`)
+- Playwright E2E tests: `tests/e2e/test_web_console_playwright.py` (mock) and `tests/e2e/test_web_console_live.py` (live broker)
+- Docs: [guides/web-console.md](docs/guides/web-console.md)
 - Map diff `recommendation`, `actionable`, and `key_targets` for drift triage
 - Scoped map build: `--crop-bounds`, `--min-text-len` to reduce full-screen OCR noise
 - `resolve_map_verify_mode()` — map verify uses `ocr_contains` / `anchor_visible`, not semantic
@@ -64,6 +91,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.21] - 2026-06-11
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+- Update SUMD.md
+- Update SUMR.md
+- Update TODO.md
+- Update docs/agent-broker.md
+- Update docs/guides/README.md
+- Update docs/guides/web-console.md
+- Update docs/index.md
+- Update docs/reference/env.md
+- ... and 5 more files
+
+### Test
+- Update tests/e2e/conftest.py
+- Update tests/e2e/test_web_console_live.py
+- Update tests/e2e/test_web_console_playwright.py
+- Update tests/test_agent.py
+- Update tests/test_agent_audit_session.py
+- Update tests/test_agent_web_console.py
+- Update tests/test_auto_command.py
+- Update tests/test_control_browser_session.py
+- Update tests/test_control_gtk_demo.py
+- Update tests/test_control_screenshot_verify.py
+- ... and 12 more files
+
+### Other
+- Update .gitignore
+- Update .koru/cursor/settings.json
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update app.doql.less
+- Update brain/scratch_find_pycharm_chat.py
+- Update examples/planfile-automation.yaml
+- Update packages/vdisplay-agent/src/vdisplay_agent/cli.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/__init__.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/_audit_execute.py
+- ... and 37 more files
 
 ## [0.1.20] - 2026-06-10
 

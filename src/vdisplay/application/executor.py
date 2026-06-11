@@ -9,7 +9,7 @@ from typing import Any
 from .commands import CommandRequest, CommandResult, CommandVerb
 from .errors import error_from_exception
 from .handlers import execute_agent, execute_local
-from .runtime import ExecutionPolicy, Route, get_execution_policy
+from .runtime import ExecutionPolicy, Route, get_execution_policy, _LOCAL_DISCOVERY_VERBS
 from .session_recorder import extract_diagnostics, record_execution, session_recording_enabled
 from .session_context import agent_audit_delegated, ensure_audit_session_dir, enrich_command_request
 from .artifacts import build_artifacts
@@ -52,6 +52,13 @@ def _maybe_enrich_screenshot(cmd: CommandRequest, data: dict[str, Any]) -> dict[
     return img2nl_enrich.enrich_screenshot_payload(data)
 
 
+def _agent_discovery_fallback(cmd: CommandRequest, exc: VDisplayError) -> bool:
+    if cmd.verb not in _LOCAL_DISCOVERY_VERBS:
+        return False
+    message = str(exc).lower()
+    return "unreachable" in message or "timed out" in message or "hung" in message
+
+
 def execute(
     cmd: CommandRequest,
     *,
@@ -68,7 +75,17 @@ def execute(
     if _audit_record_on_client(route):
         _emit_command_received(cmd, route=route)
     try:
-        data = execute_agent(cmd) if route == "agent" else execute_local(cmd)
+        if route == "agent":
+            try:
+                data = execute_agent(cmd)
+            except VDisplayError as exc:
+                if _agent_discovery_fallback(cmd, exc):
+                    data = execute_local(cmd)
+                    meta = {**meta, "route": "local", "agent_fallback": str(exc)}
+                else:
+                    raise
+        else:
+            data = execute_local(cmd)
         data = _maybe_enrich_screenshot(cmd, data)
         result = CommandResult.success(
             action=cmd.action,

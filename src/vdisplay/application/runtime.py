@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Literal
+from urllib.parse import urlparse
 
 from ..agent_config import resolve_agent_url, use_agent, _default_agent_base
 
@@ -13,6 +14,21 @@ if TYPE_CHECKING:
     from ..client import AgentClient
 
 Route = Literal["agent", "local"]
+
+# Same-host discovery is identical in-process; skip IPC so a hung capture cannot block monitors.
+_LOCAL_DISCOVERY_VERBS = frozenset(
+    {
+        CommandVerb.MONITORS,
+        CommandVerb.OUTPUTS,
+        CommandVerb.WINDOWS,
+        CommandVerb.ALL,
+    }
+)
+
+
+def _is_local_agent_url(url: str) -> bool:
+    host = (urlparse(url).hostname or "").lower()
+    return host in {"127.0.0.1", "localhost", "::1"}
 
 
 def agent_client_optional(*, allow_auto: bool = True) -> AgentClient | None:
@@ -64,7 +80,16 @@ class ExecutionPolicy:
             return "local"
         if cmd.verb == CommandVerb.SCREENSHOT and cmd.mode == "virtual":
             return "local"
-        if resolve_agent_url(allow_auto=True) is not None:
+        url = resolve_agent_url(allow_auto=True)
+        if url and cmd.verb in _LOCAL_DISCOVERY_VERBS:
+            force_remote = os.environ.get("VDISPLAY_AGENT_FORCE_REMOTE", "").strip().lower() in {
+                "1",
+                "true",
+                "yes",
+            }
+            if _is_local_agent_url(url) and not force_remote:
+                return "local"
+        if url is not None:
             return "agent"
         return "local"
 

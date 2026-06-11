@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from typing import Any
 
 from .desktop_apps import (
@@ -14,10 +16,40 @@ from .desktop_apps import (
     map_input_target_candidates,
     map_manifest_path,
     map_submit_target_candidates,
+    prompt_chat_selectors_for,
     resolve_map_path,
     submit_selectors_for,
 )
 from .exceptions import VDisplayError
+
+
+def _is_wayland_session() -> bool:
+    from .hmi.pointer import is_wayland_session
+
+    return is_wayland_session()
+
+
+def _ide_find_timeout_seconds() -> float:
+    raw = os.environ.get("VDISPLAY_IDE_FIND_TIMEOUT_S", "20")
+    try:
+        return max(1.0, float(raw))
+    except ValueError:
+        return 20.0
+
+
+def _should_skip_window_wait(app_id: str, *, backend: str, map_path: str | None) -> str | None:
+    """Skip AT-SPI/xdotool window polling for native Wayland vision-only IDEs."""
+    if map_path or not _is_wayland_session():
+        return None
+    app = get_desktop_app(app_id)
+    if backend not in {"auto", "vision"} and app.preferred_backend != "vision":
+        return None
+    if app.preferred_backend != "vision":
+        return None
+    return (
+        f"{app.label} on native Wayland is not visible to AT-SPI/xdotool; "
+        "skipped window focus wait (use --map, koru plugin, or --variant xwayland)"
+    )
 
 
 def open_desktop_app(
@@ -58,7 +90,21 @@ def wait_for_app_window(
     display: str | None = None,
     timeout_seconds: float = 20.0,
     poll_interval: float = 0.5,
+    backend: str | None = None,
+    map_path: str | None = None,
 ) -> dict[str, Any]:
+    app = get_desktop_app(app_id)
+    effective_backend = backend or app.preferred_backend or "auto"
+    skip_reason = _should_skip_window_wait(app_id, backend=effective_backend, map_path=map_path)
+    if skip_reason:
+        return {
+            "ok": True,
+            "app_id": app_id,
+            "focused": None,
+            "skipped": True,
+            "note": skip_reason,
+        }
+
     from .application.services import control as control_svc
 
     hints = ide_hints_for(app_id)
@@ -68,7 +114,7 @@ def wait_for_app_window(
         try:
             control_svc.control_focus(
                 display=display,
-                backend="auto",
+                backend=effective_backend if effective_backend != "auto" else "auto",
                 app=hints["app"],
                 window_title=hints["window_title_contains"],
                 role="window",
@@ -153,10 +199,20 @@ def _find_first_selector(
         return None, found
 
     last_error: dict[str, Any] | None = None
+    find_timeout = _ide_find_timeout_seconds()
     for spec in selectors:
         payload = {**base, **spec}
         try:
-            found = control_svc.controls_find(**payload)
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                future = pool.submit(control_svc.controls_find, **payload)
+                found = future.result(timeout=find_timeout)
+        except FuturesTimeoutError:
+            last_error = {
+                "ok": False,
+                "error": f"controls_find timed out after {find_timeout:.0f}s",
+                "selector": spec,
+            }
+            continue
         except Exception as exc:
             last_error = {"ok": False, "error": str(exc), "selector": spec}
             continue
@@ -205,25 +261,35 @@ def _handle_wait_window(
 ) -> str | None:
     focus_error: str | None = None
     effective_timeout = wait_timeout if (not resolved_map or open_app) else min(wait_timeout, 3.0)
+    wait_result = wait_for_app_window(
+        app.app_id,
+        display=display,
+        timeout_seconds=effective_timeout,
+        backend=app.preferred_backend,
+        map_path=resolved_map,
+    )
+    result["wait_window"] = wait_result
+    if wait_result.get("skipped"):
+        return None
     if not resolved_map:
-        wait_result = wait_for_app_window(app.app_id, display=display, timeout_seconds=effective_timeout)
-        result["wait_window"] = wait_result
         if not wait_result.get("ok"):
             focus_error = str(wait_result.get("error") or "window not ready")
-            result["next"] = (
-                f"PyCharm/Cursor on native Wayland is invisible to AT-SPI. "
-                f"Try: vdisplay ide prompt --ide {app.app_id} --open "
-                f"or build a GUI map: vdisplay map build -o maps/{app.app_id}-chat.json"
-            )
-    else:
-        wait_result = wait_for_app_window(
-            app.app_id, display=display, timeout_seconds=effective_timeout
-        )
-        result["wait_window"] = wait_result
-        if not wait_result.get("ok"):
-            focus_error = str(wait_result.get("error") or "window not ready")
-            result["wait_window"]["note"] = "continuing with GUI map (AT-SPI window focus not required)"
+            result["next"] = _wayland_ide_next_steps(app)
+        return focus_error
+    if not wait_result.get("ok"):
+        focus_error = str(wait_result.get("error") or "window not ready")
+        result["wait_window"]["note"] = "continuing with GUI map (AT-SPI window focus not required)"
     return focus_error
+
+
+def _wayland_ide_next_steps(app: Any) -> list[str]:
+    steps = [
+        f"Try XWayland: vdisplay app open {app.app_id} --variant xwayland",
+        f"Build GUI map: vdisplay map build -o maps/{app.app_id}-chat.json",
+        "For vision backend: vdisplay-agent serve && vdisplay agent screencast start",
+        "Prefer koru plugin for native Wayland Electron chat",
+    ]
+    return steps
 
 
 def _handle_focus_window(
@@ -307,6 +373,116 @@ def _handle_submit(
     return submitted, submit_result
 
 
+def _build_map_missing_result(
+    app: Any,
+    text: str,
+    effective_backend: str,
+    map_path: str,
+) -> dict[str, Any]:
+    return {
+        "ok": False,
+        "app_id": app.app_id,
+        "backend": effective_backend,
+        "chars": len(text),
+        "submit": False,
+        "map_path": None,
+        "map_path_requested": map_path,
+        "message": f"map file not found or invalid: {map_path}",
+        "hint": "Build the map first: vdisplay map build --monitor DP-1 --crop-bounds X,Y,W,H -o maps/cursor-chat.json",
+        "next": [
+            "Install OCR deps: pip install pytesseract Pillow && sudo apt install tesseract-ocr",
+            "Ensure screencast is active: vdisplay agent screencast status",
+            f"See template: {map_manifest_path(app.app_id) or 'maps/templates/cursor-chat.manifest.json'}",
+        ],
+    }
+
+
+def _build_no_selector_result(
+    app: Any,
+    focus_error: str | None,
+    resolved_map: str | None,
+    map_manifest: str | None,
+    open_app: bool,
+    found: dict[str, Any] | None,
+    target_candidates: tuple[str, ...],
+) -> dict[str, Any]:
+    next_steps: list[str] = []
+    if not resolved_map and map_manifest:
+        next_steps.append(
+            f"Build GUI map: vdisplay map build -o maps/{app.app_id}-chat.json (template: {map_manifest})"
+        )
+    if _is_wayland_session() and app.preferred_backend == "vision" and not resolved_map:
+        next_steps.extend(_wayland_ide_next_steps(app))
+    if not open_app:
+        next_steps.append(f"Launch IDE first: vdisplay app open {app.app_id}")
+    if resolved_map:
+        next_steps.append(
+            f"Retarget map element: vdisplay map show {resolved_map} | jq '.elements | keys'"
+        )
+    return {
+        "ok": False,
+        "message": (
+            f"no chat input matched for app={app.app_id} (app={app.app_hint!r}); "
+            f"focus_error={focus_error or '-'}"
+        ),
+        "focus_error": focus_error,
+        "diagnostics": found,
+        "map_targets_tried": list(target_candidates),
+        "hint": app.notes or "build a GUI map or use koru plugin for Electron chat",
+        "next": next_steps,
+    }
+
+
+def _build_write_kwargs(
+    selector: dict[str, str],
+    found: dict[str, Any] | None,
+    *,
+    display: str | None,
+    backend: str,
+    value: str,
+    verify: bool,
+    resolved_map: str | None,
+    app: Any,
+) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {
+        "display": display,
+        "backend": backend,
+        "value": value,
+        "verify": verify,
+    }
+    if resolved_map and selector.get("map_path"):
+        kwargs.update(
+            {
+                "map_path": selector["map_path"],
+                "map_scope": selector.get("map_scope"),
+                "map_target": selector.get("map_target"),
+            }
+        )
+    else:
+        selector_payload = {key: value for key, value in selector.items() if key != "backend"}
+        kwargs.update(
+            {
+                "app": app.app_hint,
+                "window_title": app.window_title_contains,
+                **selector_payload,
+            }
+        )
+    selected = (found or {}).get("selected") if isinstance(found, dict) else None
+    if isinstance(selected, dict) and selected.get("id"):
+        kwargs["provider_ref"] = selected["id"]
+    return kwargs
+
+
+def _build_set_value_failure_result(
+    result: dict[str, Any],
+    message: str,
+    selector: dict[str, str],
+    focus_error: str | None,
+) -> dict[str, Any]:
+    result.update({"message": message, "selector": selector, "focus_error": focus_error})
+    return result
+
+
 def send_ide_prompt(
     *,
     app_id: str,
@@ -328,6 +504,9 @@ def send_ide_prompt(
     app = get_desktop_app(app_id)
     effective_backend = backend or app.preferred_backend or "auto"
     resolved_map = resolve_map_path(app_id, map_path)
+    if map_path and resolved_map is None:
+        return _build_map_missing_result(app, text, effective_backend, map_path)
+
     map_manifest = map_manifest_path(app_id)
     target_candidates = map_input_target_candidates(app_id, map_target)
     result: dict[str, Any] = {
@@ -352,7 +531,7 @@ def send_ide_prompt(
 
     selector, found = _find_first_selector(
         app_id=app.app_id,
-        selectors=chat_selectors_for(app.app_id),
+        selectors=prompt_chat_selectors_for(app.app_id, backend=effective_backend, map_path=resolved_map),
         display=display,
         backend=effective_backend,
         map_path=resolved_map,
@@ -362,83 +541,36 @@ def send_ide_prompt(
     )
 
     if selector is None:
-        next_steps = []
-        if not resolved_map and map_manifest:
-            next_steps.append(
-                f"Build GUI map: vdisplay map build -o maps/{app.app_id}-chat.json (template: {map_manifest})"
-            )
-        if not open_app:
-            next_steps.append(f"Launch IDE first: vdisplay app open {app.app_id}")
-        if resolved_map:
-            next_steps.append(
-                f"Retarget map element: vdisplay map show {resolved_map} | jq '.elements | keys'"
-            )
         result.update(
-            {
-                "ok": False,
-                "message": (
-                    f"no chat input matched for app={app.app_id} (app={app.app_hint!r}); "
-                    f"focus_error={focus_error or '-'}"
-                ),
-                "focus_error": focus_error,
-                "diagnostics": found,
-                "map_targets_tried": list(target_candidates),
-                "hint": app.notes or "build a GUI map or use koru plugin for Electron chat",
-                "next": next_steps,
-            }
+            _build_no_selector_result(
+                app, focus_error, resolved_map, map_manifest, open_app, found, target_candidates
+            )
         )
         return result
 
-    write_kwargs: dict[str, Any] = {
-        "display": display,
-        "backend": effective_backend,
-        "value": text,
-        "verify": verify,
-    }
-    if resolved_map and selector.get("map_path"):
-        write_kwargs.update(
-            {
-                "map_path": selector["map_path"],
-                "map_scope": selector.get("map_scope"),
-                "map_target": selector.get("map_target"),
-            }
-        )
-    else:
-        selector_payload = {key: value for key, value in selector.items() if key != "backend"}
-        write_kwargs.update(
-            {
-                "app": app.app_hint,
-                "window_title": app.window_title_contains,
-                **selector_payload,
-            }
-        )
-
-    selected = (found or {}).get("selected") if isinstance(found, dict) else None
-    if isinstance(selected, dict) and selected.get("id"):
-        write_kwargs["provider_ref"] = selected["id"]
+    write_kwargs = _build_write_kwargs(
+        selector,
+        found,
+        display=display,
+        backend=effective_backend,
+        value=text,
+        verify=verify,
+        resolved_map=resolved_map,
+        app=app,
+    )
 
     try:
         typed = control_svc.control_set_value(**write_kwargs)
     except Exception as exc:
-        result.update(
-            {
-                "message": str(exc),
-                "selector": selector,
-                "focus_error": focus_error,
-            }
-        )
-        return result
+        return _build_set_value_failure_result(result, str(exc), selector, focus_error)
 
     if not typed.get("ok", True):
-        result.update(
-            {
-                "message": str(typed.get("error") or typed.get("message") or "set_value failed"),
-                "selector": selector,
-                "typed": typed,
-                "focus_error": focus_error,
-            }
+        return _build_set_value_failure_result(
+            result,
+            str(typed.get("error") or typed.get("message") or "set_value failed"),
+            selector,
+            focus_error,
         )
-        return result
 
     submitted = False
     submit_result: dict[str, Any] | None = None

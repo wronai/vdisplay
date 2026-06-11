@@ -78,28 +78,30 @@ def _handle_backend_score_updated(event: DomainEvent, scores: dict[str, dict[str
     bucket["score"] = int(round(100 * bucket["success"] / total)) if total else 50
 
 
+def _process_verification_event(scores: dict[str, dict[str, dict[str, int]]], event: DomainEvent) -> None:
+    profile, provider, verify = _routing_from_event(event)
+    if not profile or not provider:
+        return
+    if event.event_type == "ControlActionPlanned" and verify is None:
+        return
+    bucket = _score_bucket(scores, profile=profile, provider=provider)
+    verified = verify.get("verified") if verify else None
+    ok = bool(event.body.get("ok", True))
+    if event.event_type == "ControlVerificationPassed" or (ok and verified is not False):
+        _apply_outcome(bucket, success=True)
+    elif event.event_type == "ControlVerificationFailed" or not ok or verified is False:
+        _apply_outcome(bucket, success=False)
+
+
 def build_backend_scores(events: list[DomainEvent]) -> dict[str, Any]:
     scores: dict[str, dict[str, dict[str, int]]] = {}
     for event in events:
         if event.event_type not in _SCORE_EVENT_TYPES:
             continue
-
         if event.event_type == "BackendScoreUpdated":
             _handle_backend_score_updated(event, scores)
             continue
-
-        profile, provider, verify = _routing_from_event(event)
-        if not profile or not provider:
-            continue
-        if event.event_type == "ControlActionPlanned" and verify is None:
-            continue
-        bucket = _score_bucket(scores, profile=profile, provider=provider)
-        verified = verify.get("verified") if verify else None
-        ok = bool(event.body.get("ok", True))
-        if event.event_type == "ControlVerificationPassed" or (ok and verified is not False):
-            _apply_outcome(bucket, success=True)
-        elif event.event_type == "ControlVerificationFailed" or not ok or verified is False:
-            _apply_outcome(bucket, success=False)
+        _process_verification_event(scores, event)
     return scores
 
 

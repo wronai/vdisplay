@@ -13,6 +13,8 @@ class CommandVerb(StrEnum):
     CAPABILITIES = "CAPABILITIES"
     VALIDATE = "VALIDATE"
     SCREENSHOT = "SCREENSHOT"
+    SCREENCAST_START = "SCREENCAST_START"
+    SCREENCAST_STOP = "SCREENCAST_STOP"
     VIRTUAL_START = "VIRTUAL_START"
     VIRTUAL_STOP = "VIRTUAL_STOP"
     TERMINAL_OPEN = "TERMINAL_OPEN"
@@ -48,6 +50,8 @@ QUERY_VERBS = frozenset(
 COMMAND_VERBS = frozenset(
     {
         CommandVerb.SCREENSHOT,
+        CommandVerb.SCREENCAST_START,
+        CommandVerb.SCREENCAST_STOP,
         CommandVerb.VIRTUAL_START,
         CommandVerb.VIRTUAL_STOP,
         CommandVerb.TERMINAL_OPEN,

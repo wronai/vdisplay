@@ -45,10 +45,23 @@ def test_provider_uses_registry_session(registry: BrowserSessionRegistry) -> Non
     assert len(matches) == 1
 
 
+def test_browser_registry_reuses_existing_session(registry: BrowserSessionRegistry) -> None:
+    page = FakePage()
+    first = registry.open_mock(page, url="https://example.test/a", session_id="browser-reuse")
+    second = registry.open("https://example.test/b", session_id="browser-reuse")
+    assert second is first
+    assert second.session_id == "browser-reuse"
+
+
 def test_browser_session_scoring_ineligible_without_open_session(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.control.scoring import rank_providers
 
     monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "ok"))
+    monkeypatch.setattr("vdisplay.control.browser_session_store.session_available", lambda _sid: False)
+    monkeypatch.setattr(
+        "vdisplay.control.providers.browser_session.default_registry",
+        lambda: type("EmptyRegistry", (), {"list_ids": lambda self: [], "get": lambda self, _sid: None})(),
+    )
     ranked, _ = rank_providers(selector=ControlSelector(dom_css="#go"))
     browser = next(item for item in ranked if item.provider == "browser")
     assert browser.eligible is False

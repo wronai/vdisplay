@@ -10,6 +10,7 @@ from vdisplay.capture.host import capture_all_monitors, capture_host_to_file
 from vdisplay.exceptions import VDisplayError
 
 from ..session_store import SessionStore
+from .screencast_recovery import is_recoverable_screencast_error, try_recover_screencast
 
 
 def capture_frame(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
@@ -86,10 +87,22 @@ def _capture_host(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
             screencast_session=store.screencast,
             region=region,
         )
-    except VDisplayError:
+    except VDisplayError as exc:
         if store.screencast is not None and not store.screencast.is_ready:
             store.screencast = None
-        raise
+        if is_recoverable_screencast_error(exc) and not body.get("_screencast_recovered"):
+            if try_recover_screencast(store, interactive_preferred=False):
+                return _capture_host(store, {**body, "_screencast_recovered": True})
+            from .screencast_recovery import screencast_recovery_cooldown_remaining
+
+            cooldown = screencast_recovery_cooldown_remaining()
+            hint = (
+                "screencast auto-start failed — run once: vdisplay agent screencast start "
+                "(after agent restart if you see DBus LimitsExceeded / max_match_rules)"
+            )
+            if cooldown > 0:
+                hint += f" (next auto-retry in {int(cooldown)}s)"
+            raise VDisplayError(f"{exc} — {hint}") from exc
     png = Path(meta["path"]).read_bytes()
     meta["ok"] = True
     meta["png_base64"] = base64.b64encode(png).decode("ascii")

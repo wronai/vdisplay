@@ -1,132 +1,126 @@
-# code2llm | 303f 42138L | python:239,json:25,toml:11,shell:7,yaml:5,yml:5,proto:4,txt:2 | 2026-06-10
-# generated in 0.16s
-# CC̅=3.9 | critical:21/1783 | dups:0 | cycles:0
+# code2llm | 334f 46426L | python:269,json:25,toml:11,shell:7,yaml:6,yml:5,proto:4,txt:2 | 2026-06-11
+# generated in 0.15s
+# CC̅=3.9 | critical:14/2007 | dups:0 | cycles:0
 
-HEALTH[20]:
-  🟡 CC    _nl_from_imgl_scene CC=17 (limit:15)
-  🟡 CC    build_backend_scores CC=15 (limit:15)
-  🟡 CC    _apply_drift_payload CC=15 (limit:15)
-  🟡 CC    build_map_health CC=38 (limit:15)
-  🟡 CC    context_to_vql_program CC=34 (limit:15)
+HEALTH[14]:
+  🟡 CC    send_ide_prompt CC=15 (limit:15)
+  🟡 CC    _open CC=20 (limit:15)
+  🟡 CC    execute CC=15 (limit:15)
+  🟡 CC    _execute_one CC=19 (limit:15)
   🟡 CC    _enrich_render_intent CC=28 (limit:15)
-  🟡 CC    map_drift_blocks_cache CC=20 (limit:15)
-  🟡 CC    ocr_boxes_from_cached_context CC=16 (limit:15)
   🟡 CC    observe_screen CC=22 (limit:15)
-  🟡 CC    attach_imgl_to_context CC=15 (limit:15)
-  🟡 CC    ocr_boxes_from_imgl CC=15 (limit:15)
   🟡 CC    dump_tree CC=22 (limit:15)
-  🟡 CC    send_ide_prompt CC=27 (limit:15)
-  🟡 CC    _run_ocr CC=23 (limit:15)
-  🟡 CC    render_readme CC=31 (limit:15)
-  🟡 CC    _build_control_diagnostics CC=17 (limit:15)
-  🟡 CC    run_hmi_watch CC=39 (limit:15)
-  🟡 CC    _run CC=15 (limit:15)
+  🟡 CC    global_region_to_capture_local CC=20 (limit:15)
+  🟡 CC    screencast_stream_region_for_monitor CC=15 (limit:15)
+  🟡 CC    apply_step_verify_drift CC=19 (limit:15)
+  🟡 CC    _task_from_mapping CC=22 (limit:15)
+  🟡 CC    sample_pointer CC=16 (limit:15)
   🟡 CC    _run CC=18 (limit:15)
-  🟡 CC    primary_label CC=15 (limit:15)
+  🟡 CC    _drift_recommends_refresh CC=16 (limit:15)
 
 REFACTOR[1]:
-  1. split 20 high-CC methods  (CC>15)
+  1. split 14 high-CC methods  (CC>15)
 
-PIPELINES[761]:
-  [1] Src [main]: main → create_server
+PIPELINES[794]:
+  [1] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
       PURITY: 100% pure
-  [2] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
+  [2] Src [main]: main → _main_legacy → execute_dsl_line → dispatch → ...(5 more)
       PURITY: 100% pure
-  [3] Src [main]: main → _main_legacy → execute_dsl_line → dispatch → ...(5 more)
+  [3] Src [_parse_windows]: _parse_windows → _with_display → pick_flag
       PURITY: 100% pure
-  [4] Src [_parse_windows]: _parse_windows → _with_display → pick_flag
+  [4] Src [_parse_screenshot]: _parse_screenshot → pick_flag
       PURITY: 100% pure
-  [5] Src [_parse_screenshot]: _parse_screenshot → pick_flag
+  [5] Src [_parse_virtual_start]: _parse_virtual_start → pick_flag
       PURITY: 100% pure
-  [6] Src [_parse_virtual_start]: _parse_virtual_start → pick_flag
+  [6] Src [_parse_launch]: _parse_launch → pick_flag
       PURITY: 100% pure
-  [7] Src [_parse_launch]: _parse_launch → pick_flag
+  [7] Src [_parse_mirror]: _parse_mirror → pick_flag
       PURITY: 100% pure
-  [8] Src [_parse_mirror]: _parse_mirror → pick_flag
+  [8] Src [_parse_adopt]: _parse_adopt → pick_flag
       PURITY: 100% pure
-  [9] Src [_parse_adopt]: _parse_adopt → pick_flag
+  [9] Src [_parse_controls_list]: _parse_controls_list → _parse_control_common → _with_display → pick_flag
       PURITY: 100% pure
-  [10] Src [_parse_controls_list]: _parse_controls_list → _parse_control_common → _with_display → pick_flag
+  [10] Src [_parse_controls_find]: _parse_controls_find → _parse_control_common → _with_display → pick_flag
       PURITY: 100% pure
-  [11] Src [_parse_controls_find]: _parse_controls_find → _parse_control_common → _with_display → pick_flag
+  [11] Src [_parse_control_click]: _parse_control_click → _parse_control_common → _with_display → pick_flag
       PURITY: 100% pure
-  [12] Src [_parse_control_click]: _parse_control_click → _parse_control_common → _with_display → pick_flag
+  [12] Src [_parse_control_focus]: _parse_control_focus → _parse_control_common → _with_display → pick_flag
       PURITY: 100% pure
-  [13] Src [_parse_control_focus]: _parse_control_focus → _parse_control_common → _with_display → pick_flag
+  [13] Src [_parse_control_set_value]: _parse_control_set_value → _parse_control_common → _with_display → pick_flag
       PURITY: 100% pure
-  [14] Src [_parse_control_set_value]: _parse_control_set_value → _parse_control_common → _with_display → pick_flag
+  [14] Src [_parse_diagnose_control]: _parse_diagnose_control → _with_display → pick_flag
       PURITY: 100% pure
-  [15] Src [_parse_diagnose_control]: _parse_diagnose_control → _with_display → pick_flag
+  [15] Src [_parse_browser_open]: _parse_browser_open → pick_flag
       PURITY: 100% pure
-  [16] Src [_parse_browser_open]: _parse_browser_open → pick_flag
+  [16] Src [_parse_terminal_open]: _parse_terminal_open → pick_flag
       PURITY: 100% pure
-  [17] Src [_parse_terminal_open]: _parse_terminal_open → pick_flag
+  [17] Src [_parse_release]: _parse_release → pick_flag
       PURITY: 100% pure
-  [18] Src [_parse_release]: _parse_release → pick_flag
+  [18] Src [_screenshot_to_text]: _screenshot_to_text
       PURITY: 100% pure
-  [19] Src [_screenshot_to_text]: _screenshot_to_text
+  [19] Src [_mirror_to_text]: _mirror_to_text
       PURITY: 100% pure
-  [20] Src [_mirror_to_text]: _mirror_to_text
+  [20] Src [_controls_list_to_text]: _controls_list_to_text
       PURITY: 100% pure
-  [21] Src [_controls_list_to_text]: _controls_list_to_text
+  [21] Src [_browser_open_to_text]: _browser_open_to_text
       PURITY: 100% pure
-  [22] Src [_browser_open_to_text]: _browser_open_to_text
+  [22] Src [_terminal_open_to_text]: _terminal_open_to_text
       PURITY: 100% pure
-  [23] Src [_terminal_open_to_text]: _terminal_open_to_text
+  [23] Src [_control_to_text]: _control_to_text
       PURITY: 100% pure
-  [24] Src [_control_to_text]: _control_to_text
+  [24] Src [handle_screenshot]: handle_screenshot → _ok
       PURITY: 100% pure
-  [25] Src [handle_screenshot]: handle_screenshot → _ok
+  [25] Src [handle_virtual_start]: handle_virtual_start → _ok
       PURITY: 100% pure
-  [26] Src [handle_virtual_start]: handle_virtual_start → _ok
+  [26] Src [handle_mirror]: handle_mirror → resolve_host_display → _display_socket_exists
       PURITY: 100% pure
-  [27] Src [handle_mirror]: handle_mirror → resolve_host_display → _display_socket_exists
+  [27] Src [handle_adopt]: handle_adopt → _ok
       PURITY: 100% pure
-  [28] Src [handle_adopt]: handle_adopt → _ok
+  [28] Src [handle_release]: handle_release → _ok
       PURITY: 100% pure
-  [29] Src [handle_release]: handle_release → _ok
+  [29] Src [handle_health]: handle_health
       PURITY: 100% pure
-  [30] Src [handle_health]: handle_health
+  [30] Src [handle_info]: handle_info
       PURITY: 100% pure
-  [31] Src [handle_info]: handle_info
+  [31] Src [handle_outputs]: handle_outputs → handle_monitors
       PURITY: 100% pure
-  [32] Src [handle_outputs]: handle_outputs → handle_monitors
+  [32] Src [handle_all]: handle_all
       PURITY: 100% pure
-  [33] Src [handle_all]: handle_all
+  [33] Src [handle_capabilities]: handle_capabilities
       PURITY: 100% pure
-  [34] Src [handle_capabilities]: handle_capabilities
+  [34] Src [handle_validate]: handle_validate
       PURITY: 100% pure
-  [35] Src [handle_validate]: handle_validate
+  [35] Src [main]: main → dispatch → _dispatch_legacy → validate_command_dict → ...(3 more)
       PURITY: 100% pure
-  [36] Src [main]: main → dispatch → _dispatch_legacy → validate_command_dict → ...(3 more)
+  [36] Src [main]: main → uri_to_dsl
       PURITY: 100% pure
-  [37] Src [main]: main → uri_to_dsl
+  [37] Src [main]: main → create_app → resolve_agent_url → _probe_default_agent → ...(2 more)
       PURITY: 100% pure
-  [38] Src [main]: main → create_app → resolve_agent_url → _probe_default_agent → ...(2 more)
+  [38] Src [main]: main → run_nl_prompt → nl_to_dsl → parse_display
       PURITY: 100% pure
-  [39] Src [main]: main → run_nl_prompt → nl_to_dsl → parse_display
+  [39] Src [parse_display]: parse_display
       PURITY: 100% pure
-  [40] Src [parse_display]: parse_display
+  [40] Src [platform_capabilities]: platform_capabilities
       PURITY: 100% pure
-  [41] Src [platform_capabilities]: platform_capabilities
+  [41] Src [diagnostics]: diagnostics
       PURITY: 100% pure
-  [42] Src [diagnostics]: diagnostics
+  [42] Src [outputs]: outputs
       PURITY: 100% pure
-  [43] Src [outputs]: outputs
+  [43] Src [start_virtual]: start_virtual
       PURITY: 100% pure
-  [44] Src [start_virtual]: start_virtual
+  [44] Src [start_mirror]: start_mirror
       PURITY: 100% pure
-  [45] Src [start_mirror]: start_mirror
+  [45] Src [start_relay]: start_relay
       PURITY: 100% pure
-  [46] Src [start_relay]: start_relay
+  [46] Src [start_terminal]: start_terminal
       PURITY: 100% pure
-  [47] Src [start_terminal]: start_terminal
+  [47] Src [start_browser]: start_browser
       PURITY: 100% pure
-  [48] Src [start_browser]: start_browser
+  [48] Src [start_screencast]: start_screencast
       PURITY: 100% pure
-  [49] Src [start_screencast]: start_screencast
+  [49] Src [stop_screencast]: stop_screencast
       PURITY: 100% pure
-  [50] Src [stop_screencast]: stop_screencast
+  [50] Src [screencast_status]: screencast_status
       PURITY: 100% pure
 
 LAYERS:
@@ -137,67 +131,73 @@ LAYERS:
   │ scratch_atspi               18L  0C    0m  CC=0.0    ←0
   │
   src/                            CC̄=4.0    ←in:0  →out:0
-  │ !! session_recorder          1018L  3C   46m  CC=31     ←6
-  │ !! control                    991L  0C   28m  CC=17     ←0
+  │ !! control                   1010L  0C   30m  CC=14     ←0
+  │ !! portal_screencast          982L  1C   44m  CC=15     ←8
   │ !! scoring                    811L  2C   40m  CC=12     ←6
-  │ !! portal_screencast          782L  1C   34m  CC=11     ←6
+  │ !! session_recorder           763L  3C   34m  CC=14     ←6
   │ !! provider                   715L  1C   37m  CC=12     ←0
-  │ !! verifier                   590L  3C   24m  CC=23     ←1
-  │ !! host                       555L  0C   15m  CC=14     ←6
+  │ !! verifier                   619L  3C   30m  CC=13     ←1
+  │ !! ide_prompt                 601L  0C   17m  CC=15     ←12
   │ !! gui_map_diff               500L  3C   18m  CC=14     ←2
   │ verify                     498L  0C   21m  CC=12     ←1
   │ linux_x11_relay            478L  2C   24m  CC=12     ←0
   │ descriptors                464L  5C   11m  CC=14     ←10
-  │ !! ide_prompt                 456L  0C    9m  CC=27     ←2
-  │ desktop_apps               435L  2C   24m  CC=9      ←3
+  │ desktop_apps               463L  2C   25m  CC=9      ←3
+  │ host                       440L  0C   14m  CC=13     ←7
   │ events                     429L  1C   17m  CC=14     ←3
   │ atspi_impl                 413L  0C   19m  CC=8      ←1
-  │ !! pointer                    389L  1C   14m  CC=31     ←1
+  │ screencast_crop            400L  0C   13m  CC=9      ←1
+  │ browser_playwright         380L  3C   36m  CC=14     ←2
   │ vision_ocr                 365L  1C   18m  CC=13     ←7
-  │ discovery                  363L  0C   14m  CC=11     ←23
+  │ discovery                  364L  0C   14m  CC=11     ←25
   │ vision_preview             363L  2C   16m  CC=10     ←2
   │ selector                   347L  1C   18m  CC=14     ←9
-  │ browser_playwright         339L  3C   30m  CC=14     ←2
-  │ session                    326L  0C   12m  CC=4      ←0
-  │ linux_xwd                  320L  0C   21m  CC=12     ←15
+  │ !! tasks                      335L  1C   21m  CC=22     ←2
+  │ session                    330L  0C   12m  CC=4      ←0
+  │ replay                     330L  3C   12m  CC=14     ←2
+  │ linux_xwd                  320L  0C   21m  CC=12     ←10
   │ parsers                    320L  0C   12m  CC=12     ←1
+  │ !! vql_bridge                 320L  0C   15m  CC=28     ←2
   │ map                        313L  0C    9m  CC=10     ←0
-  │ screenshot_verify          300L  0C   11m  CC=14     ←6
+  │ screenshot_verify          303L  0C   10m  CC=13     ←7
+  │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
-  │ !! keyboard                   297L  2C   10m  CC=15     ←0
+  │ !! browser_session            297L  2C   16m  CC=20     ←4
+  │ pointer_probes             297L  0C   12m  CC=13     ←7
+  │ watch                      293L  0C   10m  CC=8      ←1
   │ local                      291L  0C   21m  CC=4      ←1
-  │ !! vql_bridge                 284L  0C    8m  CC=34     ←2
+  │ sampler_loop               284L  3C   13m  CC=8      ←1
   │ vision_template            280L  1C   11m  CC=11     ←5
-  │ sampler_loop               280L  3C   12m  CC=10     ←1
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ ax_impl                    269L  4C   27m  CC=10     ←2
+  │ !! coordinate_map             263L  0C    9m  CC=20     ←4
   │ terminal_screen            260L  3C   14m  CC=7      ←3
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
   │ session                    257L  0C    8m  CC=10     ←2
-  │ browser_session            246L  2C   13m  CC=14     ←3
+  │ agent                      251L  0C   23m  CC=6      ←1
+  │ atspi                      246L  1C   15m  CC=10     ←0
   │ codec                      246L  5C   16m  CC=14     ←1
   │ gui_map                    245L  6C   16m  CC=9      ←6
+  │ img2nl_enrich              245L  0C   13m  CC=14     ←0
   │ gui_map_build              243L  0C   11m  CC=9      ←3
-  │ agent                      243L  0C   22m  CC=6      ←1
   │ policy                     242L  1C    8m  CC=7      ←2
-  │ atspi                      240L  1C   15m  CC=8      ←0
   │ discovery                  239L  0C   11m  CC=4      ←0
-  │ !! img2nl_enrich              237L  0C   11m  CC=17     ←0
   │ vision_llm                 236L  1C   12m  CC=12     ←2
+  │ !! pointer_sampling           231L  0C    8m  CC=16     ←1
   │ terminal_session           227L  2C   16m  CC=7      ←6
   │ portal                     221L  1C    7m  CC=11     ←1
-  │ coords                     219L  0C    8m  CC=12     ←1
+  │ !! mouse                      217L  2C   13m  CC=18     ←1
   │ session                    216L  3C   11m  CC=11     ←2
+  │ backend_scores             216L  0C   14m  CC=12     ←3
   │ models                     214L  3C    7m  CC=6      ←0
-  │ !! backend_scores             214L  0C   13m  CC=15     ←3
-  │ !! observe_cache              213L  0C   11m  CC=20     ←2
-  │ !! mouse                      211L  2C   10m  CC=18     ←0
+  │ !! observe_cache              214L  0C   13m  CC=16     ←2
   │ client_api                 210L  1C   26m  CC=4      ←0
-  │ query                      209L  0C    6m  CC=9      ←4
-  │ !! watch                      207L  0C    7m  CC=39     ←1
+  │ query                      209L  0C    6m  CC=9      ←5
+  │ executor                   203L  1C    7m  CC=11     ←1
   │ browser_session_store      196L  1C   14m  CC=7      ←2
   │ api                        193L  3C   32m  CC=6      ←4
+  │ !! runner                     192L  1C    6m  CC=19     ←1
   │ models                     187L  9C    7m  CC=4      ←0
   │ capture                    182L  0C    5m  CC=9      ←1
   │ retry_policy               181L  2C    9m  CC=10     ←1
@@ -206,86 +206,104 @@ LAYERS:
   │ vision_backend             171L  0C    7m  CC=7      ←1
   │ uia                        169L  1C   10m  CC=6      ←0
   │ ax                         169L  1C   10m  CC=6      ←0
+  │ agent                      167L  0C    6m  CC=7      ←0
+  │ control                    166L  0C   10m  CC=5      ←0
+  │ session_recorder_diagnostics   165L  0C   11m  CC=13     ←3
   │ linux_xvfb                 164L  1C   14m  CC=8      ←0
   │ contracts                  164L  5C    7m  CC=4      ←1
   │ screen_context             164L  1C   10m  CC=12     ←1
   │ plugins                    163L  1C   11m  CC=8      ←6
-  │ control                    159L  0C   10m  CC=5      ←0
   │ nl                         158L  0C    8m  CC=14     ←3
   │ nlp                        158L  0C   14m  CC=10     ←2
   │ routing_semantics          158L  1C    8m  CC=7      ←4
-  │ agent                      155L  0C    6m  CC=5      ←0
+  │ !! pipeline                   151L  0C    6m  CC=22     ←2
   │ x11                        150L  1C   13m  CC=9      ←0
   │ terminal                   147L  1C   13m  CC=14     ←0
-  │ !! map_health                 147L  0C    4m  CC=38     ←1
+  │ screencast_stream_matching   146L  0C   13m  CC=8      ←1
   │ policy                     140L  1C    4m  CC=11     ←2
-  │ !! pipeline                   138L  0C    3m  CC=22     ←2
+  │ coordinate_rotation        140L  0C   12m  CC=11     ←0
+  │ !! map_health_handlers        139L  0C    8m  CC=19     ←1
   │ common                     137L  0C    9m  CC=2      ←10
+  │ session_recorder_readme    133L  0C    8m  CC=14     ←2
   │ sampler                    132L  0C    8m  CC=9      ←0
+  │ web_pointer                130L  0C    5m  CC=11     ←1
   │ client_routes              128L  0C    6m  CC=7      ←1
+  │ !! executor                   125L  0C    6m  CC=15     ←6
   │ session_context            124L  1C    8m  CC=6      ←6
+  │ imgl_bridge                122L  0C    7m  CC=12     ←4
   │ registry                   117L  1C   14m  CC=3      ←2
-  │ !! imgl_bridge                116L  0C    5m  CC=15     ←4
   │ ide                        115L  0C    2m  CC=8      ←0
   │ event_store                114L  1C   12m  CC=5      ←4
   │ linux_ydotool              114L  1C    9m  CC=8      ←0
+  │ runtime                    111L  1C    8m  CC=10     ←3
   │ relay                      110L  0C    3m  CC=5      ←0
   │ scan                       110L  0C    7m  CC=6      ←2
   │ gui_map_resolve            109L  0C    9m  CC=6      ←3
   │ sampler                    109L  1C    3m  CC=5      ←1
-  │ executor                   108L  0C    5m  CC=13     ←6
+  │ client_http                107L  1C    7m  CC=5      ←0
+  │ context                    106L  1C    6m  CC=14     ←1
   │ normalize                  103L  0C    7m  CC=14     ←1
   │ artifacts                  102L  0C    5m  CC=13     ←1
+  │ hmi                         99L  0C    2m  CC=7      ←0
+  │ screencast_stream_meta      99L  0C    6m  CC=12     ←3
   │ engine                      99L  0C    6m  CC=11     ←4
   │ map                         98L  0C    2m  CC=7      ←0
-  │ client_http                 96L  1C    7m  CC=5      ←0
   │ verify_policy               95L  0C    5m  CC=12     ←1
-  │ agent_config                93L  0C    9m  CC=6      ←16
+  │ auto                        94L  0C    2m  CC=8      ←0
+  │ agent_config                93L  0C    9m  CC=6      ←18
   │ observe                     92L  0C    2m  CC=9      ←0
   │ drm                         92L  1C    5m  CC=11     ←0
   │ gui_map_events              91L  0C    4m  CC=6      ←2
   │ payloads                    86L  0C    5m  CC=1      ←2
-  │ runtime                     86L  1C    7m  CC=6      ←3
   │ __init__                    83L  0C    2m  CC=5      ←2
   │ virtual                     81L  0C    2m  CC=6      ←0
   │ vision_disambiguate         78L  1C    6m  CC=4      ←4
   │ fbdev                       77L  1C    5m  CC=7      ←0
   │ capabilities                76L  1C    1m  CC=1      ←0
+  │ watch_format                74L  0C    7m  CC=11     ←1
   │ control                     72L  0C    4m  CC=3      ←3
   │ base                        69L  1C   10m  CC=2      ←0
   │ action_state                69L  2C    4m  CC=6      ←1
   │ __init__                    69L  0C    0m  CC=0.0    ←0
-  │ utils                       68L  0C    4m  CC=4      ←15
+  │ utils                       68L  0C    4m  CC=4      ←17
   │ mss                         68L  1C    5m  CC=8      ←0
   │ linux_xdotool               68L  1C    9m  CC=3      ←0
   │ engine                      67L  0C    3m  CC=2      ←1
-  │ hmi                         66L  0C    2m  CC=2      ←0
   │ base                        64L  1C   11m  CC=1      ←0
   │ verbs                       63L  1C    0m  CC=0.0    ←0
   │ app                         59L  0C    2m  CC=6      ←0
-  │ __init__                    56L  0C    1m  CC=2      ←1
+  │ __init__                    58L  0C    1m  CC=2      ←1
   │ browser_engine              55L  1C    4m  CC=3      ←5
   │ mirror                      53L  0C    2m  CC=3      ←0
   │ screenshot                  53L  0C    2m  CC=1      ←0
   │ diagnose                    53L  0C    2m  CC=5      ←0
+  │ pointer_types               52L  1C    3m  CC=11     ←0
+  │ browser_sync_executor       51L  0C    4m  CC=2      ←5
   │ info                        51L  0C    1m  CC=6      ←0
   │ client                      49L  1C    2m  CC=3      ←0
   │ all_cmd                     46L  0C    4m  CC=1      ←0
   │ __init__                    46L  0C    0m  CC=0.0    ←0
   │ rank                        43L  0C    5m  CC=9      ←1
+  │ map_health                  41L  0C    2m  CC=5      ←1
   │ errors                      39L  2C    2m  CC=4      ←5
   │ cli                         36L  0C    2m  CC=2      ←0
   │ x11                         35L  1C    4m  CC=4      ←0
-  │ cli_handlers                34L  0C    6m  CC=1      ←17
+  │ watch_seed                  35L  0C    1m  CC=7      ←0
+  │ cli_handlers                34L  0C    6m  CC=1      ←19
+  │ monitor_geometry            34L  0C    1m  CC=3      ←0
   │ mirror_stub                 34L  1C    4m  CC=1      ←0
+  │ pointer                     33L  0C    0m  CC=0.0    ←0
   │ __init__                    31L  0C    0m  CC=0.0    ←0
   │ agent_dispatch              30L  0C    2m  CC=2      ←0
+  │ coords                      30L  0C    1m  CC=4      ←0
   │ windows                     29L  0C    2m  CC=1      ←0
-  │ resolve                     27L  1C    4m  CC=4      ←1
+  │ capture                     27L  1C    1m  CC=4      ←0
+  │ resolve                     27L  1C    4m  CC=4      ←2
   │ models                      26L  2C    0m  CC=0.0    ←0
   │ action_bounds               24L  0C    2m  CC=2      ←3
   │ nlp                         23L  0C    2m  CC=2      ←0
-  │ timing                      23L  0C    2m  CC=2      ←2
+  │ timing                      23L  0C    2m  CC=2      ←3
+  │ __init__                    23L  0C    0m  CC=0.0    ←0
   │ base                        22L  2C    3m  CC=1      ←0
   │ monitors                    19L  0C    2m  CC=1      ←0
   │ commands                    19L  0C    0m  CC=0.0    ←0
@@ -295,8 +313,8 @@ LAYERS:
   │ info                        16L  0C    2m  CC=1      ←0
   │ verify_strategy             16L  1C    0m  CC=0.0    ←0
   │ session_kind                15L  1C    0m  CC=0.0    ←0
-  │ __init__                    15L  0C    0m  CC=0.0    ←0
   │ __init__                    14L  0C    1m  CC=2      ←0
+  │ __init__                    12L  0C    0m  CC=0.0    ←0
   │ __init__                    12L  0C    0m  CC=0.0    ←0
   │ __init__                    11L  0C    0m  CC=0.0    ←0
   │ __init__                    11L  0C    0m  CC=0.0    ←0
@@ -305,39 +323,44 @@ LAYERS:
   │ io                           7L  0C    1m  CC=1      ←0
   │ __init__                     6L  0C    0m  CC=0.0    ←0
   │ __init__                     5L  0C    0m  CC=0.0    ←0
+  │ __main__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     3L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
   │
-  packages/                       CC̄=2.9    ←in:0  →out:0
+  packages/                       CC̄=3.1    ←in:0  →out:0
   │ grammar                    406L  0C   30m  CC=11     ←2
-  │ sessions                   262L  0C   12m  CC=6      ←0
+  │ sessions                   313L  0C   13m  CC=6      ←0
+  │ sampler                    211L  0C    7m  CC=12     ←0
   │ task_store                 197L  3C   10m  CC=7      ←1
+  │ serve_port                 190L  0C   11m  CC=13     ←2
   │ tasks                      190L  0C   13m  CC=5      ←0
   │ control                    190L  0C    1m  CC=1      ←0
-  │ sampler                    183L  0C    7m  CC=12     ←0
+  │ web                        189L  0C    2m  CC=3      ←0
   │ session                    164L  0C    1m  CC=1      ←0
-  │ serve_port                 146L  0C    8m  CC=13     ←2
+  │ web_frame_cache            155L  0C    8m  CC=9      ←1
   │ runtime                    145L  1C   33m  CC=1      ←3
-  │ bus                        137L  0C    4m  CC=14     ←7
+  │ bus                        137L  0C    4m  CC=14     ←8
+  │ control                    131L  0C    9m  CC=4      ←0
+  │ capture                    127L  0C    7m  CC=10     ←0
   │ command                    120L  0C    7m  CC=3      ←0
-  │ control                    116L  0C    8m  CC=4      ←0
   │ query                      115L  0C    8m  CC=4      ←1
-  │ capture                     96L  0C    5m  CC=8      ←0
+  │ _audit_execute             103L  0C    3m  CC=8      ←3
   │ server                      95L  0C    1m  CC=1      ←0
-  │ _audit_execute              92L  0C    3m  CC=8      ←3
+  │ schemas                     91L  0C    0m  CC=0.0    ←0
   │ app                         87L  0C    1m  CC=2      ←3
-  │ envelope                    85L  0C    9m  CC=6      ←6
-  │ schemas                     84L  0C    0m  CC=0.0    ←0
-  │ health                      76L  0C    2m  CC=2      ←0
+  │ envelope                    85L  0C    9m  CC=6      ←7
+  │ health                      82L  0C    2m  CC=2      ←0
   │ cli                         70L  0C    3m  CC=10     ←0
   │ tasks                       69L  0C    1m  CC=1      ←0
   │ session_store               65L  2C    5m  CC=5      ←1
+  │ web_console                 62L  0C    2m  CC=2      ←0
   │ audit_context               57L  0C    3m  CC=7      ←3
   │ capabilities                56L  0C    2m  CC=5      ←0
   │ schema_registry             53L  0C    4m  CC=3      ←3
   │ windows                     52L  0C    1m  CC=1      ←0
+  │ web_replay                  49L  0C    2m  CC=9      ←0
   │ sampler                     47L  0C    1m  CC=1      ←0
   │ cli                         43L  0C    1m  CC=4      ←0
   │ cli                         41L  0C    1m  CC=7      ←0
@@ -357,7 +380,7 @@ LAYERS:
   │ result                      26L  1C    1m  CC=1      ←0
   │ controls_find.schema.json    25L  0C    0m  CC=0.0    ←0
   │ auth                        24L  0C    2m  CC=2      ←1
-  │ cli                         23L  0C    2m  CC=2      ←0
+  │ cli                         23L  0C    2m  CC=2      ←1
   │ outputs                     19L  0C    1m  CC=2      ←0
   │ pyproject.toml              19L  0C    0m  CC=0.0    ←0
   │ pyproject.toml              19L  0C    0m  CC=0.0    ←0
@@ -381,11 +404,13 @@ LAYERS:
   │ __init__                     5L  0C    0m  CC=0.0    ←0
   │ __init__                     4L  0C    0m  CC=0.0    ←0
   │ __init__                     1L  0C    0m  CC=0.0    ←0
+  │ __init__                     0L  0C    0m  CC=0.0    ←0
   │
   examples/                       CC̄=2.6    ←in:0  →out:0
   │ control_demo               172L  0C    5m  CC=6      ←0
   │ screenshot_meta            162L  0C    9m  CC=14     ←5
   │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
+  │ planfile-automation.yaml   141L  0C    0m  CC=0.0    ←0
   │ relay_demo                 137L  0C    3m  CC=11     ←0
   │ mirror_demo                 97L  0C    2m  CC=7      ←0
   │ provider                    94L  1C    5m  CC=3      ←1
@@ -426,7 +451,7 @@ LAYERS:
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
   │ tree.txt                   241L  0C    0m  CC=0.0    ←0
-  │ pyproject.toml             176L  0C    0m  CC=0.0    ←0
+  │ pyproject.toml             189L  0C    0m  CC=0.0    ←0
   │ koru.yaml                  141L  0C    0m  CC=0.0    ←0
   │ app.vql.json               127L  0C    0m  CC=0.0    ←0
   │ prefact.yaml                94L  0C    0m  CC=0.0    ←0
@@ -449,15 +474,17 @@ LAYERS:
   │ result.proto                16L  0C    0m  CC=0.0    ←0
   │ event.proto                 16L  0C    0m  CC=0.0    ←0
   │
+  ── zero ──
+     packages/vdisplay-agent/src/vdisplay_agent/static/__init__.py  0L
 
 COUPLING:
-                                              src.vdisplay      packages.vdisplay-agent        packages.dsl2vdisplay              examples.common       packages.rest2vdisplay        packages.mcp2vdisplay         examples.host-mirror          examples.host-relay   examples.control-plugin-ax  examples.control-plugin-uia            examples.ci-agent      examples.control-plugin    examples.headless-virtual        packages.cli2vdisplay        packages.nlp2vdisplay
-                 src.vdisplay                           ──                            5                            7                           ←1                            1                           ←4                           ←3                           ←3                           ←1                           ←1                                                         1                                                                                     ←1  hub
-      packages.vdisplay-agent                           32                           ──                                                                                      1                                                                                                                                                                                                                                                                                                    hub
-        packages.dsl2vdisplay                            6                                                        ──                                                        ←4                           ←2                                                                                                                                                                                                                                      ←2                               hub
+                                              src.vdisplay      packages.vdisplay-agent        packages.dsl2vdisplay              examples.common        packages.mcp2vdisplay       packages.rest2vdisplay         examples.host-mirror          examples.host-relay   examples.control-plugin-ax  examples.control-plugin-uia            examples.ci-agent      examples.control-plugin    examples.headless-virtual        packages.cli2vdisplay        packages.nlp2vdisplay
+                 src.vdisplay                           ──                            5                            9                           ←1                            1                            1                           ←3                           ←3                           ←1                           ←1                                                         1                                                                                     ←1  hub
+      packages.vdisplay-agent                           48                           ──                                                                                                                   1                                                                                                                                                                                                                                                                       hub
+        packages.dsl2vdisplay                            6                                                        ──                                                        ←2                           ←4                                                                                                                                                                                                                                      ←2                               hub
               examples.common                            1                                                                                     ──                                                                                     ←3                           ←3                                                                                     ←2                                                        ←2                                                            hub
-       packages.rest2vdisplay                            2                           ←1                            4                                                        ──                                                                                                                                                                                                                                                                                                  
-        packages.mcp2vdisplay                            4                                                         2                                                                                     ──                                                                                                                                                                                                                                                                    1
+        packages.mcp2vdisplay                            4                                                         2                                                        ──                                                                                                                                                                                                                                                                                                 1
+       packages.rest2vdisplay                            2                           ←1                            4                                                                                     ──                                                                                                                                                                                                                                                                     
          examples.host-mirror                            3                                                                                      3                                                                                     ──                                                                                                                                                                                                                                        
           examples.host-relay                            3                                                                                      3                                                                                                                  ──                                                                                                                                                                                                           
    examples.control-plugin-ax                            1                                                                                                                                                                                                                                      ──                            2                                                                                                                                                 
@@ -466,14 +493,14 @@ COUPLING:
       examples.control-plugin                            1                                                                                                                                                                                                                                                                                                                             ──                                                                                       
     examples.headless-virtual                                                                                                                   2                                                                                                                                                                                                                                                                   ──                                                          
         packages.cli2vdisplay                                                                                      2                                                                                                                                                                                                                                                                                                                             ──                             
-        packages.nlp2vdisplay                            1                                                                                                                                               ←1                                                                                                                                                                                                                                                                   ──
+        packages.nlp2vdisplay                            1                                                                                                                  ←1                                                                                                                                                                                                                                                                                                ──
   CYCLES: none
-  HUB: packages.dsl2vdisplay/ (fan-in=16)
-  HUB: src.vdisplay/ (fan-in=57)
-  HUB: examples.common/ (fan-in=10)
+  HUB: src.vdisplay/ (fan-in=73)
   HUB: packages.vdisplay-agent/ (fan-in=5)
-  SMELL: src.vdisplay/ fan-out=14 → split needed
-  SMELL: packages.vdisplay-agent/ fan-out=33 → split needed
+  HUB: examples.common/ (fan-in=10)
+  HUB: packages.dsl2vdisplay/ (fan-in=18)
+  SMELL: src.vdisplay/ fan-out=17 → split needed
+  SMELL: packages.vdisplay-agent/ fan-out=49 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

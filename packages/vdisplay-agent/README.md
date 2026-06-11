@@ -30,6 +30,8 @@ export VDISPLAY_AGENT_TOKEN=...   # optional
 
 See [docs/agent-broker.md](../../docs/agent-broker.md) for the full HTTP API, capture notes, adapter examples, and systemd user unit (`packaging/systemd/vdisplay-agent.user.service`).
 
+**Web console:** [docs/guides/web-console.md](../../docs/guides/web-console.md) — open `http://127.0.0.1:8765/web` for multi-monitor preview and automation controls.
+
 Quick test:
 
 ```bash

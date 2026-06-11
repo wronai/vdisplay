@@ -52,7 +52,7 @@ _ROTATION_DEGREES = {
     "right": 270,
 }
 
-
+from .monitor_geometry import parse_geometry_mm as _parse_geometry_mm
 def list_outputs(
     display: str | None = None,
     *,
@@ -229,6 +229,7 @@ def _merge_output_metadata(
             "connected": extra.get("connected", monitor.get("connected")),
             "primary": extra.get("primary", monitor.get("primary")),
         }
+        item.update(_parse_geometry_mm(str(monitor.get("geometry") or "")))
         merged.append(item)
     return merged
 

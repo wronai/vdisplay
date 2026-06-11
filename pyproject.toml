@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.20"
+version = "0.1.21"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -46,8 +46,17 @@ control = [
     "dsl2vdisplay",
     "nlp2vdisplay",
 ]
+auto = [
+    "PyYAML>=6.0",
+    "dsl2vdisplay",
+    "planfile>=0.1.103",
+]
 browser = [
     "playwright>=1.40",
+]
+e2e = [
+    "playwright>=1.40",
+    "pytest>=8.0",
 ]
 vision = [
     "Pillow>=10.0",
@@ -170,6 +179,10 @@ badge_color_thresholds = { low = 1.0, medium = 5.0, high = 10.0, critical = 50.0
 testpaths = ["tests"]
 pythonpath = ["tests"]
 addopts = "-q"
+markers = [
+    "e2e: Playwright GUI tests (requires playwright + chromium)",
+    "live: Playwright tests against running vdisplay-agent (VDISPLAY_AGENT_URL)",
+]
 filterwarnings = [
     "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
     "ignore:on_event is deprecated:DeprecationWarning",
