@@ -13,7 +13,7 @@ from typing import Any, Callable
 
 from .commands import CommandRequest, CommandResult, CommandVerb
 from .executor import execute
-from .verbs import COMMAND_VERBS
+from .commands.verbs import COMMAND_VERBS
 
 REPLAYABLE_VERBS = frozenset(
     {
