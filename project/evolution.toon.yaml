@@ -1,24 +1,16 @@
-# code2llm/evolution | 2099 func | 227f | 2026-06-11
-# generated in 0.01s
+# code2llm/evolution | 2120 func | 228f | 2026-06-11
+# generated in 0.04s
 
-NEXT[5] (ranked by impact):
+NEXT[3] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/capture/portal_screencast.py
       WHY: 1586L, 1 classes, max CC=15
       EFFORT: ~4h  IMPACT: 23790
 
-  [2] !  SPLIT-FUNC      send_ide_prompt  CC=15  fan=19
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 285
-
-  [3] !  SPLIT-FUNC      sample_pointer  CC=16  fan=16
-      WHY: CC=16 exceeds 15
-      EFFORT: ~1h  IMPACT: 256
-
-  [4] !! SPLIT           maps/pycharm-chat.json
+  [2] !! SPLIT           maps/pycharm-chat.json
       WHY: 1588L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [5] !! SPLIT           planfile.yaml
+  [3] !! SPLIT           planfile.yaml
       WHY: 1319L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
@@ -30,9 +22,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          4.0 → ≤2.8
-  max-CC:      16 → ≤8
+  max-CC:      15 → ≤7
   god-modules: 15 → 0
-  high-CC(≥15): 6 → ≤3
+  high-CC(≥15): 3 → ≤1
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

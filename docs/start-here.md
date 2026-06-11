@@ -84,6 +84,7 @@ vdisplay diagnose control                 # control backends + routing
 | Automate PyCharm / canvas on Wayland | [guides/wayland-control.md](guides/wayland-control.md) |
 | Multi-monitor screencast (DP-1/DP-2/HDMI-1) | [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) |
 | Develop vdisplay on this PC (automation) | [examples/dev-workflow](../examples/dev-workflow/) |
+| Full autonomy loop (observe→act→verify) | [guides/autonomy-loop.md](guides/autonomy-loop.md) |
 | Monitor desktop from browser (multi-monitor console) | [guides/web-console.md](guides/web-console.md) |
 | Build persistent click targets (GUI map) | [guides/gui-map-pack.md](guides/gui-map-pack.md) |
 | OCR verify + vision LLM fallback | [guides/vision-fallback.md](guides/vision-fallback.md) |

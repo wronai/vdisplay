@@ -92,6 +92,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.25] - 2026-06-11
+
+### Docs
+- Update README.md
+- Update docs/control.md
+- Update docs/guides/autonomy-loop.md
+- Update docs/index.md
+- Update docs/start-here.md
+- Update examples/dev-workflow/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/test_auto_command.py
+- Update tests/test_auto_feedback.py
+
+### Other
+- Update examples/dev-workflow/planfile-autonomy.yaml
+- Update examples/dev-workflow/planfile.yaml
+- Update examples/dev-workflow/run-dev-automation.sh
+- Update project/analysis.toon.yaml
+- Update project/calls.mmd
+- Update project/calls.png
+- Update project/calls.toon.yaml
+- Update project/calls.yaml
+- Update project/compact_flow.mmd
+- Update project/compact_flow.png
+- ... and 9 more files
+
 ## [0.1.24] - 2026-06-11
 
 ### Docs

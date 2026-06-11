@@ -61,6 +61,7 @@ class AutoTask:
     description: str = ""
     monitor: str | None = None
     map_path: str | None = None
+    verify: bool = False
     raw: dict[str, Any] = field(default_factory=dict)
     ticket_id: str | None = None
 
@@ -75,6 +76,7 @@ class AutoTask:
             "description": self.description,
             "monitor": self.monitor,
             "map_path": self.map_path,
+            "verify": self.verify,
             "ticket_id": self.ticket_id,
         }
 
@@ -280,6 +282,8 @@ def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) ->
     if not command:
         return None
     status = str(item.get("status") or "todo").lower()
+    verify_raw = item.get("verify")
+    verify = verify_raw in {True, "true", "1", 1, "yes", "on"}
     return AutoTask(
         id=str(item.get("id") or default_id),
         title=str(item.get("title") or item.get("name") or default_id),
@@ -290,6 +294,7 @@ def _task_from_mapping(item: dict[str, Any], *, source: str, default_id: str) ->
         description=str(item.get("description") or ""),
         monitor=str(item.get("monitor") or item.get("source") or "") or None,
         map_path=str(item.get("map") or item.get("map_path") or "") or None,
+        verify=verify,
         raw=dict(item),
     )
 
@@ -342,3 +347,30 @@ def write_yaml_task_status(path: Path, task_id: str, *, status: str, note: str =
 
     if updated:
         path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
+
+
+_AUTOMATION_LIST_KEYS = ("automation", "automation_tasks", "control_tasks", "desktop_tasks", "tasks")
+
+
+def reset_yaml_automation_tasks(path: Path) -> int:
+    """Reset all planfile automation tasks to todo (clears last_run_note)."""
+    yaml = _yaml()
+    if not path.is_file():
+        return 0
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        return 0
+    count = 0
+    for key in _AUTOMATION_LIST_KEYS:
+        items = data.get(key)
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            item["status"] = "todo"
+            item.pop("last_run_note", None)
+            count += 1
+    if count:
+        path.write_text(yaml.safe_dump(data, sort_keys=False, allow_unicode=True), encoding="utf-8")
+    return count

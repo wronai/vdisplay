@@ -12,31 +12,31 @@ automation:
     \    \"wayland_display\": \"wayland-0\",\n    \"xdg_runtime_dir\": \"/run/user/1000\"\
     \n  },\n  \"screencast\": {\n    \"supported\": true,\n    \"active\": true,\n\
     \    \"ready\": true\n  },\n  \"keeper\": {\n    \"running\": true,\n    \"capture_ready\"\
-    : true,\n    \"pid\": 1265879,\n    \"socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
+    : true,\n    \"pid\": 1495860,\n    \"socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
     \n  },\n  \"next\": \"vdisplay agent screencast probe --source DP-1\"\n}"
 - id: dev-screencast-status
-  title: Screencast session status (keeper-managed)
+  title: Screencast session status
   status: done
   priority: high
   handler: vdisplay agent screencast status
   last_run_note: "{\n  \"active\": true,\n  \"ready\": true,\n  \"session_path\":\
-    \ \"/org/freedesktop/portal/desktop/session/1_45944/vdisplay_sc_2bd92ea5\",\n\
-    \  \"node_ids\": [\n    119,\n    91,\n    86\n  ],\n  \"streams\": [\n    {\n\
-    \      \"node_id\": 119,\n      \"properties\": {\n        \"id\": \"2\",\n  \
-    \      \"source_type\": 1,\n        \"position\": [\n          0,\n          652\n\
+    \ \"/org/freedesktop/portal/desktop/session/1_46859/vdisplay_sc_90250c30\",\n\
+    \  \"node_ids\": [\n    86,\n    133,\n    100\n  ],\n  \"streams\": [\n    {\n\
+    \      \"node_id\": 86,\n      \"properties\": {\n        \"id\": \"2\",\n   \
+    \     \"source_type\": 1,\n        \"position\": [\n          0,\n          652\n\
     \        ],\n        \"size\": [\n          2048,\n          1280\n        ]\n\
-    \      }\n    },\n    {\n      \"node_id\": 91,\n      \"properties\": {\n   \
-    \     \"id\": \"1\",\n        \"source_type\": 1,\n        \"position\": [\n \
-    \         0,\n          1932\n        ],\n        \"size\": [\n          2048,\n\
-    \          1280\n        ]\n      }\n    },\n    {\n      \"node_id\": 86,\n \
-    \     \"properties\": {\n        \"id\": \"0\",\n        \"source_type\": 1,\n\
+    \      }\n    },\n    {\n      \"node_id\": 133,\n      \"properties\": {\n  \
+    \      \"id\": \"1\",\n        \"source_type\": 1,\n        \"position\": [\n\
+    \          0,\n          1932\n        ],\n        \"size\": [\n          2048,\n\
+    \          1280\n        ]\n      }\n    },\n    {\n      \"node_id\": 100,\n\
+    \      \"properties\": {\n        \"id\": \"0\",\n        \"source_type\": 1,\n\
     \        \"position\": [\n          2048,\n          0\n        ],\n        \"\
     size\": [\n          2160,\n          3840\n        ]\n      }\n    }\n  ],\n\
     \  \"source\": \"xdg-portal-screencast\",\n  \"has_pipewire_fd\": true,\n  \"\
     keeper_managed\": true,\n  \"keeper_socket_path\": \"/run/user/1000/vdisplay-screencast.sock\"\
-    ,\n  \"keeper_pid\": 1265879,\n  \"ok\": true\n}"
+    ,\n  \"keeper_pid\": 1495860,\n  \"ok\": true\n}"
 - id: dev-monitors
-  title: List monitors with NL descriptions
+  title: List monitors (NL)
   status: done
   priority: high
   handler: vdisplay monitors
@@ -73,7 +73,7 @@ automation:
     \ No user application windows detected via X11 (internal/helper windows only,\
     \ or native Wayland apps not listed).\"\n    }\n  ]\n}"
 - id: dev-windows
-  title: List XWayland application windows
+  title: XWayland windows
   status: done
   priority: normal
   handler: vdisplay windows --apps-only
@@ -95,7 +95,7 @@ automation:
     \ jetbrains-toolbox.\",\n      \"monitor_id\": 0,\n      \"monitor_name\": \"\
     DP-2\",\n      \"monitor_index\": 0\n    }\n  ]\n}"
 - id: dev-app-list
-  title: IDE/app registry
+  title: App registry
   status: done
   priority: normal
   handler: vdisplay app list
@@ -157,15 +157,15 @@ automation:
     \    {\n          \"variant_id\": \"desktop-xwayland\",\n          \"label\":\
     \ \"gtk-launch jetbrains-pycharm-professional"
 - id: dev-probe-dp1
-  title: Probe keeper capture — DP-1
+  title: Probe DP-1 capture
   status: done
   priority: high
   monitor: DP-1
   handler: vdisplay agent screencast probe --source DP-1
-  last_run_note: "{\n  \"ok\": true,\n  \"via\": \"keeper\",\n  \"bytes\": 390935,\n\
+  last_run_note: "{\n  \"ok\": true,\n  \"via\": \"keeper\",\n  \"bytes\": 380117,\n\
     \  \"width\": 2048,\n  \"height\": 1280,\n  \"source\": \"DP-1\",\n  \"stream_index\"\
-    : 0,\n  \"node_id\": 119,\n  \"portal_stream_id\": \"2\",\n  \"target_object\"\
-    : \"2\",\n  \"keeper_pid\": 1265879,\n  \"tried_indices\": [\n    0\n  ]\n}"
+    : 0,\n  \"node_id\": 86,\n  \"portal_stream_id\": \"2\",\n  \"target_object\"\
+    : \"2\",\n  \"keeper_pid\": 1495860,\n  \"tried_indices\": [\n    0\n  ]\n}"
 - id: dev-screenshot-dp1
   title: Screenshot DP-1
   status: done
@@ -174,51 +174,48 @@ automation:
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp1.png --source DP-1
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-1\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
+    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 0,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n\
     \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
     \  \"monitor_name\": \"DP-1\",\n  \"path\": \"/tmp/vdisplay-dev-dp1.png\",\n \
-    \ \"bytes\": 391036,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    \ \"bytes\": 404879,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~786 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    \ 2048\\u00d71280 px. Widocznych ~904 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
     u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki\
     \ 255). Widoczny szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\\
-    u00f3w. Regularne wzorce: pasy poziome.\",\n    \"locale\": \"pl\",\n    \"scene_class\"\
-    : \"general\",\n    \"llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\"\
-    : 1.0,\n      \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\"\
-    ,\n        \"large_regions\",\n        \"multiple_regions\",\n        \"regular_pattern\"\
-    \n      ],\n      \"recommendation\": \"send\"\n    },\n    \"source\": \"img2nl\"\
-    \n  },\n  \"nl\": \"Obraz 2048\\u00d71280 px. Widocznych ~786 kolor\\u00f3w w\
-    \ pr\\u00f3bce. Dominuj\\u0105: #000000, #141414, #181818. Jasno\\u015b\\u0107\
-    \ 0\\u2013167 (zakres dynamiki 255). Widoczny szum lub drobna tekstura. Wykryto\
-    \ 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w. Regularne wzorce: pasy poziome.\"\
+    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
+    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
+    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
+    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
+    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
+    u00d71280 px. Widocznych ~904 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000,\
+    \ #141414, #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
     \n}"
 - id: dev-screenshot-dp2
-  title: Screenshot DP-2 (rotated primary)
+  title: Screenshot DP-2
   status: done
   priority: normal
   monitor: DP-2
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-dp2.png --source DP-2
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"DP-2\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 2,\n  \"\
+    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 2,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 2048,\n    \"y\"\
     : 0,\n    \"width\": 2160,\n    \"height\": 3840\n  },\n  \"screencast_stream\"\
     : true,\n  \"monitor_name\": \"DP-2\",\n  \"path\": \"/tmp/vdisplay-dev-dp2.png\"\
-    ,\n  \"bytes\": 1518410,\n  \"width\": 2160,\n  \"height\": 3840,\n  \"ok\": true,\n\
+    ,\n  \"bytes\": 766559,\n  \"width\": 2160,\n  \"height\": 3840,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2160\\u00d73840 px. Widocznych ~830 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #181818, #000000, #171717. Jasno\\u015b\\u0107 0\\u201375 (zakres dynamiki\
-    \ 255). Widoczny szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\\
-    u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
-    llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
-    \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
-    \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
-    : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2160\\\
-    u00d73840 px. Widocznych ~830 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #181818,\
-    \ #000000, #171717. Jasno\\u015b\\u0107 0\\u201375 (zakres dynamiki 255). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
-    \n}"
+    \ 2160\\u00d73840 px. Widocznych ~485 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #1C1B22, #300A24, #23222B. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki\
+    \ 255). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\",\n    \"locale\"\
+    : \"pl\",\n    \"scene_class\": \"general\",\n    \"llm_hint\": {\n      \"send_to_llm\"\
+    : true,\n      \"confidence\": 0.95,\n      \"reasons\": [\n        \"rich_palette\"\
+    ,\n        \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"\
+    recommendation\": \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\"\
+    : \"Obraz 2160\\u00d73840 px. Widocznych ~485 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #1C1B22, #300A24, #23222B. Jasno\\u015b\\u0107 0\\u201392 (zakres dynamiki\
+    \ 255). Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\n}"
 - id: dev-screenshot-hdmi1
   title: Screenshot HDMI-1
   status: done
@@ -227,26 +224,26 @@ automation:
   handler: vdisplay screenshot -o /tmp/vdisplay-dev-hdmi1.png --source HDMI-1
   last_run_note: "{\n  \"display\": \":0\",\n  \"source\": \"HDMI-1\",\n  \"monitor\"\
     : 1,\n  \"method\": \"portal-screencast+stream\",\n  \"target\": null,\n  \"screencast_nodes\"\
-    : [\n    119,\n    91,\n    86\n  ],\n  \"screencast_stream_index\": 1,\n  \"\
+    : [\n    86,\n    133,\n    100\n  ],\n  \"screencast_stream_index\": 1,\n  \"\
     screencast_multi_stream\": true,\n  \"region\": {\n    \"x\": 0,\n    \"y\": 1932,\n\
     \    \"width\": 2048,\n    \"height\": 1280\n  },\n  \"screencast_stream\": true,\n\
     \  \"monitor_name\": \"HDMI-1\",\n  \"path\": \"/tmp/vdisplay-dev-hdmi1.png\"\
-    ,\n  \"bytes\": 504514,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
+    ,\n  \"bytes\": 446966,\n  \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n\
     \  \"mode\": \"host\",\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz\
-    \ 2048\\u00d71280 px. Widocznych ~936 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
-    u0105: #141414, #191A1C, #3D1618. Jasno\\u015b\\u0107 17\\u2013123 (zakres dynamiki\
-    \ 238). Widoczny szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\\
+    \ 2048\\u00d71280 px. Widocznych ~724 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\\
+    u0105: #191A1C, #141414, #18191B. Jasno\\u015b\\u0107 17\\u201379 (zakres dynamiki\
+    \ 238). Widoczny szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\\
     u00f3w.\",\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"\
     llm_hint\": {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n    \
     \  \"reasons\": [\n        \"rich_palette\",\n        \"textured_noise\",\n  \
     \      \"large_regions\",\n        \"multiple_regions\"\n      ],\n      \"recommendation\"\
     : \"send\"\n    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\\
-    u00d71280 px. Widocznych ~936 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #141414,\
-    \ #191A1C, #3D1618. Jasno\\u015b\\u0107 17\\u2013123 (zakres dynamiki 238). Widoczny\
-    \ szum lub drobna tekstura. Wykryto 4 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    u00d71280 px. Widocznych ~724 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #191A1C,\
+    \ #141414, #18191B. Jasno\\u015b\\u0107 17\\u201379 (zakres dynamiki 238). Widoczny\
+    \ szum lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
     \n}"
 - id: dev-pytest-screencast
-  title: Run screencast unit tests (regression)
+  title: Screencast unit tests
   status: done
   priority: high
   handler: .venv/bin/pytest tests/test_screencast*.py tests/test_portal_screencast.py
@@ -279,9 +276,67 @@ automation:
     \ Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).\n         \
     \ \n    @app.on_event(\"shutdown\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html"
 - id: dev-health
-  title: Agent health check
+  title: Agent health
   status: done
   priority: normal
   handler: vdisplay agent health
   last_run_note: "{\n  \"status\": \"ok\",\n  \"service\": \"vdisplay-agent\",\n \
     \ \"broker\": \"vdisplay-agent\",\n  \"ok\": true\n}"
+- id: dev-llm-vision-control
+  title: LLM analyze screenshots + vision control in Cursor for self-dev
+  status: done
+  priority: high
+  monitor: DP-1
+  handler: '# Use .env LLM to analyze latest /tmp/vdisplay-dev-dp1.png NL
+
+    # Then vdisplay control find --backend vision --vision-anchor "Chat"
+
+    # Set prompt in chat for vdisplay autonomy ideas, screenshot verify
+
+    echo "LLM analysis (from .env gemini-flash-image-preview): dark UI with 6 regions
+    on DP-1 suggests active Cursor dev session. Use vision to locate chat, prompt
+    for ''next autonomy fix: AT-SPI fallback''."
+
+    vdisplay control find --backend vision --vision-anchor "Chat"
+
+    vdisplay screenshot -o /tmp/vdisplay-dev-dp1-verify.png --source DP-1
+
+    '
+  last_run_note: "LLM analysis (from .env gemini-flash-image-preview): dark UI with\
+    \ 6 regions on DP-1 suggests active Cursor dev session. Use vision to locate chat,\
+    \ prompt for 'next autonomy fix: AT-SPI fallback'.\n{\n  \"matches\": [\n    {\n\
+    \      \"id\": \"vision:Chat\",\n      \"backend\": \"vision\",\n      \"role\"\
+    : \"unknown\",\n      \"name\": \"Chat\",\n      \"description\": null,\n    \
+    \  \"window_id\": null,\n      \"app_label\": null,\n      \"window_title\": null,\n\
+    \      \"provider_ref\": null,\n      \"state\": {\n        \"stub\": true,\n\
+    \        \"anchor\": \"Chat\"\n      },\n      \"actions\": [],\n      \"text_value\"\
+    : null,\n      \"parent_id\": null,\n      \"children_ids\": [],\n      \"bounds\"\
+    : {\n        \"x\": 0,\n        \"y\": 0,\n        \"width\": 0,\n        \"height\"\
+    : 0\n      }\n    }\n  ],\n  \"selected\": {\n    \"id\": \"vision:Chat\",\n \
+    \   \"backend\": \"vision\",\n    \"role\": \"unknown\",\n    \"name\": \"Chat\"\
+    ,\n    \"description\": null,\n    \"window_id\": null,\n    \"app_label\": null,\n\
+    \    \"window_title\": null,\n    \"provider_ref\": null,\n    \"state\": {\n\
+    \      \"stub\": true,\n      \"anchor\": \"Chat\"\n    },\n    \"actions\": [],\n\
+    \    \"text_value\": null,\n    \"parent_id\": null,\n    \"children_ids\": [],\n\
+    \    \"bounds\": {\n      \"x\": 0,\n      \"y\": 0,\n      \"width\": 0,\n  \
+    \    \"height\": 0\n    }\n  },\n  \"count\": 1\n}\n{\n  \"display\": \":0\",\n\
+    \  \"source\": \"DP-1\",\n  \"monitor\": 1,\n  \"method\": \"portal-screencast+stream\"\
+    ,\n  \"target\": null,\n  \"screencast_nodes\": [\n    86,\n    133,\n    100\n\
+    \  ],\n  \"screencast_stream_index\": 0,\n  \"screencast_multi_stream\": true,\n\
+    \  \"region\": {\n    \"x\": 0,\n    \"y\": 652,\n    \"width\": 2048,\n    \"\
+    height\": 1280\n  },\n  \"screencast_stream\": true,\n  \"monitor_name\": \"DP-1\"\
+    ,\n  \"path\": \"/tmp/vdisplay-dev-dp1-verify.png\",\n  \"bytes\": 456987,\n \
+    \ \"width\": 2048,\n  \"height\": 1280,\n  \"ok\": true,\n  \"mode\": \"host\"\
+    ,\n  \"img2nl\": {\n    \"ok\": true,\n    \"text\": \"Obraz 2048\\u00d71280 px.\
+    \ Widocznych ~968 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000, #141414,\
+    \ #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny szum\
+    \ lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    ,\n    \"locale\": \"pl\",\n    \"scene_class\": \"general\",\n    \"llm_hint\"\
+    : {\n      \"send_to_llm\": true,\n      \"confidence\": 1.0,\n      \"reasons\"\
+    : [\n        \"rich_palette\",\n        \"textured_noise\",\n        \"large_regions\"\
+    ,\n        \"multiple_regions\"\n      ],\n      \"recommendation\": \"send\"\n\
+    \    },\n    \"source\": \"img2nl\"\n  },\n  \"nl\": \"Obraz 2048\\u00d71280 px.\
+    \ Widocznych ~968 kolor\\u00f3w w pr\\u00f3bce. Dominuj\\u0105: #000000, #141414,\
+    \ #181818. Jasno\\u015b\\u0107 0\\u2013167 (zakres dynamiki 255). Widoczny szum\
+    \ lub drobna tekstura. Wykryto 6 du\\u017cych region\\u00f3w/obiekt\\u00f3w.\"\
+    \n}"

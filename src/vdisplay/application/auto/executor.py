@@ -57,7 +57,13 @@ class ExecuteResult:
         }
 
 
-def execute_task_command(command: str, *, project: str | None = None, dry_run: bool = False) -> ExecuteResult:
+def execute_task_command(
+    command: str,
+    *,
+    project: str | None = None,
+    dry_run: bool = False,
+    task: Any | None = None,
+) -> ExecuteResult:
     cmd = command.strip()
     if not cmd:
         return ExecuteResult(ok=False, method="empty", error="empty command")
@@ -65,6 +71,18 @@ def execute_task_command(command: str, *, project: str | None = None, dry_run: b
     if dry_run:
         return ExecuteResult(ok=True, method="dry-run", output=cmd)
 
+    if task is not None:
+        from .feedback import prepare_command, task_execution_env
+
+        cmd, feedback = prepare_command(cmd, task)
+        with task_execution_env(task, feedback):
+            result = _execute_prepared(cmd, project=project)
+    else:
+        result = _execute_prepared(cmd, project=project)
+    return result
+
+
+def _execute_prepared(cmd: str, *, project: str | None) -> ExecuteResult:
     if cmd.startswith("__api__:"):
         return _execute_api(json.loads(cmd[len("__api__:") :]))
 

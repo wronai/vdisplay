@@ -368,6 +368,37 @@ def _fuzzy_rescue_node(
     return None
 
 
+def _find_after_node_in_scope(
+    after: ControlSnapshot,
+    selector: ControlSelector,
+    scope_root: str,
+) -> ControlNode | None:
+    after_node = pick_match(after.nodes, selector)
+    if after_node is not None or scope_root not in after.nodes:
+        return after_node
+    after_scope = _subtree_ids(after, scope_root)
+    after_inputs = [
+        after.nodes[node_id]
+        for node_id in after_scope
+        if after.nodes[node_id].role == ControlRole.INPUT
+    ]
+    return after_inputs[0] if after_inputs else None
+
+
+def _build_set_value_result(
+    target: ControlNode,
+    after_node: ControlNode,
+    expected_value: str,
+) -> dict[str, Any]:
+    return {
+        "text_value": {
+            "before": _display_text(target),
+            "after": _display_text(after_node),
+            "expected": expected_value,
+        }
+    }
+
+
 def _handle_set_value_verification(
     after: ControlSnapshot,
     target: ControlNode,
@@ -381,27 +412,10 @@ def _handle_set_value_verification(
         app=target.app_label,
         index=0,
     )
-    after_node = pick_match(after.nodes, selector)
-    if after_node is None and scope_root in after.nodes:
-        after_scope = _subtree_ids(after, scope_root)
-        after_inputs = [
-            after.nodes[node_id]
-            for node_id in after_scope
-            if after.nodes[node_id].role == ControlRole.INPUT
-        ]
-        if after_inputs:
-            after_node = after_inputs[0]
-
+    after_node = _find_after_node_in_scope(after, selector, scope_root)
     after_node = _fuzzy_rescue_node(after, after_node, expected_value)
-
     if after_node is not None:
-        return {
-            "text_value": {
-                "before": _display_text(target),
-                "after": _display_text(after_node),
-                "expected": expected_value,
-            }
-        }
+        return _build_set_value_result(target, after_node, expected_value)
     return {}
 
 

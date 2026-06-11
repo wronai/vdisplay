@@ -8,6 +8,7 @@ from typing import Any, Literal
 
 from ...exceptions import VDisplayError
 from .executor import ExecuteResult, execute_task_command
+from .feedback import finalize_result_ok, preflight_observe, prepare_command, task_execution_env
 from .tasks import AutoSource, AutoTask, load_auto_tasks, next_auto_task, resolve_planfile_path, write_yaml_task_status
 
 AutoAction = Literal["run", "once", "list", "next"]
@@ -150,8 +151,8 @@ def _planfile_for_task(task: AutoTask, project: Path, dry_run: bool) -> Any:
     return None
 
 
-def _build_execute_payload(result: ExecuteResult, task: AutoTask) -> dict[str, Any]:
-    return {
+def _build_execute_payload(result: ExecuteResult, task: AutoTask, feedback: Any | None = None) -> dict[str, Any]:
+    payload = {
         "ok": result.ok,
         "task": task.to_dict(),
         "method": result.method,
@@ -159,6 +160,9 @@ def _build_execute_payload(result: ExecuteResult, task: AutoTask) -> dict[str, A
         "error": result.error,
         "exit_code": result.exit_code,
     }
+    if feedback is not None:
+        payload["feedback"] = feedback.to_dict()
+    return payload
 
 
 def _handle_execute_exception(
@@ -194,11 +198,29 @@ def _execute_one(
             pf.claim_ticket(task.ticket_id, assigned_to=assigned_to)
             pf.start_ticket(task.ticket_id)
 
-        result = execute_task_command(task.command, project=str(project), dry_run=dry_run)
-        payload = _build_execute_payload(result, task)
+        observe_feedback = preflight_observe(
+            task,
+            project=str(project),
+            execute_fn=lambda cmd, **kwargs: execute_task_command(cmd, project=str(project), **kwargs),
+        )
+        prepared, prep_feedback = prepare_command(task.command, task)
+        observe_feedback.prepared_command = prepared
+        observe_feedback.verify_requested = prep_feedback.verify_requested or observe_feedback.verify_requested
 
         if dry_run:
-            return payload
+            return _build_execute_payload(
+                ExecuteResult(ok=True, method="dry-run", output=prepared),
+                task,
+                observe_feedback,
+            )
+
+        with task_execution_env(task, observe_feedback):
+            result = execute_task_command(prepared, project=str(project), task=task)
+        result.ok = finalize_result_ok(result, observe_feedback)
+        if not result.ok and observe_feedback.verify_passed is False:
+            result.error = (result.error or "verify failed").strip()
+
+        payload = _build_execute_payload(result, task, observe_feedback)
 
         _update_task_status(task, result, pf, project, planfile)
         return payload

@@ -483,6 +483,61 @@ def _build_set_value_failure_result(
     return result
 
 
+def _try_control_set_value(
+    write_kwargs: dict[str, Any],
+    result: dict[str, Any],
+    selector: dict[str, str],
+    focus_error: str | None,
+) -> dict[str, Any] | None:
+    from .application.services import control as control_svc
+
+    try:
+        typed = control_svc.control_set_value(**write_kwargs)
+    except Exception as exc:
+        return _build_set_value_failure_result(result, str(exc), selector, focus_error)
+    if not typed.get("ok", True):
+        return _build_set_value_failure_result(
+            result,
+            str(typed.get("error") or typed.get("message") or "set_value failed"),
+            selector,
+            focus_error,
+        )
+    return typed
+
+
+def _build_ide_success_result(
+    result: dict[str, Any],
+    selector: dict[str, str],
+    focus_error: str | None,
+    typed: dict[str, Any],
+    submit: bool,
+    app: Any,
+    display: str | None,
+    effective_backend: str,
+    resolved_map: str | None,
+    map_scope: str | None,
+) -> dict[str, Any]:
+    submitted = False
+    submit_result: dict[str, Any] | None = None
+    if submit:
+        submitted, submit_result = _handle_submit(
+            app, display, effective_backend, resolved_map, map_scope
+        )
+    result.update(
+        {
+            "ok": True,
+            "message": "typed via vdisplay ide prompt",
+            "selector": selector,
+            "focus_error": focus_error,
+            "typed": typed,
+            "submitted": submitted,
+            "submit_result": submit_result,
+            "map_path": resolved_map,
+        }
+    )
+    return result
+
+
 def send_ide_prompt(
     *,
     app_id: str,
@@ -499,8 +554,6 @@ def send_ide_prompt(
     map_target: str | None = None,
     verify: bool = False,
 ) -> dict[str, Any]:
-    from .application.services import control as control_svc
-
     app = get_desktop_app(app_id)
     effective_backend = backend or app.preferred_backend or "auto"
     resolved_map = resolve_map_path(app_id, map_path)
@@ -559,39 +612,15 @@ def send_ide_prompt(
         app=app,
     )
 
-    try:
-        typed = control_svc.control_set_value(**write_kwargs)
-    except Exception as exc:
-        return _build_set_value_failure_result(result, str(exc), selector, focus_error)
+    typed = _try_control_set_value(write_kwargs, result, selector, focus_error)
+    if isinstance(typed, dict) and not typed.get("ok", True):
+        return typed
+    if typed is None:
+        return result
 
-    if not typed.get("ok", True):
-        return _build_set_value_failure_result(
-            result,
-            str(typed.get("error") or typed.get("message") or "set_value failed"),
-            selector,
-            focus_error,
-        )
-
-    submitted = False
-    submit_result: dict[str, Any] | None = None
-    if submit:
-        submitted, submit_result = _handle_submit(
-            app, display, effective_backend, resolved_map, map_scope
-        )
-
-    result.update(
-        {
-            "ok": True,
-            "message": "typed via vdisplay ide prompt",
-            "selector": selector,
-            "focus_error": focus_error,
-            "typed": typed,
-            "submitted": submitted,
-            "submit_result": submit_result,
-            "map_path": resolved_map,
-        }
+    return _build_ide_success_result(
+        result, selector, focus_error, typed, submit, app, display, effective_backend, resolved_map, map_scope
     )
-    return result
 
 
 __all__ = [

@@ -1,8 +1,8 @@
-# vdisplay | 2161 func | 246f | 49737L | python | 2026-06-11
+# vdisplay | 2182 func | 247f | 50281L | python | 2026-06-11
 # generated in 0.00s
 
 HEALTH:
-  CC̄=3.9  critical=171 (limit:10)  dup=1  cycles=0
+  CC̄=3.9  critical=173 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     _start_screencast_impl = 41 (limit:10)
@@ -16,7 +16,7 @@ ALERTS[20]:
   !!! high_fan_out     _render_match_overlay_local = 22 (limit:10)
   !!! high_fan_out     _start_capture_server = 22 (limit:10)
 
-MODULES[341] (top by size):
+MODULES[343] (top by size):
   M[maps/pycharm-chat.json] 1588L C:0 F:0 CC↑0 D:0 (json)
   M[src/vdisplay/capture/portal_screencast.py] 1586L C:1 F:77 CC↑15 D:13 (python)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
@@ -27,12 +27,12 @@ MODULES[341] (top by size):
   M[src/vdisplay/control/providers/vision/provider.py] 724L C:1 F:37 CC↑12 D:0 (python)
   M[src/vdisplay/capture/screencast_keeper.py] 694L C:0 F:32 CC↑13 D:5 (python)
   M[src/vdisplay/control/verifier.py] 659L C:3 F:32 CC↑14 D:1 (python)
-  M[src/vdisplay/ide_prompt.py] 601L C:0 F:17 CC↑15 D:13 (python)
-  M[src/vdisplay/control/verify.py] 524L C:0 F:23 CC↑12 D:1 (python)
+  M[src/vdisplay/ide_prompt.py] 630L C:0 F:19 CC↑13 D:2 (python)
+  M[src/vdisplay/control/verify.py] 538L C:0 F:25 CC↑12 D:1 (python)
   M[goal.yaml] 512L C:0 F:0 CC↑0 D:0 (yaml)
   M[src/vdisplay/capture/screencast_crop.py] 503L C:0 F:16 CC↑14 D:1 (python)
   M[src/vdisplay/control/gui_map_diff.py] 500L C:3 F:18 CC↑14 D:2 (python)
-  LANGS: python:273/json:26/toml:11/shell:8/yaml:7/other:5/yml:5/proto:4/txt:2
+  LANGS: python:274/json:26/toml:11/shell:8/yaml:8/other:5/yml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
   ★ _start_screencast_impl fan=41  // Orchestrates 41 calls
@@ -43,10 +43,10 @@ HOTSPOTS[10]:
 
 REFACTOR[15]:
   [1] H/H Split god module src/vdisplay/capture/portal_screencast.py (1586L, 1 classes)
-  [2] H/H Split god module src/vdisplay/ide_prompt.py (601L, 0 classes)
-  [3] H/H Split god module src/vdisplay/application/services/control.py (1081L, 0 classes)
-  [4] H/H Split god module src/vdisplay/application/session_recorder.py (763L, 3 classes)
-  [5] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
+  [2] H/H Split god module src/vdisplay/application/services/control.py (1081L, 0 classes)
+  [3] H/H Split god module src/vdisplay/application/session_recorder.py (763L, 3 classes)
+  [4] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
+  [5] H/H Split god module src/vdisplay/control/gui_map_diff.py (500L, 3 classes)
 
 EVOLUTION:
-  2026-06-11 CC̄=3.9 crit=171 49737L // Automated analysis
+  2026-06-11 CC̄=3.9 crit=173 50281L // Automated analysis

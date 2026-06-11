@@ -206,7 +206,7 @@ automation:
 
     monkeypatch.setattr(
         "vdisplay.application.auto.runner.execute_task_command",
-        lambda command, dry_run=False, project=None: type(
+        lambda command, dry_run=False, project=None, task=None, **kwargs: type(
             "R",
             (),
             {"ok": True, "method": "test", "output": command, "error": "", "exit_code": 0},
@@ -220,3 +220,28 @@ automation:
     assert result.executed[1]["task"]["id"] == "second"
     tasks = load_auto_tasks(project=tmp_path, source="yaml")
     assert len(tasks) == 0
+
+
+def test_reset_yaml_automation_tasks(tmp_path: Path) -> None:
+    from vdisplay.application.auto.tasks import load_auto_tasks, reset_yaml_automation_tasks
+
+    plan = tmp_path / "planfile.yaml"
+    plan.write_text(
+        """
+automation:
+  - id: a
+    title: a
+    status: done
+    handler: echo a
+    last_run_note: old
+  - id: b
+    title: b
+    status: failed
+    handler: echo b
+""".strip(),
+        encoding="utf-8",
+    )
+    assert reset_yaml_automation_tasks(plan) == 2
+    tasks = load_auto_tasks(project=tmp_path, source="yaml")
+    assert len(tasks) == 2
+    assert all(t.status == "todo" for t in tasks)

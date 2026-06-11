@@ -278,6 +278,40 @@ def capture_multimon(...) -> dict: ...
 - Self-hosting development of vdisplay itself: `vdisplay app open cursor` (or code/pycharm), `screenshot --source DP-1` for "eyes" (with img2nl), `control find --role entry --text-contains "Chat"` using shipped selectors + vision fallback for native Wayland UIs. See updated `packages/vdisplay-agent/README.md` for the full "używaj tego komputera do rozwoju vdisplay poprzez vdisplay" example.
 - For native Wayland apps (Cursor, etc.): vision + GUI maps preferred over pure AT-SPI (as documented in app registry).
 
+**Kolejno autonomy progress (testuj i wdrażaj):**
+- Observation solid: keeper screencast, correct per-source regions (DP-1 2048x1280 at [0,652], DP-2 tall, HDMI-1), NL/img2nl for "vision", dev-workflow script automates multi-monitor captures.
+- Action: app open (Cursor etc.), vision control find (Chat/Ask in Cursor), browser sessions.
+- Loop: launch via vdisplay, observe DP-1 screenshot, vision find, run tests/automation, re-screenshot verify. LLM (.env) for decide: analyze NL to suggest control in Cursor for dev (e.g. prompt for vdisplay fixes).
+- Self-dev using PC via vdisplay: as programmer, use to launch Cursor on desktop, observe via DP-1, control vision, automate (pytest, script), "edit" docs (updates + verify screenshot), develop vdisplay by controlling its own interface.
+- Docs updated with status, examples, gaps.
+- Next: integrate LLM call in script, hybrid vision+action, full loop test.
+
+**Current autonomy status (as of latest sequential testing):**
+- Observation: Full via screencast+keeper (multi-stream "All Screens"), per-source --source DP-1 capture with correct region [0,652,2048,1280] and img2nl/NL descriptions. `vdisplay monitors`, `windows --apps-only`, `observe`, `screenshot --source DP-1` all work reliably.
+- Action: `vdisplay app open cursor` (and other registered apps like pycharm, code) succeeds. Vision-based `control find --backend vision --vision-anchor "Chat"` / "Ask" finds elements in native Cursor. Browser sessions via `control browser-open` possible (with some sync/async caveats).
+- Control loop: Launch IDE via vdisplay, observe DP-1 desktop state via screenshot (verifies correct capture/region), use vision find for UI elements. AT-SPI `control list/find` often times out (12s) on this desktop due to many XWayland helpers and native apps; mitigated by `VDISPLAY_ATSPI_TIMEOUT_S=30` and `--max-depth 4`, but vision is primary for Cursor/etc.
+- Automation: `vdisplay auto` for planfiles, pytest for capture/control/agent tests (mostly pass, some deprecation warnings from FastAPI/Starlette). Self-dev loop: Use vdisplay to launch Cursor on desktop, screenshot/observe state, run tests, control UI elements via vision.
+- Gaps: Full "set-value" or "click" on vision elements requires hybrid (vision find + AT-SPI id or other); e2e playwright tests have issues; browser control needs async fixes in some paths. No direct terminal open in registry (use system or control).
+- Next in kolejno: Test vision+action hybrids, improve browser control, add more self-dev examples to docs, run full autonomy planfile if available.
+
+### Self-hosting development of vdisplay using vdisplay (PC interface via GUI)
+
+As a programmer, use the desktop itself (via vdisplay) to develop vdisplay:
+
+1. Ensure keeper/screencast: `vdisplay agent screencast start --force` (All Screens, multi-stream for DP-1/HDMI-1).
+2. Launch dev IDE: `vdisplay app open cursor` (or code, pycharm — registered with chat selectors and vision anchors for "Ask"/"Chat"/"Composer").
+3. Observe "dev desktop" on specific source: `vdisplay screenshot --source DP-1` (correct 2048x1280 region for the assigned stream, with img2nl/NL for "vision").
+4. Automate: run tests `python -m pytest tests/test_portal_screencast.py -q`, build, etc. (can launch terminal/IDE and control).
+5. Control/Interact: `vdisplay control find --backend vision --vision-anchor "Ask"` or AT-SPI where available; `set-value`, `click` on submit. For native chat, vision fallback.
+6. Edit docs/code: open files in Cursor (via launcher or control), edit (search/replace or GUI), save, re-screenshot to verify state on DP-1.
+7. Verify loop: re-observe with `vdisplay windows --apps-only`, `monitor`, status; use NL from screenshots to "see" changes.
+
+This enables full observe-decide-act for dev tasks on the PC, including multi-monitor (DP-2 rotated primary with Toolbox, DP-1 for focused dev). See packages/vdisplay-agent/README.md for command examples and the keeper fixes that made reliable --source capture possible.
+
+Limitations: AT-SPI timeouts on complex Wayland (use --max-depth, longer VDISPLAY_ATSPI_TIMEOUT_S, or vision); X11 windows limited to XWayland (use screenshot/vision for native).
+
+Recent fixes (region metadata, keeper delegation, stream matching) make this reliable for DP-1 etc.
+
 ---
 
 ### 6.2 `control/*` — **nowa domena (Sprint 1 priorytet)**

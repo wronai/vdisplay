@@ -15,6 +15,8 @@ vdisplay-agent serve
 export VDISPLAY_AGENT_URL=http://127.0.0.1:8765
 export PYTHONPATH=src:packages/vdisplay-agent/src
 bash examples/dev-workflow/run-dev-automation.sh
+# ponowny run (zadania były już done):
+bash examples/dev-workflow/run-dev-automation.sh --reset
 ```
 
 Dokumentacja: [docs/guides/gnome-wayland-screencast.md](../../docs/guides/gnome-wayland-screencast.md)

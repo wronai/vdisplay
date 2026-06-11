@@ -114,6 +114,18 @@ def merge_cached_analysis(ctx: ScreenContext, cached: ScreenContext) -> ScreenCo
     return ctx
 
 
+def _drift_summary_recommends_refresh(summary: dict[str, Any], recommendation: str) -> bool:
+    missing = int(summary.get("missing") or 0)
+    bounds = int(summary.get("bounds") or 0)
+    if missing > 0 or bounds > 0:
+        return recommendation != "stable_with_cosmetic_drift"
+    return False
+
+
+def _drift_status_recommends_refresh(status: str) -> bool:
+    return status in {"refresh_required", "drift", "bounds", "missing", "fingerprint"}
+
+
 def _drift_recommends_refresh(drift: dict[str, Any]) -> bool:
     recommendation = str(drift.get("recommendation") or "").lower()
     if recommendation == "refresh_required":
@@ -121,14 +133,12 @@ def _drift_recommends_refresh(drift: dict[str, Any]) -> bool:
     if drift.get("drifted") is True and drift.get("actionable") is True:
         return True
     status = str(drift.get("status") or drift.get("summary") or "").lower()
-    if status in {"refresh_required", "drift", "bounds", "missing", "fingerprint"}:
+    if _drift_status_recommends_refresh(status):
         return True
     summary = drift.get("summary")
     if isinstance(summary, dict):
-        missing = int(summary.get("missing") or 0)
-        bounds = int(summary.get("bounds") or 0)
-        if missing > 0 or bounds > 0:
-            return recommendation != "stable_with_cosmetic_drift"
+        if _drift_summary_recommends_refresh(summary, recommendation):
+            return True
     if int(drift.get("missing") or drift.get("missing_count") or 0) > 0:
         return True
     return False

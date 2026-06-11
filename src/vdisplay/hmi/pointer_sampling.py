@@ -179,23 +179,53 @@ def sample_pointer(
     primary = resolve_primary_source(sources, stale, wayland=wayland)
 
     if primary is None or (primary in stale and primary not in {"evdev-rel", "evdev"}):
-        err_bits = ["no live pointer on Wayland (xdotool is stale)"]
-        if evdev_relative_only:
-            err_bits.append("evdev-rel is movement-only until seeded by gnome/gtk")
-        errors = pointer_probe_errors()
-        detail = "; ".join(f"{k}={v}" for k, v in errors.items() if v)
-        if detail:
-            err_bits.append(detail)
-        return PointerSample(
-            x=None,
-            y=None,
-            window_id=window_id,
-            sources=sources,
-            primary=None,
-            stale_sources=stale,
-            error=" — ".join(err_bits),
-        )
+        return _build_stale_pointer_sample(sources, stale, window_id, evdev_relative_only)
 
+    return _build_live_pointer_sample(
+        sources,
+        primary,
+        stale,
+        window_id,
+        display=display,
+        window_resolver=window_resolver,
+        evdev_relative_only=evdev_relative_only,
+    )
+
+
+def _build_stale_pointer_sample(
+    sources: dict[str, tuple[int, int]],
+    stale: tuple[str, ...],
+    window_id: str | None,
+    evdev_relative_only: bool,
+) -> PointerSample:
+    err_bits = ["no live pointer on Wayland (xdotool is stale)"]
+    if evdev_relative_only:
+        err_bits.append("evdev-rel is movement-only until seeded by gnome/gtk")
+    errors = pointer_probe_errors()
+    detail = "; ".join(f"{k}={v}" for k, v in errors.items() if v)
+    if detail:
+        err_bits.append(detail)
+    return PointerSample(
+        x=None,
+        y=None,
+        window_id=window_id,
+        sources=sources,
+        primary=None,
+        stale_sources=stale,
+        error=" — ".join(err_bits),
+    )
+
+
+def _build_live_pointer_sample(
+    sources: dict[str, tuple[int, int]],
+    primary: str,
+    stale: tuple[str, ...],
+    window_id: str | None,
+    *,
+    display: str | None,
+    window_resolver: Any,
+    evdev_relative_only: bool,
+) -> PointerSample:
     x, y = sources[primary]
     title = window_title(window_id, display=display)
     error = None

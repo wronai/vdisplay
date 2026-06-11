@@ -21,6 +21,7 @@
 | [guides/desktop-control-today.md](guides/desktop-control-today.md) | What works today, gaps, PyCharm prompt, koru fallback |
 | `guides/wayland-control.md` | Native Wayland / PyCharm / canvas? |
 | [guides/gnome-wayland-screencast.md](guides/gnome-wayland-screencast.md) | Multi-monitor screencast (keeper, DP-1/DP-2/HDMI-1)? |
+| [guides/autonomy-loop.md](guides/autonomy-loop.md) | Full autonomy (observe→act→verify)? |
 | [guides/gui-map-pack.md](guides/gui-map-pack.md) | Build and refresh GUI map? |
 | [guides/vision-fallback.md](guides/vision-fallback.md) | OCR verify + vision LLM? |
 | [guides/browser-control.md](guides/browser-control.md) | Playwright DOM control? |

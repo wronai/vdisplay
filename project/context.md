@@ -1,16 +1,16 @@
 # System Architecture Analysis
-<!-- generated in 0.01s -->
+<!-- generated in 0.02s -->
 
 ## Overview
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 273, json: 26, toml: 11, shell: 8, yaml: 7
+- **Languages**: python: 274, json: 26, toml: 11, yaml: 8, shell: 8
 - **Analysis Mode**: static
-- **Total Functions**: 2161
-- **Total Classes**: 162
-- **Modules**: 341
-- **Entry Points**: 936
+- **Total Functions**: 2182
+- **Total Classes**: 163
+- **Modules**: 343
+- **Entry Points**: 938
 
 ## Architecture by Module
 
@@ -53,14 +53,14 @@
 - **Classes**: 3
 - **File**: `api.py`
 
-### src.vdisplay.capture.screencast_keeper
-- **Functions**: 32
-- **File**: `screencast_keeper.py`
-
 ### src.vdisplay.control.verifier
 - **Functions**: 32
 - **Classes**: 3
 - **File**: `verifier.py`
+
+### src.vdisplay.capture.screencast_keeper
+- **Functions**: 32
+- **File**: `screencast_keeper.py`
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30
@@ -86,28 +86,28 @@
 - **Classes**: 2
 - **File**: `desktop_apps.py`
 
+### src.vdisplay.control.verify
+- **Functions**: 25
+- **File**: `verify.py`
+
 ### src.vdisplay.backends.linux_x11_relay
 - **Functions**: 24
 - **Classes**: 2
 - **File**: `linux_x11_relay.py`
 
-### src.vdisplay.control.verify
-- **Functions**: 23
-- **File**: `verify.py`
-
 ### src.vdisplay.application.handlers.agent
 - **Functions**: 23
 - **File**: `agent.py`
+
+### src.vdisplay.application.auto.tasks
+- **Functions**: 23
+- **Classes**: 1
+- **File**: `tasks.py`
 
 ### src.vdisplay.control.providers.browser_session
 - **Functions**: 22
 - **Classes**: 2
 - **File**: `browser_session.py`
-
-### src.vdisplay.application.auto.tasks
-- **Functions**: 22
-- **Classes**: 1
-- **File**: `tasks.py`
 
 ## Key Entry Points
 
@@ -363,15 +363,15 @@ from_dict [src.vdisplay.control.selector.ControlSelector]
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.__init__, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.list_ids, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.get, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.require, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_mock, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_process, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.open_pexpect, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.close, src.vdisplay.control.providers.terminal_session.TerminalSessionRegistry.close_all
 
+### src.vdisplay.control.providers.atspi.AtspiControlProvider
+- **Methods**: 9
+- **Key Methods**: src.vdisplay.control.providers.atspi.AtspiControlProvider.__init__, src.vdisplay.control.providers.atspi.AtspiControlProvider.available, src.vdisplay.control.providers.atspi.AtspiControlProvider.probe_integration, src.vdisplay.control.providers.atspi.AtspiControlProvider.snapshot, src.vdisplay.control.providers.atspi.AtspiControlProvider.find, src.vdisplay.control.providers.atspi.AtspiControlProvider.invoke, src.vdisplay.control.providers.atspi.AtspiControlProvider.focus, src.vdisplay.control.providers.atspi.AtspiControlProvider.set_value, src.vdisplay.control.providers.atspi.AtspiControlProvider.bounds
+- **Inherits**: ControlProvider
+
 ### src.vdisplay.control.providers.terminal.TerminalControlProvider
 - **Methods**: 9
 - **Key Methods**: src.vdisplay.control.providers.terminal.TerminalControlProvider.__init__, src.vdisplay.control.providers.terminal.TerminalControlProvider.available, src.vdisplay.control.providers.terminal.TerminalControlProvider._resolve_session_id, src.vdisplay.control.providers.terminal.TerminalControlProvider.snapshot, src.vdisplay.control.providers.terminal.TerminalControlProvider.find, src.vdisplay.control.providers.terminal.TerminalControlProvider.invoke, src.vdisplay.control.providers.terminal.TerminalControlProvider.focus, src.vdisplay.control.providers.terminal.TerminalControlProvider.set_value, src.vdisplay.control.providers.terminal.TerminalControlProvider.bounds
 - **Inherits**: ControlProvider
-
-### src.vdisplay.hmi.keyboard.KeyboardWatcher
-> Background evdev reader pushing :class:`KeyEvent` objects to a queue.
-- **Methods**: 9
-- **Key Methods**: src.vdisplay.hmi.keyboard.KeyboardWatcher.__init__, src.vdisplay.hmi.keyboard.KeyboardWatcher.typed_buffer, src.vdisplay.hmi.keyboard.KeyboardWatcher.start, src.vdisplay.hmi.keyboard.KeyboardWatcher.stop, src.vdisplay.hmi.keyboard.KeyboardWatcher.drain, src.vdisplay.hmi.keyboard.KeyboardWatcher._emit, src.vdisplay.hmi.keyboard.KeyboardWatcher._handle_key, src.vdisplay.hmi.keyboard.KeyboardWatcher._open_fds, src.vdisplay.hmi.keyboard.KeyboardWatcher._run
 
 ## Data Transformation Functions
 
@@ -491,8 +491,8 @@ Functions exposed as public API (no underscore prefix):
 - `packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler` - 42 calls
 - `packages.rest2vdisplay.src.rest2vdisplay.app.create_app` - 38 calls
 - `src.vdisplay.commands.relay.register` - 37 calls
-- `src.vdisplay.application.parsers.parse_dsl` - 37 calls
 - `src.vdisplay.commands.agent.register` - 37 calls
+- `src.vdisplay.application.parsers.parse_dsl` - 37 calls
 - `src.vdisplay.application.events.map_events_from_diagnostics` - 36 calls
 - `src.vdisplay.application.session_recorder.SessionRecorder.record` - 36 calls
 - `examples.agent-broker.broker_demo.main` - 35 calls
