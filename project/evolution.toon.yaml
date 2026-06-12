@@ -1,5 +1,5 @@
-# code2llm/evolution | 2265 func | 240f | 2026-06-11
-# generated in 0.02s
+# code2llm/evolution | 2259 func | 239f | 2026-06-12
+# generated in 0.01s
 
 NEXT[6] (ranked by impact):
   [1] !! SPLIT           src/vdisplay/capture/portal_screencast.py
@@ -10,9 +10,9 @@ NEXT[6] (ranked by impact):
       WHY: CC=36 exceeds 15
       EFFORT: ~1h  IMPACT: 1152
 
-  [3] !! SPLIT-FUNC      _build_imgl_layers  CC=34  fan=12
-      WHY: CC=34 exceeds 15
-      EFFORT: ~1h  IMPACT: 408
+  [3] !! SPLIT-FUNC      _build_imgl_layers  CC=37  fan=15
+      WHY: CC=37 exceeds 15
+      EFFORT: ~1h  IMPACT: 555
 
   [4] !  SPLIT-FUNC      load_task_record  CC=15  fan=13
       WHY: CC=15 exceeds 15
@@ -34,9 +34,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
-  max-CC:      36 → ≤18
-  god-modules: 16 → 0
-  high-CC(≥15): 5 → ≤2
+  max-CC:      37 → ≤18
+  god-modules: 17 → 0
+  high-CC(≥15): 8 → ≤4
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -64,4 +64,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.0 → now CC̄=4.1
+  prev CC̄=4.1 → now CC̄=4.1

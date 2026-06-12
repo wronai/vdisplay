@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from .coordinate_rotation import (
@@ -10,6 +11,88 @@ from .coordinate_rotation import (
     region_rel_to_local as _region_rel_to_local,
 )
 from .screencast_stream_meta import enrich_screencast_stream_meta, stream_bounds_from_meta
+
+
+def _pointer_safe_margin_px() -> int:
+    raw = os.environ.get("VDISPLAY_POINTER_SAFE_MARGIN", "").strip().lower()
+    if raw in {"0", "false", "no", "off"}:
+        return 0
+    if raw.isdigit():
+        return max(0, int(raw))
+    try:
+        from ..hmi.pointer import is_wayland_session
+
+        return 140 if is_wayland_session() else 0
+    except Exception:
+        return 140
+
+
+def _desktop_bounds(display: str | None) -> tuple[int, int, int, int]:
+    """Return (min_x, min_y, max_x, max_y) across all monitors."""
+    from ..discovery import list_monitors, resolve_host_display
+
+    resolved = resolve_host_display(display)
+    min_x = min_y = 0
+    max_x = max_y = 0
+    found = False
+    for monitor in list_monitors(resolved):
+        x = int(monitor.get("x") or monitor.get("geometry_x") or 0)
+        y = int(monitor.get("y") or monitor.get("geometry_y") or 0)
+        w = int(monitor.get("width") or monitor.get("width_px") or 0)
+        h = int(monitor.get("height") or monitor.get("height_px") or 0)
+        if w <= 0 or h <= 0:
+            continue
+        found = True
+        min_x = min(min_x, x)
+        min_y = min(min_y, y)
+        max_x = max(max_x, x + w)
+        max_y = max(max_y, y + h)
+    if not found:
+        return 0, 0, 4096, 2560
+    return min_x, min_y, max_x, max_y
+
+
+def _clamp_global_pointer(
+    gx: int,
+    gy: int,
+    *,
+    display: str | None,
+    monitor_name: str | None = None,
+) -> tuple[int, int, dict[str, Any] | None]:
+    margin = _pointer_safe_margin_px()
+    if margin <= 0:
+        return gx, gy, None
+
+    min_x = min_y = 0
+    max_x = max_y = 0
+    if monitor_name:
+        monitor = _monitor_by_name(display, monitor_name)
+        if monitor is not None:
+            min_x = int(monitor.get("x") or monitor.get("geometry_x") or 0)
+            min_y = int(monitor.get("y") or monitor.get("geometry_y") or 0)
+            max_x = min_x + int(monitor.get("width") or monitor.get("width_px") or 0)
+            max_y = min_y + int(monitor.get("height") or monitor.get("height_px") or 0)
+    if max_x <= min_x or max_y <= min_y:
+        min_x, min_y, max_x, max_y = _desktop_bounds(display)
+
+    safe_x, safe_y = gx, gy
+    adjusted: dict[str, Any] = {"margin_px": margin, "monitor": monitor_name}
+    if safe_x > max_x - margin:
+        adjusted["from_x"] = safe_x
+        safe_x = max(min_x + margin, max_x - margin)
+    if safe_y > max_y - margin:
+        adjusted["from_y"] = safe_y
+        safe_y = max(min_y + margin, max_y - margin)
+    if safe_x < min_x + margin:
+        safe_x = min_x + margin
+    if safe_y < min_y + margin:
+        safe_y = min_y + margin
+    if safe_x == gx and safe_y == gy:
+        return gx, gy, None
+    adjusted["to_x"] = safe_x
+    adjusted["to_y"] = safe_y
+    adjusted["reason"] = "avoid GNOME hot corner / screen edge"
+    return safe_x, safe_y, adjusted
 
 
 def global_pointer_coords(
@@ -40,7 +123,7 @@ def global_pointer_coords(
     if source:
         monitor = _monitor_by_name(display, source)
         if monitor is not None:
-            return _global_from_monitor(local_x, local_y, monitor=monitor, png_w=png_w, png_h=png_h)
+            return _global_from_monitor(local_x, local_y, monitor=monitor, png_w=png_w, png_h=png_h, display=display)
 
     return local_x, local_y, {"mapping": "local"}
 
@@ -202,22 +285,26 @@ def _global_from_region(
     mapping = "screencast-stream" if meta.get("screencast_stream") else "region"
     if rotation and rotation != "normal":
         mapping = f"{mapping}+rotation-{rotation}"
-    return (
-        origin_x + rel_x,
-        origin_y + rel_y,
-        {
-            "mapping": mapping,
-            "origin_x": origin_x,
-            "origin_y": origin_y,
-            "scale_x": scale_x,
-            "scale_y": scale_y,
-            "rotation": rotation,
-            "local_x": local_x,
-            "local_y": local_y,
-            "region_rel_x": rel_x,
-            "region_rel_y": rel_y,
-        },
+    gx, gy = origin_x + rel_x, origin_y + rel_y
+    monitor_name = str(meta.get("monitor_name") or meta.get("source") or "")
+    gx, gy, clamp = _clamp_global_pointer(
+        gx, gy, display=display, monitor_name=monitor_name or None
     )
+    mapping_payload: dict[str, Any] = {
+        "mapping": mapping,
+        "origin_x": origin_x,
+        "origin_y": origin_y,
+        "scale_x": scale_x,
+        "scale_y": scale_y,
+        "rotation": rotation,
+        "local_x": local_x,
+        "local_y": local_y,
+        "region_rel_x": rel_x,
+        "region_rel_y": rel_y,
+    }
+    if clamp:
+        mapping_payload["pointer_clamp"] = clamp
+    return gx, gy, mapping_payload
 
 
 def _global_from_monitor(
@@ -227,6 +314,7 @@ def _global_from_monitor(
     monitor: dict[str, Any],
     png_w: int,
     png_h: int,
+    display: str | None = None,
 ) -> tuple[int, int, dict[str, Any]]:
     origin_x = int(monitor.get("x") or 0)
     origin_y = int(monitor.get("y") or 0)
@@ -249,23 +337,24 @@ def _global_from_monitor(
     elif _aspect_mismatch(monitor_w, monitor_h, png_w, png_h):
         mapping = "monitor-1:1"
     source = str(monitor.get("name") or "")
-    return (
-        origin_x + rel_x,
-        origin_y + rel_y,
-        {
-            "mapping": mapping,
-            "monitor": source,
-            "origin_x": origin_x,
-            "origin_y": origin_y,
-            "scale_x": scale_x,
-            "scale_y": scale_y,
-            "rotation": rotation,
-            "local_x": local_x,
-            "local_y": local_y,
-            "region_rel_x": rel_x,
-            "region_rel_y": rel_y,
-        },
-    )
+    gx, gy = origin_x + rel_x, origin_y + rel_y
+    gx, gy, clamp = _clamp_global_pointer(gx, gy, display=display, monitor_name=source or None)
+    mapping_payload: dict[str, Any] = {
+        "mapping": mapping,
+        "monitor": source,
+        "origin_x": origin_x,
+        "origin_y": origin_y,
+        "scale_x": scale_x,
+        "scale_y": scale_y,
+        "rotation": rotation,
+        "local_x": local_x,
+        "local_y": local_y,
+        "region_rel_x": rel_x,
+        "region_rel_y": rel_y,
+    }
+    if clamp:
+        mapping_payload["pointer_clamp"] = clamp
+    return gx, gy, mapping_payload
 
 
 def _rotation_for_monitor(display: str | None, name: str | None) -> str | None:

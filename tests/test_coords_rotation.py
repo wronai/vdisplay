@@ -7,6 +7,11 @@ import pytest
 from vdisplay.input.coords import global_pointer_coords
 
 
+@pytest.fixture(autouse=True)
+def _disable_pointer_safe_margin(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VDISPLAY_POINTER_SAFE_MARGIN", "0")
+
+
 def test_global_pointer_coords_rotated_left_aspect_mismatch() -> None:
     gx, gy, mapping = global_pointer_coords(
         100,
@@ -58,6 +63,29 @@ def test_global_region_to_capture_local_screencast_stream() -> None:
     point = global_point_to_capture_local(1500, 2400, meta)
     assert 0 <= point[0] < 2560
     assert 0 <= point[1] < 1600
+
+
+def test_global_pointer_coords_clamps_bottom_right_hot_corner(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VDISPLAY_POINTER_SAFE_MARGIN", "120")
+    monkeypatch.setattr(
+        "vdisplay.capture.coordinate_map._monitor_by_name",
+        lambda display, name: {"name": "DP-2", "x": 0, "y": 1932, "width": 2048, "height": 1280, "rotation": "left"},
+    )
+    gx, gy, mapping = global_pointer_coords(
+        1900,
+        1629,
+        {
+            "width": 2560,
+            "height": 1600,
+            "rotation": "left",
+            "monitor_name": "DP-2",
+            "source": "DP-2",
+            "region": {"x": 0, "y": 1932, "width": 2048, "height": 1280},
+            "screencast_stream": True,
+        },
+    )
+    assert gy <= 1932 + 1280 - 120
+    assert mapping.get("pointer_clamp") is not None
 
 
 def test_global_point_roundtrip_screencast_stream() -> None:

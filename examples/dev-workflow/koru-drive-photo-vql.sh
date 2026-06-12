@@ -9,11 +9,21 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 KORU_SRC="${KORU_SRC:-$HOME/github/semcod/koru/src}"
+IMGL_SRC="${IMGL_SRC:-$HOME/github/semcod/imgl}"
 
 cd "$ROOT"
 if [[ -f "${ROOT}/.venv/bin/activate" ]]; then
   # shellcheck disable=SC1091
   source "${ROOT}/.venv/bin/activate"
+fi
+if [[ -f "${ROOT}/.env" ]]; then
+  while IFS= read -r line; do
+    case "${line}" in
+      OPENROUTER_API_KEY=*|LLM_MODEL=*|KORU_VDISPLAY_LLM_VISION_DECISION=*)
+        export "${line}"
+        ;;
+    esac
+  done < <(grep -E '^(OPENROUTER_API_KEY|LLM_MODEL|KORU_VDISPLAY_LLM_VISION_DECISION)=' "${ROOT}/.env" || true)
 fi
 
 IDE="cursor"
@@ -42,9 +52,24 @@ fi
 export VDISPLAY_AGENT_URL="${VDISPLAY_AGENT_URL:-http://127.0.0.1:8765}"
 export KORU_VDISPLAY_CONTROL_FALLBACK="${KORU_VDISPLAY_CONTROL_FALLBACK:-1}"
 export KORU_VDISPLAY_USE_VQL_MOUSE_FOCUS="${KORU_VDISPLAY_USE_VQL_MOUSE_FOCUS:-1}"
-export KORU_VDISPLAY_PREFER_PHOTO_VQL="${KORU_VDISPLAY_PREFER_PHOTO_VQL:-1}"
+# JetBrains: auto photo VQL+LLM when capture matches after ide control; else ide-prompt map.
+case "${IDE}" in
+  jetbrains|pycharm|idea)
+    export KORU_VDISPLAY_PREFER_PHOTO_VQL="${KORU_VDISPLAY_PREFER_PHOTO_VQL:-auto}"
+    export KORU_VDISPLAY_AUTO_OPEN_IDE="${KORU_VDISPLAY_AUTO_OPEN_IDE:-1}"
+    ;;
+  *)
+    export KORU_VDISPLAY_PREFER_PHOTO_VQL="${KORU_VDISPLAY_PREFER_PHOTO_VQL:-1}"
+    ;;
+esac
 export KORU_VDISPLAY_PHOTO_VQL_REFRESH="${KORU_VDISPLAY_PHOTO_VQL_REFRESH:-auto}"
-export PYTHONPATH="${KORU_SRC}:${ROOT}/src:${ROOT}/packages/vdisplay-agent/src${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="${IMGL_SRC}:${KORU_SRC}:${ROOT}/src:${ROOT}/packages/vdisplay-agent/src${PYTHONPATH:+:$PYTHONPATH}"
+export KORU_VDISPLAY_LLM_VISION_DECISION="${KORU_VDISPLAY_LLM_VISION_DECISION:-1}"
+export KORU_VDISPLAY_AUTO_IDE_CONTROL="${KORU_VDISPLAY_AUTO_IDE_CONTROL:-1}"
+export KORU_VDISPLAY_IDE_CONTROL_RETRIES="${KORU_VDISPLAY_IDE_CONTROL_RETRIES:-3}"
+export KORU_VDISPLAY_RAISE_ALT_TAB="${KORU_VDISPLAY_RAISE_ALT_TAB:-0}"
+export KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES="${KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES:-2}"
+export VDISPLAY_POINTER_SAFE_MARGIN="${VDISPLAY_POINTER_SAFE_MARGIN:-140}"
 
 export KORU_DRIVE_IDE="${IDE}"
 export KORU_DRIVE_PROMPT="${PROMPT}"

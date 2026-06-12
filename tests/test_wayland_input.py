@@ -8,6 +8,11 @@ from vdisplay.input.coords import global_pointer_coords
 from vdisplay.input.resolve import resolve_pointer_input
 
 
+@pytest.fixture(autouse=True)
+def _disable_pointer_safe_margin(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("VDISPLAY_POINTER_SAFE_MARGIN", "0")
+
+
 def test_enrich_screencast_stream_meta_from_agent(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.control.screenshot_verify import enrich_screencast_stream_meta
 

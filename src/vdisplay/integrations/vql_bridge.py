@@ -297,17 +297,50 @@ def _layer_from_bbox(
     return layer
 
 
+def _normalize_imgl_scene_payload(raw: Any) -> dict[str, Any] | None:
+    """Parse IMGL scene payloads that may be dicts or JSON strings (vdisplay_context cache)."""
+    import json
+
+    data: dict[str, Any] | None
+    if isinstance(raw, dict):
+        data = raw
+    elif isinstance(raw, str):
+        try:
+            loaded = json.loads(raw)
+        except json.JSONDecodeError:
+            return None
+        data = loaded if isinstance(loaded, dict) else None
+    else:
+        return None
+    if not data:
+        return None
+    if data.get("windows") or data.get("elements") or data.get("ocr_boxes"):
+        return data
+    nested = data.get("scene")
+    if isinstance(nested, dict):
+        merged = dict(nested)
+        for key in ("windows", "elements", "ocr_boxes", "orphan_elements"):
+            if key in data and key not in merged:
+                merged[key] = data[key]
+        return merged
+    return data
+
+
 def _extract_imgl_scene(imgl: dict[str, Any]) -> dict[str, Any] | None:
     """Normalize scene dict from ctx.imgl (analyze_with_imgl or img2nl describe path)."""
     if not isinstance(imgl, dict):
         return None
-    if imgl.get("ok") and isinstance(imgl.get("scene"), dict):
-        return imgl["scene"]
+    if imgl.get("ok") and imgl.get("scene") is not None:
+        scene = _normalize_imgl_scene_payload(imgl["scene"])
+        if scene is not None:
+            return scene
     img2nl = imgl.get("img2nl")
     if isinstance(img2nl, dict) and img2nl.get("ok"):
         meta = img2nl.get("metadata") or {}
-        if isinstance(meta, dict) and isinstance(meta.get("scene"), dict):
-            return meta["scene"]
+        if isinstance(meta, dict) and meta.get("scene") is not None:
+            scene = _normalize_imgl_scene_payload(meta["scene"])
+            if scene is not None:
+                return scene
     return None
 
 
