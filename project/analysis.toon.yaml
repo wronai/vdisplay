@@ -1,6 +1,6 @@
-# code2llm | 367f 142214L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
-# generated in 0.22s
-# CC̅=4.0 | critical:0/2364 | dups:0 | cycles:0
+# code2llm | 367f 142278L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
+# generated in 0.14s
+# CC̅=4.0 | critical:0/2367 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -116,9 +116,9 @@ LAYERS:
   │ !! session_recorder           764L  3C   34m  CC=14     ←8
   │ !! provider                   724L  1C   37m  CC=12     ←0
   │ !! screencast_keeper          694L  0C   32m  CC=13     ←5
+  │ !! vql_bridge                 677L  0C   34m  CC=14     ←2
   │ !! verifier                   659L  3C   32m  CC=14     ←1
   │ !! ide_prompt                 627L  0C   19m  CC=13     ←13
-  │ !! vql_bridge                 623L  0C   31m  CC=14     ←2
   │ !! verify                     538L  0C   25m  CC=12     ←1
   │ !! feedback                   534L  1C   28m  CC=14     ←2
   │ !! screencast_crop            503L  0C   16m  CC=14     ←1
@@ -128,7 +128,7 @@ LAYERS:
   │ desktop_apps               463L  2C   25m  CC=9      ←3
   │ project_config             463L  5C   19m  CC=14     ←4
   │ atspi_impl                 441L  0C   20m  CC=14     ←1
-  │ host                       440L  0C   14m  CC=13     ←7
+  │ host                       441L  0C   14m  CC=13     ←7
   │ events                     429L  1C   17m  CC=14     ←3
   │ coordinate_map             417L  0C   17m  CC=14     ←4
   │ tasks                      414L  1C   30m  CC=12     ←2
@@ -147,7 +147,7 @@ LAYERS:
   │ screenshot_verify          323L  0C   11m  CC=13     ←7
   │ screencast_cli             318L  0C   15m  CC=10     ←2
   │ map                        313L  0C    9m  CC=10     ←0
-  │ vql_capture_validation     302L  0C   13m  CC=13     ←1
+  │ vql_capture_validation     311L  0C   13m  CC=14     ←1
   │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
   │ pointer_probes             297L  0C   12m  CC=13     ←8
@@ -515,17 +515,17 @@ COUPLING:
   CYCLES: none
   HUB: src.vdisplay/ (fan-in=92)
   HUB: packages.dsl2vdisplay/ (fan-in=18)
-  HUB: examples.common/ (fan-in=11)
   HUB: examples.dev-workflow/ (fan-in=120)
   HUB: packages.vdisplay-agent/ (fan-in=5)
-  SMELL: examples.host-relay/ fan-out=9 → split needed
-  SMELL: src.vdisplay/ fan-out=48 → split needed
-  SMELL: brain/ fan-out=17 → split needed
-  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
+  HUB: examples.common/ (fan-in=11)
   SMELL: examples.agent-broker/ fan-out=13 → split needed
   SMELL: examples.control-plane/ fan-out=33 → split needed
-  SMELL: packages.vdisplay-agent/ fan-out=72 → split needed
+  SMELL: brain/ fan-out=17 → split needed
+  SMELL: src.vdisplay/ fan-out=48 → split needed
   SMELL: examples.host-mirror/ fan-out=8 → split needed
+  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
+  SMELL: packages.vdisplay-agent/ fan-out=72 → split needed
+  SMELL: examples.host-relay/ fan-out=9 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

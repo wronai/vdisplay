@@ -27,7 +27,8 @@ def _monitor_source_name(display: str, monitor: int, source: str) -> str:
         for item in monitors:
             if str(item.get("name", "")).lower() == normalized:
                 return str(item["name"])
-        return source
+        available = [str(item.get("name") or "") for item in monitors if item.get("name")]
+        raise VDisplayError(f"monitor not found: {source} (available: {available})")
 
     if 1 <= monitor <= len(monitors):
         return str(monitors[monitor - 1]["name"])

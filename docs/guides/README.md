@@ -4,6 +4,7 @@ Short decision docs: one question per page. For stable API/CLI/env lists see [re
 
 | Guide | Answers |
 |-------|---------|
+| [autonomy-loop.md](autonomy-loop.md) | **Koru + vdisplay** observe→decide→act→verify, sesje `.vdisplay/`, photo-VQL drive |
 | [desktop-control-today.md](desktop-control-today.md) | Current desktop control capabilities, gaps, PyCharm + koru |
 | [agent-broker.md](agent-broker.md) | When to run broker vs in-process; screencast order |
 | [web-console.md](web-console.md) | Browser dashboard — monitors, screencast, replay (MVP) |

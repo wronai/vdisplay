@@ -40,3 +40,17 @@ def test_capture_host_png_prefers_mirror(monkeypatch: pytest.MonkeyPatch) -> Non
     mirror_cls.create.assert_called_once()
     session.start.assert_called_once()
     session.stop.assert_called_once()
+
+
+def test_capture_host_png_rejects_unknown_source(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "vdisplay.capture.host.list_monitors",
+        lambda _display: [
+            {"name": "DP-1", "primary": False, "x": 0, "y": 0, "width": 100, "height": 80},
+            {"name": "HDMI-1", "primary": True, "x": 0, "y": 80, "width": 100, "height": 80},
+        ],
+    )
+    monkeypatch.setattr("vdisplay.capture.host.resolve_host_display", lambda _d: ":0")
+
+    with pytest.raises(VDisplayError, match="monitor not found: DP-2"):
+        capture_host_png(source="DP-2")

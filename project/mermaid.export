@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.02s
+%% generated in 0.01s
     subgraph brain__scratch_find_pycharm_chat
         brain__scratch_find_pycharm_chat___get_role_safe["_get_role_safe"]
         brain__scratch_find_pycharm_chat___get_name_safe["_get_name_safe"]

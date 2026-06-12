@@ -61,6 +61,26 @@ def test_jetbrains_capture_accepts_pycharm_window_title() -> None:
     assert out["ide_window_warning"] is None
 
 
+def test_jetbrains_capture_rejects_missing_window_title() -> None:
+    layers = [
+        {
+            "id": "window_0",
+            "kind": "window",
+            "text": "",
+            "bbox": {"x": 0, "y": 0, "w": 2048, "h": 1280},
+        }
+    ]
+    out = validate_vql_capture(
+        layers=layers,
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2048, "height": 1280}},
+    )
+    assert out["capture_confirmed"] is False
+    assert out["ok_for_drive"] is False
+    assert out["ide_window_warning"]["reason"] == "missing_window_title"
+    assert "missing_window_title" in out["reasons"]
+
+
 def test_body_ide_mentions_ignores_window_layer() -> None:
     layers = [
         {"kind": "window", "text": "project - Cursor"},

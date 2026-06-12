@@ -3,10 +3,10 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.32-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$39.40-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-19.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.33-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$39.83-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-19.5h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $39.3999 (37 commits)
+- 🤖 **LLM usage:** $39.8306 (38 commits)
 - 👤 **Human dev:** ~$1953 (19.5h @ $100/h, 30min dedup)
 
 Generated on 2026-06-12 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
@@ -78,6 +78,7 @@ Details: [docs/examples.md](docs/examples.md) · per-example READMEs in each fol
 
 | Goal | Start here |
 |------|------------|
+| **Koru autonomous loop + photo-VQL chat drive** | [examples/dev-workflow/README.md](examples/dev-workflow/README.md#koru--vdisplay--pętla-autonomiczna-photo-vql) · [autonomy-loop.md](docs/guides/autonomy-loop.md) |
 | Desktop automation on GNOME Wayland | [docs/guides/wayland-control.md](docs/guides/wayland-control.md) |
 | Persistent vision click targets | [docs/guides/gui-map-pack.md](docs/guides/gui-map-pack.md) |
 | Broker + REST/MCP for agents | [docs/guides/agent-broker.md](docs/guides/agent-broker.md) |
@@ -116,6 +117,19 @@ vdisplay ide list
 vdisplay ide prompt --ide pycharm --text "Explain this stack trace"
 vdisplay ide prompt --ide pycharm --open --map maps/pycharm-chat.json --submit
 ```
+
+### Koru + photo-VQL (autonomous chat drive)
+
+Full **observe → decide → act → verify** loop with session audit and capture guards (`capture_confirmed`):
+
+```bash
+cd examples/dev-workflow
+bash koru-drive-photo-vql.sh --ide jetbrains --source DP-2 --prompt "fix tests" --submit
+bash koru-audit-last-session.sh --ide jetbrains
+```
+
+Requires: `vdisplay-agent serve`, `KORU_SRC`, `IMGL_SRC`, venv with `[observe]`.  
+Guide: [examples/dev-workflow/README.md](examples/dev-workflow/README.md#koru--vdisplay--pętla-autonomiczna-photo-vql).
 
 See [Desktop control today](docs/guides/desktop-control-today.md) for implementation details and limitations.
 

@@ -118,7 +118,16 @@ def ide_window_warning(*, ide: str, layers: list[dict[str, Any]]) -> dict[str, A
         return None
     titles = window_titles_from_layers(layers)
     if not titles:
-        return None
+        return {
+            "ide": canon,
+            "expected_tokens": list(tokens),
+            "window_titles": [],
+            "reason": "missing_window_title",
+            "message": (
+                f"VQL capture has no foreground window title for {canon}. "
+                "Focus the target IDE and refresh observe before drive."
+            ),
+        }
 
     joined = " | ".join(titles).lower()
     competing = _COMPETING_IDE_WINDOW_TOKENS.get(canon, ())
@@ -251,7 +260,7 @@ def validate_vql_capture(
 
     reasons: list[str] = list(structure.get("reasons") or [])
     if expected and warn is not None:
-        reasons.append("ide_window_mismatch")
+        reasons.append(str(warn.get("reason") or "ide_window_mismatch"))
     if body_false_positive:
         reasons.append("body_mentions_target_ide_not_window_title")
 

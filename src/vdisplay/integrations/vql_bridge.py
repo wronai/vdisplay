@@ -223,12 +223,59 @@ def _try_validate_metadata(program: dict[str, Any], metadata: dict[str, Any]) ->
     return metadata
 
 
-def _attach_capture_validation(metadata: dict[str, Any]) -> dict[str, Any]:
+def _first_nonempty_layer_list(*values: Any) -> list[dict[str, Any]]:
+    for value in values:
+        if not isinstance(value, list):
+            continue
+        layers = [item for item in value if isinstance(item, dict)]
+        if layers:
+            return layers
+    return []
+
+
+def _layers_for_capture_validation(
+    *,
+    program: dict[str, Any] | None,
+    render: dict[str, Any],
+) -> list[dict[str, Any]]:
+    program = program or {}
+    scene = program.get("scene") if isinstance(program.get("scene"), dict) else {}
+    return _first_nonempty_layer_list(
+        render.get("layers"),
+        program.get("layers"),
+        scene.get("layers"),
+        program.get("elements"),
+        scene.get("elements"),
+        render.get("ui_elements"),
+    )
+
+
+def _layers_to_ui_elements(layers: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        {
+            "id": layer.get("id"),
+            "role": layer.get("kind") or layer.get("role"),
+            "label": layer.get("text") or layer.get("label"),
+            "bounds": layer.get("bbox") or layer.get("bounds"),
+            "click_center": layer.get("click_center") or layer.get("center"),
+        }
+        for layer in layers
+        if isinstance(layer, dict)
+    ]
+
+
+def _attach_capture_validation(
+    metadata: dict[str, Any],
+    *,
+    program: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Embed IDE/structure validation for autonomy observe → decide → act."""
     render = dict(metadata.get("render_intent") or {})
-    layers = render.get("layers") or []
-    if not isinstance(layers, list):
-        layers = []
+    layers = _layers_for_capture_validation(program=program, render=render)
+    if layers and not render.get("layers"):
+        render["layers"] = layers
+    if layers and not render.get("ui_elements"):
+        render["ui_elements"] = _layers_to_ui_elements(layers)
     ide = expected_ide_from_env()
     nl = str(metadata.get("describe", {}).get("nl") or render.get("nl") or "")
     validation = validate_vql_capture(layers=layers, ide=ide, reverse=render, nl=nl or None)
@@ -242,6 +289,23 @@ def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
     """Build or merge a VQLProgram-compatible dict from ScreenContext."""
     program = _try_from_screen_context(ctx)
     if program is not None:
+        metadata = dict(program.get("metadata") or {})
+        metadata["capture"] = _capture_block(ctx)
+        metadata["environment"] = _environment_block(ctx)
+        if ctx.map_pack:
+            metadata["gui_map"] = ctx.map_pack
+        if ctx.verify:
+            metadata["verify"] = ctx.verify
+        if ctx.vision:
+            metadata["vision"] = ctx.vision
+        if ctx.nl:
+            metadata.setdefault("describe", {})["nl"] = ctx.nl
+        metadata["render_intent"] = _enrich_render_intent(
+            ctx,
+            dict(metadata.get("render_intent") or {}),
+        )
+        metadata = _attach_capture_validation(metadata, program=program)
+        program["metadata"] = metadata
         return program
 
     program = _try_imgl_scene(ctx)
@@ -253,7 +317,7 @@ def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
     metadata = _assemble_metadata(ctx, program)
     metadata = _try_merge_metadata(ctx, metadata)
     metadata = _try_validate_metadata(program, metadata)
-    metadata = _attach_capture_validation(metadata)
+    metadata = _attach_capture_validation(metadata, program=program)
     program["metadata"] = metadata
     return program
 
@@ -497,7 +561,7 @@ def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> None:
     from .imgl_bridge import imgl_available, imgl_enabled
 
     render = (program.get("metadata") or {}).get("render_intent") or {}
-    layers = render.get("layers") or []
+    layers = _layers_for_capture_validation(program=program, render=render)
     if layers:
         return
     if not imgl_enabled():
@@ -563,17 +627,7 @@ def _enrich_render_intent(ctx: ScreenContext, descriptor: dict[str, Any]) -> dic
         enriched["layers"] = _build_imgl_layers(ctx.imgl)
 
     if enriched.get("layers") and not enriched.get("ui_elements"):
-        enriched["ui_elements"] = [
-            {
-                "id": layer.get("id"),
-                "role": layer.get("kind") or layer.get("role"),
-                "label": layer.get("text") or layer.get("label"),
-                "bounds": layer.get("bbox") or layer.get("bounds"),
-                "click_center": layer.get("click_center") or layer.get("center"),
-            }
-            for layer in enriched["layers"]
-            if isinstance(layer, dict)
-        ]
+        enriched["ui_elements"] = _layers_to_ui_elements(enriched["layers"])
 
     _maybe_add_map_targets(enriched, ctx.map_pack)
     _maybe_add_routing_hint(enriched, ctx.environment)

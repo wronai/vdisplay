@@ -1,6 +1,6 @@
-# vdisplay | 367f 142214L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
-# generated in 0.08s
-# stats: 2364 func | 0 cls | 367 mod | CC̄=4.0 | critical:0 | cycles:0
+# vdisplay | 367f 142278L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
+# generated in 0.05s
+# stats: 2367 func | 0 cls | 367 mod | CC̄=4.0 | critical:0 | cycles:0
 # alerts[5]: fan-out _start_screencast_impl=41; fan-out register_routes=33; fan-out register_routes=27; fan-out SessionRecorder.record=26; fan-out start_sampler=24
 # hotspots[5]: _start_screencast_impl fan=41; register_routes fan=33; register_routes fan=27; SessionRecorder.record fan=26; start_sampler fan=24
 # evolution: CC̄ 4.1→4.0 (improved -0.1)
@@ -226,7 +226,7 @@ M[367]:
   src/vdisplay/capture/base.py,9
   src/vdisplay/capture/coordinate_map.py,417
   src/vdisplay/capture/coordinate_rotation.py,140
-  src/vdisplay/capture/host.py,440
+  src/vdisplay/capture/host.py,441
   src/vdisplay/capture/linux_xwd.py,328
   src/vdisplay/capture/policy.py,140
   src/vdisplay/capture/portal.py,221
@@ -354,8 +354,8 @@ M[367]:
   src/vdisplay/integrations/pipeline.py,175
   src/vdisplay/integrations/screen_context.py,185
   src/vdisplay/integrations/vision_backend.py,172
-  src/vdisplay/integrations/vql_bridge.py,623
-  src/vdisplay/integrations/vql_capture_validation.py,302
+  src/vdisplay/integrations/vql_bridge.py,677
+  src/vdisplay/integrations/vql_capture_validation.py,311
   src/vdisplay/models.py,26
   src/vdisplay/monitor_geometry.py,34
   src/vdisplay/nl.py,158
@@ -521,6 +521,25 @@ D:
     _parse_ref(element_id)
     _matches_terminal_node(node;selector)
     _find_terminal_nodes(nodes;selector)
+  src/vdisplay/capture/coordinate_map.py:
+    e: _pointer_safe_margin_px,_desktop_bounds,_resolve_monitor_bounds,_clamp_global_pointer,global_pointer_coords,_get_stream_region,global_point_to_capture_local,_clip_global_to_stream,_bounds_from_corners,_map_corners_to_local,global_region_to_capture_local,_resolve_mapping_label,_build_mapping_payload,_global_from_region,_global_from_monitor,_rotation_for_monitor,_monitor_by_name
+    _pointer_safe_margin_px()
+    _desktop_bounds(display)
+    _resolve_monitor_bounds(display;monitor_name)
+    _clamp_global_pointer(gx;gy)
+    global_pointer_coords(local_x;local_y;capture_meta)
+    _get_stream_region(meta)
+    global_point_to_capture_local(global_x;global_y;capture_meta)
+    _clip_global_to_stream(gx;gy;gw;gh;origin_x;origin_y;stream_w;stream_h)
+    _bounds_from_corners(corners)
+    _map_corners_to_local(corners;meta;display)
+    global_region_to_capture_local(region;capture_meta)
+    _resolve_mapping_label(meta;rotation)
+    _build_mapping_payload()
+    _global_from_region(local_x;local_y)
+    _global_from_monitor(local_x;local_y)
+    _rotation_for_monitor(display;name)
+    _monitor_by_name(display;name)
   src/vdisplay/capture/portal_screencast.py:
     e: PortalScreenCastSession,_remember_screencast_path,_forget_screencast_path,_save_restore_token,_load_restore_token,_purge_stale_screencast_sessions,get_active_screencast,_set_active,ensure_portal_session_env,portal_session_env_status,_apply_keeper_fields,refresh_screencast_adopt_payload,_probe_adopt_screencast_fd,_set_active_if_self,_screencast_multiple,prepare_portal_screencast_start,screencast_adopt_payload,start_screencast_session,stop_screencast_session,_is_retryable_screencast_error,_pipewire_capture_timeout_s,_pipewire_force_caps,_gnome_screenshot_fallback_enabled,_capture_via_gnome_screenshot_region,invalidate_screencast_session,_system_python,_ensure_portal_deps,_screencast_pipewire_fd,_pipewire_fresh_fd_enabled,_open_screencast_pipewire_fd,_start_screencast,_portal_request_path,_stream_properties,_stream_serial,_stream_target,screencast_stream_region,_rect_overlap_area,_monitor_bounds,_best_stream_region,screencast_stream_region_for_monitor,screencast_stream_region_for_index,_stream_properties_size,_stream_properties_region,_ensure_fd_inheritable,_dbus_fd,_close_pipewire_fd,_portal_response_error,_parse_start_streams,_open_pipewire_fd,_start_screencast_impl,_remove_portal_request_receiver,_purge_portal_request_receivers,_listen_portal_request,_close_screencast_session,_retryable_capture_error,_capture_pipewire_stream,_capture_pipewire_stream_once,_pipewire_capture_pipeline_tail,_capture_pipewire_frame_gi_threaded,_pipewire_video_caps,_pipewiresrc_target_props,_capture_pipewire_frame_gi,_capture_pipewire_frame_gi_subprocess,_capture_pipewire_frame_gst_launch,_capture_pipewire_node,_vdisplay_src_path,_start_screencast_subprocess
     PortalScreenCastSession: start(0),_parse_adopted_ids(1),_init_adopted_session(1),from_portal_payload(1),detach_local(0),_parse_node_ids(1),_parse_stream_targets(1),status(0),capture_png(0),_try_pipewire_node(2),_try_capture_single_node(4),capture_png_local(0),stop(0)  # Hold an open portal ScreenCast session and grab PNG frames f...
@@ -843,7 +862,7 @@ D:
     pick_context_coordinates(sources)
     _point_in_window(window;x;y)
   src/vdisplay/integrations/vql_bridge.py:
-    e: vql_enabled,vql_available,_capture_block,_environment_block,_try_from_screen_context,_try_imgl_scene,_adopted_element_to_layer,_adopted_elements_to_layers,_try_adopt_screenshot,_fallback_program,_assemble_metadata,_try_merge_metadata,_try_validate_metadata,_attach_capture_validation,context_to_vql_program,reverse_generation_descriptor,_resolve_canvas_size,_resolve_scene_class,_bbox_center,_layer_from_bbox,_normalize_imgl_scene_payload,_extract_imgl_scene,_element_layer_from_dict,_ocr_layer_from_dict,_extend_element_layers,_build_imgl_layers,_warn_empty_vql_layers,_maybe_add_map_targets,_maybe_add_routing_hint,_enrich_render_intent,write_vql_artifacts
+    e: vql_enabled,vql_available,_capture_block,_environment_block,_try_from_screen_context,_try_imgl_scene,_adopted_element_to_layer,_adopted_elements_to_layers,_try_adopt_screenshot,_fallback_program,_assemble_metadata,_try_merge_metadata,_try_validate_metadata,_first_nonempty_layer_list,_layers_for_capture_validation,_layers_to_ui_elements,_attach_capture_validation,context_to_vql_program,reverse_generation_descriptor,_resolve_canvas_size,_resolve_scene_class,_bbox_center,_layer_from_bbox,_normalize_imgl_scene_payload,_extract_imgl_scene,_element_layer_from_dict,_ocr_layer_from_dict,_extend_element_layers,_build_imgl_layers,_warn_empty_vql_layers,_maybe_add_map_targets,_maybe_add_routing_hint,_enrich_render_intent,write_vql_artifacts
     vql_enabled()
     vql_available()
     _capture_block(ctx)
@@ -857,6 +876,9 @@ D:
     _assemble_metadata(ctx;program)
     _try_merge_metadata(ctx;metadata)
     _try_validate_metadata(program;metadata)
+    _first_nonempty_layer_list()
+    _layers_for_capture_validation()
+    _layers_to_ui_elements(layers)
     _attach_capture_validation(metadata)
     context_to_vql_program(ctx)
     reverse_generation_descriptor(ctx)
@@ -875,25 +897,21 @@ D:
     _maybe_add_routing_hint(enriched;environment)
     _enrich_render_intent(ctx;descriptor)
     write_vql_artifacts(ctx)
-  src/vdisplay/capture/coordinate_map.py:
-    e: _pointer_safe_margin_px,_desktop_bounds,_resolve_monitor_bounds,_clamp_global_pointer,global_pointer_coords,_get_stream_region,global_point_to_capture_local,_clip_global_to_stream,_bounds_from_corners,_map_corners_to_local,global_region_to_capture_local,_resolve_mapping_label,_build_mapping_payload,_global_from_region,_global_from_monitor,_rotation_for_monitor,_monitor_by_name
-    _pointer_safe_margin_px()
-    _desktop_bounds(display)
-    _resolve_monitor_bounds(display;monitor_name)
-    _clamp_global_pointer(gx;gy)
-    global_pointer_coords(local_x;local_y;capture_meta)
-    _get_stream_region(meta)
-    global_point_to_capture_local(global_x;global_y;capture_meta)
-    _clip_global_to_stream(gx;gy;gw;gh;origin_x;origin_y;stream_w;stream_h)
-    _bounds_from_corners(corners)
-    _map_corners_to_local(corners;meta;display)
-    global_region_to_capture_local(region;capture_meta)
-    _resolve_mapping_label(meta;rotation)
-    _build_mapping_payload()
-    _global_from_region(local_x;local_y)
-    _global_from_monitor(local_x;local_y)
-    _rotation_for_monitor(display;name)
-    _monitor_by_name(display;name)
+  src/vdisplay/integrations/vql_capture_validation.py:
+    e: expected_ide_from_env,_canonical_ide,window_titles_from_layers,_center_from_dict,_bbox_center,_layer_center,_layer_label,ide_window_warning,body_ide_mentions,chat_composer_candidates,validate_vql_structure,validate_vql_capture,validate_vql_sidecar_file
+    expected_ide_from_env()
+    _canonical_ide(ide)
+    window_titles_from_layers(layers)
+    _center_from_dict(center)
+    _bbox_center(bbox)
+    _layer_center(layer)
+    _layer_label(layer)
+    ide_window_warning()
+    body_ide_mentions()
+    chat_composer_candidates(layers)
+    validate_vql_structure()
+    validate_vql_capture()
+    validate_vql_sidecar_file(path)
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
     e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_cmdline,_is_vdisplay_agent_pid,_partition_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
     _pid_alive(pid)
@@ -978,22 +996,6 @@ D:
     _passes_uia_filters(record)
     filter_records(records;selector)
     create_uia_backend(backend)
-  src/vdisplay/capture/host.py:
-    e: _wayland_host_session,_monitor_source_name,resolve_window_region,_monitor_capture_region,_capture_all_from_driver_full,_monitor_for_name,_try_mirror_capture,_try_driver_capture,capture_host_png,_host_capture_error,capture_host_to_file,_capture_individual_monitors,_try_bulk_capture,capture_all_monitors
-    _wayland_host_session(display)
-    _monitor_source_name(display;monitor;source)
-    resolve_window_region(display)
-    _monitor_capture_region(display;output_name)
-    _capture_all_from_driver_full(display;monitors;output_dir)
-    _monitor_for_name(display;source_name)
-    _try_mirror_capture(monitors;source_name;target;resolved;errors)
-    _try_driver_capture(resolved;region;errors)
-    capture_host_png()
-    _host_capture_error(display;source;errors)
-    capture_host_to_file(path)
-    _capture_individual_monitors(monitors;resolved;output_dir;target;method;prefer_mirror;screencast_session)
-    _try_bulk_capture(resolved;monitors;output_dir;method;prefer_mirror;screencast_session)
-    capture_all_monitors()
   src/vdisplay/capture/screencast_keeper.py:
     e: _keeper_capture_client_timeout_s,keeper_state_path,keeper_stop_path,keeper_socket_path,_keeper_runtime_dir,session_uses_keeper,keeper_manages_session,_resolve_keeper_socket_path,ping_keeper_socket,keeper_capture_ready,_capture_server_running,_ensure_capture_server,_resolve_capture_socket,_exchange_capture_request,_decode_capture_png,request_keeper_capture,read_keeper_state,stop_keeper,_read_keeper_state_unchecked,_terminate_pid,_terminate_orphan_keepers,_pid_alive,_write_state,_mark_socket_ready,_dispatch_capture_request,_send_capture_response,_read_capture_request,_handle_capture_connection,_start_capture_server,run_keeper_daemon,spawn_keeper,main
     _keeper_capture_client_timeout_s()
@@ -1106,21 +1108,22 @@ D:
     evaluate_map_drift(ctx;png)
     _item_to_ocr_box(item)
     ocr_boxes_from_cached_context(ctx)
-  src/vdisplay/integrations/vql_capture_validation.py:
-    e: expected_ide_from_env,_canonical_ide,window_titles_from_layers,_center_from_dict,_bbox_center,_layer_center,_layer_label,ide_window_warning,body_ide_mentions,chat_composer_candidates,validate_vql_structure,validate_vql_capture,validate_vql_sidecar_file
-    expected_ide_from_env()
-    _canonical_ide(ide)
-    window_titles_from_layers(layers)
-    _center_from_dict(center)
-    _bbox_center(bbox)
-    _layer_center(layer)
-    _layer_label(layer)
-    ide_window_warning()
-    body_ide_mentions()
-    chat_composer_candidates(layers)
-    validate_vql_structure()
-    validate_vql_capture()
-    validate_vql_sidecar_file(path)
+  src/vdisplay/capture/host.py:
+    e: _wayland_host_session,_monitor_source_name,resolve_window_region,_monitor_capture_region,_capture_all_from_driver_full,_monitor_for_name,_try_mirror_capture,_try_driver_capture,capture_host_png,_host_capture_error,capture_host_to_file,_capture_individual_monitors,_try_bulk_capture,capture_all_monitors
+    _wayland_host_session(display)
+    _monitor_source_name(display;monitor;source)
+    resolve_window_region(display)
+    _monitor_capture_region(display;output_name)
+    _capture_all_from_driver_full(display;monitors;output_dir)
+    _monitor_for_name(display;source_name)
+    _try_mirror_capture(monitors;source_name;target;resolved;errors)
+    _try_driver_capture(resolved;region;errors)
+    capture_host_png()
+    _host_capture_error(display;source;errors)
+    capture_host_to_file(path)
+    _capture_individual_monitors(monitors;resolved;output_dir;target;method;prefer_mirror;screencast_session)
+    _try_bulk_capture(resolved;monitors;output_dir;method;prefer_mirror;screencast_session)
+    capture_all_monitors()
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:
     e: _config_from_body,_ensure_virtual_session,_capture_virtual_persistent,_recover_screencast,start_sampler,stop_sampler,sampler_status
     _config_from_body(body)
@@ -1311,6 +1314,21 @@ D:
     load_merged_backend_scores()
     provider_score_prior(provider)
     load_backend_scores(session_root)
+  src/vdisplay/application/auto/defaults.py:
+    e: _resolve_action_map,_resolve_task_monitor,_resolve_task_map_path,_resolve_task_command,apply_project_defaults,_wants_vision_injection,_inject_vision_anchor,_vql_layers_from_program,_vql_target_entry,vql_decision_slice,_check_ocr_status,_build_base_decision_data,build_decision_data
+    _resolve_action_map(config;action_spec)
+    _resolve_task_monitor(task;config;action_spec)
+    _resolve_task_map_path(task;config;action_spec)
+    _resolve_task_command(task;action_spec;config)
+    apply_project_defaults(task;config)
+    _wants_vision_injection(command;options)
+    _inject_vision_anchor(command;spec)
+    _vql_layers_from_program(program)
+    _vql_target_entry(layer)
+    vql_decision_slice(vql_path)
+    _check_ocr_status()
+    _build_base_decision_data(task;config)
+    build_decision_data(task;config)
   src/vdisplay/application/auto/tasks.py:
     e: AutoTask,_yaml,ensure_auto_dependencies,_task_options,_legacy_planfile_keys,resolve_planfile_path,load_auto_tasks,next_auto_task,_sort_tasks,_load_yaml_tasks,_load_ticket_tasks,_first_string,_executor_command,_inputs_command,_action_command,_mapping_command,_is_skipped_status,_is_valid_planfile_action,_validate_mapping_task,_task_title,_task_priority,_task_monitor,_task_map_path,_task_verify,_task_from_mapping,_api_endpoint_command,_ticket_command,_update_task_list,write_yaml_task_status,reset_yaml_automation_tasks
     AutoTask: to_dict(0)
@@ -1343,41 +1361,6 @@ D:
     _update_task_list(items;task_id)
     write_yaml_task_status(path;task_id)
     reset_yaml_automation_tasks(path)
-  src/vdisplay/hmi/keyboard.py:
-    e: KeyEvent,KeyboardWatcher,_event_device_paths,_decode_char,_key_name
-    KeyEvent:
-    KeyboardWatcher: __init__(0),start(0),stop(0),drain(0),_emit(1),_handle_key(2),_open_fds(1),_run(1)  # Background evdev reader pushing :class:`KeyEvent` objects to...
-    _event_device_paths()
-    _decode_char(code)
-    _key_name(code)
-  src/vdisplay/integrations/imgl_bridge.py:
-    e: imgl_enabled,_import_imgl_api,imgl_available,_vql_sidecar_path,_build_imgl_config,_scene_to_dict,analyze_with_imgl,_try_imgl_vdisplay_context,attach_imgl_to_context,_imgl_item_to_ocr_box,ocr_boxes_from_imgl
-    imgl_enabled()
-    _import_imgl_api()
-    imgl_available()
-    _vql_sidecar_path(image_path)
-    _build_imgl_config(ImglConfig)
-    _scene_to_dict(scene;scene_to_json)
-    analyze_with_imgl(image_path)
-    _try_imgl_vdisplay_context(ctx;lang)
-    attach_imgl_to_context(ctx)
-    _imgl_item_to_ocr_box(item)
-    ocr_boxes_from_imgl(image_path)
-  src/vdisplay/application/auto/defaults.py:
-    e: _resolve_action_map,_resolve_task_monitor,_resolve_task_map_path,_resolve_task_command,apply_project_defaults,_wants_vision_injection,_inject_vision_anchor,_vql_layers_from_program,_vql_target_entry,vql_decision_slice,_check_ocr_status,_build_base_decision_data,build_decision_data
-    _resolve_action_map(config;action_spec)
-    _resolve_task_monitor(task;config;action_spec)
-    _resolve_task_map_path(task;config;action_spec)
-    _resolve_task_command(task;action_spec;config)
-    apply_project_defaults(task;config)
-    _wants_vision_injection(command;options)
-    _inject_vision_anchor(command;spec)
-    _vql_layers_from_program(program)
-    _vql_target_entry(layer)
-    vql_decision_slice(vql_path)
-    _check_ocr_status()
-    _build_base_decision_data(task;config)
-    build_decision_data(task;config)
   src/vdisplay/application/history/loader.py:
     e: resolve_metadata_root,discover_session_dirs,discover_run_dirs,read_latest_run_id,_parse_broker_line,load_broker_events,_session_summary,_session_location,load_session_ref,_build_task_record,load_task_record,load_run_record,count_observe_pngs,load_history_index,load_run_detail,iter_session_events
     resolve_metadata_root(root)
@@ -1396,6 +1379,13 @@ D:
     load_history_index(root)
     load_run_detail(run_id)
     iter_session_events(session_dir)
+  src/vdisplay/hmi/keyboard.py:
+    e: KeyEvent,KeyboardWatcher,_event_device_paths,_decode_char,_key_name
+    KeyEvent:
+    KeyboardWatcher: __init__(0),start(0),stop(0),drain(0),_emit(1),_handle_key(2),_open_fds(1),_run(1)  # Background evdev reader pushing :class:`KeyEvent` objects to...
+    _event_device_paths()
+    _decode_char(code)
+    _key_name(code)
   src/vdisplay/integrations/screen_context.py:
     e: ScreenContext,_attach_img2nl_to_context,_attach_vision_to_context,screen_context_from_capture,load_environment_snapshot
     ScreenContext: to_dict(0),from_dict(1),merge_capture_meta(1),attach_diagnostics(1),attach_map_path(1),compute_fingerprint(0),sidecar_path(1),write_sidecar(0)  # Portable snapshot of what vdisplay knows about one screen im...
@@ -1403,6 +1393,19 @@ D:
     _attach_vision_to_context(ctx;payload)
     screen_context_from_capture(payload)
     load_environment_snapshot()
+  src/vdisplay/integrations/imgl_bridge.py:
+    e: imgl_enabled,_import_imgl_api,imgl_available,_vql_sidecar_path,_build_imgl_config,_scene_to_dict,analyze_with_imgl,_try_imgl_vdisplay_context,attach_imgl_to_context,_imgl_item_to_ocr_box,ocr_boxes_from_imgl
+    imgl_enabled()
+    _import_imgl_api()
+    imgl_available()
+    _vql_sidecar_path(image_path)
+    _build_imgl_config(ImglConfig)
+    _scene_to_dict(scene;scene_to_json)
+    analyze_with_imgl(image_path)
+    _try_imgl_vdisplay_context(ctx;lang)
+    attach_imgl_to_context(ctx)
+    _imgl_item_to_ocr_box(item)
+    ocr_boxes_from_imgl(image_path)
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:
     e: split_command,normalize_tokens,resolve_verb,pick_flag,_with_display,_parse_windows,_parse_screenshot,_parse_virtual_start,_parse_launch,_parse_mirror,_parse_adopt,_has_flag,_parse_control_common,_parse_controls_list,_parse_controls_find,_parse_control_click,_parse_control_focus,_parse_control_set_value,_parse_diagnose_control,_parse_browser_open,_parse_terminal_open,_parse_release,parse_line,_screenshot_to_text,_mirror_to_text,_controls_list_to_text,_browser_open_to_text,_terminal_open_to_text,to_text,_control_to_text
     split_command(line)

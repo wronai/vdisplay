@@ -7,7 +7,7 @@
 - **Primary Language**: python
 - **Languages**: python: 288, json: 29, shell: 12, yaml: 11, toml: 11
 - **Analysis Mode**: static
-- **Total Functions**: 2364
+- **Total Functions**: 2367
 - **Total Classes**: 176
 - **Modules**: 367
 - **Entry Points**: 971
@@ -48,6 +48,10 @@
 - **Functions**: 34
 - **File**: `control.py`
 
+### src.vdisplay.integrations.vql_bridge
+- **Functions**: 34
+- **File**: `vql_bridge.py`
+
 ### src.vdisplay.api
 - **Functions**: 32
 - **Classes**: 3
@@ -61,10 +65,6 @@
 ### src.vdisplay.capture.screencast_keeper
 - **Functions**: 32
 - **File**: `screencast_keeper.py`
-
-### src.vdisplay.integrations.vql_bridge
-- **Functions**: 31
-- **File**: `vql_bridge.py`
 
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30

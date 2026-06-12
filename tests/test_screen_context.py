@@ -42,6 +42,44 @@ def test_context_to_vql_program_includes_capture_and_reverse(tmp_path: Path) -> 
     assert reverse["canvas"]["width"] == 800
 
 
+def test_context_to_vql_program_validates_scene_layers_when_render_empty(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    png = tmp_path / "screen.png"
+    png.write_bytes(b"\x89PNG\r\n\x1a\n" + b"\x00" * 64)
+    layer = {
+        "id": "window_0",
+        "kind": "window",
+        "text": "project - PyCharm",
+        "bbox": {"x": 0, "y": 0, "w": 800, "h": 600},
+        "click_center": {"x": 400, "y": 300},
+    }
+    ctx = ScreenContext(
+        image_path=str(png),
+        capture={"width": 800, "height": 600, "source": "vdisplay"},
+        nl="PyCharm window.",
+    )
+    ctx.compute_fingerprint()
+    monkeypatch.setenv("VDISPLAY_CAPTURE_VALIDATE_IDE", "jetbrains")
+    monkeypatch.setattr(
+        "vdisplay.integrations.vql_bridge._try_from_screen_context",
+        lambda _ctx: {
+            "version": "1.0",
+            "scene": {"width": 800, "height": 600, "layers": [layer]},
+            "layers": [layer],
+            "metadata": {"render_intent": {"canvas": {"width": 800, "height": 600}, "layers": []}},
+        },
+    )
+
+    program = context_to_vql_program(ctx)
+    validation = program["metadata"]["capture_validation"]
+
+    assert validation["capture_confirmed"] is True
+    assert validation["structure"]["layer_count"] == 1
+    assert program["metadata"]["render_intent"]["layers"] == [layer]
+
+
 def test_observe_screen_writes_sidecar(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

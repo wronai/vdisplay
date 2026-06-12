@@ -1,4 +1,4 @@
-# vdisplay | 2364 func | 262f | 142214L | python | 2026-06-12
+# vdisplay | 2367 func | 262f | 142278L | python | 2026-06-12
 # generated in 0.00s
 
 HEALTH:
@@ -30,8 +30,8 @@ MODULES[367] (top by size):
   M[src/vdisplay/application/session_recorder.py] 764L C:3 F:34 CC↑14 D:8 (python)
   M[src/vdisplay/control/providers/vision/provider.py] 724L C:1 F:37 CC↑12 D:0 (python)
   M[src/vdisplay/capture/screencast_keeper.py] 694L C:0 F:32 CC↑13 D:5 (python)
+  M[src/vdisplay/integrations/vql_bridge.py] 677L C:0 F:34 CC↑14 D:2 (python)
   M[src/vdisplay/control/verifier.py] 659L C:3 F:32 CC↑14 D:1 (python)
-  M[src/vdisplay/ide_prompt.py] 627L C:0 F:19 CC↑13 D:13 (python)
   LANGS: python:288/json:29/shell:12/toml:11/yaml:11/other:5/yml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
@@ -49,4 +49,4 @@ REFACTOR[15]:
   [5] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
 
 EVOLUTION:
-  2026-06-12 CC̄=4.0 crit=212 142214L // Automated analysis
+  2026-06-12 CC̄=4.0 crit=212 142278L // Automated analysis
