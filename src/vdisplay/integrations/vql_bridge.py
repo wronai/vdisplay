@@ -72,32 +72,75 @@ def _try_from_screen_context(ctx: ScreenContext) -> dict[str, Any] | None:
 
 
 def _try_imgl_scene(ctx: ScreenContext) -> dict[str, Any] | None:
-    imgl_scene = (ctx.imgl.get("scene") if ctx.imgl.get("ok") else None)
-    if not imgl_scene or not imgl_available():
+    """Build VQL program from imgl scene with full actuation layers."""
+    if not ctx.imgl.get("ok") or not imgl_available():
         return None
-    try:
-        from imgl.export.vql_adapter import scene_to_vql
-        from imgl.types import Scene
-
-        scene = Scene.from_dict(imgl_scene) if hasattr(Scene, "from_dict") else None
-        if scene is not None:
-            return scene_to_vql(scene)
-    except Exception:
-        pass
-    return None
+    capture = ctx.capture
+    width = int(capture.get("width") or 0)
+    height = int(capture.get("height") or 0)
+    layers = _build_imgl_layers(ctx.imgl)
+    if not layers:
+        return None
+    return {
+        "version": "1.0",
+        "scene": {"width": width, "height": height, "layers": layers, "elements": layers},
+        "layers": layers,
+        "elements": layers,
+        "metadata": {
+            "source": "imgl",
+            "element_count": ctx.imgl.get("element_count") or len(layers),
+            "window_count": ctx.imgl.get("window_count") or 0,
+        },
+    }
 
 
 def _try_adopt_screenshot(ctx: ScreenContext) -> dict[str, Any] | None:
+    """Use img2vql.adopt_screenshot for top-level elements (bboxes, click_centers)."""
     if not ctx.image_path or not Path(ctx.image_path).is_file():
         return None
     try:
         from img2vql import adopt_screenshot
 
         adopted = adopt_screenshot(ctx.image_path)
-        if isinstance(adopted, dict):
-            return adopted
-        if hasattr(adopted, "to_dict"):
-            return adopted.to_dict()
+        if not isinstance(adopted, dict) or not adopted.get("ok"):
+            return None
+        elements = adopted.get("elements") or []
+        if not elements:
+            return None
+        capture = ctx.capture
+        width = int(capture.get("width") or 0)
+        height = int(capture.get("height") or 0)
+        layers = []
+        for el in elements:
+            bbox = el.get("bbox")
+            if not isinstance(bbox, (list, tuple)) or len(bbox) < 4:
+                continue
+            x, y, w, h = bbox[0], bbox[1], bbox[2], bbox[3]
+            # Normalize to bbox dict format
+            bbox_dict = {"x": x, "y": y, "w": w, "h": h}
+            center = {"x": x + w // 2, "y": y + h // 2}
+            layer = {
+                "kind": str(el.get("role") or "element"),
+                "id": str(el.get("id") or ""),
+                "text": el.get("label") or el.get("text") or "",
+                "bbox": bbox_dict,
+                "center": center,
+                "click_center": center,
+                "confidence": float(el.get("confidence") or 0.0) or None,
+                "metadata": {"source": "img2vql-adopt", "location": el.get("location")},
+            }
+            layers.append(layer)
+        return {
+            "version": "1.0",
+            "scene": {"width": width, "height": height, "layers": layers, "elements": elements},
+            "layers": layers,
+            "elements": elements,
+            "metadata": {
+                "source": "img2vql",
+                "element_count": adopted.get("element_count") or len(elements),
+                "describe": {"nl": adopted.get("description") or ""},
+            },
+        }
     except ImportError:
         pass
     except Exception:
@@ -362,27 +405,14 @@ def _extract_imgl_scene(imgl: dict[str, Any]) -> dict[str, Any] | None:
 
 
 def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build actuation layers from imgl scene data (windows+elements+ocr)."""
     limit = get_runtime_options().vql.layer_export_limit
     scene = _extract_imgl_scene(imgl)
-    if scene is not None:
-        try:
-            from imgl.export.actuation_layers import scene_to_actuation_layers
-
-            return scene_to_actuation_layers(scene, limit=limit)
-        except ImportError:
-            pass
-        imgl = {"ok": True, "scene": scene}
-    try:
-        from imgl.export.actuation_layers import imgl_result_to_actuation_layers
-
-        return imgl_result_to_actuation_layers(imgl, limit=limit)
-    except ImportError:
-        pass
-    imgl_scene = imgl.get("scene") if imgl.get("ok") else None
-    if not isinstance(imgl_scene, dict):
+    if not isinstance(scene, dict):
         return []
+    # Build layers from scene windows + elements + orphan + ocr
     layers: list[dict[str, Any]] = []
-    for window in imgl_scene.get("windows") or []:
+    for window in scene.get("windows") or []:
         if not isinstance(window, dict):
             continue
         window_layer = _layer_from_bbox(
@@ -405,7 +435,7 @@ def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
             )
             if item:
                 layers.append(item)
-    for element in imgl_scene.get("elements") or []:
+    for element in scene.get("elements") or []:
         if not isinstance(element, dict):
             continue
         item = _layer_from_bbox(
@@ -417,7 +447,19 @@ def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
         )
         if item:
             layers.append(item)
-    for ocr in imgl_scene.get("ocr_boxes") or []:
+    for element in scene.get("orphan_elements") or []:
+        if not isinstance(element, dict):
+            continue
+        item = _layer_from_bbox(
+            kind=str(element.get("role") or element.get("type") or "element"),
+            layer_id=str(element.get("id") or ""),
+            text=element.get("text"),
+            bbox=element.get("bbox"),
+            confidence=float(element.get("confidence") or 0.0) or None,
+        )
+        if item:
+            layers.append(item)
+    for ocr in scene.get("ocr_boxes") or []:
         if not isinstance(ocr, dict):
             continue
         text = str(ocr.get("text") or "").strip()

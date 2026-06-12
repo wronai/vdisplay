@@ -3,7 +3,7 @@
 #
 # Usage:
 #   bash examples/dev-workflow/koru-drive-photo-vql.sh --ide cursor --prompt "fix tests"
-#   bash examples/dev-workflow/koru-drive-photo-vql.sh --ide jetbrains --source DP-2 --dry-run
+#   bash examples/dev-workflow/koru-drive-photo-vql.sh --ide jetbrains --source DP-1 --dry-run
 
 set -euo pipefail
 
@@ -71,9 +71,15 @@ export KORU_VDISPLAY_VQL_MAX_AGE_S="${KORU_VDISPLAY_VQL_MAX_AGE_S:-300}"
 export VDISPLAY_SESSION="${VDISPLAY_SESSION:-1}"
 export KORU_VDISPLAY_AUTO_IDE_CONTROL="${KORU_VDISPLAY_AUTO_IDE_CONTROL:-1}"
 export KORU_VDISPLAY_IDE_CONTROL_RETRIES="${KORU_VDISPLAY_IDE_CONTROL_RETRIES:-3}"
-export KORU_VDISPLAY_RAISE_ALT_TAB="${KORU_VDISPLAY_RAISE_ALT_TAB:-0}"
+# Alt+Tab focus recovery: default on for JetBrains (see _raise_alt_tab_enabled); off for other IDEs unless set.
+case "${IDE}" in
+  jetbrains|pycharm|idea) ;;
+  *) export KORU_VDISPLAY_RAISE_ALT_TAB="${KORU_VDISPLAY_RAISE_ALT_TAB:-0}" ;;
+esac
 export KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES="${KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES:-2}"
 export VDISPLAY_POINTER_SAFE_MARGIN="${VDISPLAY_POINTER_SAFE_MARGIN:-140}"
+# Enable ydotool literal typing on Wayland (more reliable than clipboard paste for PyCharm AI Chat)
+export VDISPLAY_ALLOW_YDOTOOL_TYPING="${VDISPLAY_ALLOW_YDOTOOL_TYPING:-1}"
 
 export KORU_DRIVE_IDE="${IDE}"
 export KORU_DRIVE_PROMPT="${PROMPT}"
@@ -91,7 +97,7 @@ import os
 import sys
 from pathlib import Path
 
-from koru.integrations.autonomy_session import find_latest_koru_session
+from koru.integrations.autonomy_session import find_latest_koru_session, persist_autonomy_phase
 from koru.integrations.vdisplay_client import prepare_photo_vql_for_drive, send_chat
 
 ide = os.environ["KORU_DRIVE_IDE"]
@@ -100,6 +106,23 @@ submit = os.environ.get("KORU_DRIVE_SUBMIT", "0") in {"1", "true", "yes"}
 
 observe = prepare_photo_vql_for_drive(ide=ide)
 print("photo_vql_observe:", json.dumps(observe, indent=2))
+
+probe = observe.get("desktop_probe") or {}
+if probe:
+    print("desktop_probe:", json.dumps({
+        "ok": probe.get("ok"),
+        "resolved_source": probe.get("resolved_source"),
+        "source_auto_resolved": probe.get("source_auto_resolved"),
+        "monitor_names": probe.get("monitor_names"),
+        "window_count": probe.get("window_count"),
+        "ide_process_count": len(probe.get("ide_processes") or []),
+    }, indent=2))
+if not observe.get("ok"):
+    err = observe.get("error") or "prepare failed"
+    print(f"prepare_aborted: {err}", file=sys.stderr)
+    if observe.get("hint"):
+        print(f"hint: {observe.get('hint')}", file=sys.stderr)
+    sys.exit(1)
 
 prov = observe.get("capture_provenance") or {}
 if prov:
@@ -116,6 +139,8 @@ if observe.get("ide_window_warning"):
         "KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH=1",
         file=sys.stderr,
     )
+    if observe.get("competing_ide"):
+        print(f"competing_ide: {observe['competing_ide']}", file=sys.stderr)
 
 ide_control = observe.get("ide_control") or {}
 visual_guard_failed = ide_control.get("visual_guard_failed")
@@ -157,6 +182,7 @@ if coords:
 
 session = find_latest_koru_session(ide=ide, root=Path(os.environ.get("VDISPLAY_METADATA_DIR", ".vdisplay")))
 if session is not None:
+    persist_autonomy_phase(session, "act", "drive_result", reply)
     print(f"SESSION={session.resolve()}")
     print(f"# audit: bash examples/dev-workflow/koru-audit-last-session.sh --ide {ide}")
 else:

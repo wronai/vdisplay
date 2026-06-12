@@ -1,12 +1,12 @@
-# redup/duplication | 52 groups | 286f 45951L | 2026-06-12
+# redup/duplication | 52 groups | 286f 45998L | 2026-06-12
 
 SUMMARY:
   files_scanned: 286
-  total_lines:   45951
+  total_lines:   45998
   dup_groups:    52
   dup_fragments: 121
   saved_lines:   499
-  scan_ms:       4941
+  scan_ms:       5888
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.2%)
@@ -56,7 +56,7 @@ DUPLICATES[52] (ranked by impact):
       src/vdisplay/control/scoring.py:128-134  (_ax_ready)
       src/vdisplay/control/scoring.py:137-143  (_browser_ready)
   [1fe3c7539f2901fb]   STRU  _imgl_item_to_ocr_box  L=14 N=2 saved=14 sim=1.00
-      src/vdisplay/integrations/imgl_bridge.py:141-154  (_imgl_item_to_ocr_box)
+      src/vdisplay/integrations/imgl_bridge.py:146-159  (_imgl_item_to_ocr_box)
       src/vdisplay/integrations/observe_cache.py:200-213  (_item_to_ocr_box)
   [2daecba5919bff35]   STRU  enrich_screencast_stream_meta  L=13 N=2 saved=13 sim=1.00
       src/vdisplay/capture/screencast_stream_meta.py:42-54  (enrich_screencast_stream_meta)

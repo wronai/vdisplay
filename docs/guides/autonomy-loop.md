@@ -189,7 +189,7 @@ Used by `koru-drive-photo-vql.sh`, `prepare_photo_vql_for_drive()`, `send_chat()
 | Step | Function | Input | Output in session |
 |------|----------|-------|-------------------|
 | 1. **Session** | `begin_autonomy_session()` | ide, source | `.vdisplay/YYYY-MM-DD/ISO__koru-{ide}/` |
-| 2. **Observe** | `ensure_vdisplay_ide_control` + `refresh_photo_vql_sidecar` | live screenshot | `observe/capture.png` + `.vql.json` |
+| 2. **Observe** | `prepare_photo_vql_for_drive` → `ensure_vdisplay_ide_control` + `refresh_photo_vql_sidecar` | live screenshot | `observe/prepare.json`, `observe/capture.png` + `.vql.json` |
 | 3. **Freshness gate** | `load_vql_metadata()` / `vql_sidecar_is_stale()` | max age (default 300s) | skip stale; abort if session active |
 | 4. **IDE match** | `_photo_vql_ide_window_warning()` | **window title layer only** | `ide_window_warning` if Cursor≠PyCharm |
 | 5. **Decide** | `get_vql_chat_target_from_photo` + `_resolve_photo_vql_llm_coords` | PNG + VQL + OpenRouter | `decide/vql_target.json` |
@@ -208,13 +208,35 @@ When typing misses the chat composer, inspect (in order):
 
 Logger keys (grep): `VQL_CHAT_TARGET_CANDIDATES`, `VQL_CURSOR_POSITIONING`, `VQL_CURSOR_POSITIONING_SUSPICIOUS`, `VQL_YDOTOOL_COMMAND_MAPPED`, `VQL_CHAT_WRITE_PASTE_OK`.
 
-### Freshness env vars
+### Capture guards (JetBrains / Wayland)
+
+- `capture_confirmed` comes from **window title layer**, not map actuation success.
+- `body_false_positive: true` when OCR sees IDE name in document body (e.g. Cursor) but not in titlebar.
+- **Terminal pollution:** when the control terminal running `bash koru-drive-*.sh` is on the captured monitor (DP-2), imgl OCR reads bash history as "button/input" VQL candidates. Guard: `_VQL_TERMINAL_LABEL_NOISE` (20+ tokens: `KORU_`, `DRY_RUN`, `PREFER`, `po clear`, `recznie`, `wpisz`, `audit`, etc.) → heavy score penalty (-1500) → reject candidates with shell/command/env tokens. Pollution also triggers `ide_window_mismatch` + `capture_confirmed: false`.
+- Default: drive **aborts** if foreground ≠ PyCharm; set `KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH=1` only for controlled tests.
+- Full checklist: `semcod/koru/docs/photo-vql-jetbrains-wayland.md`.
+
+### Guard env vars (JetBrains / Wayland)
 
 | Variable | Default | Meaning |
-|----------|---------|---------|
+|----------|--------|---------|
+| `KORU_VDISPLAY_RAISE_ALT_TAB` | auto on for JetBrains | Alt+Tab focus recovery before abort |
+| `KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH` | off | Map-only path when capture title ≠ target IDE (test/escape hatch) |
+| `KORU_VDISPLAY_ALLOW_IDE_MISMATCH` | off | Broader guard bypass for actuation |
+| `KORU_VDISPLAY_VERIFY_AFTER_PASTE` | on | OCR verify after paste; `ok: false` when text not visible |
+| `KORU_VDISPLAY_DRY_RUN` | off | Dry-run mode (no actual paste/ydotool) |
+| `VDISPLAY_CAPTURE_VALIDATE_IDE` | `jetbrains` in drive script | Pre-check window title on screenshot |
 | `KORU_VDISPLAY_VQL_MAX_AGE_S` | `300` | Sidecars older than this are not used for decide |
 | `KORU_VDISPLAY_PHOTO_VQL_REFRESH` | `auto` | `auto` = refresh when missing/stale/mismatch; `always` = every run |
 | `VDISPLAY_SESSION` | `1` in drive script | Enables `record_koru_drive_step` audit |
+
+### Audit
+
+```bash
+bash examples/dev-workflow/koru-audit-last-session.sh --ide jetbrains
+```
+
+Section **0. Prepare/observe** reads `observe/prepare.json` (`capture_confirmed`, `competing_ide`, `focus_recovery`, `visual_guard_failed`).
 
 ### Entry command (JetBrains DP-2)
 

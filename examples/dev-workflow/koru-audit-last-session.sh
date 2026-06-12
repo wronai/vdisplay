@@ -40,13 +40,48 @@ fi
 if [[ -z "${SESSION}" || ! -d "${SESSION}" ]]; then
   echo "Brak sesji *__koru-${IDE} w .vdisplay/" >&2
   echo "  Po 'vdisplay config --project . clear' uruchom REAL drive (bez --dry-run):" >&2
-  echo "  bash examples/dev-workflow/koru-drive-photo-vql.sh --ide ${IDE} --source DP-2 --prompt 'test'" >&2
+  echo "  bash examples/dev-workflow/koru-drive-photo-vql.sh --ide ${IDE} --source DP-1 --prompt 'test'" >&2
   echo "  Dry-run tworzy tylko observe/prepare.json — decide/act wymagają pełnego perform." >&2
   exit 1
 fi
 
 echo "SESSION=${SESSION}"
 echo "session.json: $(jq -r '.started_at // .kind // empty' "${SESSION}/session.json" 2>/dev/null || echo '?')"
+
+echo ""
+echo "=== 0. Prepare / observe (observe/prepare.json) ==="
+PREPARE="${SESSION}/observe/prepare.json"
+if [[ ! -f "${PREPARE}" ]]; then
+  echo "(brak — observe/prepare.json)"
+else
+  jq '{
+    ok,
+    source,
+    capture_confirmed,
+    capture_ready,
+    map_only_fallback,
+    body_false_positive,
+    competing_ide,
+    error,
+    hint,
+    ide_control_attempts,
+    focus_recovery,
+    ide_window_warning,
+    ide_control: (.ide_control | {
+      capture_confirmed,
+      visual_guard_failed,
+      confirmation_bias_risk,
+      map_actuation_ok,
+      interior_focused
+    }),
+    capture_provenance: (.capture_provenance | {
+      capture_confirmed,
+      window_titles,
+      png_mtime_iso,
+      vql_mtime_iso
+    })
+  }' "${PREPARE}"
+fi
 
 audit_file() {
   local rel="$1"

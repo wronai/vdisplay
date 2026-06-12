@@ -1,7 +1,7 @@
-# vdisplay | 367f 63391L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
-# generated in 0.04s
-# stats: 2341 func | 0 cls | 367 mod | CC̄=4.1 | critical:9 | cycles:0
-# alerts[5]: fan-out _start_screencast_impl=41; CC _build_imgl_layers=37; CC analyze_history=36; fan-out register_routes=33; fan-out analyze_history=32
+# vdisplay | 367f 227773L | json:29,yaml:11,toml:11,txt:2,shell:12,python:288,yml:5,proto:4 | 2026-06-12
+# generated in 0.06s
+# stats: 2342 func | 0 cls | 367 mod | CC̄=4.1 | critical:10 | cycles:0
+# alerts[5]: CC _build_imgl_layers=42; fan-out _start_screencast_impl=41; CC analyze_history=36; fan-out register_routes=33; fan-out analyze_history=32
 # hotspots[5]: _start_screencast_impl fan=41; register_routes fan=33; analyze_history fan=32; register_routes fan=27; SessionRecorder.record fan=26
 # evolution: CC̄ 4.1→4.1 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
@@ -32,8 +32,8 @@ M[367]:
   examples/control-plugin/pyproject.toml,16
   examples/control-plugin/src/vdisplay_example_plugin/__init__.py,27
   examples/control-plugin/src/vdisplay_example_plugin/my_provider.py,92
-  examples/dev-workflow/koru-audit-last-session.sh,84
-  examples/dev-workflow/koru-drive-photo-vql.sh,167
+  examples/dev-workflow/koru-audit-last-session.sh,119
+  examples/dev-workflow/koru-drive-photo-vql.sh,193
   examples/dev-workflow/koru-photo-vql.sh,97
   examples/dev-workflow/planfile.yaml,335
   examples/dev-workflow/planfile-autonomy.yaml,36
@@ -152,8 +152,8 @@ M[367]:
   proto/vdisplay/v1/event.proto,16
   proto/vdisplay/v1/result.proto,16
   pyproject.toml,190
-  screen.png.context.json,450
-  screen.png.vql.json,215
+  screen.png.context.json,105421
+  screen.png.vql.json,57902
   screen.png.vql.imgl.json,8523
   src/vdisplay/__init__.py,12
   src/vdisplay/__main__.py,4
@@ -349,12 +349,12 @@ M[367]:
   src/vdisplay/input/linux_ydotool.py,114
   src/vdisplay/input/resolve.py,27
   src/vdisplay/integrations/__init__.py,11
-  src/vdisplay/integrations/imgl_bridge.py,163
+  src/vdisplay/integrations/imgl_bridge.py,168
   src/vdisplay/integrations/observe_cache.py,224
   src/vdisplay/integrations/pipeline.py,175
   src/vdisplay/integrations/screen_context.py,172
   src/vdisplay/integrations/vision_backend.py,172
-  src/vdisplay/integrations/vql_bridge.py,567
+  src/vdisplay/integrations/vql_bridge.py,609
   src/vdisplay/integrations/vql_capture_validation.py,291
   src/vdisplay/models.py,26
   src/vdisplay/monitor_geometry.py,34
@@ -371,7 +371,7 @@ M[367]:
   src/vdisplay/windows/scan.py,110
   testql-scenarios/generated-cli-tests.testql.toon.yaml,20
   tree.txt,241
-  ui.vql.json,80
+  ui.vql.json,1696
   vdisplay.yaml,218
 D:
   src/vdisplay/integrations/vql_bridge.py:
@@ -741,6 +741,52 @@ D:
     gui_map_built()
     gui_map_drift_detected()
     map_events_from_diagnostics()
+  src/vdisplay/application/session_recorder.py:
+    e: StepRecord,SessionDocument,SessionRecorder,session_recording_enabled,_redact_env,_collect_env_snapshot,_slugify,_default_session_name,resolve_session_root,get_session_recorder,record_execution,request_to_dict,result_to_dict,collect_artifacts,_artifacts_from_data,_collect_top_level_artifacts,_collect_block_artifacts,_collect_routing_artifacts,copy_artifact,command_request_to_dsl_text,resolve_map_path,archive_map_artifacts,_reprocess_steps,_reprocess_events,_update_session_files,reprocess_session_diagnostics,discover_session_dirs,load_session_document,export_session_zip,_build_summary,_utc_now
+    StepRecord:
+    SessionDocument: to_dict(0)
+    SessionRecorder: __init__(1),_load_or_create_document(0),record(2),_emit_step_events(4),flush(0)
+    session_recording_enabled()
+    _redact_env(env)
+    _collect_env_snapshot()
+    _slugify(value)
+    _default_session_name()
+    resolve_session_root(cmd)
+    get_session_recorder(cmd)
+    record_execution(cmd;result)
+    request_to_dict(cmd)
+    result_to_dict(result)
+    collect_artifacts(result)
+    _artifacts_from_data(data)
+    _collect_top_level_artifacts(data;add)
+    _collect_block_artifacts(data;add)
+    _collect_routing_artifacts(data;add)
+    copy_artifact(step_dir;artifact)
+    command_request_to_dsl_text(cmd)
+    resolve_map_path(cmd;result;diagnostics)
+    archive_map_artifacts(session_root;cmd;result;diagnostics)
+    _reprocess_steps(doc;session_dir)
+    _reprocess_events(doc;session_dir;diagnostics_by_request)
+    _update_session_files(doc;session_dir)
+    reprocess_session_diagnostics(session_dir)
+    discover_session_dirs()
+    load_session_document(session_dir)
+    export_session_zip(session_dir;output)
+    _build_summary(steps)
+    _utc_now()
+  src/vdisplay/application/session_recorder_readme.py:
+    e: _session_embed_images,_is_image_artifact,render_readme,_render_observe_section,_render_header,_render_step_toc,_render_step_section,_render_step_routing,_render_step_verify,_render_step_files,_render_maps_section
+    _session_embed_images()
+    _is_image_artifact(kind;rel_path)
+    render_readme(doc)
+    _render_observe_section(session_dir)
+    _render_header(doc)
+    _render_step_toc(steps)
+    _render_step_section(step)
+    _render_step_routing(step)
+    _render_step_verify(step)
+    _render_step_files(step)
+    _render_maps_section(maps)
   src/vdisplay/application/services/img2nl_enrich.py:
     e: img2nl_enabled,img2nl_locale,describe_backend,_extract_window_titles,_extract_element_labels,_nl_from_imgl_scene,_describe_via_imgl,_describe_via_vql,describe_screenshot_image,_describe_via_img2nl,_image_path,_maybe_vision_llm_enrich,enrich_screenshot_payload
     img2nl_enabled()
@@ -892,52 +938,6 @@ D:
     WindowContextResolver: __init__(0),resolve(3),_windows_cached(0),_window_by_id(1)  # Resolve window/app under pointer with short-lived window lis...
     pick_context_coordinates(sources)
     _point_in_window(window;x;y)
-  src/vdisplay/application/session_recorder.py:
-    e: StepRecord,SessionDocument,SessionRecorder,session_recording_enabled,_redact_env,_collect_env_snapshot,_slugify,_default_session_name,resolve_session_root,get_session_recorder,record_execution,request_to_dict,result_to_dict,collect_artifacts,_artifacts_from_data,_collect_top_level_artifacts,_collect_block_artifacts,_collect_routing_artifacts,copy_artifact,command_request_to_dsl_text,resolve_map_path,archive_map_artifacts,_reprocess_steps,_reprocess_events,_update_session_files,reprocess_session_diagnostics,discover_session_dirs,load_session_document,export_session_zip,_build_summary,_utc_now
-    StepRecord:
-    SessionDocument: to_dict(0)
-    SessionRecorder: __init__(1),_load_or_create_document(0),record(2),_emit_step_events(4),flush(0)
-    session_recording_enabled()
-    _redact_env(env)
-    _collect_env_snapshot()
-    _slugify(value)
-    _default_session_name()
-    resolve_session_root(cmd)
-    get_session_recorder(cmd)
-    record_execution(cmd;result)
-    request_to_dict(cmd)
-    result_to_dict(result)
-    collect_artifacts(result)
-    _artifacts_from_data(data)
-    _collect_top_level_artifacts(data;add)
-    _collect_block_artifacts(data;add)
-    _collect_routing_artifacts(data;add)
-    copy_artifact(step_dir;artifact)
-    command_request_to_dsl_text(cmd)
-    resolve_map_path(cmd;result;diagnostics)
-    archive_map_artifacts(session_root;cmd;result;diagnostics)
-    _reprocess_steps(doc;session_dir)
-    _reprocess_events(doc;session_dir;diagnostics_by_request)
-    _update_session_files(doc;session_dir)
-    reprocess_session_diagnostics(session_dir)
-    discover_session_dirs()
-    load_session_document(session_dir)
-    export_session_zip(session_dir;output)
-    _build_summary(steps)
-    _utc_now()
-  src/vdisplay/application/session_recorder_readme.py:
-    e: _session_embed_images,_is_image_artifact,render_readme,_render_observe_section,_render_header,_render_step_toc,_render_step_section,_render_step_routing,_render_step_verify,_render_step_files,_render_maps_section
-    _session_embed_images()
-    _is_image_artifact(kind;rel_path)
-    render_readme(doc)
-    _render_observe_section(session_dir)
-    _render_header(doc)
-    _render_step_toc(steps)
-    _render_step_section(step)
-    _render_step_routing(step)
-    _render_step_verify(step)
-    _render_step_files(step)
-    _render_maps_section(maps)
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
     e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_cmdline,_is_vdisplay_agent_pid,_partition_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
     _pid_alive(pid)
@@ -1631,6 +1631,16 @@ D:
     nl_to_dsl(prompt)
     run_nl_prompt(prompt)
     _run_local_dsl(line)
+  src/vdisplay/commands/session.py:
+    e: add_root_session_args,register,command_request_from_control_args,_resolve_session_dir,handle_list,handle_show,handle_export,handle_reprocess
+    add_root_session_args(parser)
+    register(sub)
+    command_request_from_control_args(args;verb)
+    _resolve_session_dir(args)
+    handle_list(args)
+    handle_show(args)
+    handle_export(args)
+    handle_reprocess(args)
   src/vdisplay/commands/history.py:
     e: register,_resolve_root,_resolve_session_from_args,handle_list,handle_show,handle_analyze,_print_analyze_summary,handle_events,handle_replay
     register(sub)
@@ -1745,16 +1755,6 @@ D:
     _build_probe_result(png;stream_idx;monitor;props;state;source_name;tried)
     probe_screencast_capture()
     start_screencast_via_agent(client)
-  src/vdisplay/commands/session.py:
-    e: add_root_session_args,register,command_request_from_control_args,_resolve_session_dir,handle_list,handle_show,handle_export,handle_reprocess
-    add_root_session_args(parser)
-    register(sub)
-    command_request_from_control_args(args;verb)
-    _resolve_session_dir(args)
-    handle_list(args)
-    handle_show(args)
-    handle_export(args)
-    handle_reprocess(args)
   packages/vdisplay-agent/src/vdisplay_agent/cli.py:
     e: main
     main(argv)
@@ -2756,10 +2756,10 @@ D:
   planfile.yaml:
   koru.yaml:
   vdisplay.yaml:
+  pyproject.toml:
   tree.txt:
   prefact.yaml:
   project.sh:
-  ui.vql.json:
   packages/mcp2vdisplay/pyproject.toml:
   packages/dsl2vdisplay/pyproject.toml:
   packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py:
@@ -2784,6 +2784,7 @@ D:
   packages/nlp2vdisplay/pyproject.toml:
   packages/vdisplay-agent/pyproject.toml:
   packages/vdisplay-agent/src/vdisplay_agent/schemas.py:
+  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py:
   packages/vdisplay-agent/src/vdisplay_agent/static/__init__.py:
   maps/pycharm-chat-fresh.json:
@@ -2827,6 +2828,13 @@ D:
     audit_file()
   examples/dev-workflow/planfile.yaml:
   examples/dev-workflow/planfile-autonomy.yaml:
+  examples/dev-workflow/koru-drive-photo-vql.sh:
+    e: print,print,persist_autonomy_phase,print,print
+    print()
+    print()
+    persist_autonomy_phase()
+    print()
+    print()
   examples/dev-workflow/vdisplay.override.example.yaml:
   examples/dev-workflow/run-dev-automation.sh:
     e: _ensure_koru_daemon
@@ -2891,11 +2899,6 @@ D:
   proto/vdisplay/v1/common.proto:
   proto/vdisplay/v1/event.proto:
   proto/vdisplay/v1/command.proto:
-  pyproject.toml:
   screen.png.context.json:
   screen.png.vql.json:
-  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
-  examples/dev-workflow/koru-drive-photo-vql.sh:
-    e: print,print
-    print()
-    print()
+  ui.vql.json:

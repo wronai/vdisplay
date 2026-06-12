@@ -48,16 +48,15 @@ def _build_imgl_config(ImglConfig: Any) -> Any:
 
 
 def _scene_to_dict(scene: Any, scene_to_json: Callable[..., Any]) -> dict[str, Any]:
+    """Convert imgl Scene object to dict. scene_to_json may return str or dict."""
     if hasattr(scene, "to_dict"):
         payload = scene.to_dict()
         return payload if isinstance(payload, dict) else {}
     payload = scene_to_json(scene)
-    if isinstance(payload, dict):
-        return payload
     if isinstance(payload, str):
         loaded = json.loads(payload)
         return loaded if isinstance(loaded, dict) else {}
-    return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def analyze_with_imgl(
@@ -95,11 +94,17 @@ def analyze_with_imgl(
         return {"ok": False, "error": str(exc)}
 
     scene_json = _scene_to_dict(scene, scene_to_json)
+    # Count all elements: inside windows + top-level + orphan
+    windows = scene_json.get("windows", [])
+    elements_in_windows = sum(len(w.get("elements", [])) for w in windows)
+    top_elements = len(scene_json.get("elements", []) or [])
+    orphan_elements = len(scene_json.get("orphan_elements", []) or [])
+    total_elements = elements_in_windows + top_elements + orphan_elements
     return {
         "ok": True,
         "scene": scene_json,
-        "element_count": len(scene_json.get("elements", []) or []),
-        "window_count": len(scene_json.get("windows", []) or []),
+        "element_count": total_elements,
+        "window_count": len(windows),
         "ocr_count": len(scene_json.get("ocr_boxes", []) or []),
         "source": "imgl",
         "vql_file": str(vql_path),
