@@ -1,8 +1,8 @@
-# vdisplay | 2356 func | 262f | 142125L | python | 2026-06-12
+# vdisplay | 2364 func | 262f | 142214L | python | 2026-06-12
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.1  critical=213 (limit:10)  dup=1  cycles=0
+  CC̄=4.0  critical=212 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
   !!! high_fan_out     _start_screencast_impl = 41 (limit:10)
@@ -49,4 +49,4 @@ REFACTOR[15]:
   [5] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
 
 EVOLUTION:
-  2026-06-12 CC̄=4.1 crit=213 142125L // Automated analysis
+  2026-06-12 CC̄=4.0 crit=212 142214L // Automated analysis

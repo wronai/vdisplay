@@ -265,6 +265,46 @@ def global_region_to_capture_local(
     return _bounds_from_corners(tuple(corners), png_w=png_w, png_h=png_h)
 
 
+def _resolve_mapping_label(meta: dict[str, Any], rotation: str) -> str:
+    """Return the mapping label (e.g. 'region+rotation-90')."""
+    mapping = "screencast-stream" if meta.get("screencast_stream") else "region"
+    if rotation and rotation != "normal":
+        mapping = f"{mapping}+rotation-{rotation}"
+    return mapping
+
+
+def _build_mapping_payload(
+    *,
+    mapping: str,
+    origin_x: int,
+    origin_y: int,
+    scale_x: float,
+    scale_y: float,
+    rotation: str,
+    local_x: int,
+    local_y: int,
+    rel_x: int,
+    rel_y: int,
+    clamp: dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Assemble the mapping metadata dict for coordinate translation."""
+    payload: dict[str, Any] = {
+        "mapping": mapping,
+        "origin_x": origin_x,
+        "origin_y": origin_y,
+        "scale_x": scale_x,
+        "scale_y": scale_y,
+        "rotation": rotation,
+        "local_x": local_x,
+        "local_y": local_y,
+        "region_rel_x": rel_x,
+        "region_rel_y": rel_y,
+    }
+    if clamp:
+        payload["pointer_clamp"] = clamp
+    return payload
+
+
 def _global_from_region(
     local_x: int,
     local_y: int,
@@ -290,28 +330,25 @@ def _global_from_region(
         rotation=rotation,
         allow_1to1_fallback=False,
     )
-    mapping = "screencast-stream" if meta.get("screencast_stream") else "region"
-    if rotation and rotation != "normal":
-        mapping = f"{mapping}+rotation-{rotation}"
+    mapping = _resolve_mapping_label(meta, rotation)
     gx, gy = origin_x + rel_x, origin_y + rel_y
     monitor_name = str(meta.get("monitor_name") or meta.get("source") or "")
     gx, gy, clamp = _clamp_global_pointer(
         gx, gy, display=display, monitor_name=monitor_name or None
     )
-    mapping_payload: dict[str, Any] = {
-        "mapping": mapping,
-        "origin_x": origin_x,
-        "origin_y": origin_y,
-        "scale_x": scale_x,
-        "scale_y": scale_y,
-        "rotation": rotation,
-        "local_x": local_x,
-        "local_y": local_y,
-        "region_rel_x": rel_x,
-        "region_rel_y": rel_y,
-    }
-    if clamp:
-        mapping_payload["pointer_clamp"] = clamp
+    mapping_payload = _build_mapping_payload(
+        mapping=mapping,
+        origin_x=origin_x,
+        origin_y=origin_y,
+        scale_x=scale_x,
+        scale_y=scale_y,
+        rotation=rotation,
+        local_x=local_x,
+        local_y=local_y,
+        rel_x=rel_x,
+        rel_y=rel_y,
+        clamp=clamp,
+    )
     return gx, gy, mapping_payload
 
 

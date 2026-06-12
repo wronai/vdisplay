@@ -180,31 +180,32 @@ def vql_decision_slice(
     }
 
 
-def build_decision_data(
-    task: AutoTask,
-    config: ProjectConfig,
-    *,
-    prepared_command: str = "",
-    vql_path: str | Path | None = None,
-) -> dict[str, Any]:
-    """Audit record: which defaults and actuation paths apply to this task."""
-    raw = task.raw or {}
-    action_ref = str(raw.get("action_ref") or raw.get("action") or "").strip()
-    action_spec: ActionSpec | None = config.action(action_ref) if action_ref else None
-    map_path = task.map_path
-    map_available = bool(map_path and Path(map_path).is_file())
-
-    ocr_ready = False
-    ocr_reason = ""
+def _check_ocr_status() -> tuple[bool, str]:
+    """Best-effort check whether OCR is available."""
     try:
         from ...control.vision_ocr import ocr_available
 
-        ocr_ready, ocr_reason = ocr_available()
+        return ocr_available()
     except Exception as exc:
-        ocr_reason = str(exc)
+        return False, str(exc)
 
+
+def _build_base_decision_data(
+    task: AutoTask,
+    config: ProjectConfig,
+    *,
+    action_ref: str,
+    action_spec: ActionSpec | None,
+    prepared_command: str,
+    ocr_ready: bool,
+    ocr_reason: str,
+) -> dict[str, Any]:
+    """Assemble the base decision data dict (before VQL slice)."""
+    raw = task.raw or {}
+    map_path = task.map_path
+    map_available = bool(map_path and Path(map_path).is_file())
     base = config.metadata_dir
-    data: dict[str, Any] = {
+    return {
         "action_ref": action_ref or None,
         "koru_instance": str(raw.get("koru_instance") or raw.get("koru") or "") or None,
         "monitor": task.monitor,
@@ -220,5 +221,28 @@ def build_decision_data(
         "prepared_command": prepared_command or task.command,
         "data_locations": config.options.data_location_paths(base),
     }
+
+
+def build_decision_data(
+    task: AutoTask,
+    config: ProjectConfig,
+    *,
+    prepared_command: str = "",
+    vql_path: str | Path | None = None,
+) -> dict[str, Any]:
+    """Audit record: which defaults and actuation paths apply to this task."""
+    raw = task.raw or {}
+    action_ref = str(raw.get("action_ref") or raw.get("action") or "").strip()
+    action_spec: ActionSpec | None = config.action(action_ref) if action_ref else None
+    ocr_ready, ocr_reason = _check_ocr_status()
+    data = _build_base_decision_data(
+        task,
+        config,
+        action_ref=action_ref,
+        action_spec=action_spec,
+        prepared_command=prepared_command,
+        ocr_ready=ocr_ready,
+        ocr_reason=ocr_reason,
+    )
     data.update(vql_decision_slice(vql_path, options=config.options))
     return data

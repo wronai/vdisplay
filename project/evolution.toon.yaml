@@ -1,20 +1,16 @@
-# code2llm/evolution | 2289 func | 240f | 2026-06-12
+# code2llm/evolution | 2297 func | 240f | 2026-06-12
 # generated in 0.01s
 
-NEXT[4] (ranked by impact):
-  [1] !  SPLIT-FUNC      load_task_record  CC=15  fan=13
-      WHY: CC=15 exceeds 15
-      EFFORT: ~1h  IMPACT: 195
-
-  [2] !! SPLIT           screen.png.context.json
+NEXT[3] (ranked by impact):
+  [1] !! SPLIT           screen.png.context.json
       WHY: 54007L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [3] !! SPLIT           screen.png.vql.json
+  [2] !! SPLIT           screen.png.vql.json
       WHY: 23595L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [4] !! SPLIT           screen.png.vql.imgl.json
+  [3] !! SPLIT           screen.png.vql.imgl.json
       WHY: 8523L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
@@ -26,9 +22,9 @@ RISKS[3]:
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
-  max-CC:      16 → ≤8
+  max-CC:      14 → ≤7
   god-modules: 21 → 0
-  high-CC(≥15): 5 → ≤2
+  high-CC(≥15): 0 → ≤0
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

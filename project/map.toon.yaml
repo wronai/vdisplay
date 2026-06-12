@@ -1,9 +1,9 @@
-# vdisplay | 367f 142125L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
-# generated in 0.05s
-# stats: 2356 func | 0 cls | 367 mod | CC̄=4.1 | critical:5 | cycles:0
+# vdisplay | 367f 142214L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
+# generated in 0.08s
+# stats: 2364 func | 0 cls | 367 mod | CC̄=4.0 | critical:0 | cycles:0
 # alerts[5]: fan-out _start_screencast_impl=41; fan-out register_routes=33; fan-out register_routes=27; fan-out SessionRecorder.record=26; fan-out start_sampler=24
 # hotspots[5]: _start_screencast_impl fan=41; register_routes fan=33; register_routes fan=27; SessionRecorder.record fan=26; start_sampler fan=24
-# evolution: CC̄ 4.1→4.1 (flat 0.0)
+# evolution: CC̄ 4.1→4.0 (improved -0.1)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[367]:
   app.vql.json,127
@@ -164,7 +164,7 @@ M[367]:
   src/vdisplay/application/__init__.py,17
   src/vdisplay/application/artifacts.py,102
   src/vdisplay/application/auto/__init__.py,12
-  src/vdisplay/application/auto/defaults.py,224
+  src/vdisplay/application/auto/defaults.py,248
   src/vdisplay/application/auto/executor.py,221
   src/vdisplay/application/auto/feedback.py,534
   src/vdisplay/application/auto/metadata.py,91
@@ -186,7 +186,7 @@ M[367]:
   src/vdisplay/application/handlers/local.py,291
   src/vdisplay/application/history/__init__.py,28
   src/vdisplay/application/history/analyze.py,218
-  src/vdisplay/application/history/loader.py,262
+  src/vdisplay/application/history/loader.py,277
   src/vdisplay/application/history/models.py,167
   src/vdisplay/application/models.py,7
   src/vdisplay/application/parsers.py,7
@@ -224,7 +224,7 @@ M[367]:
   src/vdisplay/backends/mirror_stub.py,34
   src/vdisplay/capture/__init__.py,23
   src/vdisplay/capture/base.py,9
-  src/vdisplay/capture/coordinate_map.py,380
+  src/vdisplay/capture/coordinate_map.py,417
   src/vdisplay/capture/coordinate_rotation.py,140
   src/vdisplay/capture/host.py,440
   src/vdisplay/capture/linux_xwd.py,328
@@ -352,7 +352,7 @@ M[367]:
   src/vdisplay/integrations/imgl_bridge.py,168
   src/vdisplay/integrations/observe_cache.py,224
   src/vdisplay/integrations/pipeline.py,175
-  src/vdisplay/integrations/screen_context.py,172
+  src/vdisplay/integrations/screen_context.py,185
   src/vdisplay/integrations/vision_backend.py,172
   src/vdisplay/integrations/vql_bridge.py,623
   src/vdisplay/integrations/vql_capture_validation.py,302
@@ -374,57 +374,6 @@ M[367]:
   ui.vql.json,1696
   vdisplay.yaml,218
 D:
-  src/vdisplay/capture/coordinate_map.py:
-    e: _pointer_safe_margin_px,_desktop_bounds,_resolve_monitor_bounds,_clamp_global_pointer,global_pointer_coords,_get_stream_region,global_point_to_capture_local,_clip_global_to_stream,_bounds_from_corners,_map_corners_to_local,global_region_to_capture_local,_global_from_region,_global_from_monitor,_rotation_for_monitor,_monitor_by_name
-    _pointer_safe_margin_px()
-    _desktop_bounds(display)
-    _resolve_monitor_bounds(display;monitor_name)
-    _clamp_global_pointer(gx;gy)
-    global_pointer_coords(local_x;local_y;capture_meta)
-    _get_stream_region(meta)
-    global_point_to_capture_local(global_x;global_y;capture_meta)
-    _clip_global_to_stream(gx;gy;gw;gh;origin_x;origin_y;stream_w;stream_h)
-    _bounds_from_corners(corners)
-    _map_corners_to_local(corners;meta;display)
-    global_region_to_capture_local(region;capture_meta)
-    _global_from_region(local_x;local_y)
-    _global_from_monitor(local_x;local_y)
-    _rotation_for_monitor(display;name)
-    _monitor_by_name(display;name)
-  src/vdisplay/application/auto/defaults.py:
-    e: _resolve_action_map,_resolve_task_monitor,_resolve_task_map_path,_resolve_task_command,apply_project_defaults,_wants_vision_injection,_inject_vision_anchor,_vql_layers_from_program,_vql_target_entry,vql_decision_slice,build_decision_data
-    _resolve_action_map(config;action_spec)
-    _resolve_task_monitor(task;config;action_spec)
-    _resolve_task_map_path(task;config;action_spec)
-    _resolve_task_command(task;action_spec;config)
-    apply_project_defaults(task;config)
-    _wants_vision_injection(command;options)
-    _inject_vision_anchor(command;spec)
-    _vql_layers_from_program(program)
-    _vql_target_entry(layer)
-    vql_decision_slice(vql_path)
-    build_decision_data(task;config)
-  src/vdisplay/application/history/loader.py:
-    e: resolve_metadata_root,discover_session_dirs,discover_run_dirs,read_latest_run_id,load_broker_events,_session_summary,_session_location,load_session_ref,load_task_record,load_run_record,count_observe_pngs,load_history_index,load_run_detail,iter_session_events
-    resolve_metadata_root(root)
-    discover_session_dirs()
-    discover_run_dirs()
-    read_latest_run_id(root)
-    load_broker_events(root)
-    _session_summary(session_dir)
-    _session_location(session_dir)
-    load_session_ref(session_dir)
-    load_task_record(task_path)
-    load_run_record(run_dir)
-    count_observe_pngs(root)
-    load_history_index(root)
-    load_run_detail(run_id)
-    iter_session_events(session_dir)
-  src/vdisplay/integrations/screen_context.py:
-    e: ScreenContext,screen_context_from_capture,load_environment_snapshot
-    ScreenContext: to_dict(0),from_dict(1),merge_capture_meta(1),attach_diagnostics(1),attach_map_path(1),compute_fingerprint(0),sidecar_path(1),write_sidecar(0)  # Portable snapshot of what vdisplay knows about one screen im...
-    screen_context_from_capture(payload)
-    load_environment_snapshot()
   packages/dsl2vdisplay/src/dsl2vdisplay/bus.py:
     e: _dispatch_legacy,dispatch,_dispatch_fallback,execute_dsl_line
     _dispatch_legacy(cmd)
@@ -926,6 +875,25 @@ D:
     _maybe_add_routing_hint(enriched;environment)
     _enrich_render_intent(ctx;descriptor)
     write_vql_artifacts(ctx)
+  src/vdisplay/capture/coordinate_map.py:
+    e: _pointer_safe_margin_px,_desktop_bounds,_resolve_monitor_bounds,_clamp_global_pointer,global_pointer_coords,_get_stream_region,global_point_to_capture_local,_clip_global_to_stream,_bounds_from_corners,_map_corners_to_local,global_region_to_capture_local,_resolve_mapping_label,_build_mapping_payload,_global_from_region,_global_from_monitor,_rotation_for_monitor,_monitor_by_name
+    _pointer_safe_margin_px()
+    _desktop_bounds(display)
+    _resolve_monitor_bounds(display;monitor_name)
+    _clamp_global_pointer(gx;gy)
+    global_pointer_coords(local_x;local_y;capture_meta)
+    _get_stream_region(meta)
+    global_point_to_capture_local(global_x;global_y;capture_meta)
+    _clip_global_to_stream(gx;gy;gw;gh;origin_x;origin_y;stream_w;stream_h)
+    _bounds_from_corners(corners)
+    _map_corners_to_local(corners;meta;display)
+    global_region_to_capture_local(region;capture_meta)
+    _resolve_mapping_label(meta;rotation)
+    _build_mapping_payload()
+    _global_from_region(local_x;local_y)
+    _global_from_monitor(local_x;local_y)
+    _rotation_for_monitor(display;name)
+    _monitor_by_name(display;name)
   packages/vdisplay-agent/src/vdisplay_agent/serve_port.py:
     e: _pid_alive,_parse_ss_pids,_pids_from_ss,_pids_from_lsof,find_listener_pids,_cmdline,_is_vdisplay_agent_pid,_partition_listener_pids,_probe_is_vdisplay_agent,stop_pids,ensure_broker_port_free
     _pid_alive(pid)
@@ -1088,6 +1056,17 @@ D:
     _ensure_wayland_screencast(client)
     _capture_via_agent(client)
     capture_screenshot_via_client(client)
+  src/vdisplay/application/history/analyze.py:
+    e: _compute_task_stats,_analyze_session,_collect_domain_backends,_collect_projection_backends,_count_observe_artifacts,_build_summary,analyze_history,collect_events,_session_location_for_events
+    _compute_task_stats(tasks)
+    _analyze_session(session_dir;event_histogram;backends_used)
+    _collect_domain_backends(session_dir;backends_used)
+    _collect_projection_backends(session_dir;backends_used)
+    _count_observe_artifacts(base;index)
+    _build_summary(index)
+    analyze_history(root)
+    collect_events()
+    _session_location_for_events(session_dir)
   src/vdisplay/hmi/pointer_probes.py:
     e: is_wayland_session,pointer_probe_errors,session_env,parse_xdotool_shell,probe_xdotool,probe_gnome_shell_pointer,probe_gtk_subprocess,trustworthy_absolute,probe_absolute_pointer,probe_all_sources,window_title,monitor_at
     is_wayland_session()
@@ -1127,17 +1106,6 @@ D:
     evaluate_map_drift(ctx;png)
     _item_to_ocr_box(item)
     ocr_boxes_from_cached_context(ctx)
-  src/vdisplay/application/history/analyze.py:
-    e: _compute_task_stats,_analyze_session,_collect_domain_backends,_collect_projection_backends,_count_observe_artifacts,_build_summary,analyze_history,collect_events,_session_location_for_events
-    _compute_task_stats(tasks)
-    _analyze_session(session_dir;event_histogram;backends_used)
-    _collect_domain_backends(session_dir;backends_used)
-    _collect_projection_backends(session_dir;backends_used)
-    _count_observe_artifacts(base;index)
-    _build_summary(index)
-    analyze_history(root)
-    collect_events()
-    _session_location_for_events(session_dir)
   src/vdisplay/integrations/vql_capture_validation.py:
     e: expected_ide_from_env,_canonical_ide,window_titles_from_layers,_center_from_dict,_bbox_center,_layer_center,_layer_label,ide_window_warning,body_ide_mentions,chat_composer_candidates,validate_vql_structure,validate_vql_capture,validate_vql_sidecar_file
     expected_ide_from_env()
@@ -1395,6 +1363,46 @@ D:
     attach_imgl_to_context(ctx)
     _imgl_item_to_ocr_box(item)
     ocr_boxes_from_imgl(image_path)
+  src/vdisplay/application/auto/defaults.py:
+    e: _resolve_action_map,_resolve_task_monitor,_resolve_task_map_path,_resolve_task_command,apply_project_defaults,_wants_vision_injection,_inject_vision_anchor,_vql_layers_from_program,_vql_target_entry,vql_decision_slice,_check_ocr_status,_build_base_decision_data,build_decision_data
+    _resolve_action_map(config;action_spec)
+    _resolve_task_monitor(task;config;action_spec)
+    _resolve_task_map_path(task;config;action_spec)
+    _resolve_task_command(task;action_spec;config)
+    apply_project_defaults(task;config)
+    _wants_vision_injection(command;options)
+    _inject_vision_anchor(command;spec)
+    _vql_layers_from_program(program)
+    _vql_target_entry(layer)
+    vql_decision_slice(vql_path)
+    _check_ocr_status()
+    _build_base_decision_data(task;config)
+    build_decision_data(task;config)
+  src/vdisplay/application/history/loader.py:
+    e: resolve_metadata_root,discover_session_dirs,discover_run_dirs,read_latest_run_id,_parse_broker_line,load_broker_events,_session_summary,_session_location,load_session_ref,_build_task_record,load_task_record,load_run_record,count_observe_pngs,load_history_index,load_run_detail,iter_session_events
+    resolve_metadata_root(root)
+    discover_session_dirs()
+    discover_run_dirs()
+    read_latest_run_id(root)
+    _parse_broker_line(stripped)
+    load_broker_events(root)
+    _session_summary(session_dir)
+    _session_location(session_dir)
+    load_session_ref(session_dir)
+    _build_task_record(payload)
+    load_task_record(task_path)
+    load_run_record(run_dir)
+    count_observe_pngs(root)
+    load_history_index(root)
+    load_run_detail(run_id)
+    iter_session_events(session_dir)
+  src/vdisplay/integrations/screen_context.py:
+    e: ScreenContext,_attach_img2nl_to_context,_attach_vision_to_context,screen_context_from_capture,load_environment_snapshot
+    ScreenContext: to_dict(0),from_dict(1),merge_capture_meta(1),attach_diagnostics(1),attach_map_path(1),compute_fingerprint(0),sidecar_path(1),write_sidecar(0)  # Portable snapshot of what vdisplay knows about one screen im...
+    _attach_img2nl_to_context(ctx;img2nl)
+    _attach_vision_to_context(ctx;payload)
+    screen_context_from_capture(payload)
+    load_environment_snapshot()
   packages/dsl2vdisplay/src/dsl2vdisplay/grammar.py:
     e: split_command,normalize_tokens,resolve_verb,pick_flag,_with_display,_parse_windows,_parse_screenshot,_parse_virtual_start,_parse_launch,_parse_mirror,_parse_adopt,_has_flag,_parse_control_common,_parse_controls_list,_parse_controls_find,_parse_control_click,_parse_control_focus,_parse_control_set_value,_parse_diagnose_control,_parse_browser_open,_parse_terminal_open,_parse_release,parse_line,_screenshot_to_text,_mirror_to_text,_controls_list_to_text,_browser_open_to_text,_terminal_open_to_text,to_text,_control_to_text
     split_command(line)
@@ -2771,8 +2779,11 @@ D:
   koru.yaml:
   vdisplay.yaml:
   tree.txt:
+  screen.png.context.json:
+  screen.png.vql.json:
   prefact.yaml:
   project.sh:
+  ui.vql.json:
   packages/mcp2vdisplay/pyproject.toml:
   packages/dsl2vdisplay/pyproject.toml:
   packages/dsl2vdisplay/src/dsl2vdisplay/__init__.py:
@@ -2912,7 +2923,4 @@ D:
   proto/vdisplay/v1/event.proto:
   proto/vdisplay/v1/command.proto:
   pyproject.toml:
-  screen.png.context.json:
-  screen.png.vql.json:
-  ui.vql.json:
   packages/vdisplay-agent/src/vdisplay_agent/__init__.py:

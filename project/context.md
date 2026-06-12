@@ -7,7 +7,7 @@
 - **Primary Language**: python
 - **Languages**: python: 288, json: 29, shell: 12, yaml: 11, toml: 11
 - **Analysis Mode**: static
-- **Total Functions**: 2356
+- **Total Functions**: 2364
 - **Total Classes**: 176
 - **Modules**: 367
 - **Entry Points**: 971
@@ -523,7 +523,6 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.application.session_recorder.load_session_document` - 29 calls
 - `src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics` - 28 calls
 - `src.vdisplay.application.proto.codec.decode_event_envelope` - 28 calls
-- `src.vdisplay.application.history.loader.load_task_record` - 28 calls
 - `src.vdisplay.integrations.screen_context.ScreenContext.from_dict` - 28 calls
 - `packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch` - 27 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes` - 27 calls
@@ -533,6 +532,7 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.control.contracts.control_route_request_from_command` - 27 calls
 - `src.vdisplay.control.selector.parse_selector` - 27 calls
 - `src.vdisplay.control.providers.ax_impl.PyobjcAxBackend.collect_elements` - 27 calls
+- `src.vdisplay.capture.screencast_keeper.stop_keeper` - 27 calls
 
 ## System Interactions
 

@@ -53,6 +53,24 @@ def read_latest_run_id(root: Path) -> str | None:
     return value or None
 
 
+def _parse_broker_line(stripped: str) -> BrokerEvent | None:
+    """Parse a single broker.jsonl line into a BrokerEvent."""
+    try:
+        payload = json.loads(stripped)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return BrokerEvent(
+        ts=str(payload.get("ts") or ""),
+        action=str(payload.get("action") or ""),
+        ok=bool(payload.get("ok")),
+        code=str(payload.get("code") or "") or None,
+        status=int(payload["status"]) if payload.get("status") is not None else None,
+        error=str(payload.get("error") or "") or None,
+    )
+
+
 def load_broker_events(root: Path, *, limit: int | None = None) -> list[BrokerEvent]:
     path = root / "broker.jsonl"
     if not path.is_file():
@@ -62,22 +80,9 @@ def load_broker_events(root: Path, *, limit: int | None = None) -> list[BrokerEv
         stripped = line.strip()
         if not stripped:
             continue
-        try:
-            payload = json.loads(stripped)
-        except json.JSONDecodeError:
-            continue
-        if not isinstance(payload, dict):
-            continue
-        rows.append(
-            BrokerEvent(
-                ts=str(payload.get("ts") or ""),
-                action=str(payload.get("action") or ""),
-                ok=bool(payload.get("ok")),
-                code=str(payload.get("code") or "") or None,
-                status=int(payload["status"]) if payload.get("status") is not None else None,
-                error=str(payload.get("error") or "") or None,
-            )
-        )
+        event = _parse_broker_line(stripped)
+        if event is not None:
+            rows.append(event)
     if limit is not None and limit > 0:
         return rows[-limit:]
     return rows
@@ -124,15 +129,13 @@ def load_session_ref(session_dir: Path) -> SessionRef:
     )
 
 
-def load_task_record(task_path: Path, *, run_id: str) -> TaskRecord | None:
-    if not task_path.is_file():
-        return None
-    try:
-        payload = json.loads(task_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        return None
-    if not isinstance(payload, dict):
-        return None
+def _build_task_record(
+    payload: dict[str, Any],
+    *,
+    task_path: Path,
+    run_id: str,
+) -> TaskRecord:
+    """Construct a TaskRecord from the parsed payload dict."""
     inner = payload.get("payload") or {}
     task = inner.get("task") or {}
     feedback = inner.get("feedback") or {}
@@ -152,6 +155,18 @@ def load_task_record(task_path: Path, *, run_id: str) -> TaskRecord | None:
         exit_code=inner.get("exit_code"),
         path=task_path,
     )
+
+
+def load_task_record(task_path: Path, *, run_id: str) -> TaskRecord | None:
+    if not task_path.is_file():
+        return None
+    try:
+        payload = json.loads(task_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return _build_task_record(payload, task_path=task_path, run_id=run_id)
 
 
 def load_run_record(run_dir: Path) -> RunRecord | None:

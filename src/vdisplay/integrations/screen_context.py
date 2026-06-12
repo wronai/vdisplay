@@ -117,6 +117,30 @@ class ScreenContext:
         return out
 
 
+def _attach_img2nl_to_context(ctx: ScreenContext, img2nl: Any) -> None:
+    """Attach img2nl payload and scene to the context if valid."""
+    if not isinstance(img2nl, dict):
+        return
+    ctx.imgl["img2nl"] = img2nl
+    if not img2nl.get("ok"):
+        return
+    meta = img2nl.get("metadata") or {}
+    scene = meta.get("scene") if isinstance(meta, dict) else None
+    if isinstance(scene, dict):
+        ctx.imgl.setdefault("ok", True)
+        ctx.imgl.setdefault("scene", scene)
+        ctx.imgl.setdefault("source", img2nl.get("source") or "imgl")
+
+
+def _attach_vision_to_context(ctx: ScreenContext, payload: dict[str, Any]) -> None:
+    """Attach vision_llm and preview data to the context."""
+    if payload.get("vision_llm"):
+        ctx.vision["llm"] = payload["vision_llm"]
+    preview = payload.get("preview")
+    if isinstance(preview, dict):
+        ctx.vision["preview"] = preview
+
+
 def screen_context_from_capture(
     payload: dict[str, Any],
     *,
@@ -132,19 +156,8 @@ def screen_context_from_capture(
     if payload.get("nl"):
         ctx.nl = str(payload["nl"])
     if payload.get("img2nl"):
-        ctx.imgl["img2nl"] = payload["img2nl"]
-        img2nl = payload["img2nl"]
-        if isinstance(img2nl, dict) and img2nl.get("ok"):
-            meta = img2nl.get("metadata") or {}
-            scene = meta.get("scene") if isinstance(meta, dict) else None
-            if isinstance(scene, dict):
-                ctx.imgl.setdefault("ok", True)
-                ctx.imgl.setdefault("scene", scene)
-                ctx.imgl.setdefault("source", img2nl.get("source") or "imgl")
-    if payload.get("vision_llm"):
-        ctx.vision["llm"] = payload["vision_llm"]
-    if payload.get("preview") and isinstance(payload["preview"], dict):
-        ctx.vision["preview"] = payload["preview"]
+        _attach_img2nl_to_context(ctx, payload["img2nl"])
+    _attach_vision_to_context(ctx, payload)
     ctx.compute_fingerprint()
     return ctx
 
