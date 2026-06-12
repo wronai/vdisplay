@@ -355,3 +355,48 @@ def test_render_readme_includes_routing() -> None:
     readme = render_readme(doc)
     assert "vision" in readme
     assert "CONTROL CLICK" in readme
+
+
+def test_render_readme_embeds_screenshot_preview(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from vdisplay.application.session_recorder import SessionDocument, StepRecord
+    from vdisplay.application.session_recorder_readme import render_readme
+
+    monkeypatch.setenv("VDISPLAY_SESSION_EMBED_IMAGES", "1")
+    png = tmp_path / "steps" / "0001" / "shot.png"
+    png.parent.mkdir(parents=True)
+    png.write_bytes(b"png")
+    observe = tmp_path / "observe" / "capture.png"
+    observe.parent.mkdir(parents=True)
+    observe.write_bytes(b"observe")
+
+    doc = SessionDocument(
+        session_id="embed-session",
+        started_at="2026-06-10T10:00:00Z",
+        updated_at="2026-06-10T10:00:01Z",
+        summary={"total_steps": 1, "ok_steps": 1, "failed_steps": 0},
+        steps=[
+            StepRecord(
+                index=1,
+                step_id="0001",
+                request_id="req-1",
+                timestamp="2026-06-10T10:00:01Z",
+                duration_ms=1,
+                source="cli",
+                route="local",
+                verb="SCREENSHOT",
+                action="screenshot",
+                command_line="SCREENSHOT",
+                ok=True,
+                request_path="steps/0001/request.json",
+                result_path="steps/0001/result.json",
+                artifacts=[{"kind": "screenshot", "session_path": "steps/0001/shot.png"}],
+            )
+        ],
+    )
+    readme = render_readme(doc, session_dir=tmp_path)
+    assert "![screenshot](steps/0001/shot.png)" in readme
+    assert "![observe capture](observe/capture.png)" in readme
+    assert "## Observe capture" in readme

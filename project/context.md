@@ -7,10 +7,10 @@
 - **Primary Language**: python
 - **Languages**: python: 288, json: 29, shell: 12, yaml: 11, toml: 11
 - **Analysis Mode**: static
-- **Total Functions**: 2338
+- **Total Functions**: 2341
 - **Total Classes**: 176
 - **Modules**: 367
-- **Entry Points**: 970
+- **Entry Points**: 972
 
 ## Architecture by Module
 
@@ -39,14 +39,14 @@
 - **Classes**: 1
 - **File**: `runtime.py`
 
+### src.vdisplay.application.services.control
+- **Functions**: 34
+- **File**: `control.py`
+
 ### src.vdisplay.application.session_recorder
 - **Functions**: 34
 - **Classes**: 3
 - **File**: `session_recorder.py`
-
-### src.vdisplay.application.services.control
-- **Functions**: 34
-- **File**: `control.py`
 
 ### src.vdisplay.api
 - **Functions**: 32
@@ -135,7 +135,7 @@ Main execution flows into the system:
 - **Calls**: packages.vdisplay-agent.src.vdisplay_agent.services.sampler._config_from_body, SamplerLoop, loop.start, VDisplayError, kwargs.get, src.vdisplay.capture.host.capture_host_to_file, task_svc.begin_sampler_task, task_svc.touch_sampler_task
 
 ### src.vdisplay.application.session_recorder.SessionRecorder._load_or_create_document
-- **Calls**: session_json.is_file, src.vdisplay.application.session_recorder._utc_now, SessionDocument, None.write_text, json.loads, SessionDocument, len, json.dumps
+- **Calls**: session_json.is_file, src.vdisplay.application.auto.metadata._utc_now, SessionDocument, None.write_text, json.loads, SessionDocument, len, json.dumps
 
 ### src.vdisplay.commands.agent.register
 - **Calls**: sub.add_parser, parser.add_subparsers, agent_sub.add_parser, agent_serve.add_argument, agent_serve.add_argument, agent_serve.set_defaults, agent_sub.add_parser, agent_health.set_defaults
@@ -514,9 +514,9 @@ Functions exposed as public API (no underscore prefix):
 - `examples.host-relay.relay_demo.main` - 33 calls
 - `src.vdisplay.application.artifacts.artifacts_from_control` - 33 calls
 - `packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server` - 32 calls
-- `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
 - `src.vdisplay.control.selector.ControlSelector.from_dict` - 32 calls
 - `src.vdisplay.application.parsers.parse_agent_control_body` - 32 calls
+- `src.vdisplay.commands.session.command_request_from_control_args` - 32 calls
 - `examples.host-mirror.mirror_demo.main` - 31 calls
 - `src.vdisplay.commands.map.handle` - 31 calls
 - `examples.control-plane.control_demo.run_browser_demo` - 30 calls

@@ -2,20 +2,59 @@
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .session_recorder import SessionDocument, StepRecord
 
+_IMAGE_ARTIFACT_KINDS = frozenset(
+    {"screenshot", "preview", "png", "observe", "diff", "before", "after", "verify"}
+)
 
-def render_readme(doc: SessionDocument) -> str:
+
+def _session_embed_images() -> bool:
+    raw = os.environ.get("VDISPLAY_SESSION_EMBED_IMAGES", "1").strip().lower()
+    return raw in {"1", "true", "yes", "on"}
+
+
+def _is_image_artifact(kind: str, rel_path: str) -> bool:
+    lowered = str(kind or "").lower()
+    if lowered in _IMAGE_ARTIFACT_KINDS:
+        return True
+    suffix = Path(rel_path).suffix.lower()
+    return suffix in {".png", ".jpg", ".jpeg", ".webp", ".gif"}
+
+
+def render_readme(doc: SessionDocument, *, session_dir: Path | None = None) -> str:
     lines = _render_header(doc)
+    if session_dir is not None:
+        lines.extend(_render_observe_section(session_dir))
     lines.extend(_render_step_toc(doc.steps))
     for step in doc.steps:
         lines.extend(_render_step_section(step))
     if doc.maps:
         lines.extend(_render_maps_section(doc.maps))
     return "\n".join(lines)
+
+
+def _render_observe_section(session_dir: Path) -> list[str]:
+    """Koru autonomy observe capture (separate from vdisplay step artifacts)."""
+    capture = session_dir / "observe" / "capture.png"
+    if not capture.is_file():
+        return []
+    rel = "observe/capture.png"
+    lines = [
+        "## Observe capture",
+        "",
+        f"- **File:** [{rel}]({rel})",
+    ]
+    if _session_embed_images():
+        lines.extend(["", f"![observe capture]({rel})", ""])
+    else:
+        lines.append("")
+    return lines
 
 
 def _render_header(doc: SessionDocument) -> list[str]:
@@ -110,11 +149,19 @@ def _render_step_files(step: StepRecord) -> list[str]:
         f"  - [{step.result_path}]({step.result_path})",
         f"  - [diagnostics.json](steps/{step.step_id}/diagnostics.json)",
     ]
+    embed = _session_embed_images()
+    previews: list[str] = []
     for artifact in step.artifacts:
         rel = artifact.get("session_path")
         if rel:
             kind = artifact.get("kind", "artifact")
             lines.append(f"  - [{kind}]({rel})")
+            if embed and _is_image_artifact(kind, rel):
+                previews.append(f"![{kind}]({rel})")
+    if previews:
+        lines.append("- **Preview:**")
+        for preview in previews:
+            lines.append(f"  {preview}")
     return lines
 
 

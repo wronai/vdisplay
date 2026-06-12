@@ -1,12 +1,12 @@
-# redup/duplication | 52 groups | 286f 45899L | 2026-06-12
+# redup/duplication | 52 groups | 286f 45951L | 2026-06-12
 
 SUMMARY:
   files_scanned: 286
-  total_lines:   45899
+  total_lines:   45951
   dup_groups:    52
   dup_fragments: 121
   saved_lines:   499
-  scan_ms:       7177
+  scan_ms:       4941
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.2%)

@@ -1,6 +1,6 @@
-# code2llm | 367f 212943L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
-# generated in 0.36s
-# CC̅=4.1 | critical:9/2338 | dups:0 | cycles:0
+# code2llm | 367f 63391L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
+# generated in 0.16s
+# CC̅=4.1 | critical:9/2341 | dups:0 | cycles:0
 
 HEALTH[9]:
   🟡 CC    _clamp_global_pointer CC=20 (limit:15)
@@ -9,14 +9,14 @@ HEALTH[9]:
   🟡 CC    load_broker_events CC=15 (limit:15)
   🟡 CC    load_task_record CC=15 (limit:15)
   🟡 CC    analyze_history CC=36 (limit:15)
-  🟡 CC    screen_context_from_capture CC=15 (limit:15)
   🟡 CC    _build_imgl_layers CC=37 (limit:15)
+  🟡 CC    screen_context_from_capture CC=15 (limit:15)
   🟡 CC    _layer_center CC=18 (limit:15)
 
 REFACTOR[1]:
   1. split 9 high-CC methods  (CC>15)
 
-PIPELINES[854]:
+PIPELINES[856]:
   [1] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
       PURITY: 100% pure
   [2] Src [main]: main → _main_legacy → execute_dsl_line → dispatch → ...(5 more)
@@ -123,7 +123,7 @@ LAYERS:
   │ !! portal_screencast         1602L  1C   79m  CC=14     ←13
   │ !! control                   1079L  0C   34m  CC=14     ←0
   │ !! scoring                    811L  2C   40m  CC=12     ←6
-  │ !! session_recorder           761L  3C   34m  CC=14     ←8
+  │ !! session_recorder           764L  3C   34m  CC=14     ←7
   │ !! provider                   724L  1C   37m  CC=12     ←0
   │ !! screencast_keeper          694L  0C   32m  CC=13     ←5
   │ !! verifier                   659L  3C   32m  CC=14     ←1
@@ -168,11 +168,11 @@ LAYERS:
   │ router                     271L  2C   10m  CC=9      ←2
   │ profile_inference          271L  1C   11m  CC=14     ←3
   │ ax_impl                    269L  4C   27m  CC=10     ←2
-  │ !! loader                     262L  0C   14m  CC=15     ←2
+  │ !! loader                     262L  0C   14m  CC=15     ←3
   │ pointer_sampling           261L  0C   10m  CC=14     ←1
   │ terminal_screen            260L  3C   14m  CC=7      ←3
+  │ session                    260L  0C    8m  CC=10     ←2
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
-  │ session                    258L  0C    8m  CC=10     ←2
   │ agent                      251L  0C   23m  CC=6      ←1
   │ codec                      248L  5C   16m  CC=14     ←1
   │ atspi                      247L  1C   15m  CC=10     ←0
@@ -199,6 +199,7 @@ LAYERS:
   │ api                        193L  3C   32m  CC=6      ←4
   │ models                     187L  9C    7m  CC=4      ←0
   │ retry_policy               180L  2C    9m  CC=10     ←1
+  │ session_recorder_readme    180L  0C   11m  CC=14     ←3
   │ gui_map_export             179L  0C    7m  CC=8      ←2
   │ !! analyze                    178L  0C    3m  CC=36     ←1
   │ pipeline                   175L  0C   10m  CC=11     ←2
@@ -226,7 +227,6 @@ LAYERS:
   │ policy                     140L  1C    4m  CC=11     ←2
   │ coordinate_rotation        140L  0C   12m  CC=11     ←0
   │ sampler                    134L  0C    8m  CC=9      ←0
-  │ session_recorder_readme    133L  0C    8m  CC=14     ←3
   │ web_pointer                130L  0C    5m  CC=11     ←1
   │ client_routes              128L  0C    6m  CC=7      ←1
   │ session_context            121L  1C    8m  CC=6      ←6
@@ -254,7 +254,7 @@ LAYERS:
   │ observe                     94L  0C    2m  CC=9      ←0
   │ drm                         92L  1C    5m  CC=11     ←0
   │ gui_map_events              91L  0C    4m  CC=6      ←2
-  │ metadata                    91L  0C    5m  CC=6      ←2
+  │ metadata                    91L  0C    5m  CC=6      ←3
   │ agent_config                90L  0C    9m  CC=6      ←18
   │ payloads                    86L  0C    5m  CC=1      ←2
   │ __init__                    83L  0C    2m  CC=5      ←2
@@ -424,7 +424,7 @@ LAYERS:
   │ planfile.yaml              335L  0C    0m  CC=0.0    ←0
   │ control_demo               172L  0C    5m  CC=6      ←0
   │ planfile-automation.yaml   170L  0C    0m  CC=0.0    ←0
-  │ koru-drive-photo-vql.sh    165L  0C    1m  CC=0.0    ←0
+  │ koru-drive-photo-vql.sh    167L  0C    1m  CC=0.0    ←0
   │ screenshot_meta            162L  0C    9m  CC=14     ←6
   │ run_all_examples.sh        158L  0C    9m  CC=0.0    ←0
   │ run-dev-automation.sh      139L  0C    1m  CC=0.0    ←0
@@ -471,13 +471,13 @@ LAYERS:
   │ docker-compose.yml          11L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! screen.png.context.json  98895L  0C    0m  CC=0.0    ←0
-  │ !! screen.png.vql.json      51376L  0C    0m  CC=0.0    ←0
   │ !! screen.png.vql.imgl.json  8523L  0C    0m  CC=0.0    ←0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
   │ !! goal.yaml                  512L  0C    0m  CC=0.0    ←0
+  │ screen.png.context.json    450L  0C    0m  CC=0.0    ←0
   │ tree.txt                   241L  0C    0m  CC=0.0    ←0
   │ vdisplay.yaml              218L  0C    0m  CC=0.0    ←0
+  │ screen.png.vql.json        215L  0C    0m  CC=0.0    ←0
   │ pyproject.toml             190L  0C    0m  CC=0.0    ←0
   │ koru.yaml                  141L  0C    0m  CC=0.0    ←0
   │ app.vql.json               127L  0C    0m  CC=0.0    ←0
@@ -523,19 +523,19 @@ COUPLING:
     packages.nlp2vdisplay                        1                        3                                                                                                                                                                                                                               ←1                                                                         ──                         
         examples.ci-agent                                                 1                                                                                                                            2                                                                                                                                                                                                      ──
   CYCLES: none
-  HUB: examples.dev-workflow/ (fan-in=120)
   HUB: src.vdisplay/ (fan-in=92)
-  HUB: packages.dsl2vdisplay/ (fan-in=18)
   HUB: examples.common/ (fan-in=11)
   HUB: packages.vdisplay-agent/ (fan-in=5)
-  SMELL: examples.control-plane/ fan-out=33 → split needed
-  SMELL: examples.agent-broker/ fan-out=13 → split needed
-  SMELL: brain/ fan-out=17 → split needed
+  HUB: examples.dev-workflow/ (fan-in=120)
+  HUB: packages.dsl2vdisplay/ (fan-in=18)
   SMELL: src.vdisplay/ fan-out=48 → split needed
-  SMELL: examples.host-mirror/ fan-out=8 → split needed
-  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
+  SMELL: examples.control-plane/ fan-out=33 → split needed
   SMELL: examples.host-relay/ fan-out=9 → split needed
+  SMELL: examples.agent-broker/ fan-out=13 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=72 → split needed
+  SMELL: brain/ fan-out=17 → split needed
+  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
+  SMELL: examples.host-mirror/ fan-out=8 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

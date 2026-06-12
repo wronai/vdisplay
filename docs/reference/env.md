@@ -99,7 +99,7 @@ vdisplay fallback **does not** replace the koru IDE plugin for Cursor/Glass UI c
 | `VDISPLAY_EVENT_STORE` | `1` by default when session recording is on; writes `index.jsonl` |
 | `VDISPLAY_EVENT_FORMAT` | `json` (default) \| `protobuf` — also append length-delimited records to `index.pb` |
 | `VDISPLAY_PROJECTIONS` | `1` (default) — rebuild `projections/*.json` after each event |
-| `VDISPLAY_SESSION_EMBED_IMAGES` | Embed PNG thumbnails in README (future) |
+| `VDISPLAY_SESSION_EMBED_IMAGES` | When `1` (default), README embeds `![](path)` previews for PNG artifacts and `observe/capture.png` |
 
 CLI: `vdisplay --session [--session-id SLUG] …` — root audit slug. Control `--session-id` is the **terminal/browser** session id (different field).
 

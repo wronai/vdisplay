@@ -313,7 +313,10 @@ class SessionRecorder:
             json.dumps(self._document.to_dict(), indent=2, ensure_ascii=False),
             encoding="utf-8",
         )
-        (self.root / "README.md").write_text(render_readme(self._document), encoding="utf-8")
+        (self.root / "README.md").write_text(
+            render_readme(self._document, session_dir=self.root),
+            encoding="utf-8",
+        )
 
 
 def resolve_session_root(cmd: CommandRequest) -> Path | None:
@@ -670,7 +673,7 @@ def _update_session_files(doc: SessionDocument, session_dir: Path) -> None:
         json.dumps(doc.to_dict(), indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-    (session_dir / "README.md").write_text(render_readme(doc), encoding="utf-8")
+    (session_dir / "README.md").write_text(render_readme(doc, session_dir=session_dir), encoding="utf-8")
 
 
 def reprocess_session_diagnostics(session_dir: Path) -> dict[str, Any]:

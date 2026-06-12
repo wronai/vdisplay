@@ -205,7 +205,9 @@ def handle_show(args: argparse.Namespace) -> int:
     session_dir = _resolve_session_dir(args)
     if args.format == "readme":
         readme = session_dir / "README.md"
-        text = readme.read_text(encoding="utf-8") if readme.is_file() else render_readme(load_session_document(session_dir))
+        text = readme.read_text(encoding="utf-8") if readme.is_file() else render_readme(
+            load_session_document(session_dir), session_dir=session_dir
+        )
         sys.stdout.write(text)
         if not text.endswith("\n"):
             sys.stdout.write("\n")

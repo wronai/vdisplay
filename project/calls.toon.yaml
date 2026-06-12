@@ -1,31 +1,33 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.39s
-# nodes: 420 | edges: 500 | modules: 124
+# generated in 0.25s
+# nodes: 419 | edges: 500 | modules: 124
 # CC̄=4.1
 
 HUBS[20]:
   examples.dev-workflow.koru-audit-last-session.print
     CC=0  in:120  out:0  total:120
-  packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
-    CC=1  in:0  out:68  total:68
   src.vdisplay.cli_handlers.print_json
     CC=1  in:67  out:1  total:68
+  packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
+    CC=1  in:0  out:68  total:68
+  src.vdisplay.application.history.analyze.analyze_history
+    CC=36  in:1  out:59  total:60
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
     CC=3  in:44  out:2  total:46
   src.vdisplay.commands.ide.handle
     CC=8  in:0  out:45  total:45
   packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler
     CC=7  in:0  out:42  total:42
-  packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-    CC=2  in:3  out:38  total:41
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
     CC=14  in:14  out:27  total:41
+  packages.rest2vdisplay.src.rest2vdisplay.app.create_app
+    CC=2  in:3  out:38  total:41
   src.vdisplay.discovery.resolve_host_display
     CC=11  in:33  out:7  total:40
-  src.vdisplay.utils.run_command
-    CC=2  in:33  out:4  total:37
   src.vdisplay.capture.screencast_keeper.stop_keeper
     CC=13  in:10  out:27  total:37
+  src.vdisplay.utils.run_command
+    CC=2  in:33  out:4  total:37
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
@@ -34,12 +36,10 @@ HUBS[20]:
     CC=13  in:5  out:29  total:34
   src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
     CC=13  in:5  out:28  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:33  total:33
   src.vdisplay.application.project_config.load_project_config
     CC=14  in:6  out:27  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
@@ -320,8 +320,14 @@ MODULES:
     execute  CC=5  out:13
   src.vdisplay.application.handlers.control  [1 funcs]
     control_request_body  CC=3  out:3
-  src.vdisplay.application.history.loader  [2 funcs]
+  src.vdisplay.application.history.analyze  [2 funcs]
+    analyze_history  CC=36  out:59
+    collect_events  CC=13  out:17
+  src.vdisplay.application.history.loader  [5 funcs]
+    discover_session_dirs  CC=10  out:14
     load_history_index  CC=8  out:14
+    load_run_detail  CC=5  out:11
+    load_session_ref  CC=1  out:3
     resolve_metadata_root  CC=3  out:4
   src.vdisplay.application.project_config  [3 funcs]
     clear_metadata_dir  CC=10  out:16
@@ -341,17 +347,12 @@ MODULES:
     audit_context_from_mapping  CC=3  out:12
     current_audit_headers  CC=2  out:2
     enrich_command_request  CC=6  out:5
-  src.vdisplay.application.session_recorder  [6 funcs]
-    discover_session_dirs  CC=1  out:1
-    export_session_zip  CC=4  out:10
+  src.vdisplay.application.session_recorder  [3 funcs]
     load_session_document  CC=13  out:29
     record_execution  CC=5  out:4
-    reprocess_session_diagnostics  CC=3  out:12
     session_recording_enabled  CC=2  out:5
   src.vdisplay.application.session_recorder_diagnostics  [1 funcs]
     extract_diagnostics  CC=13  out:28
-  src.vdisplay.application.session_recorder_readme  [1 funcs]
-    render_readme  CC=3  out:8
   src.vdisplay.capture.host  [2 funcs]
     capture_all_monitors  CC=8  out:12
     capture_host_to_file  CC=3  out:10
@@ -423,10 +424,14 @@ MODULES:
     include_all_from_args  CC=2  out:3
   src.vdisplay.commands.config  [1 funcs]
     handle  CC=4  out:12
-  src.vdisplay.commands.history  [3 funcs]
+  src.vdisplay.commands.history  [7 funcs]
+    _print_analyze_summary  CC=8  out:24
     _resolve_root  CC=1  out:2
     _resolve_session_from_args  CC=7  out:16
+    handle_analyze  CC=2  out:6
+    handle_events  CC=2  out:6
     handle_list  CC=3  out:12
+    handle_show  CC=10  out:17
   src.vdisplay.commands.hmi  [1 funcs]
     handle  CC=7  out:6
   src.vdisplay.commands.ide  [2 funcs]
@@ -450,14 +455,8 @@ MODULES:
   src.vdisplay.commands.screenshot  [2 funcs]
     handle  CC=1  out:2
     register  CC=1  out:15
-  src.vdisplay.commands.session  [7 funcs]
-    _resolve_session_dir  CC=9  out:21
+  src.vdisplay.commands.session  [1 funcs]
     add_root_session_args  CC=1  out:2
-    command_request_from_control_args  CC=8  out:32
-    handle_export  CC=3  out:12
-    handle_list  CC=3  out:14
-    handle_reprocess  CC=2  out:4
-    handle_show  CC=10  out:21
   src.vdisplay.control.gui_map  [1 funcs]
     load_gui_map  CC=2  out:6
   src.vdisplay.control.gui_map_resolve  [1 funcs]

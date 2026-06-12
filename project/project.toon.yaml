@@ -1,4 +1,4 @@
-# vdisplay | 2338 func | 262f | 212943L | python | 2026-06-12
+# vdisplay | 2341 func | 262f | 63391L | python | 2026-06-12
 # generated in 0.00s
 
 HEALTH:
@@ -17,8 +17,6 @@ ALERTS[20]:
   !!! high_fan_out     _portal_impl = 23 (limit:10)
 
 MODULES[367] (top by size):
-  M[screen.png.context.json] 98895L C:0 F:0 CC↑0 D:0 (json)
-  M[screen.png.vql.json] 51376L C:0 F:0 CC↑0 D:0 (json)
   M[screen.png.vql.imgl.json] 8523L C:0 F:0 CC↑0 D:0 (json)
   M[src/vdisplay/capture/portal_screencast.py] 1602L C:1 F:79 CC↑14 D:13 (python)
   M[maps/pycharm-chat.json] 1588L C:0 F:0 CC↑0 D:0 (json)
@@ -26,12 +24,14 @@ MODULES[367] (top by size):
   M[src/vdisplay/application/services/control.py] 1079L C:0 F:34 CC↑14 D:0 (python)
   M[src/vdisplay/control/scoring.py] 811L C:2 F:40 CC↑12 D:6 (python)
   M[maps/pycharm-chat-fresh.json] 795L C:0 F:0 CC↑0 D:0 (json)
-  M[src/vdisplay/application/session_recorder.py] 761L C:3 F:34 CC↑14 D:8 (python)
+  M[src/vdisplay/application/session_recorder.py] 764L C:3 F:34 CC↑14 D:7 (python)
   M[src/vdisplay/control/providers/vision/provider.py] 724L C:1 F:37 CC↑12 D:0 (python)
   M[src/vdisplay/capture/screencast_keeper.py] 694L C:0 F:32 CC↑13 D:5 (python)
   M[src/vdisplay/control/verifier.py] 659L C:3 F:32 CC↑14 D:1 (python)
   M[src/vdisplay/ide_prompt.py] 627L C:0 F:19 CC↑13 D:13 (python)
   M[src/vdisplay/integrations/vql_bridge.py] 567L C:0 F:26 CC↑37 D:2 (python)
+  M[src/vdisplay/control/verify.py] 538L C:0 F:25 CC↑12 D:1 (python)
+  M[src/vdisplay/application/auto/feedback.py] 534L C:1 F:28 CC↑14 D:2 (python)
   LANGS: python:288/json:29/shell:12/toml:11/yaml:11/other:5/yml:5/proto:4/txt:2
 
 HOTSPOTS[10]:
@@ -49,4 +49,4 @@ REFACTOR[15]:
   [5] H/H Split god module src/vdisplay/application/services/control.py (1079L, 0 classes)
 
 EVOLUTION:
-  2026-06-12 CC̄=4.1 crit=212 212943L // Automated analysis
+  2026-06-12 CC̄=4.1 crit=212 63391L // Automated analysis
