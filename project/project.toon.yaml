@@ -1,52 +1,52 @@
-# vdisplay | 2368 func | 262f | 142318L | python | 2026-06-12
+# vdisplay | 2784 func | 273f | 149616L | python | 2026-06-12
 # generated in 0.00s
 
 HEALTH:
-  CC̄=4.1  critical=213 (limit:10)  dup=1  cycles=0
+  CC̄=4.2  critical=266 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
+  !!! cc_exceeded      correlate_surfaces = 93 (limit:15)
+  !!! high_fan_out     correlate_surfaces = 49 (limit:10)
+  !!! cc_exceeded      startHttpServer = 41 (limit:15)
+  !!! cc_exceeded      server = 41 (limit:15)
   !!! high_fan_out     _start_screencast_impl = 41 (limit:10)
-  !!! high_fan_out     register_routes = 33 (limit:10)
-  !!! high_fan_out     register_routes = 27 (limit:10)
-  !!! high_fan_out     SessionRecorder.record = 26 (limit:10)
-  !!! high_fan_out     start_sampler = 24 (limit:10)
-  !!! high_fan_out     create_app = 23 (limit:10)
-  !!! high_fan_out     _portal_impl = 23 (limit:10)
-  !!! high_fan_out     main = 22 (limit:10)
-  !!! high_fan_out     _render_match_overlay_local = 22 (limit:10)
-  !!! high_fan_out     _start_capture_server = 22 (limit:10)
+  !!! high_fan_out     register_routes = 34 (limit:10)
+  !!! high_fan_out     build_up_payload = 34 (limit:10)
+  !!! cc_exceeded      listAgentWindowSources = 31 (limit:15)
+  !!! high_fan_out     startHttpServer = 31 (limit:10)
+  !!! cc_exceeded      beginDisplayMediaCapture = 30 (limit:15)
 
-MODULES[367] (top by size):
+MODULES[380] (top by size):
   M[screen.png.context.json] 54007L C:0 F:0 CC↑0 D:0 (json)
   M[screen.png.vql.json] 23595L C:0 F:0 CC↑0 D:0 (json)
   M[screen.png.vql.imgl.json] 8523L C:0 F:0 CC↑0 D:0 (json)
+  M[packages/vdisplay-electron-share/main.js] 1712L C:0 F:148 CC↑41 D:0 (javascript)
   M[ui.vql.json] 1696L C:0 F:0 CC↑0 D:0 (json)
-  M[src/vdisplay/capture/portal_screencast.py] 1602L C:1 F:79 CC↑14 D:13 (python)
+  M[src/vdisplay/capture/portal_screencast.py] 1643L C:1 F:79 CC↑18 D:13 (python)
   M[maps/pycharm-chat.json] 1588L C:0 F:0 CC↑0 D:0 (json)
   M[planfile.yaml] 1319L C:0 F:0 CC↑0 D:0 (yaml)
-  M[src/vdisplay/application/services/control.py] 1079L C:0 F:34 CC↑14 D:0 (python)
+  M[src/vdisplay/application/services/control.py] 1079L C:0 F:34 CC↑14 D:1 (python)
+  M[packages/vdisplay-electron-share/renderer.js] 842L C:0 F:97 CC↑30 D:63 (javascript)
+  M[src/vdisplay/commands/electron_share.py] 815L C:0 F:43 CC↑24 D:1 (python)
   M[src/vdisplay/control/scoring.py] 811L C:2 F:40 CC↑12 D:6 (python)
   M[maps/pycharm-chat-fresh.json] 795L C:0 F:0 CC↑0 D:0 (json)
   M[src/vdisplay/application/session_recorder.py] 764L C:3 F:34 CC↑14 D:8 (python)
-  M[src/vdisplay/control/providers/vision/provider.py] 724L C:1 F:37 CC↑12 D:0 (python)
-  M[src/vdisplay/capture/screencast_keeper.py] 694L C:0 F:32 CC↑13 D:5 (python)
-  M[src/vdisplay/integrations/vql_bridge.py] 677L C:0 F:34 CC↑14 D:2 (python)
-  M[src/vdisplay/control/verifier.py] 659L C:3 F:32 CC↑14 D:1 (python)
-  LANGS: python:288/json:29/shell:12/toml:11/yaml:11/other:5/yml:5/proto:4/txt:2
+  M[src/vdisplay/windows/surface_registry.py] 724L C:0 F:20 CC↑93 D:1 (python)
+  LANGS: python:297/json:30/shell:12/toml:11/yaml:11/other:5/yml:5/proto:4/javascript:3/txt:2
 
 HOTSPOTS[10]:
+  ★ correlate_surfaces fan=49  // Merge discovery sources into one row per logical app/window.
   ★ _start_screencast_impl fan=41  // Orchestrates 41 calls
-  ★ register_routes fan=33  // Orchestrates 33 calls
-  ★ register_routes fan=27  // Orchestrates 27 calls
-  ★ SessionRecorder.record fan=26  // Orchestrates 26 calls
-  ★ start_sampler fan=24  // Orchestrates 24 calls
+  ★ register_routes fan=34  // Orchestrates 34 calls
+  ★ build_up_payload fan=34  // Orchestrates 34 calls
+  ★ startHttpServer fan=31  // Orchestrates 31 calls
 
 REFACTOR[15]:
-  [1] H/H Split god module src/vdisplay/application/auto/feedback.py (534L, 1 classes)
-  [2] H/H Split god module src/vdisplay/application/services/control.py (1079L, 0 classes)
-  [3] H/H Split god module src/vdisplay/application/session_recorder.py (764L, 3 classes)
-  [4] H/H Split god module src/vdisplay/capture/portal_screencast.py (1602L, 1 classes)
-  [5] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
+  [1] H/L Split detect_chat_click_target (CC=25)
+  [2] H/L Split correlate_surfaces (CC=93)
+  [3] H/L Split beginDisplayMediaCapture (CC=30)
+  [4] H/L Split listCaptureSources (CC=25)
+  [5] H/L Split listAgentWindowSources (CC=31)
 
 EVOLUTION:
-  2026-06-12 CC̄=4.1 crit=213 142318L // Automated analysis
+  2026-06-12 CC̄=4.2 crit=266 149616L // Automated analysis

@@ -9,6 +9,8 @@ from typing import Any
 from vdisplay import WindowRelaySession
 from vdisplay.exceptions import VDisplayError
 
+from .services.browser_bridge import BrowserFrameStore
+
 
 @dataclass
 class SessionRecord:
@@ -29,6 +31,9 @@ class SessionStore:
     sampler: Any | None = None
     sampler_task_id: str | None = None
     screencast_task_id: str | None = None
+    screencast_capture_failed: bool = False
+    screencast_capture_error: str = ""
+    browser_bridge: BrowserFrameStore = field(default_factory=BrowserFrameStore)
 
     def register(self, *, kind: str, handle: Any, prefix: str) -> SessionRecord:
         session_id = f"{prefix}-{uuid.uuid4().hex[:12]}"

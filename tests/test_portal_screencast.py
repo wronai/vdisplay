@@ -60,6 +60,22 @@ def test_agent_screencast_status_endpoint(agent_client) -> None:
     assert payload["data"]["active"] is False
 
 
+def test_agent_screencast_status_reports_capture_not_ready_without_keeper(agent_client) -> None:
+    client, runtime = agent_client
+    session = PortalScreenCastSession()
+    session.active = True
+    session.session_path = "/org/test/session"
+    session.node_ids = [80, 81]
+    runtime.store.screencast = session
+
+    payload = client.get("/session/screencast/status").json()
+    assert payload["ok"] is True
+    assert payload["data"]["active"] is True
+    assert payload["data"]["ready"] is True
+    assert payload["data"]["capture_ready"] is False
+    assert "screencast start --force" in payload["data"]["capture_hint"]
+
+
 def test_stop_screencast_when_inactive() -> None:
     stop_screencast_session()
     payload = stop_screencast_session()
@@ -240,6 +256,22 @@ def test_capture_pipewire_stream_retries_on_timeout(monkeypatch: pytest.MonkeyPa
     assert attempts == [None, "2"]
 
 
+def test_capture_pipewire_stream_uses_minimum_per_strategy_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from vdisplay.capture import portal_screencast as mod
+
+    timeouts: list[float] = []
+
+    def fake_once(*, pipewire_fd, node_id, target_object=None, width=None, height=None, timeout_s=30.0):
+        timeouts.append(timeout_s)
+        return b"\x89PNG" + b"x" * 64
+
+    monkeypatch.setattr(mod, "_capture_pipewire_stream_once", fake_once)
+    mod._capture_pipewire_stream(pipewire_fd=9, node_id=117, timeout_s=15.0)
+    assert timeouts == [7.5]
+
+
 def test_capture_pipewire_stream_uses_live_pipewiresrc(monkeypatch: pytest.MonkeyPatch) -> None:
     from vdisplay.capture import portal_screencast as mod
 
@@ -259,7 +291,36 @@ def test_capture_pipewire_stream_uses_live_pipewiresrc(monkeypatch: pytest.Monke
     assert calls
     gst_call = next(cmd for cmd in calls if cmd and cmd[0].endswith("gst-launch-1.0"))
     assert "always-copy=true" in gst_call
+    assert "num-buffers=1" in gst_call
     assert "is-live" not in gst_call
+
+
+def test_capture_pipewire_gst_launch_returns_png_written_before_timeout(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from vdisplay.capture import portal_screencast as mod
+
+    png = b"\x89PNG\r\n\x1a\n" + b"x" * 64
+
+    def fake_run(cmd, **kwargs):
+        location = next(part for part in cmd if str(part).startswith("location="))
+        with open(str(location).split("=", 1)[1], "wb") as fh:
+            fh.write(png)
+        raise mod.subprocess.TimeoutExpired(cmd, timeout=kwargs.get("timeout"))
+
+    monkeypatch.setattr(mod.shutil, "which", lambda name: "/usr/bin/gst-launch-1.0" if name == "gst-launch-1.0" else None)
+    monkeypatch.setattr(mod.subprocess, "run", fake_run)
+
+    out = tmp_path / "frame.png"
+    data = mod._capture_pipewire_frame_gst_launch(
+        9,
+        71,
+        None,
+        out,
+        timeout_s=3.0,
+    )
+    assert data == png
 
 
 def test_capture_png_local_falls_back_to_gnome_screenshot(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -288,7 +349,7 @@ def test_capture_png_local_falls_back_to_gnome_screenshot(monkeypatch: pytest.Mo
     monkeypatch.setattr(
         mod,
         "_capture_via_gnome_screenshot_region",
-        lambda properties: png,
+        lambda properties, **kwargs: png,
     )
 
     assert session.capture_png_local(node_index=0, try_all_streams=False) == png
@@ -327,6 +388,10 @@ def test_agent_screencast_adopt_endpoint(agent_client, monkeypatch: pytest.Monke
     from vdisplay.capture import portal_screencast as mod
 
     client, runtime = agent_client
+    monkeypatch.setattr(
+        "vdisplay_agent.services.sessions._is_wayland_host_session",
+        lambda: False,
+    )
     session = PortalScreenCastSession()
     session.active = True
     session.session_path = "/org/freedesktop/portal/desktop/session/test/adopt"

@@ -26,6 +26,187 @@ def _console_html() -> str:
         raise HTTPException(status_code=500, detail=f"console.html missing: {exc}") from exc
 
 
+def _browser_bridge_html() -> str:
+    return """<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vdisplay browser bridge</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; }
+    body { margin: 0; background: #101820; color: #f6f1e7; }
+    main { box-sizing: border-box; display: grid; gap: 16px; min-height: 100vh; padding: 20px; }
+    header, section { border: 1px solid rgba(255,255,255,.14); border-radius: 20px; background: rgba(255,255,255,.08); padding: 16px; }
+    header { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+    h1 { font-size: 20px; margin: 0; }
+    button { border: 0; border-radius: 12px; background: #f6c85f; color: #101820; cursor: pointer; font-weight: 800; padding: 10px 14px; }
+    button.secondary { background: rgba(255,255,255,.14); color: #f6f1e7; }
+    input { border: 1px solid rgba(255,255,255,.18); border-radius: 10px; background: rgba(0,0,0,.25); color: #f6f1e7; padding: 10px; }
+    label { display: grid; gap: 6px; font-size: 12px; font-weight: 800; }
+    video { background: #050708; border-radius: 16px; max-height: 72vh; object-fit: contain; width: 100%; }
+    pre { color: #d7ffe0; max-height: 220px; overflow: auto; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>vdisplay browser bridge</h1>
+        <p>Chrome/Chromium getDisplayMedia fallback for GNOME Wayland.</p>
+      </div>
+      <label>Source <input id="source" value="HDMI-1" /></label>
+      <button id="start">Share screen</button>
+      <button id="stop" class="secondary">Stop</button>
+    </header>
+    <section>
+      <video id="preview" autoplay muted playsinline></video>
+    </section>
+    <section>
+      <pre id="status">idle</pre>
+    </section>
+    <canvas id="canvas" hidden></canvas>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const sourceInput = document.getElementById("source");
+    const statusEl = document.getElementById("status");
+    const video = document.getElementById("preview");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    sourceInput.value = params.get("source") || params.get("monitor") || "HDMI-1";
+    let stream = null;
+    let bridgeId = "";
+    let seq = 0;
+    let heartbeatTimer = null;
+    let frameTimer = null;
+
+    function log(payload) {
+      statusEl.textContent = JSON.stringify(payload, null, 2);
+    }
+
+    async function postJson(path, payload) {
+      const response = await fetch(path, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.ok === false) {
+        throw new Error((data.error && data.error.message) || data.detail || response.statusText);
+      }
+      return data.data || data;
+    }
+
+    async function registerBridge() {
+      const source = sourceInput.value.trim() || "HDMI-1";
+      const payload = await postJson("/session/browser-bridge/register", {
+        client: "vdisplay-browser-bridge",
+        version: "0.1.0",
+        sources: [source],
+        monitors: [source],
+      });
+      bridgeId = payload.bridge_id;
+      return bridgeId;
+    }
+
+    async function heartbeat() {
+      if (!bridgeId) return;
+      const source = sourceInput.value.trim() || "HDMI-1";
+      await postJson("/session/browser-bridge/heartbeat", {
+        bridge_id: bridgeId,
+        sharing: Boolean(stream),
+        sources: [source],
+        monitors: [source],
+        fps: 2,
+      });
+    }
+
+    async function pushFrame() {
+      if (!stream || !bridgeId) {
+        log({ ok: false, phase: "pushFrame", error: "stream or bridge missing", bridge_id: bridgeId, has_stream: Boolean(stream) });
+        return;
+      }
+      if (video.videoWidth <= 0 || video.videoHeight <= 0) {
+        log({ ok: false, phase: "pushFrame", error: "video has no dimensions yet", bridge_id: bridgeId, videoWidth: video.videoWidth, videoHeight: video.videoHeight });
+        return;
+      }
+      const source = sourceInput.value.trim() || "HDMI-1";
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/png");
+      if (!dataUrl || dataUrl.length < 100) {
+        log({ ok: false, phase: "pushFrame", error: "canvas produced an empty frame", width: canvas.width, height: canvas.height });
+        return;
+      }
+      await postJson("/capture/ingest", {
+        bridge_id: bridgeId,
+        source,
+        seq: ++seq,
+        mime: "image/png",
+        data_url: dataUrl,
+        width: canvas.width,
+        height: canvas.height,
+        captured_at_ms: Date.now(),
+        source_name: document.title,
+      });
+      log({ ok: true, bridge_id: bridgeId, source, seq, width: canvas.width, height: canvas.height });
+    }
+
+    function stop() {
+      clearInterval(heartbeatTimer);
+      clearInterval(frameTimer);
+      heartbeatTimer = null;
+      frameTimer = null;
+      if (stream) {
+        for (const track of stream.getTracks()) track.stop();
+      }
+      stream = null;
+      video.srcObject = null;
+      log({ ok: true, stopped: true, bridge_id: bridgeId });
+    }
+
+    async function start() {
+      stop();
+      await registerBridge();
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        audio: false,
+        video: { cursor: "always", frameRate: { ideal: 5, max: 15 } },
+      });
+      video.srcObject = stream;
+      for (const track of stream.getVideoTracks()) track.addEventListener("ended", stop);
+      await new Promise((resolve) => {
+        if (video.readyState >= 2) { resolve(); return; }
+        video.addEventListener("loadeddata", () => resolve(), { once: true });
+        setTimeout(resolve, 3000);
+      });
+      try { await video.play(); } catch (e) {
+        if (e.name !== "AbortError") throw e;
+        /* autoplay already started playback — safe to ignore */
+      }
+      await new Promise((resolve) => {
+        if (video.videoWidth > 0 && video.videoHeight > 0) {
+          resolve();
+          return;
+        }
+        video.onloadedmetadata = () => resolve();
+        setTimeout(resolve, 1500);
+      });
+      await heartbeat();
+      await pushFrame();
+      heartbeatTimer = setInterval(() => heartbeat().catch((error) => log({ ok: false, error: String(error) })), 2000);
+      frameTimer = setInterval(() => pushFrame().catch((error) => log({ ok: false, error: String(error) })), 500);
+    }
+
+    document.getElementById("start").addEventListener("click", () => start().catch((error) => log({ ok: false, error: String(error) })));
+    document.getElementById("stop").addEventListener("click", stop);
+    log({ ok: true, url: location.href, source: sourceInput.value, hint: "Click Share screen, choose the IDE monitor, then keep this tab open." });
+  </script>
+</body>
+</html>"""
+
+
 def register_routes(
     app: FastAPI,
     broker: AgentRuntime,
@@ -34,6 +215,10 @@ def register_routes(
     @app.get("/web", response_class=HTMLResponse, include_in_schema=False)
     def web_console_page() -> HTMLResponse:
         return HTMLResponse(_console_html())
+
+    @app.get("/api/web/browser-bridge", response_class=HTMLResponse, include_in_schema=False)
+    def web_browser_bridge_page() -> HTMLResponse:
+        return HTMLResponse(_browser_bridge_html())
 
     @app.get("/api/web/overview")
     def web_overview(

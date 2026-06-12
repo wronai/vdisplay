@@ -1,7 +1,10 @@
 """Cold-path vision LLM — semantic Q&A on screenshot crops (OpenRouter).
 
-Not used for click coordinates or provider routing. Invoked only when local
-OCR/anchor verify fails and ``VDISPLAY_VISION_LLM_ENABLED=1``.
+For **chat composer click detection** (full-frame PNG coordinates), see
+``vdisplay.control.vision_chat_detect`` and ``vdisplay.integrations.chat_target``.
+
+Invoked for verify fallback when local OCR/anchor fails and
+``VDISPLAY_VISION_LLM_ENABLED=1``.
 """
 
 from __future__ import annotations

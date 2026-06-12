@@ -3,11 +3,11 @@
 
 ## AI Cost Tracking
 
-![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.34-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
-![AI Cost](https://img.shields.io/badge/AI%20Cost-$40.28-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-19.9h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
+![PyPI](https://img.shields.io/badge/pypi-costs-blue) ![Version](https://img.shields.io/badge/version-0.1.35-blue) ![Python](https://img.shields.io/badge/python-3.9+-blue) ![License](https://img.shields.io/badge/license-Apache--2.0-green)
+![AI Cost](https://img.shields.io/badge/AI%20Cost-$40.71-orange) ![Human Time](https://img.shields.io/badge/Human%20Time-20.6h-blue) ![Model](https://img.shields.io/badge/Model-openrouter%2Fqwen%2Fqwen3--coder--next-lightgrey)
 
-- 🤖 **LLM usage:** $40.2810 (39 commits)
-- 👤 **Human dev:** ~$1992 (19.9h @ $100/h, 30min dedup)
+- 🤖 **LLM usage:** $40.7063 (40 commits)
+- 👤 **Human dev:** ~$2061 (20.6h @ $100/h, 30min dedup)
 
 Generated on 2026-06-12 using [openrouter/qwen/qwen3-coder-next](https://openrouter.ai/qwen/qwen3-coder-next)
 
@@ -57,6 +57,7 @@ vdisplay windows --apps-only
 | [Control plane](docs/control-plane.md) | [Examples index](docs/examples.md) |
 | [Agent broker (full API)](docs/agent-broker.md) | [Troubleshooting](docs/troubleshooting.md) |
 | [Vision-only Wayland](docs/vision-only-wayland.md) | [packages/README.md](packages/README.md) |
+| [Electron Share Manager](docs/electron-share-manager.md) | [Electron package README](packages/vdisplay-electron-share/README.md) |
 
 Full index: [docs/index.md](docs/index.md)
 
@@ -82,6 +83,7 @@ Details: [docs/examples.md](docs/examples.md) · per-example READMEs in each fol
 | Desktop automation on GNOME Wayland | [docs/guides/wayland-control.md](docs/guides/wayland-control.md) |
 | Persistent vision click targets | [docs/guides/gui-map-pack.md](docs/guides/gui-map-pack.md) |
 | Broker + REST/MCP for agents | [docs/guides/agent-broker.md](docs/guides/agent-broker.md) |
+| Stable Wayland capture with preview window | [docs/electron-share-manager.md](docs/electron-share-manager.md) |
 | Headless CI screenshot | [examples/headless-virtual](examples/headless-virtual/) |
 | Semantic browser/terminal control | [docs/control-plane.md](docs/control-plane.md) |
 
@@ -95,6 +97,7 @@ vdisplay diagnose
 vdisplay screenshot -o out.png --source DP-1    # Wayland: agent + screencast first
 vdisplay diagnose control
 vdisplay control click --backend vision --map maps/chat.json --target chat
+vdisplay services up --install --instance pycharm --target "PyCharm chat" --source HDMI-1 --open-browser-bridge
 ```
 
 CLI index: [docs/reference/cli.md](docs/reference/cli.md)
@@ -128,7 +131,22 @@ bash koru-drive-photo-vql.sh --ide jetbrains --source DP-2 --prompt "fix tests" 
 bash koru-audit-last-session.sh --ide jetbrains
 ```
 
-Requires: `vdisplay-agent serve`, `KORU_SRC`, `IMGL_SRC`, venv with `[observe]`.  
+Recommended first step on GNOME Wayland:
+
+```bash
+vdisplay services up \
+  --install \
+  --instance jetbrains \
+  --target jetbrains \
+  --source HDMI-1 \
+  --open-browser-bridge
+```
+
+Then in the opened browser bridge tab click `Share screen`, select the IDE
+monitor, and keep the tab open. Koru should only run photo-VQL drive after
+`capture_ready=true`; otherwise it may fall back to blind keyboard injection.
+
+Requires: `KORU_SRC`, `IMGL_SRC`, venv with `[observe]`.  
 Guide: [examples/dev-workflow/README.md](examples/dev-workflow/README.md#koru--vdisplay--pętla-autonomiczna-photo-vql).
 
 See [Desktop control today](docs/guides/desktop-control-today.md) for implementation details and limitations.
@@ -180,6 +198,53 @@ vdisplay screenshot -o /tmp/host.png --source DP-1
 **Dev automation on this PC:** [examples/dev-workflow/](examples/dev-workflow/)
 
 Full API: [docs/agent-broker.md](docs/agent-broker.md) · Guide: [docs/guides/agent-broker.md](docs/guides/agent-broker.md)
+
+## Electron Share Manager (Wayland capture window)
+
+For GNOME Wayland hosts where Python PipeWire capture is unreliable, use the
+orchestrated services command. It starts `vdisplay-agent`, starts the Electron
+manager UI/tray, and exposes a Chrome/Chromium browser bridge that pushes PNG
+frames to the agent.
+
+One-command first run:
+
+```bash
+cd ~/github/wronai/vdisplay
+source .venv/bin/activate
+
+vdisplay services up --install \
+  --instance pycharm \
+  --target "PyCharm chat" \
+  --source HDMI-1 \
+  --open-browser-bridge
+```
+
+Then approve sharing in the opened browser tab:
+
+1. Click `Share screen`.
+2. Select the IDE monitor.
+3. Keep the tab open while automation runs.
+
+After `capture_ready=true`, capture can read frames from the agent:
+
+```bash
+export VDISPLAY_AGENT_URL=http://127.0.0.1:8766
+vdisplay screenshot -o /tmp/pycharm.png --source HDMI-1
+```
+
+The lower-level Electron manager can still be launched directly when you only
+need the tray/full-window manager:
+
+```bash
+vdisplay electron-share start --install \
+  --instance pycharm \
+  --target "PyCharm chat" \
+  --source HDMI-1 \
+  --port 8799
+```
+
+Docs: [docs/electron-share-manager.md](docs/electron-share-manager.md) · Package:
+[packages/vdisplay-electron-share/README.md](packages/vdisplay-electron-share/README.md)
 
 ## Control layer equivalents
 

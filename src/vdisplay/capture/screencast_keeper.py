@@ -255,6 +255,7 @@ def request_keeper_capture(
     timeout_s: float | None = None,
 ) -> bytes:
     """Capture a PNG frame from the keeper-owned portal session."""
+    explicit_timeout_s = timeout_s
     if timeout_s is None:
         timeout_s = _keeper_capture_client_timeout_s()
     sock_path, expected_path = _resolve_capture_socket(session_path, socket_path)
@@ -262,10 +263,17 @@ def request_keeper_capture(
     payload = {"op": "capture", "node_index": int(node_index)}
     if expected_path:
         payload["session_path"] = expected_path
+    if explicit_timeout_s is not None:
+        payload["capture_timeout_s"] = _keeper_worker_capture_timeout_s(float(explicit_timeout_s))
     request = (json.dumps(payload) + "\n").encode("utf-8")
 
     data = _exchange_capture_request(sock_path, request, timeout_s, node_index)
     return _decode_capture_png(data, node_index)
+
+
+def _keeper_worker_capture_timeout_s(client_timeout_s: float) -> float:
+    """Leave response margin so the keeper can return an error before socket timeout."""
+    return max(2.0, min(60.0, float(client_timeout_s) - 5.0))
 
 
 def read_keeper_state() -> dict[str, Any] | None:
@@ -420,8 +428,22 @@ def _dispatch_capture_request(session: Any, request: dict[str, Any]) -> dict[str
     except (TypeError, ValueError):
         return {"ok": False, "error": "invalid node_index"}
 
+    capture_timeout_s: float | None = None
+    if request.get("capture_timeout_s") is not None:
+        try:
+            capture_timeout_s = max(2.0, min(60.0, float(request.get("capture_timeout_s"))))
+        except (TypeError, ValueError):
+            return {"ok": False, "error": "invalid capture_timeout_s"}
+
     try:
-        png = session.capture_png_local(node_index=node_index, try_all_streams=False)
+        if capture_timeout_s is None:
+            png = session.capture_png_local(node_index=node_index, try_all_streams=False)
+        else:
+            png = session.capture_png_local(
+                node_index=node_index,
+                try_all_streams=False,
+                timeout_s=capture_timeout_s,
+            )
     except VDisplayError as exc:
         try:
             with open("/tmp/vdisplay-keeper-capture.log", "a", encoding="utf-8") as f:

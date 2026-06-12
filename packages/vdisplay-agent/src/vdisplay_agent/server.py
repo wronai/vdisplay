@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
@@ -25,22 +26,23 @@ def create_app(runtime: AgentRuntime | None = None):
     except Exception:
         pass
 
-    app = FastAPI(title="vdisplay-agent", version=__version__)
     broker = runtime or AgentRuntime()
-    register_all_routes(app, broker)
 
-    @app.on_event("startup")
-    def _startup() -> None:
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
         broker.recover_tasks()
-
-    @app.on_event("shutdown")
-    def _shutdown() -> None:
         try:
-            broker.shutdown()
-        except Exception as exc:
-            import logging
+            yield
+        finally:
+            try:
+                broker.shutdown()
+            except Exception as exc:
+                import logging
 
-            logging.getLogger(__name__).warning("agent shutdown cleanup failed: %s", exc)
+                logging.getLogger(__name__).warning("agent shutdown cleanup failed: %s", exc)
+
+    app = FastAPI(title="vdisplay-agent", version=__version__, lifespan=lifespan)
+    register_all_routes(app, broker)
 
     app.state.runtime = broker
     return app

@@ -217,7 +217,15 @@ def _capture_via_agent(
         finally:
             client.stop_session(session_id)
 
-    _ensure_wayland_screencast(client)
+    try:
+        from ...capture.electron_share import electron_share_enabled
+
+        electron_share_capture = electron_share_enabled()
+    except Exception:
+        electron_share_capture = False
+
+    if all_monitors or not electron_share_capture:
+        _ensure_wayland_screencast(client)
 
     validate_screenshot_source(
         display=display,

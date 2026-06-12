@@ -1,9 +1,23 @@
 from __future__ import annotations
 
 import argparse
+import os
+from urllib.parse import urlparse
 
 from vdisplay.application.env_defaults import env_value
 from vdisplay.application.env_loader import load_project_env
+
+
+def _default_serve_port() -> int:
+    agent_url = os.environ.get("VDISPLAY_AGENT_URL", "").strip()
+    if agent_url:
+        parsed = urlparse(agent_url)
+        if parsed.port:
+            return parsed.port
+    port_raw = os.environ.get("VDISPLAY_AGENT_PORT", "").strip()
+    if port_raw.isdigit():
+        return int(port_raw)
+    return 8765
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -16,7 +30,7 @@ def main(argv: list[str] | None = None) -> int:
 
     serve = sub.add_parser("serve", help="Start localhost REST broker")
     serve.add_argument("--host", default=env_value("VDISPLAY_AGENT_HOST") or "127.0.0.1")
-    serve.add_argument("--port", type=int, default=int(env_value("VDISPLAY_AGENT_PORT") or "8765"))
+    serve.add_argument("--port", type=int, default=_default_serve_port())
     serve.add_argument("--reload", action="store_true")
 
     args = parser.parse_args(argv)

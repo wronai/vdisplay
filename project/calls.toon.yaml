@@ -1,15 +1,17 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.23s
-# nodes: 420 | edges: 500 | modules: 124
-# CC̄=4.1
+# generated in 0.27s
+# nodes: 411 | edges: 500 | modules: 121
+# CC̄=4.2
 
 HUBS[20]:
   examples.dev-workflow.koru-audit-last-session.print
-    CC=0  in:120  out:0  total:120
+    CC=0  in:147  out:0  total:147
+  packages.vdisplay-electron-share.renderer.list
+    CC=3  in:132  out:2  total:134
+  src.vdisplay.cli_handlers.print_json
+    CC=1  in:68  out:1  total:69
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
     CC=1  in:0  out:68  total:68
-  src.vdisplay.cli_handlers.print_json
-    CC=1  in:67  out:1  total:68
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
     CC=3  in:44  out:2  total:46
   src.vdisplay.commands.ide.handle
@@ -18,32 +20,30 @@ HUBS[20]:
     CC=7  in:0  out:42  total:42
   src.vdisplay.discovery.resolve_host_display
     CC=11  in:34  out:7  total:41
-  packages.rest2vdisplay.src.rest2vdisplay.app.create_app
-    CC=2  in:3  out:38  total:41
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
     CC=14  in:14  out:27  total:41
-  src.vdisplay.capture.screencast_keeper.stop_keeper
-    CC=13  in:10  out:27  total:37
+  packages.rest2vdisplay.src.rest2vdisplay.app.create_app
+    CC=2  in:3  out:38  total:41
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:38  total:38
   src.vdisplay.utils.run_command
     CC=2  in:33  out:4  total:37
   src.vdisplay.discovery.list_outputs
-    CC=8  in:9  out:27  total:36
+    CC=8  in:10  out:27  total:37
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
   src.vdisplay.application.session_recorder.load_session_document
     CC=13  in:5  out:29  total:34
-  src.vdisplay.application.project_config.load_project_config
-    CC=14  in:6  out:27  total:33
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
+  src.vdisplay.application.project_config.load_project_config
+    CC=14  in:6  out:27  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error
+    CC=7  in:21  out:12  total:33
   src.vdisplay.commands.session.command_request_from_control_args
     CC=8  in:1  out:32  total:33
   src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
     CC=13  in:5  out:28  total:33
-  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
-    CC=1  in:0  out:32  total:32
 
 MODULES:
   examples.agent-broker.broker_demo  [1 funcs]
@@ -134,8 +134,8 @@ MODULES:
   packages.mcp2vdisplay.src.mcp2vdisplay.cli  [2 funcs]
     create_server  CC=1  out:1
     main  CC=2  out:6
-  packages.mcp2vdisplay.src.mcp2vdisplay.server  [1 funcs]
-    create_server  CC=1  out:32
+  packages.nlp2vdisplay.src.nlp2vdisplay.cli  [1 funcs]
+    main  CC=7  out:15
   packages.rest2vdisplay.src.rest2vdisplay.app  [1 funcs]
     create_app  CC=2  out:38
   packages.uri2vdisplay.src.uri2vdisplay.cli  [1 funcs]
@@ -150,7 +150,7 @@ MODULES:
     _broker_log_path  CC=4  out:8
     log_broker_event  CC=3  out:7
   packages.vdisplay-agent.src.vdisplay_agent.cli  [1 funcs]
-    main  CC=9  out:23
+    main  CC=8  out:22
   packages.vdisplay-agent.src.vdisplay_agent.envelope  [7 funcs]
     agent_meta  CC=1  out:0
     failure  CC=3  out:2
@@ -171,11 +171,11 @@ MODULES:
     expected_token  CC=2  out:2
     make_check_auth  CC=1  out:5
   packages.vdisplay-agent.src.vdisplay_agent.routes.capture  [1 funcs]
-    register_routes  CC=1  out:5
+    register_routes  CC=1  out:11
   packages.vdisplay-agent.src.vdisplay_agent.routes.control  [1 funcs]
     register_routes  CC=1  out:68
   packages.vdisplay-agent.src.vdisplay_agent.routes.health  [1 funcs]
-    register_routes  CC=1  out:33
+    register_routes  CC=1  out:38
   packages.vdisplay-agent.src.vdisplay_agent.routes.sampler  [1 funcs]
     register_routes  CC=1  out:18
   packages.vdisplay-agent.src.vdisplay_agent.routes.tasks  [1 funcs]
@@ -194,16 +194,10 @@ MODULES:
     ensure_broker_port_free  CC=10  out:13
     find_listener_pids  CC=4  out:4
   packages.vdisplay-agent.src.vdisplay_agent.server  [1 funcs]
-    create_app  CC=4  out:12
+    create_app  CC=4  out:10
   packages.vdisplay-agent.src.vdisplay_agent.services.capabilities  [2 funcs]
     diagnostics  CC=4  out:10
     platform_capabilities  CC=6  out:18
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture  [5 funcs]
-    _capture_all_monitors  CC=2  out:8
-    _capture_host  CC=11  out:23
-    _capture_session  CC=3  out:13
-    _region_from_body  CC=8  out:13
-    capture_frame  CC=3  out:6
   packages.vdisplay-agent.src.vdisplay_agent.services.control  [7 funcs]
     _run_on_browser_thread  CC=1  out:2
     _selector_kwargs  CC=1  out:23
@@ -225,17 +219,17 @@ MODULES:
     _recovery_cooldown_s  CC=1  out:2
     screencast_recovery_cooldown_remaining  CC=1  out:3
     try_recover_screencast  CC=8  out:5
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions  [15 funcs]
-    _release_store_screencast_if_different  CC=9  out:6
-    _screencast_payload  CC=7  out:3
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions  [21 funcs]
+    _annotate_browser_bridge_status  CC=7  out:6
+    _annotate_screencast_capture_status  CC=6  out:3
+    _is_wayland_host_session  CC=2  out:5
+    _keeper_capture_ready_for_session  CC=7  out:6
+    _reject_wayland_adopt_without_capture  CC=7  out:8
+    _release_store_screencast_if_different  CC=9  out:7
+    _screencast_payload  CC=7  out:5
     _session_started  CC=1  out:2
-    adopt_screencast  CC=7  out:12
-    list_sessions  CC=1  out:2
-    screencast_status  CC=3  out:2
-    shutdown  CC=4  out:8
-    start_browser  CC=3  out:4
-    start_mirror  CC=3  out:5
-    start_relay  CC=4  out:5
+    adopt_screencast  CC=7  out:14
+    clear_screencast_capture_failure  CC=1  out:0
   packages.vdisplay-agent.src.vdisplay_agent.services.tasks  [10 funcs]
     _best_effort_task_op  CC=2  out:2
     end_sampler_task  CC=1  out:1
@@ -249,33 +243,33 @@ MODULES:
     unregister_session_task  CC=1  out:1
   packages.vdisplay-agent.src.vdisplay_agent.services.web_console  [1 funcs]
     click_monitor_pointer  CC=1  out:2
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache  [10 funcs]
-    _capture_bulk_or_fallback  CC=9  out:13
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache  [11 funcs]
+    _capture_bulk_or_fallback  CC=10  out:14
     _frame_cache_ttl_s  CC=1  out:2
     _get_cached_all_frames  CC=4  out:6
+    _keeper_capture_ready  CC=5  out:5
     _persist_captures_to_cache  CC=9  out:18
-    _require_screencast  CC=3  out:1
+    _require_screencast  CC=7  out:4
     cache_get  CC=4  out:4
     cache_put  CC=1  out:1
-    capture_all_monitor_frames  CC=4  out:4
+    capture_all_monitor_frames  CC=5  out:5
     capture_monitor_frame  CC=1  out:1
-    capture_monitor_frame_with_meta  CC=9  out:18
   packages.vdisplay-agent.src.vdisplay_agent.services.web_replay  [2 funcs]
     list_replay_sessions  CC=9  out:21
     queue_replay  CC=4  out:3
-  packages.vdisplay-agent.src.vdisplay_agent.session_store  [1 funcs]
-    register  CC=1  out:2
-  packages.vdisplay-agent.src.vdisplay_agent.task_store  [10 funcs]
+  packages.vdisplay-agent.src.vdisplay_agent.task_store  [11 funcs]
     __init__  CC=2  out:6
     _reopen_after_corruption  CC=2  out:4
     create_task  CC=1  out:10
+    list_tasks  CC=1  out:10
     mark_orphan_running_as_stale  CC=1  out:9
     update_task  CC=1  out:10
     _sqlite_db_valid  CC=6  out:8
     _utcnow  CC=1  out:1
     default_task_db_path  CC=3  out:9
     recover_corrupt_task_db  CC=5  out:8
-    task_to_dict  CC=4  out:5
+  packages.vdisplay-electron-share.renderer  [1 funcs]
+    list  CC=3  out:2
   src.vdisplay.agent_config  [9 funcs]
     _default_agent_base  CC=3  out:4
     _is_vdisplay_agent_health  CC=6  out:9
@@ -307,10 +301,9 @@ MODULES:
     ensure_auto_dependencies  CC=5  out:4
   src.vdisplay.application.config_options  [1 funcs]
     get_runtime_options  CC=2  out:7
-  src.vdisplay.application.env_defaults  [4 funcs]
+  src.vdisplay.application.env_defaults  [3 funcs]
     env_flag  CC=5  out:5
     env_float_value  CC=6  out:4
-    env_int_value  CC=6  out:4
     env_value  CC=3  out:1
   src.vdisplay.application.env_loader  [1 funcs]
     load_project_env  CC=4  out:8
@@ -320,8 +313,9 @@ MODULES:
     execute  CC=5  out:13
   src.vdisplay.application.handlers.control  [1 funcs]
     control_request_body  CC=3  out:3
-  src.vdisplay.application.history.loader  [2 funcs]
+  src.vdisplay.application.history.loader  [3 funcs]
     load_history_index  CC=8  out:14
+    load_run_detail  CC=5  out:11
     resolve_metadata_root  CC=3  out:4
   src.vdisplay.application.project_config  [3 funcs]
     clear_metadata_dir  CC=10  out:16
@@ -331,9 +325,6 @@ MODULES:
     queue_session_replay  CC=4  out:10
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
-  src.vdisplay.application.services.screencast_cli  [2 funcs]
-    clear_local_start_cooldown  CC=2  out:1
-    probe_screencast_capture  CC=8  out:17
   src.vdisplay.application.services.web_pointer  [1 funcs]
     pointer_click_at_monitor  CC=11  out:20
   src.vdisplay.application.session_context  [4 funcs]
@@ -371,7 +362,7 @@ MODULES:
   src.vdisplay.capture.screencast_keeper  [3 funcs]
     keeper_capture_ready  CC=5  out:8
     read_keeper_state  CC=8  out:12
-    stop_keeper  CC=13  out:27
+    session_uses_keeper  CC=11  out:15
   src.vdisplay.cli  [2 funcs]
     build_parser  CC=1  out:4
     main  CC=2  out:6
@@ -392,17 +383,6 @@ MODULES:
     route_command  CC=7  out:7
   src.vdisplay.commands  [1 funcs]
     register_all  CC=2  out:1
-  src.vdisplay.commands.agent  [11 funcs]
-    _agent_client  CC=3  out:3
-    _handle_browser_open  CC=3  out:9
-    _handle_preflight  CC=11  out:24
-    _handle_screencast  CC=2  out:4
-    _handle_serve  CC=6  out:10
-    _screencast_clear_cooldown  CC=1  out:2
-    _screencast_probe  CC=3  out:8
-    _screencast_start  CC=8  out:14
-    _screencast_status  CC=1  out:2
-    _screencast_stop  CC=1  out:3
   src.vdisplay.commands.all_cmd  [4 funcs]
     handle  CC=1  out:3
     handle_outputs  CC=1  out:3
@@ -417,16 +397,17 @@ MODULES:
     add_all_arg  CC=1  out:1
     add_control_selector_args  CC=1  out:23
     add_display_arg  CC=1  out:1
-    add_window_filter_args  CC=1  out:7
+    add_window_filter_args  CC=1  out:9
     control_selector_kwargs_for_service  CC=1  out:2
     control_selector_kwargs_from_args  CC=1  out:24
     include_all_from_args  CC=2  out:3
   src.vdisplay.commands.config  [1 funcs]
     handle  CC=4  out:12
-  src.vdisplay.commands.history  [3 funcs]
+  src.vdisplay.commands.history  [4 funcs]
     _resolve_root  CC=1  out:2
     _resolve_session_from_args  CC=7  out:16
     handle_list  CC=3  out:12
+    handle_show  CC=10  out:17
   src.vdisplay.commands.hmi  [1 funcs]
     handle  CC=7  out:6
   src.vdisplay.commands.ide  [2 funcs]
@@ -551,11 +532,11 @@ MODULES:
 
 EDGES:
   packages.mcp2vdisplay.src.mcp2vdisplay.cli.main → packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server
-  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server → src.vdisplay.agent_config.resolve_agent_url
   packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch → packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict
   packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line → packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli.main → packages.vdisplay-electron-share.renderer.list
   packages.dsl2vdisplay.src.dsl2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
   packages.dsl2vdisplay.src.dsl2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy → packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line

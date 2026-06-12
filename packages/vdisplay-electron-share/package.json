@@ -1,0 +1,36 @@
+{
+  "name": "vdisplay-electron-share",
+  "version": "0.1.0",
+  "private": true,
+  "author": "wronai",
+  "license": "Apache-2.0",
+  "description": "Electron screen-share broker for vdisplay on GNOME Wayland",
+  "main": "main.js",
+  "scripts": {
+    "start": "env -u ELECTRON_RUN_AS_NODE LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME:-none} electron --no-sandbox --ozone-platform=${VDISPLAY_ELECTRON_OZONE_PLATFORM:-x11} .",
+    "stop": "pkill -f 'vdisplay-electron-share/node_modules/.bin/electron' 2>/dev/null || pkill -f 'vdisplay-electron-share/node_modules/electron/dist/electron' 2>/dev/null || true",
+    "build": "electron-builder --linux dir"
+  },
+  "devDependencies": {
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "ai.wron.vdisplay.share",
+    "productName": "vdisplay share",
+    "linux": {
+      "target": [
+        "dir"
+      ],
+      "category": "Utility"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.html",
+      "renderer.js",
+      "assets/vdisplay-share.svg",
+      "package.json"
+    ]
+  }
+}

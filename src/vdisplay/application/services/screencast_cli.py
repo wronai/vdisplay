@@ -8,12 +8,22 @@ from pathlib import Path
 from typing import Any
 
 from ...capture.portal_screencast import portal_session_env_status
-from ...capture.screencast_keeper import keeper_capture_ready, read_keeper_state, spawn_keeper, stop_keeper
+from ...capture.screencast_keeper import (
+    keeper_capture_ready,
+    read_keeper_state,
+    request_keeper_capture,
+    spawn_keeper,
+    stop_keeper,
+)
 from ...exceptions import VDisplayError
 from ..env_defaults import env_float_value
 
 _COOLDOWN_FILE = Path(os.environ.get("XDG_RUNTIME_DIR") or f"/run/user/{os.getuid()}") / "vdisplay-screencast-last-start"
 _LOCAL_START_COOLDOWN_S = max(30.0, env_float_value("VDISPLAY_SCREENCAST_LOCAL_START_COOLDOWN_S", default=60.0))
+_KEEPER_START_FRAME_TIMEOUT_S = max(
+    15.0,
+    env_float_value("VDISPLAY_KEEPER_START_FRAME_TIMEOUT_S", default=45.0),
+)
 
 
 def _local_start_cooldown_remaining() -> float:
@@ -95,7 +105,44 @@ def _verify_keeper_running(*, context: str) -> dict[str, Any]:
             f"screencast keeper capture socket not ready after {context} — "
             "run: vdisplay agent screencast start --force"
         )
+    _verify_keeper_frame_capture(state, context=context)
     return state
+
+
+def _keeper_stream_indices(state: dict[str, Any]) -> list[int]:
+    streams = state.get("streams")
+    node_ids = state.get("node_ids")
+    stream_count = len(streams) if isinstance(streams, list) else 0
+    node_count = len(node_ids) if isinstance(node_ids, list) else 0
+    return list(range(max(stream_count, node_count, 1)))
+
+
+def _verify_keeper_frame_capture(state: dict[str, Any], *, context: str) -> None:
+    session_path = str(state.get("session_path") or "")
+    socket_path = str(state.get("socket_path") or "")
+    errors: list[str] = []
+    for node_index in _keeper_stream_indices(state):
+        try:
+            png = request_keeper_capture(
+                node_index=node_index,
+                session_path=session_path,
+                socket_path=socket_path,
+                timeout_s=_KEEPER_START_FRAME_TIMEOUT_S,
+            )
+        except Exception as exc:
+            errors.append(f"node_index={node_index}: {exc}")
+            continue
+        if not png.startswith(b"\x89PNG\r\n\x1a\n"):
+            errors.append(f"node_index={node_index}: capture returned non-PNG frame")
+    if not errors:
+        return
+    stop_keeper()
+    raise VDisplayError(
+        f"screencast keeper socket is ready but frame capture failed after {context}: "
+        f"{'; '.join(errors)}. This is not a usable ScreenCast session; "
+        "re-run `vdisplay agent screencast start --force`, choose All Screens, "
+        "and inspect /tmp/vdisplay-keeper-capture.log if it repeats."
+    )
 
 
 def _start_via_keeper(client, *, timeout_s: float, multiple: bool | None) -> dict[str, Any]:
@@ -117,7 +164,15 @@ def _start_via_keeper(client, *, timeout_s: float, multiple: bool | None) -> dic
         _mark_local_start_failure()
         raise
     if adopted.get("active") and adopted.get("ready"):
-        state = _verify_keeper_running(context="start")
+        try:
+            state = _verify_keeper_running(context="start")
+        except VDisplayError:
+            try:
+                client.stop_screencast()
+            except VDisplayError:
+                pass
+            _mark_local_start_failure()
+            raise
         clear_local_start_cooldown()
         adopted["keeper_pid"] = state.get("pid")
         adopted["keeper_socket_path"] = state.get("socket_path")

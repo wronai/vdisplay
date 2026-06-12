@@ -40,6 +40,7 @@ def _windows(cmd: CommandRequest) -> dict[str, Any]:
         match_class=cmd.match_class,
         match_pid=cmd.match_pid,
         match_app=cmd.match_app,
+        correlate=cmd.correlate,
     )
 
 

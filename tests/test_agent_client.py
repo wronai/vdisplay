@@ -68,6 +68,8 @@ def test_probe_rejects_non_vdisplay_health(monkeypatch: pytest.MonkeyPatch) -> N
 def test_probe_retries_after_initial_miss(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("VDISPLAY_AGENT_URL", raising=False)
     monkeypatch.setenv("VDISPLAY_AGENT_AUTO", "1")
+    monkeypatch.setenv("VDISPLAY_AGENT_HOST", "127.0.0.1")
+    monkeypatch.setenv("VDISPLAY_AGENT_PORT", "8765")
     from vdisplay.agent_config import reset_agent_probe_cache
 
     reset_agent_probe_cache()
@@ -136,3 +138,49 @@ def test_virtual_screenshot_routes_local_when_agent_up(
         vd_display=":99",
     )
     assert ExecutionPolicy().route(cmd) == "local"
+
+
+def test_agent_client_browser_bridge_helpers(monkeypatch):
+    from vdisplay.client import AgentClient
+
+    calls = []
+
+    def fake_request(self, method, path, *, body=None):
+        calls.append((method, path, body))
+        return {"ok": True, "bridge_id": "bb_test"}
+
+    monkeypatch.setattr(AgentClient, "request_json", fake_request)
+    client = AgentClient("http://127.0.0.1:8765")
+
+    assert client.browser_bridge_register(sources=["HDMI-1"], ttl_s=7)["bridge_id"] == "bb_test"
+    assert client.browser_bridge_heartbeat(bridge_id="bb_test", sharing=True, fps=2)["ok"] is True
+    assert client.browser_bridge_status()["ok"] is True
+    assert client.capture_ingest(
+        bridge_id="bb_test",
+        source="HDMI-1",
+        png_base64="iVBORw0KGgo=",
+        seq=1,
+        width=1,
+        height=1,
+        display_id="1",
+        display_label="HDMI",
+        source_id="screen:1",
+        source_name="Entire screen",
+        display_bounds={"x": 0, "y": 0, "width": 10, "height": 10},
+        scale_factor=1,
+    )["ok"] is True
+
+    assert calls[0] == (
+        "POST",
+        "/session/browser-bridge/register",
+        {"client": "vdisplay-client", "version": "", "sources": ["HDMI-1"], "ttl_s": 7},
+    )
+    assert calls[1] == (
+        "POST",
+        "/session/browser-bridge/heartbeat",
+        {"bridge_id": "bb_test", "sharing": True, "fps": 2},
+    )
+    assert calls[2] == ("GET", "/session/browser-bridge/status", None)
+    assert calls[3][0:2] == ("POST", "/capture/ingest")
+    assert calls[3][2]["display_label"] == "HDMI"
+    assert calls[3][2]["display_bounds"]["width"] == 10

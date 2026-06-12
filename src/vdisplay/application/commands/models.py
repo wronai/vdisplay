@@ -64,6 +64,7 @@ class CommandRequest:
     backend: str = "xvfb"
     monitor: int | None = None
     local_only: bool = False
+    correlate: bool = False
     control_selector: str | None = None
     control_provider_ref: str | None = None
     control_name: str | None = None

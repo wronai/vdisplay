@@ -88,7 +88,9 @@ def _screencast_payload(
 ) -> dict[str, Any]:
     store.screencast = session
     store.screencast_multiple = allow_multiple
+    clear_screencast_capture_failure(store)
     payload = {"ok": True, "multiple": allow_multiple, **session.status()}
+    _annotate_screencast_capture_status(payload, store, session)
     if reused:
         payload["reused"] = True
     if task_store is not None and broker_id and not (reused and store.screencast_task_id):
@@ -106,6 +108,106 @@ def _screencast_payload(
         except Exception as exc:
             _LOG.warning("screencast task persistence unavailable: %s", exc)
     return payload
+
+
+def _keeper_capture_ready_for_session(session: Any) -> bool:
+    if session is None or not getattr(session, "is_ready", False):
+        return False
+    try:
+        from vdisplay.capture.screencast_keeper import (
+            keeper_capture_ready,
+            read_keeper_state,
+            session_uses_keeper,
+        )
+
+        if not session_uses_keeper(session):
+            return False
+        return keeper_capture_ready(
+            read_keeper_state(),
+            socket_path=str(getattr(session, "keeper_socket_path", "") or "") or None,
+            timeout_s=0.2,
+        )
+    except Exception:
+        return False
+
+
+def clear_screencast_capture_failure(store: SessionStore) -> None:
+    store.screencast_capture_failed = False
+    store.screencast_capture_error = ""
+
+
+def mark_screencast_capture_failed(store: SessionStore, exc: BaseException | str) -> None:
+    store.screencast_capture_failed = True
+    store.screencast_capture_error = str(exc)
+
+
+def _is_wayland_host_session() -> bool:
+    try:
+        from vdisplay.capture.linux_xwd import _is_wayland_session
+
+        return bool(_is_wayland_session())
+    except Exception:
+        import os
+
+        return os.environ.get("XDG_SESSION_TYPE", "").strip().lower() == "wayland"
+
+
+def _annotate_screencast_capture_status(
+    payload: dict[str, Any],
+    store: SessionStore,
+    session: Any,
+) -> None:
+    socket_ready = _keeper_capture_ready_for_session(session)
+    payload["capture_socket_ready"] = socket_ready
+    capture_ready = socket_ready and not store.screencast_capture_failed
+    payload["capture_ready"] = capture_ready
+    if store.screencast_capture_failed:
+        payload["capture_last_error"] = store.screencast_capture_error
+        payload["capture_hint"] = (
+            "ScreenCast portal session is active, but the last frame capture failed. "
+            "Run `vdisplay agent screencast probe --via-agent --source <monitor>`; "
+            "if it fails, restart with `vdisplay agent screencast start --force` "
+            "from a local GNOME terminal and choose All Screens/the IDE monitor."
+        )
+    elif payload.get("active") and payload.get("ready") and not capture_ready:
+        payload["capture_hint"] = (
+            "ScreenCast portal session is active, but the frame keeper is not running. "
+            "On GNOME Wayland prefer Electron bridge: "
+            "`vdisplay electron-share start --source <monitor>` (pick monitor in GNOME Share). "
+            "Or run `vdisplay agent screencast start --force` from a local GNOME terminal, "
+            "choose All Screens/the IDE monitor, then verify with "
+            "`vdisplay agent screencast probe --via-agent --source <monitor>`."
+        )
+
+
+def _reject_wayland_adopt_without_capture(
+    store: SessionStore,
+    payload: dict[str, Any],
+    session: Any,
+) -> None:
+    if not _is_wayland_host_session():
+        return
+    if not payload.get("active") or not payload.get("ready"):
+        return
+    if payload.get("capture_socket_ready"):
+        return
+    store.screencast = None
+    clear_screencast_capture_failure(store)
+    try:
+        from vdisplay.capture.portal_screencast import _set_active, _set_active_if_self
+
+        if _set_active_if_self(session):
+            _set_active(None)
+    except Exception:
+        pass
+    raise VDisplayError(
+        "adopted screencast session is not frame-capture ready on GNOME Wayland: "
+        "frame keeper is not running. Prefer Electron bridge: "
+        "`vdisplay electron-share start --source <monitor>` (pick monitor in GNOME Share). "
+        "Or start capture with `vdisplay agent screencast start --force` from a local GNOME "
+        "terminal, choose All Screens/the IDE monitor, then verify with "
+        "`vdisplay agent screencast probe --via-agent --source <monitor>`."
+    )
 
 
 def adopt_screencast(
@@ -134,7 +236,7 @@ def adopt_screencast(
         and adopt_path == existing.session_path
     ):
         refresh_screencast_adopt_payload(existing, body)
-        return _screencast_payload(
+        payload = _screencast_payload(
             store,
             existing,
             allow_multiple=allow_multiple,
@@ -142,16 +244,20 @@ def adopt_screencast(
             task_store=task_store,
             broker_id=broker_id,
         )
+        _reject_wayland_adopt_without_capture(store, payload, existing)
+        return payload
 
     _release_store_screencast_if_different(store, adopt_path, task_store=task_store)
     session = PortalScreenCastSession.from_portal_payload(body, verify_remote=False)
-    return _screencast_payload(
+    payload = _screencast_payload(
         store,
         session,
         allow_multiple=allow_multiple,
         task_store=task_store,
         broker_id=broker_id,
     )
+    _reject_wayland_adopt_without_capture(store, payload, session)
+    return payload
 
 
 def _release_store_screencast_if_different(
@@ -165,6 +271,7 @@ def _release_store_screencast_if_different(
 
     session = store.screencast or get_active_screencast()
     store.screencast = None
+    clear_screencast_capture_failure(store)
     if task_store is not None and store.screencast_task_id:
         task_svc.end_screencast_task(task_store, store.screencast_task_id)
         store.screencast_task_id = None
@@ -260,6 +367,7 @@ def stop_screencast(store: SessionStore, *, task_store: TaskStore | None = None)
 
     session = store.screencast or get_active_screencast()
     store.screencast = None
+    clear_screencast_capture_failure(store)
     if task_store is not None and store.screencast_task_id:
         task_svc.end_screencast_task(task_store, store.screencast_task_id)
         store.screencast_task_id = None
@@ -273,10 +381,31 @@ def stop_screencast(store: SessionStore, *, task_store: TaskStore | None = None)
 def screencast_status(store: SessionStore) -> dict[str, Any]:
     from vdisplay.capture.portal_screencast import get_active_screencast
 
+    bridge_status = store.browser_bridge.status()
     session = store.screencast or get_active_screencast()
     if session is None:
-        return {"ok": True, "active": False, "ready": False}
-    return {"ok": True, **session.status()}
+        clear_screencast_capture_failure(store)
+        payload = {"ok": True, "active": False, "ready": False, "capture_ready": False}
+        _annotate_browser_bridge_status(payload, bridge_status)
+        return payload
+    payload = {"ok": True, **session.status()}
+    _annotate_screencast_capture_status(payload, store, session)
+    _annotate_browser_bridge_status(payload, bridge_status)
+    return payload
+
+
+def _annotate_browser_bridge_status(payload: dict[str, Any], bridge_status: dict[str, Any]) -> None:
+    payload["browser_bridge"] = {k: v for k, v in bridge_status.items() if k != "ok"}
+    if bridge_status.get("registered"):
+        payload.setdefault("keeper_mode", "browser_bridge")
+    if bridge_status.get("sharing"):
+        payload["active"] = True
+    if bridge_status.get("capture_ready"):
+        payload["ready"] = True
+        payload["capture_ready"] = True
+        payload["keeper_mode"] = "browser_bridge"
+    if bridge_status.get("last_frame_age_ms") is not None:
+        payload["last_frame_age_ms"] = bridge_status["last_frame_age_ms"]
 
 
 def start_terminal(
@@ -397,6 +526,7 @@ def shutdown(store: SessionStore) -> None:
     from . import sampler as sampler_svc
 
     sampler_svc.stop_sampler(store)
+    store.browser_bridge.clear()
     store.screencast = None
     store.screencast_multiple = False
     if store.virtual is not None:

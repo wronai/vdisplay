@@ -372,6 +372,7 @@ class PortalScreenCastSession:
         node_index: int,
         timeout_s: float,
         errors: list[str],
+        deadline: float | None = None,
     ) -> bytes | None:
         properties: dict[str, Any] = {}
         if index < len(self.streams):
@@ -381,8 +382,23 @@ class PortalScreenCastSession:
         except VDisplayError as exc:
             errors.append(f"node[{index}]={self.node_ids[index]}: {exc}")
             if _gnome_screenshot_fallback_enabled() and index == node_index:
+                if deadline is not None:
+                    import time
+
+                    remaining = deadline - time.monotonic()
+                    if remaining < 2.0:
+                        errors.append(
+                            f"node[{index}]={self.node_ids[index]} gnome-screenshot: "
+                            "skipped; no capture timeout budget remaining"
+                        )
+                        return None
+                else:
+                    remaining = 15.0
                 try:
-                    return _capture_via_gnome_screenshot_region(properties)
+                    return _capture_via_gnome_screenshot_region(
+                        properties,
+                        timeout_s=max(2.0, min(15.0, remaining)),
+                    )
                 except VDisplayError as fb_exc:
                     errors.append(
                         f"node[{index}]={self.node_ids[index]} gnome-screenshot: {fb_exc}"
@@ -394,11 +410,15 @@ class PortalScreenCastSession:
         *,
         node_index: int = 0,
         try_all_streams: bool = True,
+        timeout_s: float | None = None,
     ) -> bytes:
         """Capture via PipeWire in this process (keeper daemon only)."""
         if not self.is_ready:
             raise VDisplayError("screencast session not ready — POST /session/screencast/start first")
-        timeout_s = _pipewire_capture_timeout_s()
+        timeout_s = timeout_s if timeout_s is not None else _pipewire_capture_timeout_s()
+        import time
+
+        deadline = time.monotonic() + timeout_s
         errors: list[str] = []
         indices = [node_index]
         if try_all_streams:
@@ -408,7 +428,17 @@ class PortalScreenCastSession:
         for index in indices:
             if index < 0 or index >= len(self.node_ids):
                 continue
-            result = self._try_capture_single_node(index, node_index, timeout_s, errors)
+            remaining = deadline - time.monotonic()
+            if remaining < 2.0:
+                errors.append(f"node[{index}]={self.node_ids[index]}: skipped; capture timeout exhausted")
+                continue
+            result = self._try_capture_single_node(
+                index,
+                node_index,
+                remaining,
+                errors,
+                deadline=deadline,
+            )
             if result is not None:
                 return result
         detail = "; ".join(errors) or "no pipewire nodes"
@@ -524,7 +554,7 @@ def _is_retryable_screencast_error(error: str | None) -> bool:
 def _pipewire_capture_timeout_s() -> float:
     from ..application.env_defaults import env_float_value
 
-    return max(2.0, min(30.0, env_float_value("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", default=8.0)))
+    return max(5.0, min(60.0, env_float_value("VDISPLAY_PIPEWIRE_CAPTURE_TIMEOUT_S", default=15.0)))
 
 
 def _pipewire_force_caps() -> bool:
@@ -539,7 +569,11 @@ def _gnome_screenshot_fallback_enabled() -> bool:
     return env_flag("VDISPLAY_SCREENCAST_GNOME_FALLBACK", default=True)
 
 
-def _capture_via_gnome_screenshot_region(properties: dict[str, Any]) -> bytes:
+def _capture_via_gnome_screenshot_region(
+    properties: dict[str, Any],
+    *,
+    timeout_s: float = 15.0,
+) -> bytes:
     """Fallback for GNOME Wayland when pipewiresrc cannot preroll."""
     from .linux_xwd import _capture_gnome_screenshot_png, _crop_png, is_blank_png
     from .portal import capture_portal_png
@@ -550,7 +584,7 @@ def _capture_via_gnome_screenshot_region(properties: dict[str, Any]) -> bytes:
 
     errors: list[str] = []
     for label, capture_full in (
-        ("portal", lambda: capture_portal_png(interactive=False, timeout_s=15.0)),
+        ("portal", lambda: capture_portal_png(interactive=False, timeout_s=max(2.0, min(15.0, timeout_s)))),
         ("gnome-screenshot", _capture_gnome_screenshot_png),
     ):
         try:
@@ -595,19 +629,19 @@ def _system_python() -> str:
 
 
 def _ensure_portal_deps() -> None:
-    """Allow portal capture from venv by picking up system python3-gi."""
-    try:
-        from gi.repository import GLib  # noqa: F401
-
-        return
-    except ImportError:
-        pass
+    """Allow portal capture from venv by picking up system python3-gi and python3-dbus."""
     for path in (
         "/usr/lib/python3/dist-packages",
+        f"/usr/lib/python3.{sys.version_info.minor}/dist-packages",
         f"/usr/lib/python{sys.version_info.major}.{sys.version_info.minor}/dist-packages",
     ):
-        if path not in sys.path and os.path.isdir(path):
-            sys.path.append(path)
+        if os.path.isdir(path) and path not in sys.path:
+            sys.path.insert(0, path)
+    try:
+        import dbus  # noqa: F401
+        from gi.repository import GLib  # noqa: F401
+    except ImportError:
+        pass
 
 
 def _screencast_pipewire_fd(session: PortalScreenCastSession, *, fresh: bool = False) -> int:
@@ -1195,7 +1229,7 @@ def _capture_pipewire_stream(
     width, height = stream_size if stream_size else (None, None)
     if not _pipewire_force_caps():
         width, height = None, None
-    per_try = max(3.0, min(timeout_s, timeout_s / max(1, len(strategies))))
+    per_try = max(2.0, min(timeout_s, timeout_s / max(1, len(strategies))))
     errors: list[str] = []
     for label, tobj in strategies:
         try:
@@ -1306,7 +1340,7 @@ def _pipewiresrc_target_props(
     node_id: int,
     target_object: str | None,
 ) -> str:
-    props = f"fd={cap_fd} always-copy=true do-timestamp=true keepalive-time=100"
+    props = f"fd={cap_fd} always-copy=true num-buffers=1 do-timestamp=true keepalive-time=100"
     if target_object == "__default__":
         return props
     if target_object:
@@ -1485,6 +1519,7 @@ def _capture_pipewire_frame_gst_launch(
         "pipewiresrc",
         f"fd={cap_fd}",
         "always-copy=true",
+        "num-buffers=1",
         "do-timestamp=true",
         "keepalive-time=100",
     ]
@@ -1532,11 +1567,17 @@ def _capture_pipewire_frame_gst_launch(
                 pass_fds=tuple(sorted({0, 1, 2, cap_fd})),
             )
         except subprocess.TimeoutExpired as exc:
+            if out.is_file() and out.stat().st_size > 64:
+                data = out.read_bytes()
+                if data.startswith(b"\x89PNG\r\n\x1a\n"):
+                    return data
             raise VDisplayError(
                 f"gstreamer pipewire capture timed out after {timeout_s:.1f}s"
             ) from exc
     if completed.returncode == 0 and out.is_file() and out.stat().st_size > 64:
-        return out.read_bytes()
+        data = out.read_bytes()
+        if data.startswith(b"\x89PNG\r\n\x1a\n"):
+            return data
     err = (completed.stderr or b"").decode("utf-8", errors="replace").strip()
     raise VDisplayError(f"gstreamer pipewire capture failed: {err or completed.returncode}")
 

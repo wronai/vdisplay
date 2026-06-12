@@ -1,18 +1,46 @@
-# code2llm/evolution | 2301 func | 240f | 2026-06-12
+# code2llm/evolution | 2717 func | 251f | 2026-06-12
 # generated in 0.01s
 
-NEXT[3] (ranked by impact):
-  [1] !! SPLIT           screen.png.context.json
-      WHY: 54007L, 0 classes, max CC=0
-      EFFORT: ~4h  IMPACT: 0
+NEXT[10] (ranked by impact):
+  [1] !! SPLIT-FUNC      correlate_surfaces  CC=93  fan=49
+      WHY: CC=93 exceeds 15
+      EFFORT: ~1h  IMPACT: 4557
 
-  [2] !! SPLIT           screen.png.vql.json
-      WHY: 23595L, 0 classes, max CC=0
-      EFFORT: ~4h  IMPACT: 0
+  [2] !! SPLIT-FUNC      startHttpServer  CC=41  fan=31
+      WHY: CC=41 exceeds 15
+      EFFORT: ~1h  IMPACT: 1271
 
-  [3] !! SPLIT           screen.png.vql.imgl.json
-      WHY: 8523L, 0 classes, max CC=0
-      EFFORT: ~4h  IMPACT: 0
+  [3] !! SPLIT-FUNC      server  CC=41  fan=27
+      WHY: CC=41 exceeds 15
+      EFFORT: ~1h  IMPACT: 1107
+
+  [4] !  SPLIT-FUNC      build_up_payload  CC=20  fan=34
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 680
+
+  [5] !! SPLIT-FUNC      beginDisplayMediaCapture  CC=30  fan=22
+      WHY: CC=30 exceeds 15
+      EFFORT: ~1h  IMPACT: 660
+
+  [6] !! SPLIT-FUNC      detect_chat_click_target  CC=25  fan=22
+      WHY: CC=25 exceeds 15
+      EFFORT: ~1h  IMPACT: 550
+
+  [7] !  SPLIT-FUNC      installDisplayMediaHandler  CC=24  fan=20
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 480
+
+  [8] !  SPLIT-FUNC      build_prepare_payload  CC=24  fan=17
+      WHY: CC=24 exceeds 15
+      EFFORT: ~1h  IMPACT: 408
+
+  [9] !  SPLIT-FUNC      _handle_preflight  CC=20  fan=20
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 400
+
+  [10] !  SPLIT-FUNC      _capture_host  CC=20  fan=19
+      WHY: CC=20 exceeds 15
+      EFFORT: ~1h  IMPACT: 380
 
 
 RISKS[3]:
@@ -21,10 +49,10 @@ RISKS[3]:
   ⚠ Splitting screen.png.vql.imgl.json may break 0 import paths
 
 METRICS-TARGET:
-  CC̄:          4.1 → ≤2.9
-  max-CC:      14 → ≤7
-  god-modules: 21 → 0
-  high-CC(≥15): 0 → ≤0
+  CC̄:          4.2 → ≤2.9
+  max-CC:      93 → ≤20
+  god-modules: 27 → 0
+  high-CC(≥15): 33 → ≤16
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):
@@ -52,4 +80,4 @@ PATTERNS (language parser shared logic):
     - Standardized FunctionInfo/ClassInfo models
 
 HISTORY:
-  prev CC̄=4.1 → now CC̄=4.1
+  prev CC̄=4.2 → now CC̄=4.2

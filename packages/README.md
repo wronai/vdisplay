@@ -15,6 +15,7 @@ Sterowanie `vdisplay` przez DSL i bus CQRS. Adaptery delegują do `dsl2vdisplay.
 | `cli2vdisplay` | REPL / exec | `cli2vdisplay` |
 | `mcp2vdisplay` | MCP tools | `mcp2vdisplay` |
 | `rest2vdisplay` | REST API (port 8216) | `rest2vdisplay` |
+| `vdisplay-electron-share` | Optional Electron screen-share manager for GNOME Wayland | `vdisplay electron-share ...` |
 
 ## Flow
 
@@ -134,3 +135,20 @@ vdisplay virtual screenshot -o /tmp/vd.png
 ```
 
 Full broker reference: [docs/agent-broker.md](../docs/agent-broker.md) · Guide: [docs/guides/agent-broker.md](../docs/guides/agent-broker.md)
+
+## Electron Share Manager
+
+The Electron manager is an optional GUI capture bridge for Wayland desktops. It
+opens a stable app window for the browser/system picker, keeps a compact
+always-on-top preview, can hide to tray, and exposes the latest shared frame to
+`vdisplay` over localhost.
+
+```bash
+vdisplay electron-share start --install --instance pycharm --target "PyCharm chat" --port 8799
+
+export VDISPLAY_ELECTRON_SHARE_URL=http://127.0.0.1:8799
+vdisplay screenshot -o /tmp/pycharm.png --source HDMI-1
+```
+
+Docs: [../docs/electron-share-manager.md](../docs/electron-share-manager.md) ·
+Package README: [vdisplay-electron-share/README.md](vdisplay-electron-share/README.md)

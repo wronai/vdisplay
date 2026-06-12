@@ -7,7 +7,7 @@ name = "mcp2vdisplay"
 version = "0.1.0"
 description = "MCP server for vdisplay DSL"
 requires-python = ">=3.10"
-dependencies = ["dsl2vdisplay>=0.1.0"]
+dependencies = ["dsl2vdisplay>=0.1.0", "mcp>=1.0"]
 
 [project.optional-dependencies]
 mcp = ["mcp>=1.0"]

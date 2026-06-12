@@ -16,6 +16,8 @@ def _isolate_agent_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("VDISPLAY_AGENT_URL", raising=False)
     monkeypatch.delenv("VDISPLAY_AGENT_TOKEN", raising=False)
     monkeypatch.delenv("VDISPLAY_AGENT_BROKER", raising=False)
+    monkeypatch.delenv("VDISPLAY_AGENT_PORT", raising=False)
+    monkeypatch.delenv("VDISPLAY_AGENT_HOST", raising=False)
     monkeypatch.setenv("VDISPLAY_AGENT_AUTO", "0")
     from vdisplay.agent_config import reset_agent_probe_cache
 

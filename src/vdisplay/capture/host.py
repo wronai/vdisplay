@@ -10,6 +10,7 @@ from ..capture.linux_xwd import _crop_png, _is_wayland_session, capture_display_
 from ..capture.providers.engine import capture_full_png
 from ..discovery import _looks_like_xvfb_only, list_monitors, resolve_host_display
 from ..exceptions import BackendNotAvailableError, VDisplayError
+from .electron_share import try_electron_share_capture
 from .screencast_crop import capture_all_from_screencast, try_screencast_capture
 
 
@@ -230,6 +231,27 @@ def capture_host_png(
     errors: list[str] = []
     region = region or _monitor_capture_region(resolved, source_name)
 
+    electron_hit = try_electron_share_capture(
+        region,
+        errors,
+        monitor=_monitor_for_name(resolved, source_name),
+        all_monitors=monitors,
+        display=resolved,
+    )
+    if electron_hit is not None:
+        png, extra = electron_hit
+        meta.update(extra)
+        if region is not None and "region" not in meta:
+            meta["region"] = {
+                "x": region[0],
+                "y": region[1],
+                "width": region[2],
+                "height": region[3],
+            }
+        meta["source"] = source_name
+        meta["monitor_name"] = source_name
+        return png, meta
+
     screencast_hit = try_screencast_capture(
         screencast_session,
         region,
@@ -281,12 +303,24 @@ def capture_host_png(
 def _host_capture_error(display: str, source: str, errors: list[str]) -> str:
     from .linux_xwd import _is_wayland_session
 
+    electron_attempted = any("electron-share:" in item for item in errors)
     message = (
         "vdisplay host capture failed (blank or unavailable). "
         f"DISPLAY={display}, source={source}. "
         f"Tried: {'; '.join(errors) or 'no strategy'}."
     )
-    if _is_wayland_session():
+    if electron_attempted:
+        bridge_url = (
+            os.environ.get("VDISPLAY_AGENT_URL", "").rstrip("/")
+            or "http://127.0.0.1:8766"
+        )
+        bridge_url = f"{bridge_url}/api/web/browser-bridge?source={source}"
+        message += (
+            " Electron Share manager is reachable but has no usable shared frame. "
+            "On this Wayland runtime prefer Chrome/Chromium browser bridge: "
+            f"{bridge_url}. Then verify with `vdisplay electron-share health --port 8799 --source {source}`."
+        )
+    elif _is_wayland_session():
         message += (
             " On GNOME Wayland use the local agent with a persistent ScreenCast session: "
             "`vdisplay-agent serve`, then `vdisplay agent screencast start`, "

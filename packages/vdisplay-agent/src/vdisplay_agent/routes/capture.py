@@ -9,6 +9,7 @@ from fastapi import Depends, FastAPI, Header
 from fastapi.responses import JSONResponse
 
 from .. import schemas as S
+from ..envelope import json_error, json_from_runtime
 from ..runtime import AgentRuntime
 from ._audit_execute import execute_audited_service
 from ..audit_context import AuditContext
@@ -33,3 +34,14 @@ def register_routes(
             audit=audit,
             fallback=broker.capture_frame,
         )
+
+    @app.post("/capture/ingest")
+    def capture_ingest(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime("capture_ingest", broker.ingest_browser_frame(body))
+        except Exception as exc:
+            return json_error("capture_ingest", exc)

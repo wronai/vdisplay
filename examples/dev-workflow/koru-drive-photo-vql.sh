@@ -10,6 +10,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 KORU_SRC="${KORU_SRC:-$HOME/github/semcod/koru/src}"
 IMGL_SRC="${IMGL_SRC:-$HOME/github/semcod/imgl}"
+export KORU_SRC IMGL_SRC
 
 cd "$ROOT"
 if [[ -f "${ROOT}/.venv/bin/activate" ]]; then
@@ -78,17 +79,108 @@ case "${IDE}" in
 esac
 export KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES="${KORU_VDISPLAY_RAISE_ALT_TAB_CYCLES:-2}"
 export VDISPLAY_POINTER_SAFE_MARGIN="${VDISPLAY_POINTER_SAFE_MARGIN:-140}"
+export VDISPLAY_ROOT="${ROOT}"
+# Optional spoken + notify-send guidance: export KORU_VDISPLAY_USER_TTS=1
+export KORU_VDISPLAY_USER_TTS="${KORU_VDISPLAY_USER_TTS:-0}"
 # Enable ydotool literal typing on Wayland (more reliable than clipboard paste for PyCharm AI Chat)
 export VDISPLAY_ALLOW_YDOTOOL_TYPING="${VDISPLAY_ALLOW_YDOTOOL_TYPING:-1}"
 
 export KORU_DRIVE_IDE="${IDE}"
 export KORU_DRIVE_PROMPT="${PROMPT}"
 export KORU_DRIVE_SUBMIT="${SUBMIT:-0}"
-if [[ -n "${SOURCE}" ]]; then
+export KORU_DRIVE_SOURCE_CLI="${SOURCE}"
+if [[ -n "${SOURCE}" && "${SOURCE,,}" != "auto" ]]; then
   export KORU_VDISPLAY_SOURCE="${SOURCE}"
 fi
 if [[ -n "${DRY}" ]]; then
   export KORU_VDISPLAY_DRY_RUN=1
+fi
+
+echo "=== Koru photo-VQL drive ===" >&2
+echo "  katalog:  ${ROOT}" >&2
+echo "  skrypt:   $(basename "$0") (repo wronai/vdisplay, NIE semcod/koru)" >&2
+echo "  KORU_SRC: ${KORU_SRC}" >&2
+echo "  IMGL_SRC: ${IMGL_SRC}" >&2
+echo "  IDE:      ${IDE}  source: ${SOURCE:-auto}  TTS: ${KORU_VDISPLAY_USER_TTS}" >&2
+echo "  mowa:     export KORU_VDISPLAY_USER_TTS=1  # espeak/spd-say + notify-send" >&2
+
+_preflight_ok=1
+if [[ ! -f "${KORU_SRC}/koru/__init__.py" ]]; then
+  echo "USER_SETUP: Brak koru w ${KORU_SRC}" >&2
+  echo "  export KORU_SRC=\"\$HOME/github/semcod/koru/src\"" >&2
+  _preflight_ok=0
+fi
+if [[ ! -f "${IMGL_SRC}/imgl/__init__.py" ]]; then
+  echo "USER_SETUP: Brak imgl w ${IMGL_SRC}" >&2
+  echo "  export IMGL_SRC=\"\$HOME/github/semcod/imgl\"" >&2
+  _preflight_ok=0
+fi
+if [[ "${_preflight_ok}" -eq 0 ]]; then
+  echo "" >&2
+  echo "=== CO TERAZ ZROBIĆ (USER) ===" >&2
+  echo "  1. cd ~/github/wronai/vdisplay" >&2
+  echo "  2. export KORU_SRC=\"\$HOME/github/semcod/koru/src\"" >&2
+  echo "  3. export IMGL_SRC=\"\$HOME/github/semcod/imgl\"" >&2
+  echo "  4. bash examples/dev-workflow/koru-drive-photo-vql.sh --ide ${IDE} --prompt \"${PROMPT}\"" >&2
+  echo "==============================" >&2
+  exit 2
+fi
+
+if [[ -n "${SOURCE}" && "${SOURCE,,}" != "auto" ]]; then
+python3 << 'PY'
+import os
+import shlex
+import sys
+
+source = os.environ.get("KORU_DRIVE_SOURCE_CLI", "").strip()
+if not source:
+    sys.exit(0)
+
+try:
+    from vdisplay.application.services.discovery import list_monitors_local
+
+    payload = list_monitors_local()
+except Exception as exc:
+    print(f"monitor_preflight_warn: cannot list monitors ({exc})", file=sys.stderr)
+    sys.exit(0)
+
+names = [str(m.get("name")) for m in payload.get("monitors") or [] if m.get("name")]
+if not names or source in names:
+    sys.exit(0)
+
+fallback = next((name for name in names if name.startswith("DP-")), names[0])
+root = os.environ.get("VDISPLAY_ROOT", "").strip() or "."
+ide = os.environ.get("KORU_DRIVE_IDE", "jetbrains").strip() or "jetbrains"
+prompt = os.environ.get("KORU_DRIVE_PROMPT", "hello")
+cmd_prefix = f"cd {shlex.quote(root)} && bash examples/dev-workflow/koru-drive-photo-vql.sh"
+prompt_arg = shlex.quote(prompt)
+
+print(
+    f"prepare_aborted: requested monitor {source!r} not connected "
+    f"(available: {names})",
+    file=sys.stderr,
+)
+print("", file=sys.stderr)
+print("=== CO TERAZ ZROBIĆ (USER) ===", file=sys.stderr)
+print(f"  1. Aktualne monitory: {', '.join(names)}", file=sys.stderr)
+print(
+    f"  2. Auto-wybór źródła: {cmd_prefix} --ide {shlex.quote(ide)} "
+    f"--source auto --prompt {prompt_arg}",
+    file=sys.stderr,
+)
+print(
+    f"  3. Jawnie dostępny monitor: {cmd_prefix} --ide {shlex.quote(ide)} "
+    f"--source {shlex.quote(fallback)} --prompt {prompt_arg}",
+    file=sys.stderr,
+)
+print(
+    f"  4. Jeśli naprawdę potrzebujesz {source}, podłącz/aktywuj monitor "
+    "i sprawdź: vdisplay monitors",
+    file=sys.stderr,
+)
+print("==============================", file=sys.stderr)
+sys.exit(1)
+PY
 fi
 
 python3 << 'PY'
@@ -99,12 +191,25 @@ from pathlib import Path
 
 from koru.integrations.autonomy_session import find_latest_koru_session, persist_autonomy_phase
 from koru.integrations.photo_vql_drive import run_photo_vql_drive
+from koru.integrations.photo_vql_user_guidance import emit_user_guidance, preflight_repo_paths
 
 ide = os.environ["KORU_DRIVE_IDE"]
 prompt = os.environ["KORU_DRIVE_PROMPT"]
 submit = os.environ.get("KORU_DRIVE_SUBMIT", "0") in {"1", "true", "yes"}
 dry_run = os.environ.get("KORU_VDISPLAY_DRY_RUN", "").strip().lower() in {"1", "true", "yes"}
 source = os.environ.get("KORU_VDISPLAY_SOURCE", "").strip() or None
+vdisplay_root = os.environ.get("VDISPLAY_ROOT", "").strip() or None
+
+setup_issues = preflight_repo_paths()
+if setup_issues:
+    for msg in setup_issues:
+        print(f"USER_SETUP: {msg}", file=sys.stderr)
+    emit_user_guidance(
+        ide=ide,
+        reply={"ok": False, "error": setup_issues[0]},
+        vdisplay_root=vdisplay_root,
+    )
+    sys.exit(2)
 
 reply = run_photo_vql_drive(
     prompt,
@@ -130,8 +235,13 @@ if probe:
 if not observe.get("ok") and not reply.get("ok"):
     err = observe.get("error") or reply.get("error") or "prepare failed"
     print(f"prepare_aborted: {err}", file=sys.stderr)
-    if observe.get("hint") or reply.get("hint"):
-        print(f"hint: {observe.get('hint') or reply.get('hint')}", file=sys.stderr)
+    emit_user_guidance(
+        ide=ide,
+        observe=observe,
+        reply=reply,
+        source=source,
+        vdisplay_root=vdisplay_root,
+    )
     sys.exit(1)
 
 prov = observe.get("capture_provenance") or reply.get("capture_provenance") or {}
@@ -158,9 +268,15 @@ allow_mismatch = os.environ.get("KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH", "").strip
 if visual_guard_failed and not allow_mismatch:
     print(
         "drive_aborted: capture IDE mismatch (visual_guard_failed=true). "
-        f"window_titles={prov.get('window_titles')!r}. "
-        "Focus the correct IDE on the target monitor and retry.",
+        f"window_titles={prov.get('window_titles')!r}.",
         file=sys.stderr,
+    )
+    emit_user_guidance(
+        ide=ide,
+        observe=observe,
+        reply=reply,
+        source=source,
+        vdisplay_root=vdisplay_root,
     )
     sys.exit(1)
 
@@ -188,5 +304,12 @@ else:
     print("SESSION=none")
 
 print("drive_reply:", json.dumps(reply, indent=2, default=str))
+emit_user_guidance(
+    ide=ide,
+    observe=observe,
+    reply=reply,
+    source=source,
+    vdisplay_root=vdisplay_root,
+)
 sys.exit(0 if reply.get("ok") else 1)
 PY

@@ -133,6 +133,102 @@ class AgentClientApiMixin(AgentHttpTransport):
     def screencast_status(self) -> dict[str, Any]:
         return self.request_json("GET", "/session/screencast/status")
 
+    def browser_bridge_register(
+        self,
+        *,
+        client: str = "vdisplay-client",
+        version: str = "",
+        sources: list[str] | None = None,
+        monitors: list[str] | None = None,
+        source: str | None = None,
+        display: str | None = None,
+        ttl_s: float | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"client": client, "version": version}
+        if sources is not None:
+            body["sources"] = sources
+        if monitors is not None:
+            body["monitors"] = monitors
+        if source is not None:
+            body["source"] = source
+        if display is not None:
+            body["display"] = display
+        if ttl_s is not None:
+            body["ttl_s"] = ttl_s
+        return self.request_json("POST", "/session/browser-bridge/register", body=body)
+
+    def browser_bridge_heartbeat(
+        self,
+        *,
+        bridge_id: str,
+        sharing: bool,
+        sources: list[str] | None = None,
+        monitors: list[str] | None = None,
+        fps: float | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {"bridge_id": bridge_id, "sharing": sharing}
+        if sources is not None:
+            body["sources"] = sources
+        if monitors is not None:
+            body["monitors"] = monitors
+        if fps is not None:
+            body["fps"] = fps
+        return self.request_json("POST", "/session/browser-bridge/heartbeat", body=body)
+
+    def browser_bridge_status(self) -> dict[str, Any]:
+        return self.request_json("GET", "/session/browser-bridge/status")
+
+    def capture_ingest(
+        self,
+        *,
+        bridge_id: str,
+        source: str,
+        png_base64: str,
+        seq: int | None = None,
+        width: int | None = None,
+        height: int | None = None,
+        captured_at_ms: int | None = None,
+        display: str | None = None,
+        display_id: str | None = None,
+        display_label: str | None = None,
+        source_id: str | None = None,
+        source_name: str | None = None,
+        display_bounds: dict[str, Any] | None = None,
+        source_bounds: dict[str, Any] | None = None,
+        scale_factor: float | None = None,
+    ) -> dict[str, Any]:
+        body: dict[str, Any] = {
+            "bridge_id": bridge_id,
+            "source": source,
+            "mime": "image/png",
+            "png_base64": png_base64,
+        }
+        if seq is not None:
+            body["seq"] = seq
+        if width is not None:
+            body["width"] = width
+        if height is not None:
+            body["height"] = height
+        if captured_at_ms is not None:
+            body["captured_at_ms"] = captured_at_ms
+        if display is not None:
+            body["display"] = display
+        if display_id is not None:
+            body["display_id"] = display_id
+        if display_label is not None:
+            body["display_label"] = display_label
+        if source_id is not None:
+            body["source_id"] = source_id
+        if source_name is not None:
+            body["source_name"] = source_name
+        if display_bounds is not None:
+            body["display_bounds"] = display_bounds
+        if source_bounds is not None:
+            body["source_bounds"] = source_bounds
+        if scale_factor is not None:
+            body["scale_factor"] = scale_factor
+        return self.request_json("POST", "/capture/ingest", body=body)
+
     def stop_session(self, session_id: str) -> dict[str, Any]:
         return self.request_json("POST", f"/session/{session_id}/stop")
 

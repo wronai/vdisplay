@@ -72,9 +72,9 @@ flowchart TD
     subgraph examples__dev_workflow
         examples__dev_workflow__koru_audit_last_session__print["print"]
         examples__dev_workflow__koru_audit_last_session__audit_file["audit_file"]
-        examples__dev_workflow__run_dev_automation___ensure_koru_daemon["_ensure_koru_daemon"]
         examples__dev_workflow__koru_drive_photo_vql__print["print"]
         examples__dev_workflow__koru_drive_photo_vql__persist_autonomy_phase["persist_autonomy_phase"]
+        examples__dev_workflow__run_dev_automation___ensure_koru_daemon["_ensure_koru_daemon"]
     end
     subgraph examples__headless_virtual
         examples__headless_virtual__run_virtual___load_common["_load_common"]
@@ -196,6 +196,10 @@ flowchart TD
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__adopt_screencast["adopt_screencast"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__stop_screencast["stop_screencast"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__screencast_status["screencast_status"]
+        packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__register_browser_bridge["register_browser_bridge"]
+        packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__heartbeat_browser_bridge["heartbeat_browser_bridge"]
+        packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__browser_bridge_status["browser_bridge_status"]
+        packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__ingest_browser_frame["ingest_browser_frame"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__stop_session["stop_session"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__recover_tasks["recover_tasks"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__list_tasks["list_tasks"]
@@ -217,7 +221,8 @@ flowchart TD
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__adopt_window["adopt_window"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__release_window["release_window"]
         packages__vdisplay_agent__src__vdisplay_agent__runtime__AgentRuntime__shutdown["shutdown"]
-        packages__vdisplay_agent__src__vdisplay_agent__cli__main("main CC=9")
+        packages__vdisplay_agent__src__vdisplay_agent__cli___default_serve_port["_default_serve_port"]
+        packages__vdisplay_agent__src__vdisplay_agent__cli__main("main CC=8")
         packages__vdisplay_agent__src__vdisplay_agent__serve_port___pid_alive["_pid_alive"]
         packages__vdisplay_agent__src__vdisplay_agent__serve_port___parse_ss_pids["_parse_ss_pids"]
         packages__vdisplay_agent__src__vdisplay_agent__serve_port___pids_from_ss["_pids_from_ss"]
@@ -238,11 +243,68 @@ flowchart TD
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__pop["pop"]
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__relay_session["relay_session"]
         packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__clear_relay["clear_relay"]
-        packages__vdisplay_agent__src__vdisplay_agent__envelope__agent_meta["agent_meta"]
-        packages__vdisplay_agent__src__vdisplay_agent__envelope__success["success"]
-        packages__vdisplay_agent__src__vdisplay_agent__envelope__failure["failure"]
-        packages__vdisplay_agent__src__vdisplay_agent__envelope__from_runtime["from_runtime"]
-        packages__vdisplay_agent__src__vdisplay_agent__envelope__json_success["json_success"]
+    end
+    subgraph packages__vdisplay_electron_share
+        packages__vdisplay_electron_share__renderer__startButton["startButton"]
+        packages__vdisplay_electron_share__renderer__stopButton["stopButton"]
+        packages__vdisplay_electron_share__renderer__compactButton["compactButton"]
+        packages__vdisplay_electron_share__renderer__fullButton["fullButton"]
+        packages__vdisplay_electron_share__renderer__trayButton["trayButton"]
+        packages__vdisplay_electron_share__renderer__webButton["webButton"]
+        packages__vdisplay_electron_share__renderer__exportLogsButton["exportLogsButton"]
+        packages__vdisplay_electron_share__renderer__targetInput["targetInput"]
+        packages__vdisplay_electron_share__renderer__alwaysOnTopInput["alwaysOnTopInput"]
+        packages__vdisplay_electron_share__renderer__statusEl["statusEl"]
+        packages__vdisplay_electron_share__renderer__badgeEl["badgeEl"]
+        packages__vdisplay_electron_share__renderer__video["video"]
+        packages__vdisplay_electron_share__renderer__canvas["canvas"]
+        packages__vdisplay_electron_share__renderer__ctx["ctx"]
+        packages__vdisplay_electron_share__renderer__screenPicker["screenPicker"]
+        packages__vdisplay_electron_share__renderer__previewWrap["previewWrap"]
+        packages__vdisplay_electron_share__renderer__screenGrid["screenGrid"]
+        packages__vdisplay_electron_share__renderer__refreshScreensButton["refreshScreensButton"]
+        packages__vdisplay_electron_share__renderer__windowSidebar["windowSidebar"]
+        packages__vdisplay_electron_share__renderer__windowList["windowList"]
+        packages__vdisplay_electron_share__renderer__windowEmpty["windowEmpty"]
+        packages__vdisplay_electron_share__renderer__sidebarMeta["sidebarMeta"]
+        packages__vdisplay_electron_share__renderer__refreshWindowsButton["refreshWindowsButton"]
+        packages__vdisplay_electron_share__renderer__stream["stream"]
+        packages__vdisplay_electron_share__renderer__frameTimer["frameTimer"]
+        packages__vdisplay_electron_share__renderer__mainPreviewTimer["mainPreviewTimer"]
+        packages__vdisplay_electron_share__renderer__captureGeneration["captureGeneration"]
+        packages__vdisplay_electron_share__renderer__windowRefreshTimer["windowRefreshTimer"]
+        packages__vdisplay_electron_share__renderer__logRenderer["logRenderer"]
+        packages__vdisplay_electron_share__renderer__waitForVideoReady["waitForVideoReady"]
+        packages__vdisplay_electron_share__renderer__onReady["onReady"]
+        packages__vdisplay_electron_share__renderer__onError["onError"]
+        packages__vdisplay_electron_share__renderer__cleanup["cleanup"]
+        packages__vdisplay_electron_share__renderer__safePlay("safePlay CC=10")
+        packages__vdisplay_electron_share__renderer__initialSource("initialSource CC=10")
+        packages__vdisplay_electron_share__renderer__message["message"]
+        packages__vdisplay_electron_share__renderer__applyMode["applyMode"]
+        packages__vdisplay_electron_share__renderer__nextMode["nextMode"]
+        packages__vdisplay_electron_share__renderer__setStatus["setStatus"]
+        packages__vdisplay_electron_share__renderer__showScreenPicker["showScreenPicker"]
+        packages__vdisplay_electron_share__renderer__showPreview["showPreview"]
+        packages__vdisplay_electron_share__renderer__showWindowSidebar["showWindowSidebar"]
+        packages__vdisplay_electron_share__renderer__thumbnailMarkup["thumbnailMarkup"]
+        packages__vdisplay_electron_share__renderer__displaysToScreenCards["displaysToScreenCards"]
+        packages__vdisplay_electron_share__renderer__displayIdOf["displayIdOf"]
+        packages__vdisplay_electron_share__renderer__value["value"]
+        packages__vdisplay_electron_share__renderer__displayLabelOf["displayLabelOf"]
+        packages__vdisplay_electron_share__renderer__id["id"]
+        packages__vdisplay_electron_share__renderer__selectDisplay["selectDisplay"]
+        packages__vdisplay_electron_share__renderer__getDisplayMediaWithTimeout["getDisplayMediaWithTimeout"]
+        packages__vdisplay_electron_share__renderer__timedOut["timedOut"]
+        packages__vdisplay_electron_share__renderer__mediaPromise["mediaPromise"]
+        packages__vdisplay_electron_share__renderer__timeoutPromise["timeoutPromise"]
+        packages__vdisplay_electron_share__renderer__displayMatchesPreferred["displayMatchesPreferred"]
+        packages__vdisplay_electron_share__renderer__scale["scale"]
+        packages__vdisplay_electron_share__renderer__expectedX["expectedX"]
+        packages__vdisplay_electron_share__renderer__expectedY["expectedY"]
+        packages__vdisplay_electron_share__renderer__findPreferredDisplay["findPreferredDisplay"]
+        packages__vdisplay_electron_share__renderer__ensureDisplaySelection("ensureDisplaySelection CC=8")
+        packages__vdisplay_electron_share__renderer__list["list"]
     end
     subgraph src__vdisplay
         src__vdisplay__client_routes___route_outputs_query["_route_outputs_query"]
@@ -268,6 +330,10 @@ flowchart TD
         src__vdisplay__client_api__AgentClientApiMixin__adopt_screencast("adopt_screencast CC=9")
         src__vdisplay__client_api__AgentClientApiMixin__stop_screencast["stop_screencast"]
         src__vdisplay__client_api__AgentClientApiMixin__screencast_status["screencast_status"]
+        src__vdisplay__client_api__AgentClientApiMixin__browser_bridge_register["browser_bridge_register"]
+        src__vdisplay__client_api__AgentClientApiMixin__browser_bridge_heartbeat["browser_bridge_heartbeat"]
+        src__vdisplay__client_api__AgentClientApiMixin__browser_bridge_status["browser_bridge_status"]
+        src__vdisplay__client_api__AgentClientApiMixin__capture_ingest("capture_ingest CC=13")
         src__vdisplay__client_api__AgentClientApiMixin__stop_session["stop_session"]
         src__vdisplay__client_api__AgentClientApiMixin__sampler_start["sampler_start"]
         src__vdisplay__client_api__AgentClientApiMixin__sampler_stop["sampler_stop"]
@@ -301,13 +367,8 @@ flowchart TD
         src__vdisplay__ide_prompt___build_set_value_failure_result["_build_set_value_failure_result"]
         src__vdisplay__ide_prompt___try_control_set_value["_try_control_set_value"]
         src__vdisplay__ide_prompt___build_ide_success_result["_build_ide_success_result"]
-        src__vdisplay__ide_prompt__send_ide_prompt("send_ide_prompt CC=13")
-        src__vdisplay__nl__describe_window_nl("describe_window_nl CC=14")
-        src__vdisplay__nl___user_visible_app_labels("_user_visible_app_labels CC=9")
-        src__vdisplay__nl__describe_output_nl("describe_output_nl CC=13")
     end
     packages__mcp2vdisplay__src__mcp2vdisplay__cli__main --> packages__mcp2vdisplay__src__mcp2vdisplay__cli__create_server
-    packages__mcp2vdisplay__src__mcp2vdisplay__server__create_server --> src__vdisplay__agent_config__resolve_agent_url
     packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_legacy --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict
     packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__bus___dispatch_legacy
     packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict
@@ -315,6 +376,7 @@ flowchart TD
     packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__to_text
     packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch --> packages__dsl2vdisplay__src__dsl2vdisplay__grammar__split_command
     packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli__main --> packages__vdisplay_electron_share__renderer__list
     packages__dsl2vdisplay__src__dsl2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy
     packages__dsl2vdisplay__src__dsl2vdisplay__cli__main --> packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand
     packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__execute_dsl_line
@@ -324,6 +386,7 @@ flowchart TD
     packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> examples__dev_workflow__koru_audit_last_session__print
     packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas
     packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch
+    packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand --> packages__vdisplay_electron_share__renderer__list
     packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry___load_schema
     packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__all_schemas
     packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__validate_command_dict --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb
@@ -375,11 +438,13 @@ flowchart TD
     packages__rest2vdisplay__src__rest2vdisplay__cli__main --> packages__rest2vdisplay__src__rest2vdisplay__app__create_app
     packages__rest2vdisplay__src__rest2vdisplay__app__create_app --> src__vdisplay__agent_config__resolve_agent_url
     packages__rest2vdisplay__src__rest2vdisplay__app__create_app --> packages__dsl2vdisplay__src__dsl2vdisplay__schema_registry__schema_for_verb
+    packages__nlp2vdisplay__src__nlp2vdisplay__cli__main --> packages__vdisplay_electron_share__renderer__list
     packages__nlp2vdisplay__src__nlp2vdisplay__cli__main --> src__vdisplay__nlp__run_nl_prompt
     packages__nlp2vdisplay__src__nlp2vdisplay__cli__main --> examples__dev_workflow__koru_audit_last_session__print
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> src__vdisplay__application__env_loader__load_project_env
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> examples__dev_workflow__koru_audit_last_session__print
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> packages__rest2vdisplay__src__rest2vdisplay__app__create_app
+    packages__vdisplay_agent__src__vdisplay_agent__cli__main --> packages__vdisplay_agent__src__vdisplay_agent__cli___default_serve_port
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> src__vdisplay__capture__portal_screencast__ensure_portal_session_env
     packages__vdisplay_agent__src__vdisplay_agent__cli__main --> src__vdisplay__capture__portal_screencast__portal_session_env_status
@@ -414,18 +479,13 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore____init__ --> packages__vdisplay_agent__src__vdisplay_agent__task_store__default_task_db_path
     packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore___reopen_after_corruption --> packages__vdisplay_agent__src__vdisplay_agent__task_store__recover_corrupt_task_db
     packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore__create_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store___utcnow
+    packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore__list_tasks --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore__update_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store___utcnow
     packages__vdisplay_agent__src__vdisplay_agent__task_store__TaskStore__mark_orphan_running_as_stale --> packages__vdisplay_agent__src__vdisplay_agent__task_store___utcnow
     packages__vdisplay_agent__src__vdisplay_agent__broker_events__log_broker_event --> packages__vdisplay_agent__src__vdisplay_agent__broker_events___broker_log_path
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__list_replay_sessions --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__queue_replay --> src__vdisplay__application__replay__queue_session_replay
     packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__queue_replay --> packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__list_replay_sessions
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture__capture_frame --> packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture__capture_frame --> packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_session
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture__capture_frame --> packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_all_monitors
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_all_monitors --> src__vdisplay__capture__host__capture_all_monitors
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host --> packages__vdisplay_agent__src__vdisplay_agent__services__capture___region_from_body
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host --> src__vdisplay__capture__host__capture_host_to_file
-    packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host --> packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__is_recoverable_screencast_error
     packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery___recovery_cooldown_s --> src__vdisplay__application__env_defaults__env_float_value
     packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__screencast_recovery_cooldown_remaining --> packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery___recovery_cooldown_s
     packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__try_recover_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__screencast_recovery_cooldown_remaining
@@ -433,12 +493,25 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_virtual --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___session_started
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_mirror --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___session_started
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_relay --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___session_started
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___screencast_payload --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__clear_screencast_capture_failure
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___screencast_payload --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___annotate_screencast_capture_status
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___keeper_capture_ready_for_session --> src__vdisplay__capture__screencast_keeper__keeper_capture_ready
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___keeper_capture_ready_for_session --> src__vdisplay__capture__screencast_keeper__session_uses_keeper
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___keeper_capture_ready_for_session --> src__vdisplay__capture__screencast_keeper__read_keeper_state
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___is_wayland_host_session --> src__vdisplay__ide_prompt___is_wayland_session
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___annotate_screencast_capture_status --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___keeper_capture_ready_for_session
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___reject_wayland_adopt_without_capture --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__clear_screencast_capture_failure
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___reject_wayland_adopt_without_capture --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___is_wayland_host_session
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___reject_wayland_adopt_without_capture --> src__vdisplay__capture__portal_screencast___set_active_if_self
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___reject_wayland_adopt_without_capture --> src__vdisplay__capture__portal_screencast___set_active
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> src__vdisplay__capture__portal_screencast__ensure_portal_session_env
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> src__vdisplay__capture__portal_screencast___screencast_multiple
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___screencast_payload
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___reject_wayland_adopt_without_capture
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> src__vdisplay__capture__portal_screencast__get_active_screencast
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__adopt_screencast --> src__vdisplay__capture__portal_screencast__refresh_screencast_adopt_payload
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__clear_screencast_capture_failure
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different --> src__vdisplay__capture__portal_screencast__get_active_screencast
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different --> src__vdisplay__capture__portal_screencast___set_active_if_self
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different --> src__vdisplay__capture__portal_screencast___set_active
@@ -452,15 +525,20 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_screencast --> src__vdisplay__capture__portal_screencast__get_active_screencast
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_screencast --> packages__vdisplay_agent__src__vdisplay_agent__broker_events__log_broker_event
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_screencast --> src__vdisplay__capture__linux_xwd__is_blank_png
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__stop_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__clear_screencast_capture_failure
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__stop_screencast --> src__vdisplay__capture__portal_screencast__stop_screencast_session
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__stop_screencast --> src__vdisplay__capture__portal_screencast__get_active_screencast
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__screencast_status --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___annotate_screencast_capture_status
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__screencast_status --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions___annotate_browser_bridge_status
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__screencast_status --> src__vdisplay__capture__portal_screencast__get_active_screencast
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__screencast_status --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__clear_screencast_capture_failure
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_terminal --> src__vdisplay__control__providers__terminal_session__default_registry
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_browser --> src__vdisplay__control__providers__terminal_session__default_registry
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_browser --> src__vdisplay__control__providers__browser_sync_executor__run_browser_sync
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__stop_session --> src__vdisplay__control__providers__terminal_session__default_registry
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__list_sessions --> src__vdisplay__control__session__build_catalog_from_agent_store
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__shutdown --> src__vdisplay__capture__portal_screencast__stop_screencast_session
+    packages__vdisplay_agent__src__vdisplay_agent__services__sessions__shutdown --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__shutdown --> packages__vdisplay_agent__src__vdisplay_agent__services__sessions__stop_session
     packages__vdisplay_agent__src__vdisplay_agent__services__sessions__shutdown --> src__vdisplay__control__providers__terminal_session__default_registry
     packages__vdisplay_agent__src__vdisplay_agent__services__web_console__click_monitor_pointer --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta
@@ -475,12 +553,14 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> src__vdisplay__discovery__resolve_host_display
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> src__vdisplay__discovery__diagnose_display
     packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__platform_capabilities
+    packages__vdisplay_agent__src__vdisplay_agent__services__capabilities__diagnostics --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__list_tasks --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__get_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__heartbeat_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__stop_task --> packages__vdisplay_agent__src__vdisplay_agent__task_store__task_to_dict
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__register_session_task --> src__vdisplay__control__session__parse_session_kind
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__end_screencast_task --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks___best_effort_task_op
+    packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks___best_effort_task_op
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks__end_screencast_task
     packages__vdisplay_agent__src__vdisplay_agent__services__tasks__shutdown_tasks --> packages__vdisplay_agent__src__vdisplay_agent__services__tasks__end_sampler_task
@@ -493,7 +573,12 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> src__vdisplay__capture__host__capture_host_to_file
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> packages__vdisplay_agent__src__vdisplay_agent__services__sampler___capture_virtual_persistent
     packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> src__vdisplay__capture__host__capture_all_monitors
+    packages__vdisplay_agent__src__vdisplay_agent__services__sampler__start_sampler --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___frame_cache_ttl_s --> src__vdisplay__application__env_defaults__env_float_value
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___require_screencast --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___keeper_capture_ready
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___keeper_capture_ready --> src__vdisplay__capture__screencast_keeper__keeper_capture_ready
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___keeper_capture_ready --> src__vdisplay__capture__screencast_keeper__session_uses_keeper
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___keeper_capture_ready --> src__vdisplay__capture__screencast_keeper__read_keeper_state
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__cache_get --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___frame_cache_ttl_s
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___require_screencast
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__cache_get
@@ -502,12 +587,13 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___get_cached_all_frames --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__cache_get
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___require_screencast
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback --> packages__vdisplay_electron_share__renderer__list
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback --> src__vdisplay__capture__host__capture_all_monitors
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___persist_captures_to_cache --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__cache_put
-    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_all_monitor_frames --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___persist_captures_to_cache
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_all_monitor_frames --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___get_cached_all_frames
     packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_all_monitor_frames --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback
+    packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_all_monitor_frames --> packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___persist_captures_to_cache
     packages__vdisplay_agent__src__vdisplay_agent__services__control___run_on_browser_thread --> src__vdisplay__control__providers__browser_sync_executor__run_browser_sync
     packages__vdisplay_agent__src__vdisplay_agent__services__control__list_controls --> packages__vdisplay_agent__src__vdisplay_agent__services__control___run_on_browser_thread
     packages__vdisplay_agent__src__vdisplay_agent__services__control__find_controls --> packages__vdisplay_agent__src__vdisplay_agent__services__control___run_on_browser_thread
@@ -519,6 +605,8 @@ flowchart TD
     packages__vdisplay_agent__src__vdisplay_agent__services__control__set_control_value --> packages__vdisplay_agent__src__vdisplay_agent__services__control___run_on_browser_thread
     packages__vdisplay_agent__src__vdisplay_agent__services__control__set_control_value --> packages__vdisplay_agent__src__vdisplay_agent__services__control___selector_kwargs
     packages__vdisplay_agent__src__vdisplay_agent__routes__capture__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute__execute_audited_service
+    packages__vdisplay_agent__src__vdisplay_agent__routes__capture__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_from_runtime
+    packages__vdisplay_agent__src__vdisplay_agent__routes__capture__register_routes --> packages__vdisplay_agent__src__vdisplay_agent__envelope__json_error
     packages__vdisplay_agent__src__vdisplay_agent__routes___audit_headers__read_audit_headers --> packages__vdisplay_agent__src__vdisplay_agent__audit_context__audit_context_from_headers
     packages__vdisplay_agent__src__vdisplay_agent__routes__register_all_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes__auth__make_check_auth
     packages__vdisplay_agent__src__vdisplay_agent__routes__register_all_routes --> packages__vdisplay_agent__src__vdisplay_agent__routes__auth__expected_token
@@ -553,8 +641,11 @@ flowchart TD
     examples__headless_virtual__run_virtual__main --> examples__dev_workflow__koru_audit_last_session__print
     examples__control_plane__control_demo__run_diagnostics --> examples__dev_workflow__koru_audit_last_session__print
     examples__control_plane__control_demo__show_active_controls --> examples__dev_workflow__koru_audit_last_session__print
+    examples__control_plane__control_demo__show_active_controls --> packages__vdisplay_electron_share__renderer__list
     examples__control_plane__control_demo__run_terminal_demo --> examples__dev_workflow__koru_audit_last_session__print
+    examples__control_plane__control_demo__run_terminal_demo --> packages__vdisplay_electron_share__renderer__list
     examples__control_plane__control_demo__run_browser_demo --> examples__dev_workflow__koru_audit_last_session__print
+    examples__control_plane__control_demo__run_browser_demo --> packages__vdisplay_electron_share__renderer__list
     examples__control_plane__control_demo__main --> src__vdisplay__discovery__resolve_host_display
     examples__control_plane__control_demo__main --> examples__dev_workflow__koru_audit_last_session__print
     examples__control_plane__control_demo__main --> examples__control_plane__control_demo__run_diagnostics
@@ -578,6 +669,7 @@ flowchart TD
     examples__common__validate_artifacts__validate_image_and_meta --> examples__common__screenshot_meta__meta_path_for
     examples__common__validate_artifacts__validate_image_and_meta --> examples__common__screenshot_meta__png_dimensions
     examples__common__validate_artifacts__validate_directory --> examples__common__validate_artifacts__validate_image_and_meta
+    examples__common__validate_artifacts__main --> packages__vdisplay_electron_share__renderer__list
     examples__common__validate_artifacts__main --> examples__dev_workflow__koru_audit_last_session__print
     examples__common__validate_artifacts__main --> examples__common__validate_artifacts__validate_directory
     examples__common__screenshot_meta__ensure_common_on_path --> examples__common__screenshot_meta__examples_common_dir
@@ -614,11 +706,13 @@ flowchart TD
     src__vdisplay__ide_prompt___should_skip_window_wait --> src__vdisplay__ide_prompt___is_wayland_session
     src__vdisplay__ide_prompt__open_desktop_app --> src__vdisplay__desktop_apps__get_desktop_app
     src__vdisplay__ide_prompt__open_desktop_app --> src__vdisplay__desktop_apps__launch_env_for
+    src__vdisplay__ide_prompt__open_desktop_app --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__ide_prompt__wait_for_app_window --> src__vdisplay__desktop_apps__get_desktop_app
     src__vdisplay__ide_prompt__wait_for_app_window --> src__vdisplay__ide_prompt___should_skip_window_wait
     src__vdisplay__ide_prompt__wait_for_app_window --> src__vdisplay__desktop_apps__ide_hints_for
     src__vdisplay__ide_prompt___find_map_target --> src__vdisplay__control__gui_map__load_gui_map
     src__vdisplay__ide_prompt___find_map_target --> src__vdisplay__control__gui_map_resolve__map_element_to_node
+    src__vdisplay__ide_prompt___find_map_target --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__ide_prompt___find_first_selector --> src__vdisplay__desktop_apps__ide_hints_for
     src__vdisplay__ide_prompt___find_first_selector --> src__vdisplay__ide_prompt___ide_find_timeout_seconds
     src__vdisplay__ide_prompt___find_first_selector --> src__vdisplay__ide_prompt___find_map_target
@@ -631,6 +725,7 @@ flowchart TD
     src__vdisplay__ide_prompt___handle_submit --> src__vdisplay__desktop_apps__submit_selectors_for
     src__vdisplay__ide_prompt___build_map_missing_result --> src__vdisplay__desktop_apps__map_manifest_path
     src__vdisplay__ide_prompt___build_no_selector_result --> src__vdisplay__ide_prompt___is_wayland_session
+    src__vdisplay__ide_prompt___build_no_selector_result --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__ide_prompt___build_no_selector_result --> src__vdisplay__ide_prompt___wayland_ide_next_steps
     src__vdisplay__ide_prompt___try_control_set_value --> src__vdisplay__ide_prompt___build_set_value_failure_result
     src__vdisplay__ide_prompt___build_ide_success_result --> src__vdisplay__ide_prompt___handle_submit
@@ -655,6 +750,7 @@ flowchart TD
     src__vdisplay__nl__enrich_outputs_nl --> src__vdisplay__nl__window_center_on_output
     src__vdisplay__desktop_apps___variants_for --> src__vdisplay__desktop_apps___desktop_launch
     src__vdisplay__desktop_apps___variants_for --> src__vdisplay__desktop_apps___binary_launch
+    src__vdisplay__desktop_apps___expand_variants --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__desktop_apps___expand_variants --> src__vdisplay__desktop_apps___xwayland_variant
     src__vdisplay__desktop_apps___build_registry --> src__vdisplay__desktop_apps___variants_for
     src__vdisplay__desktop_apps___build_registry --> src__vdisplay__desktop_apps___expand_variants
@@ -683,6 +779,7 @@ flowchart TD
     src__vdisplay__client_http__AgentHttpTransport____init__ --> src__vdisplay__agent_config__resolve_agent_token
     src__vdisplay__client_http__AgentHttpTransport__build_request --> src__vdisplay__application__session_context__current_audit_headers
     src__vdisplay__client_http__AgentHttpTransport__normalize_payload --> src__vdisplay__agent_envelope__flatten_agent_envelope
+    src__vdisplay__utils__run_command --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__utils__run_command_bytes --> src__vdisplay__utils__run_command
     src__vdisplay__utils__auto_install_package --> examples__dev_workflow__koru_audit_last_session__print
     src__vdisplay__agent_config__agent_auto_enabled --> src__vdisplay__application__env_defaults__env_flag
@@ -767,7 +864,6 @@ flowchart TD
     src__vdisplay__commands__app__handle --> src__vdisplay__ide_prompt__open_desktop_app
     src__vdisplay__commands__app__handle --> src__vdisplay__desktop_apps__get_desktop_app
     src__vdisplay__commands__map__handle --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__register_all --> packages__vdisplay_agent__src__vdisplay_agent__session_store__SessionStore__register
     src__vdisplay__commands__ide__register --> src__vdisplay__commands__common__add_display_arg
     src__vdisplay__commands__ide__handle --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__ide__handle --> src__vdisplay__ide_prompt__send_ide_prompt
@@ -802,42 +898,6 @@ flowchart TD
     src__vdisplay__commands__monitors__register --> src__vdisplay__commands__common__add_all_arg
     src__vdisplay__commands__monitors__handle --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__monitors__handle --> src__vdisplay__commands__common__include_all_from_args
-    src__vdisplay__commands__agent___agent_client --> src__vdisplay__agent_config__resolve_agent_url
-    src__vdisplay__commands__agent__handle --> src__vdisplay__commands__agent___handle_serve
-    src__vdisplay__commands__agent__handle --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent__handle --> src__vdisplay__commands__agent___handle_preflight
-    src__vdisplay__commands__agent__handle --> src__vdisplay__commands__agent___handle_browser_open
-    src__vdisplay__commands__agent__handle --> src__vdisplay__commands__agent___handle_screencast
-    src__vdisplay__commands__agent__handle --> src__vdisplay__commands__agent___agent_client
-    src__vdisplay__commands__agent___handle_serve --> examples__dev_workflow__koru_audit_last_session__print
-    src__vdisplay__commands__agent___handle_serve --> src__vdisplay__application__env_defaults__env_value
-    src__vdisplay__commands__agent___handle_serve --> src__vdisplay__application__env_defaults__env_int_value
-    src__vdisplay__commands__agent___handle_serve --> packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free
-    src__vdisplay__commands__agent___handle_serve --> packages__rest2vdisplay__src__rest2vdisplay__app__create_app
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__commands__agent___agent_client
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__capture__portal_screencast__ensure_portal_session_env
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__capture__portal_screencast__portal_session_env_status
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__capture__screencast_keeper__keeper_capture_ready
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___handle_preflight --> src__vdisplay__capture__screencast_keeper__read_keeper_state
-    src__vdisplay__commands__agent___handle_browser_open --> src__vdisplay__agent_config__resolve_agent_url
-    src__vdisplay__commands__agent___handle_browser_open --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___handle_browser_open --> src__vdisplay__commands__agent___agent_client
-    src__vdisplay__commands__agent___screencast_start --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___screencast_start --> src__vdisplay__capture__screencast_keeper__read_keeper_state
-    src__vdisplay__commands__agent___screencast_start --> src__vdisplay__capture__screencast_keeper__keeper_capture_ready
-    src__vdisplay__commands__agent___screencast_start --> examples__dev_workflow__koru_audit_last_session__print
-    src__vdisplay__commands__agent___screencast_start --> src__vdisplay__application__services__screencast_cli__start_screencast_via_agent
-    src__vdisplay__commands__agent___screencast_start --> src__vdisplay__commands__agent___agent_client
-    src__vdisplay__commands__agent___screencast_stop --> src__vdisplay__capture__screencast_keeper__stop_keeper
-    src__vdisplay__commands__agent___screencast_stop --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___screencast_clear_cooldown --> src__vdisplay__application__services__screencast_cli__clear_local_start_cooldown
-    src__vdisplay__commands__agent___screencast_clear_cooldown --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___screencast_status --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___screencast_probe --> src__vdisplay__cli_handlers__print_json
-    src__vdisplay__commands__agent___screencast_probe --> src__vdisplay__application__services__screencast_cli__probe_screencast_capture
-    src__vdisplay__commands__agent___screencast_probe --> src__vdisplay__commands__agent___agent_client
-    src__vdisplay__commands__agent___handle_screencast --> src__vdisplay__commands__agent___agent_client
     src__vdisplay__commands__history___resolve_root --> src__vdisplay__application__history__loader__resolve_metadata_root
     src__vdisplay__commands__history___resolve_session_from_args --> src__vdisplay__application__session_recorder__discover_session_dirs
     src__vdisplay__commands__history___resolve_session_from_args --> src__vdisplay__application__history__loader__resolve_metadata_root
@@ -855,6 +915,7 @@ flowchart TD
     src__vdisplay__commands__history__handle_analyze --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__history__handle_analyze --> src__vdisplay__commands__history___resolve_root
     src__vdisplay__commands__history__handle_analyze --> src__vdisplay__commands__history___print_analyze_summary
+    src__vdisplay__commands__history___print_analyze_summary --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__commands__history__handle_events --> src__vdisplay__application__history__analyze__collect_events
     src__vdisplay__commands__history__handle_events --> src__vdisplay__cli_handlers__print_json
     src__vdisplay__commands__history__handle_events --> src__vdisplay__commands__history___resolve_session_from_args
@@ -900,6 +961,7 @@ flowchart TD
     src__vdisplay__commands__nlp__handle --> src__vdisplay__nlp__run_nl_prompt
     src__vdisplay__commands__nlp__handle --> examples__dev_workflow__koru_audit_last_session__print
     src__vdisplay__commands__virtual__handle --> src__vdisplay__cli_handlers__print_json
+    src__vdisplay__commands__virtual__handle --> packages__vdisplay_electron_share__renderer__list
     src__vdisplay__commands__diagnose__register --> src__vdisplay__application__config_options__get_runtime_options
     src__vdisplay__commands__diagnose__register --> src__vdisplay__commands__common__add_display_arg
     src__vdisplay__commands__diagnose__register --> src__vdisplay__commands__common__add_control_selector_args
@@ -909,4 +971,5 @@ flowchart TD
 
     classDef highCC fill:#ff6b6b,stroke:#c92a2a,color:#fff
     classDef medCC fill:#ffd43b,stroke:#f08c00,color:#000
-    class packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_control_common,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_browser_open,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___browser_open_to_text,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___control_to_text,packages__vdisplay_agent__src__vdisplay_agent__cli__main,packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids,packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free,packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__list_replay_sessions,packages__vdisplay_agent__src__vdisplay_agent__services__capture___region_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host,packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__try_recover_screencast,packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different,packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_screencast,packages__vdisplay_agent__src__vdisplay_agent__services__sampler___config_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___persist_captures_to_cache,packages__vdisplay_agent__src__vdisplay_agent__services__windows__list_windows,packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result,examples__agent_broker__broker_demo__main,examples__host_relay__relay_demo__main,examples__common__validate_artifacts__validate_image_and_meta,examples__common__screenshot_meta__describe_screenshot_nl,src__vdisplay__client_api__AgentClientApiMixin__adopt_screencast,src__vdisplay__ide_prompt__wait_for_app_window,src__vdisplay__ide_prompt___find_first_selector,src__vdisplay__ide_prompt___handle_wait_window medCC
+    class src__vdisplay__control__vision_chat_detect__llm_decision_rejects_chat_target,src__vdisplay__control__vision_chat_detect__detect_chat_click_target,src__vdisplay__control__providers__atspi_impl__list_applications_dict,src__vdisplay__capture__portal_screencast___capture_pipewire_frame_gst_launch,src__vdisplay__capture__screencast_keeper___dispatch_capture_request,src__vdisplay__windows__gnome_shell__list_gnome_meta_windows,src__vdisplay__windows__surface_registry__summarize_app_surfaces,src__vdisplay__windows__surface_registry__apply_jetbrains_wayland_heuristic,src__vdisplay__windows__surface_registry__correlate_surfaces,src__vdisplay__integrations__chat_target__diagnose_chat_target_resolution,packages__vdisplay_electron_share__renderer__renderScreenGrid,packages__vdisplay_electron_share__renderer__beginDisplayMediaCapture,packages__vdisplay_electron_share__renderer__startCaptureFromSource,packages__vdisplay_electron_share__renderer__generation,packages__vdisplay_electron_share__renderer__startCaptureWithSystemPicker,packages__vdisplay_electron_share__main__redactDebugValue,packages__vdisplay_electron_share__main__listCaptureSources,packages__vdisplay_electron_share__main__listAgentWindowSources,packages__vdisplay_electron_share__main__captureMainProcessFrame,packages__vdisplay_electron_share__main__startMainProcessCapture,packages__vdisplay_electron_share__main__ingestBridgeFrame,packages__vdisplay_electron_share__main__startHttpServer,packages__vdisplay_electron_share__main__server,packages__vdisplay_electron_share__main__installDisplayMediaHandler,packages__vdisplay_agent__src__vdisplay_agent__services__capture___capture_host,packages__vdisplay_agent__src__vdisplay_agent__services__browser_bridge__BrowserFrameStore__get_fresh,src__vdisplay__commands__services__build_up_payload,src__vdisplay__commands__electron_share___preferred_display_env_for_source,src__vdisplay__commands__electron_share__build_health_payload,src__vdisplay__commands__electron_share__handle_health highCC
+    class packages__dsl2vdisplay__src__dsl2vdisplay__bus__dispatch,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_legacy,packages__dsl2vdisplay__src__dsl2vdisplay__cli___main_subcommand,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_control_common,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___parse_browser_open,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___browser_open_to_text,packages__dsl2vdisplay__src__dsl2vdisplay__grammar___control_to_text,packages__vdisplay_agent__src__vdisplay_agent__cli__main,packages__vdisplay_agent__src__vdisplay_agent__serve_port__stop_pids,packages__vdisplay_agent__src__vdisplay_agent__serve_port__ensure_broker_port_free,packages__vdisplay_agent__src__vdisplay_agent__services__web_replay__list_replay_sessions,packages__vdisplay_agent__src__vdisplay_agent__services__screencast_recovery__try_recover_screencast,packages__vdisplay_agent__src__vdisplay_agent__services__sessions___release_store_screencast_if_different,packages__vdisplay_agent__src__vdisplay_agent__services__sessions__start_screencast,packages__vdisplay_agent__src__vdisplay_agent__services__sampler___config_from_body,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache__capture_monitor_frame_with_meta,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___capture_bulk_or_fallback,packages__vdisplay_agent__src__vdisplay_agent__services__web_frame_cache___persist_captures_to_cache,packages__vdisplay_agent__src__vdisplay_agent__services__windows__list_windows,packages__vdisplay_agent__src__vdisplay_agent__routes___audit_execute___json_from_command_result,examples__agent_broker__broker_demo__main,examples__host_relay__relay_demo__main,examples__common__validate_artifacts__validate_image_and_meta,examples__common__screenshot_meta__describe_screenshot_nl,src__vdisplay__client_api__AgentClientApiMixin__adopt_screencast,src__vdisplay__client_api__AgentClientApiMixin__capture_ingest,src__vdisplay__ide_prompt__wait_for_app_window,src__vdisplay__ide_prompt___find_first_selector,src__vdisplay__ide_prompt___handle_wait_window,src__vdisplay__ide_prompt___handle_submit medCC

@@ -53,10 +53,20 @@ def _maybe_enrich_screenshot(cmd: CommandRequest, data: dict[str, Any]) -> dict[
 
 
 def _agent_discovery_fallback(cmd: CommandRequest, exc: VDisplayError) -> bool:
-    if cmd.verb not in _LOCAL_DISCOVERY_VERBS:
-        return False
     message = str(exc).lower()
-    return "unreachable" in message or "timed out" in message or "hung" in message
+    unavailable = "unreachable" in message or "timed out" in message or "hung" in message
+    if not unavailable:
+        return False
+    if cmd.verb in _LOCAL_DISCOVERY_VERBS:
+        return True
+    if cmd.verb == CommandVerb.SCREENSHOT:
+        try:
+            from ..capture.electron_share import electron_share_enabled
+
+            return electron_share_enabled()
+        except Exception:
+            return False
+    return False
 
 
 def _execute_for_route(

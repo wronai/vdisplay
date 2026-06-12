@@ -92,6 +92,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.35] - 2026-06-12
+
+### Docs
+- Update README.md
+- Update docs/electron-share-manager.md
+- Update docs/guides/keeper-2-browser-bridge-poc.md
+- Update packages/README.md
+- Update packages/vdisplay-electron-share/README.md
+- Update project/README.md
+- Update project/context.md
+
+### Test
+- Update tests/conftest.py
+- Update tests/test_agent.py
+- Update tests/test_agent_client.py
+- Update tests/test_agent_web_console.py
+- Update tests/test_electron_share_cli.py
+- Update tests/test_portal_deps.py
+- Update tests/test_portal_screencast.py
+- Update tests/test_screencast_keeper_capture.py
+- Update tests/test_screencast_start_force.py
+- Update tests/test_services_cli.py
+- ... and 3 more files
+
+### Other
+- Update .gitignore
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update examples/dev-workflow/koru-drive-photo-vql.sh
+- Update packages/mcp2vdisplay/pyproject.toml
+- Update packages/mcp2vdisplay/src/mcp2vdisplay/server.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/cli.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/capture.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/health.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/session.py
+- ... and 32 more files
+
 ## [0.1.34] - 2026-06-12
 
 ### Docs

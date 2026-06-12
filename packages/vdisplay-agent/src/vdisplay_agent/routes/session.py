@@ -139,6 +139,35 @@ def register_routes(
         except Exception as exc:
             return json_error(S.ACTION_SCREENCAST_ADOPT, exc)
 
+    @app.post("/session/browser-bridge/register")
+    def session_browser_bridge_register(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime("browser_bridge_register", broker.register_browser_bridge(body))
+        except Exception as exc:
+            return json_error("browser_bridge_register", exc)
+
+    @app.post("/session/browser-bridge/heartbeat")
+    def session_browser_bridge_heartbeat(
+        body: dict[str, Any],
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime("browser_bridge_heartbeat", broker.heartbeat_browser_bridge(body))
+        except Exception as exc:
+            return json_error("browser_bridge_heartbeat", exc)
+
+    @app.get("/session/browser-bridge/status")
+    def session_browser_bridge_status(
+        authorization: str | None = Header(default=None),
+    ) -> dict[str, Any]:
+        check_auth(authorization)
+        return success("browser_bridge_status", strip_ok(broker.browser_bridge_status()))
+
     @app.post("/session/screencast/stop")
     def session_screencast_stop(
         authorization: str | None = Header(default=None),

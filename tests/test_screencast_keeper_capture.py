@@ -15,6 +15,7 @@ from vdisplay.capture import portal_screencast as portal_mod
 from vdisplay.capture.screencast_keeper import (
     _dispatch_capture_request,
     _handle_capture_connection,
+    _keeper_worker_capture_timeout_s,
     keeper_manages_session,
     keeper_socket_path,
     keeper_state_path,
@@ -34,13 +35,21 @@ class _FakeSession:
         self.active = True
         self._png = png or _make_png()
         self.calls: list[int] = []
+        self.capture_timeouts: list[float | None] = []
 
     @property
     def is_ready(self) -> bool:
         return self.active and bool(self.session_path)
 
-    def capture_png_local(self, *, node_index: int = 0, try_all_streams: bool = True) -> bytes:
+    def capture_png_local(
+        self,
+        *,
+        node_index: int = 0,
+        try_all_streams: bool = True,
+        timeout_s: float | None = None,
+    ) -> bytes:
         self.calls.append(node_index)
+        self.capture_timeouts.append(timeout_s)
         return self._png
 
 
@@ -63,9 +72,26 @@ def test_dispatch_capture_request() -> None:
     assert ok["ok"] is True
     assert "png_base64" in ok
     assert session.calls == [2]
+    assert session.capture_timeouts == [None]
 
     bad = _dispatch_capture_request(session, {"op": "capture", "session_path": "/wrong"})
     assert bad["ok"] is False
+
+
+def test_dispatch_capture_request_passes_capture_timeout() -> None:
+    session = _FakeSession()
+    ok = _dispatch_capture_request(
+        session,
+        {"op": "capture", "node_index": 1, "capture_timeout_s": 45.0},
+    )
+    assert ok["ok"] is True
+    assert session.calls == [1]
+    assert session.capture_timeouts == [45.0]
+
+
+def test_keeper_worker_capture_timeout_leaves_socket_margin() -> None:
+    assert _keeper_worker_capture_timeout_s(45.0) == 40.0
+    assert _keeper_worker_capture_timeout_s(4.0) == 2.0
 
 
 def test_capture_png_delegates_to_keeper(monkeypatch: pytest.MonkeyPatch) -> None:

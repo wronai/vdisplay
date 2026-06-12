@@ -13,6 +13,7 @@ from vdisplay.capture.host import capture_all_monitors, capture_host_to_file
 from vdisplay.exceptions import VDisplayError
 
 from ..runtime import AgentRuntime
+from . import sessions as session_svc
 
 _FRAME_CACHE: dict[str, tuple[float, Path, dict[str, Any]]] = {}
 
@@ -22,14 +23,41 @@ def _frame_cache_ttl_s() -> float:
 
 
 def _require_screencast(runtime: AgentRuntime) -> None:
-    session = runtime.store.screencast
-    if session is not None and session.is_ready:
+    if runtime.store.browser_bridge.capture_ready():
         return
+    session = runtime.store.screencast
+    if session is not None and session.is_ready and _keeper_capture_ready(session):
+        return
+    if session is not None and session.is_ready:
+        raise VDisplayError(
+            "screencast portal session is active, but frame keeper is not running — "
+            "run: vdisplay agent screencast start --force, choose All Screens/the IDE monitor, "
+            "then verify: vdisplay agent screencast probe --via-agent --source <monitor>"
+        )
     raise VDisplayError(
         "screencast not ready — run once from a GUI terminal: vdisplay agent screencast start "
         "(choose All Screens in the GNOME portal). Automatic portal prompts are disabled "
         "to avoid repeated permission dialogs."
     )
+
+
+def _keeper_capture_ready(session: Any) -> bool:
+    try:
+        from vdisplay.capture.screencast_keeper import (
+            keeper_capture_ready,
+            read_keeper_state,
+            session_uses_keeper,
+        )
+
+        if not session_uses_keeper(session):
+            return False
+        return keeper_capture_ready(
+            read_keeper_state(),
+            socket_path=str(getattr(session, "keeper_socket_path", "") or "") or None,
+            timeout_s=0.2,
+        )
+    except Exception:
+        return False
 
 
 def cache_get(key: str) -> tuple[Path, dict[str, Any]] | None:
@@ -61,6 +89,17 @@ def capture_monitor_frame_with_meta(
         if cached is not None:
             return cached
 
+    persistent = Path(tempfile.gettempdir()) / "vdisplay-web-cache" / f"{cache_key.replace(':', '_')}.png"
+    persistent.parent.mkdir(parents=True, exist_ok=True)
+    bridge_meta = runtime.store.browser_bridge.copy_fresh(
+        persistent,
+        source=monitor_name,
+        display=display,
+    )
+    if bridge_meta is not None:
+        cache_put(cache_key, persistent, bridge_meta)
+        return persistent, bridge_meta
+
     _require_screencast(runtime)
 
     with tempfile.TemporaryDirectory(prefix="vdisplay-web-") as tmpdir:
@@ -72,17 +111,20 @@ def capture_monitor_frame_with_meta(
                 source=monitor_name,
                 screencast_session=runtime.store.screencast,
             )
-        except VDisplayError:
+        except VDisplayError as exc:
             if runtime.store.screencast is not None and not runtime.store.screencast.is_ready:
                 runtime.store.screencast = None
+                session_svc.clear_screencast_capture_failure(runtime.store)
+            elif runtime.store.screencast is not None:
+                session_svc.mark_screencast_capture_failed(runtime.store, exc)
             raise
         src = Path(str(meta.get("path") or out))
         if not src.is_file():
             raise VDisplayError(f"capture failed for monitor {monitor_name}")
-        persistent = Path(tempfile.gettempdir()) / "vdisplay-web-cache" / f"{cache_key.replace(':', '_')}.png"
-        persistent.parent.mkdir(parents=True, exist_ok=True)
         persistent.write_bytes(src.read_bytes())
         capture_meta = dict(meta)
+        if runtime.store.screencast is not None:
+            session_svc.clear_screencast_capture_failure(runtime.store)
         cache_put(cache_key, persistent, capture_meta)
         return persistent, capture_meta
 
@@ -117,6 +159,9 @@ def _get_cached_all_frames(cache_key: str) -> list[dict[str, Any]] | None:
 
 
 def _capture_bulk_or_fallback(runtime: AgentRuntime, display: str | None, tmpdir: str) -> list[dict[str, Any]]:
+    bridge_captures = runtime.store.browser_bridge.copy_all_fresh(tmpdir, display=display)
+    if bridge_captures:
+        return bridge_captures
     _require_screencast(runtime)
     try:
         bulk = capture_all_monitors(
@@ -174,6 +219,6 @@ def capture_all_monitor_frames(
 
     with tempfile.TemporaryDirectory(prefix="vdisplay-web-all-") as tmpdir:
         captures = _capture_bulk_or_fallback(runtime, display, tmpdir)
+        _persist_captures_to_cache(cache_key, captures)
 
-    _persist_captures_to_cache(cache_key, captures)
-    return captures
+    return _get_cached_all_frames(cache_key) or captures

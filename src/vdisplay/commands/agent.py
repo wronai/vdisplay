@@ -3,12 +3,21 @@ from __future__ import annotations
 import argparse
 import os
 from typing import Any, Callable
+from urllib.parse import urlparse
 
 from ..agent_config import resolve_agent_url
 from ..application.config_options import get_runtime_options
 from ..application.env_defaults import env_int_value, env_value
 from ..exceptions import VDisplayError
 from .io import print_json
+
+
+def _agent_url_port() -> int | None:
+    raw = os.environ.get("VDISPLAY_AGENT_URL", "").strip()
+    if not raw:
+        return None
+    parsed = urlparse(raw)
+    return parsed.port
 
 
 def register(sub: argparse._SubParsersAction) -> None:
@@ -56,6 +65,10 @@ def register(sub: argparse._SubParsersAction) -> None:
         "--force",
         action="store_true",
         help="Bypass portal retry cooldown after a failed start",
+    )
+    sc_start.add_argument(
+        "--source",
+        help="Preferred monitor name for operator guidance; GNOME portal selection is still manual",
     )
     sc_start.add_argument(
         "--all-monitors",
@@ -143,7 +156,7 @@ def _handle_serve(args: argparse.Namespace) -> int:
     from vdisplay_agent.serve_port import ensure_broker_port_free
 
     host = args.host or env_value("VDISPLAY_AGENT_HOST") or "127.0.0.1"
-    port = args.port or env_int_value("VDISPLAY_AGENT_PORT", default=8765)
+    port = args.port or _agent_url_port() or env_int_value("VDISPLAY_AGENT_PORT", default=8765)
     try:
         ensure_broker_port_free(host, port)
     except RuntimeError as exc:
@@ -157,14 +170,23 @@ def _handle_serve(args: argparse.Namespace) -> int:
     return 0
 
 
-def _preflight_next_steps(ready: bool, keeper_ready: bool) -> str:
-    if ready and keeper_ready:
-        return "vdisplay agent screencast probe --source DP-1"
+def _preflight_next_steps(*, ready: bool, keeper_ready: bool, bridge_ready: bool) -> str:
+    if ready and (keeper_ready or bridge_ready):
+        return "vdisplay screenshot -o /tmp/test.png --source HDMI-1"
+    if bridge_ready:
+        return "vdisplay electron-share health --source HDMI-1"
     if ready and not keeper_ready:
-        return "restart vdisplay-agent serve, then: vdisplay agent screencast start --force"
+        return (
+            "restart vdisplay-agent serve, then either "
+            "vdisplay agent screencast start --force "
+            "or vdisplay electron-share start --source HDMI-1"
+        )
     if not ready:
-        return "vdisplay agent screencast start --force"
-    return "vdisplay agent screencast probe --via-agent --source DP-1"
+        return (
+            "vdisplay electron-share start --source HDMI-1 "
+            "or vdisplay agent screencast start --force"
+        )
+    return "vdisplay agent screencast probe --via-agent --source HDMI-1"
 
 
 def _handle_preflight() -> int:
@@ -191,7 +213,21 @@ def _handle_preflight() -> int:
         return 1
     portal = caps.get("portal_session") or {}
     screencast = caps.get("screencast") or {}
-    ready = bool(screencast.get("active") and screencast.get("ready"))
+    screencast_status: dict[str, Any] = {}
+    bridge_status: dict[str, Any] = {}
+    try:
+        screencast_status = client.screencast_status().get("data") or client.screencast_status()
+    except VDisplayError:
+        screencast_status = screencast
+    try:
+        bridge_status = client.browser_bridge_status().get("data") or client.browser_bridge_status()
+    except VDisplayError:
+        bridge_status = {}
+    ready = bool(screencast_status.get("active") and screencast_status.get("ready"))
+    bridge_ready = bool(
+        screencast_status.get("capture_ready")
+        and screencast_status.get("keeper_mode") == "browser_bridge"
+    ) or bool(bridge_status.get("capture_ready"))
     ok = bool(health.get("ok", health.get("status") == "ok")) and bool(portal.get("ok", True)) and cli_ok
     print_json(
         {
@@ -199,14 +235,21 @@ def _handle_preflight() -> int:
             "agent": health,
             "cli_portal_session": {"ok": cli_ok, "hint": cli_hint or None},
             "agent_portal_session": portal,
-            "screencast": screencast,
+            "screencast": screencast_status or screencast,
+            "browser_bridge": bridge_status or None,
             "keeper": {
                 "running": bool(keeper_state),
                 "capture_ready": keeper_ready,
                 "pid": keeper_state.get("pid"),
                 "socket_path": keeper_state.get("socket_path"),
             },
-            "next": _preflight_next_steps(ready, keeper_ready),
+            "capture_ready": bool(screencast_status.get("capture_ready") or bridge_ready),
+            "keeper_mode": screencast_status.get("keeper_mode"),
+            "next": _preflight_next_steps(
+                ready=ready,
+                keeper_ready=keeper_ready,
+                bridge_ready=bridge_ready,
+            ),
         }
     )
     return 0 if ok else 1
@@ -266,10 +309,9 @@ def _screencast_start(args: argparse.Namespace, fast) -> int:
     if not will_reuse:
         import sys
 
-        print(
-            "vdisplay: waiting for GNOME Screen Recording portal — choose All Screens",
-            file=sys.stderr,
-        )
+        source = str(getattr(args, "source", "") or "").strip()
+        choice = f"choose {source} or All Screens" if source else "choose All Screens"
+        print(f"vdisplay: waiting for GNOME Screen Recording portal — {choice}", file=sys.stderr)
     print_json(
         start_screencast_via_agent(
             _agent_client(timeout=120.0),

@@ -358,6 +358,64 @@ def snapshot_dict(
     ).to_dict()
 
 
+def list_applications_dict() -> dict[str, Any]:
+    """Shallow AT-SPI application list (name, pid, first frame title)."""
+    Atspi = _atspi()
+    Atspi.init()
+    desktop = Atspi.get_desktop(0)
+    applications: list[dict[str, Any]] = []
+    for app_index in range(desktop.get_child_count()):
+        row: dict[str, Any] = {"app_index": app_index}
+        try:
+            application = desktop.get_child_at_index(app_index)
+            if application is None:
+                row["error"] = "null application"
+                applications.append(row)
+                continue
+            row["name"] = application.name or None
+            row["role"] = application.get_role_name() or None
+            pid = None
+            try:
+                pid = int(application.get_process_id(None))
+            except Exception:
+                pid = None
+            row["pid"] = pid
+            window_title = None
+            frame_bounds = None
+            try:
+                child_count = min(int(application.get_child_count()), 48)
+            except Exception:
+                child_count = 0
+            for child_index in range(child_count):
+                try:
+                    child = application.get_child_at_index(child_index)
+                except Exception:
+                    continue
+                if child is None:
+                    continue
+                role = (child.get_role_name() or "").lower()
+                if role in {"frame", "window"} and (child.name or "").strip():
+                    window_title = child.name
+                    row["window_role"] = role
+                    bounds = _node_bounds(child)
+                    if bounds is not None:
+                        frame_bounds = {
+                            "x": bounds.x,
+                            "y": bounds.y,
+                            "width": bounds.width,
+                            "height": bounds.height,
+                        }
+                    break
+            row["window_title"] = window_title
+            if frame_bounds is not None:
+                row["bounds"] = frame_bounds
+            applications.append(row)
+        except Exception as exc:
+            row["error"] = str(exc)
+            applications.append(row)
+    return {"ok": True, "applications": applications, "application_count": len(applications)}
+
+
 def _resolve_accessible(element_id: str):
     Atspi = _atspi()
     Atspi.init()
@@ -377,6 +435,8 @@ def dispatch(payload: dict[str, Any]) -> dict[str, Any]:
         return _handle_available()
     if op == "snapshot":
         return {"ok": True, "snapshot": snapshot_dict(**payload.get("params", {}))}
+    if op == "list_applications":
+        return list_applications_dict()
     if op == "invoke":
         return _handle_invoke(payload)
     if op == "focus":

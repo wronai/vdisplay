@@ -25,6 +25,7 @@ def _portal_impl(out: Path, *, interactive: bool, timeout_s: float) -> dict:
     from urllib.parse import unquote, urlparse
 
     result: dict = {"ok": False, "response": -1, "uri": ""}
+    loop_holder: dict[str, object] = {}
 
     def on_response(response, results) -> None:
         result["response"] = int(response)
@@ -41,7 +42,9 @@ def _portal_impl(out: Path, *, interactive: bool, timeout_s: float) -> dict:
             )
         else:
             result["error"] = f"portal screenshot failed with response={response}"
-        loop.quit()
+        main_loop = loop_holder.get("loop")
+        if main_loop is not None:
+            main_loop.quit()
 
     DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
@@ -55,6 +58,8 @@ def _portal_impl(out: Path, *, interactive: bool, timeout_s: float) -> dict:
     )
     proxy = bus.get_object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
     iface = dbus.Interface(proxy, dbus_interface="org.freedesktop.portal.Screenshot")
+    loop = GLib.MainLoop()
+    loop_holder["loop"] = loop
     iface.Screenshot(
         "",
         {
@@ -63,7 +68,6 @@ def _portal_impl(out: Path, *, interactive: bool, timeout_s: float) -> dict:
         },
     )
 
-    loop = GLib.MainLoop()
     GLib.timeout_add_seconds(max(1, int(timeout_s)), loop.quit)
     loop.run()
 
@@ -131,6 +135,7 @@ def portal_impl(out, interactive, timeout_s):
         return {"ok": False, "error": f"portal capture needs python3-dbus and python3-gi: {exc}"}
 
     result = {"ok": False, "response": -1, "uri": ""}
+    loop_holder = {}
 
     def on_response(response, results):
         result["response"] = int(response)
@@ -146,7 +151,9 @@ def portal_impl(out, interactive, timeout_s):
             )
         else:
             result["error"] = f"portal screenshot failed with response={response}"
-        loop.quit()
+        main_loop = loop_holder.get("loop")
+        if main_loop is not None:
+            main_loop.quit()
 
     DBusGMainLoop(set_as_default=True)
     bus = dbus.SessionBus()
@@ -160,8 +167,9 @@ def portal_impl(out, interactive, timeout_s):
     )
     proxy = bus.get_object("org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop")
     iface = dbus.Interface(proxy, dbus_interface="org.freedesktop.portal.Screenshot")
-    iface.Screenshot("", {"interactive": dbus.Boolean(interactive), "handle_token": token})
     loop = GLib.MainLoop()
+    loop_holder["loop"] = loop
+    iface.Screenshot("", {"interactive": dbus.Boolean(interactive), "handle_token": token})
     GLib.timeout_add_seconds(max(1, int(timeout_s)), loop.quit)
     loop.run()
     if not result.get("ok"):

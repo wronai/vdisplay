@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import sys
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Header, Query
@@ -28,7 +31,16 @@ def register_routes(
         check_auth(authorization)
         return success(
             S.ACTION_HEALTH,
-            {"status": "ok", "service": "vdisplay-agent", "broker": "vdisplay-agent"},
+            {
+                "status": "ok",
+                "service": "vdisplay-agent",
+                "broker": "vdisplay-agent",
+                "version": __version__,
+                "python": sys.version.split()[0],
+                "executable": sys.executable,
+                "package_file": str(Path(__file__).resolve()),
+                "cwd": os.getcwd(),
+            },
         )
 
     @app.get("/version")

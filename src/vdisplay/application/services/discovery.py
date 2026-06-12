@@ -61,9 +61,10 @@ def list_windows_payload(
     match_pid: int | None = None,
     match_app: str | None = None,
     local_only: bool = False,
+    correlate: bool = False,
 ) -> dict[str, Any]:
     """List windows; agent path unless local_only (broker process)."""
-    if local_only:
+    if correlate or local_only:
         return list_windows_local(
             display,
             include_all=include_all,
@@ -74,6 +75,7 @@ def list_windows_payload(
             match_class=match_class,
             match_pid=match_pid,
             match_app=match_app,
+            correlate=correlate,
         )
     apps_only = resolve_apps_only(
         include_all=include_all,
@@ -106,6 +108,7 @@ def list_windows_local(
     match_class: str | None = None,
     match_pid: int | None = None,
     match_app: str | None = None,
+    correlate: bool = False,
 ) -> dict[str, Any]:
     resolved = resolve_host_display(display)
     apps_only = resolve_apps_only(
@@ -123,13 +126,31 @@ def list_windows_local(
         match_pid=match_pid,
         match_app=match_app,
     )
-    return {
+    payload: dict[str, Any] = {
         "requested_display": display or os.environ.get("DISPLAY"),
         "resolved_display": resolved,
         "window_count": len(windows),
         **window_discovery_meta(resolved),
         "windows": windows,
     }
+    if correlate:
+        from ...windows.surface_registry import build_surface_registry
+
+        registry = build_surface_registry(resolved, apps_only=apps_only)
+        payload["correlated"] = True
+        payload["surfaces"] = registry.get("surfaces") or []
+        payload["surface_count"] = registry.get("surface_count", 0)
+        payload["gnome_windows"] = registry.get("gnome_windows") or []
+        payload["atspi_applications"] = registry.get("atspi_applications") or []
+        payload["processes"] = registry.get("processes") or []
+        payload["correlation_sources"] = registry.get("sources") or {}
+        payload["gnome_window_count"] = registry.get("gnome_window_count", 0)
+        payload["atspi_application_count"] = registry.get("atspi_application_count", 0)
+        payload["correlation_process_count"] = registry.get("process_count", 0)
+        payload["app_surfaces"] = registry.get("app_surfaces") or []
+        payload["app_surface_count"] = registry.get("app_surface_count", 0)
+        payload["jetbrains_awt_proxy_count"] = registry.get("jetbrains_awt_proxy_count", 0)
+    return payload
 
 
 def list_adopted(display: str | None = None) -> list[dict[str, Any]]:

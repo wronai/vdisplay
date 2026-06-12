@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import base64
+
 import pytest
+
+_PNG = b"\x89PNG\r\n\x1a\n" + b"w" * 128
 
 
 def test_web_console_page(agent_client) -> None:
@@ -40,6 +44,45 @@ def test_web_frame_endpoint(agent_client, monkeypatch: pytest.MonkeyPatch, tmp_p
     res = client.get("/api/web/frame/DP-1")
     assert res.status_code == 200
     assert res.headers["content-type"].startswith("image/png")
+
+
+def test_web_frame_endpoint_rejects_active_screencast_without_keeper(agent_client) -> None:
+    client, runtime = agent_client
+    from vdisplay.capture.portal_screencast import PortalScreenCastSession
+
+    session = PortalScreenCastSession()
+    session.active = True
+    session.session_path = "/org/test/session"
+    session.node_ids = [80, 81]
+    runtime.store.screencast = session
+
+    res = client.get("/api/web/frame/DP-1")
+    assert res.status_code == 503
+    assert "frame keeper is not running" in res.text
+    assert "screencast start --force" in res.text
+
+
+def test_web_frame_endpoint_uses_browser_bridge_before_screencast(agent_client) -> None:
+    client, _runtime = agent_client
+    registered = client.post(
+        "/session/browser-bridge/register",
+        json={"client": "test-electron", "sources": ["DP-1"], "ttl_s": 10},
+    ).json()
+    bridge_id = registered["data"]["bridge_id"]
+    ingested = client.post(
+        "/capture/ingest",
+        json={
+            "bridge_id": bridge_id,
+            "source": "DP-1",
+            "png_base64": base64.b64encode(_PNG).decode("ascii"),
+        },
+    ).json()
+    assert ingested["ok"] is True
+
+    res = client.get("/api/web/frame/DP-1")
+    assert res.status_code == 200
+    assert res.headers["content-type"].startswith("image/png")
+    assert res.content == _PNG
 
 
 def test_web_replay_sessions(agent_client, monkeypatch: pytest.MonkeyPatch) -> None:

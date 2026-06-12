@@ -31,6 +31,16 @@ def add_window_filter_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--class", dest="wm_class", help="Filter by WM_CLASS")
     parser.add_argument("--pid", type=int, help="Filter by process ID")
     parser.add_argument("--app", help="Filter by app_label / process_name")
+    parser.add_argument(
+        "--correlate",
+        action="store_true",
+        help="Merge X11 + GNOME Shell + AT-SPI + ps into surfaces (Wayland-native apps)",
+    )
+    parser.add_argument(
+        "--app-surfaces",
+        action="store_true",
+        help="With --correlate: emit only app_surfaces (one row per IDE family, no browser helpers)",
+    )
 
 
 def include_all_from_args(args: argparse.Namespace) -> bool:

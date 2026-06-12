@@ -6,7 +6,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Any
 
-from .services import capabilities, capture, control, outputs, relay, sampler, sessions, tasks, windows
+from .services import browser_bridge, capabilities, capture, control, outputs, relay, sampler, sessions, tasks, windows
 from .session_store import SessionRecord, SessionStore
 from .task_store import TaskStore
 
@@ -77,6 +77,18 @@ class AgentRuntime:
 
     def screencast_status(self) -> dict[str, Any]:
         return sessions.screencast_status(self.store)
+
+    def register_browser_bridge(self, body: dict[str, Any]) -> dict[str, Any]:
+        return browser_bridge.register_browser_bridge(self.store, body)
+
+    def heartbeat_browser_bridge(self, body: dict[str, Any]) -> dict[str, Any]:
+        return browser_bridge.heartbeat_browser_bridge(self.store, body)
+
+    def browser_bridge_status(self) -> dict[str, Any]:
+        return browser_bridge.browser_bridge_status(self.store)
+
+    def ingest_browser_frame(self, body: dict[str, Any]) -> dict[str, Any]:
+        return browser_bridge.ingest_browser_frame(self.store, body)
 
     def stop_session(self, session_id: str) -> dict[str, Any]:
         return sessions.stop_session(self.store, session_id, task_store=self.task_store)
