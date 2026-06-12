@@ -1,21 +1,16 @@
-# code2llm | 367f 227773L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
-# generated in 0.15s
-# CC̅=4.1 | critical:10/2342 | dups:0 | cycles:0
+# code2llm | 367f 142125L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
+# generated in 0.14s
+# CC̅=4.1 | critical:5/2356 | dups:0 | cycles:0
 
-HEALTH[10]:
-  🟡 CC    _clamp_global_pointer CC=20 (limit:15)
-  🟡 CC    _global_from_region CC=16 (limit:15)
+HEALTH[5]:
   🟡 CC    build_decision_data CC=15 (limit:15)
   🟡 CC    load_broker_events CC=15 (limit:15)
   🟡 CC    load_task_record CC=15 (limit:15)
-  🟡 CC    analyze_history CC=36 (limit:15)
   🟡 CC    screen_context_from_capture CC=15 (limit:15)
-  🟡 CC    _layer_center CC=18 (limit:15)
-  🟡 CC    _try_adopt_screenshot CC=22 (limit:15)
-  🟡 CC    _build_imgl_layers CC=42 (limit:15)
+  🟡 CC    _global_from_region CC=16 (limit:15)
 
 REFACTOR[1]:
-  1. split 10 high-CC methods  (CC>15)
+  1. split 5 high-CC methods  (CC>15)
 
 PIPELINES[854]:
   [1] Src [create_server]: create_server → resolve_agent_url → _probe_default_agent → _probe_agent_url → ...(1 more)
@@ -129,7 +124,7 @@ LAYERS:
   │ !! screencast_keeper          694L  0C   32m  CC=13     ←5
   │ !! verifier                   659L  3C   32m  CC=14     ←1
   │ !! ide_prompt                 627L  0C   19m  CC=13     ←13
-  │ !! vql_bridge                 609L  0C   26m  CC=42     ←2
+  │ !! vql_bridge                 623L  0C   31m  CC=14     ←2
   │ !! verify                     538L  0C   25m  CC=12     ←1
   │ !! feedback                   534L  1C   28m  CC=14     ←2
   │ !! screencast_crop            503L  0C   16m  CC=14     ←1
@@ -144,7 +139,7 @@ LAYERS:
   │ tasks                      414L  1C   30m  CC=12     ←2
   │ runner                     395L  1C   14m  CC=14     ←1
   │ browser_playwright         380L  3C   36m  CC=14     ←2
-  │ !! coordinate_map             372L  0C   14m  CC=20     ←4
+  │ !! coordinate_map             380L  0C   15m  CC=16     ←4
   │ replay                     370L  3C   16m  CC=11     ←3
   │ vision_preview             367L  2C   16m  CC=10     ←2
   │ vision_ocr                 365L  1C   18m  CC=13     ←9
@@ -158,12 +153,12 @@ LAYERS:
   │ screenshot_verify          323L  0C   11m  CC=13     ←7
   │ screencast_cli             318L  0C   15m  CC=10     ←2
   │ map                        313L  0C    9m  CC=10     ←0
+  │ vql_capture_validation     302L  0C   13m  CC=13     ←1
   │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
   │ pointer_probes             297L  0C   12m  CC=13     ←8
   │ watch                      293L  0C   10m  CC=8      ←1
   │ local                      291L  0C   21m  CC=4      ←1
-  │ !! vql_capture_validation     291L  0C   11m  CC=18     ←1
   │ sampler_loop               284L  3C   13m  CC=8      ←1
   │ vision_template            282L  1C   11m  CC=11     ←5
   │ router                     271L  2C   10m  CC=9      ←2
@@ -192,6 +187,7 @@ LAYERS:
   │ observe_cache              224L  0C   15m  CC=13     ←2
   │ portal                     221L  1C    7m  CC=11     ←2
   │ executor                   221L  1C    8m  CC=11     ←1
+  │ analyze                    218L  0C    9m  CC=13     ←1
   │ session                    216L  3C   11m  CC=11     ←2
   │ backend_scores             216L  0C   14m  CC=12     ←3
   │ models                     214L  3C    7m  CC=6      ←0
@@ -202,7 +198,6 @@ LAYERS:
   │ retry_policy               180L  2C    9m  CC=10     ←1
   │ session_recorder_readme    180L  0C   11m  CC=14     ←3
   │ gui_map_export             179L  0C    7m  CC=8      ←2
-  │ !! analyze                    178L  0C    3m  CC=36     ←1
   │ pipeline                   175L  0C   10m  CC=11     ←2
   │ filter                     173L  0C   12m  CC=14     ←2
   │ vision_backend             172L  0C    7m  CC=7      ←1
@@ -472,8 +467,8 @@ LAYERS:
   │ docker-compose.yml          11L  0C    0m  CC=0.0    ←0
   │
   ./                              CC̄=0.0    ←in:0  →out:0
-  │ !! screen.png.context.json  105421L  0C    0m  CC=0.0    ←0
-  │ !! screen.png.vql.json      57902L  0C    0m  CC=0.0    ←0
+  │ !! screen.png.context.json  54007L  0C    0m  CC=0.0    ←0
+  │ !! screen.png.vql.json      23595L  0C    0m  CC=0.0    ←0
   │ !! screen.png.vql.imgl.json  8523L  0C    0m  CC=0.0    ←0
   │ !! ui.vql.json               1696L  0C    0m  CC=0.0    ←0
   │ !! planfile.yaml             1319L  0C    0m  CC=0.0    ←0
@@ -524,19 +519,19 @@ COUPLING:
     packages.nlp2vdisplay                        1                        3                                                                                                                                                                                                                               ←1                                                                         ──                         
         examples.ci-agent                                                 1                                                                                                                            2                                                                                                                                                                                                      ──
   CYCLES: none
+  HUB: src.vdisplay/ (fan-in=92)
   HUB: examples.dev-workflow/ (fan-in=120)
   HUB: packages.vdisplay-agent/ (fan-in=5)
-  HUB: packages.dsl2vdisplay/ (fan-in=18)
   HUB: examples.common/ (fan-in=11)
-  HUB: src.vdisplay/ (fan-in=92)
-  SMELL: brain/ fan-out=17 → split needed
+  HUB: packages.dsl2vdisplay/ (fan-in=18)
+  SMELL: src.vdisplay/ fan-out=48 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=72 → split needed
   SMELL: examples.agent-broker/ fan-out=13 → split needed
+  SMELL: brain/ fan-out=17 → split needed
   SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
-  SMELL: examples.control-plane/ fan-out=33 → split needed
-  SMELL: src.vdisplay/ fan-out=48 → split needed
-  SMELL: examples.host-relay/ fan-out=9 → split needed
   SMELL: examples.host-mirror/ fan-out=8 → split needed
+  SMELL: examples.control-plane/ fan-out=33 → split needed
+  SMELL: examples.host-relay/ fan-out=9 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

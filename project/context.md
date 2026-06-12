@@ -7,7 +7,7 @@
 - **Primary Language**: python
 - **Languages**: python: 288, json: 29, shell: 12, yaml: 11, toml: 11
 - **Analysis Mode**: static
-- **Total Functions**: 2342
+- **Total Functions**: 2356
 - **Total Classes**: 176
 - **Modules**: 367
 - **Entry Points**: 971
@@ -62,6 +62,10 @@
 - **Functions**: 32
 - **File**: `screencast_keeper.py`
 
+### src.vdisplay.integrations.vql_bridge
+- **Functions**: 31
+- **File**: `vql_bridge.py`
+
 ### packages.dsl2vdisplay.src.dsl2vdisplay.grammar
 - **Functions**: 30
 - **File**: `grammar.py`
@@ -90,10 +94,6 @@
 - **Functions**: 27
 - **Classes**: 4
 - **File**: `ax_impl.py`
-
-### src.vdisplay.integrations.vql_bridge
-- **Functions**: 26
-- **File**: `vql_bridge.py`
 
 ### src.vdisplay.desktop_apps
 - **Functions**: 25
@@ -496,7 +496,6 @@ Functions exposed as public API (no underscore prefix):
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.web.register_routes` - 96 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.session.register_routes` - 74 calls
 - `packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes` - 68 calls
-- `src.vdisplay.application.history.analyze.analyze_history` - 59 calls
 - `brain.scratch_test_screencast.test_screencast` - 55 calls
 - `src.vdisplay.commands.control.register` - 48 calls
 - `src.vdisplay.commands.ide.handle` - 45 calls
@@ -533,6 +532,7 @@ Functions exposed as public API (no underscore prefix):
 - `src.vdisplay.backends.linux_x11_relay.LinuxX11RelayBackend.adopt_window` - 27 calls
 - `src.vdisplay.control.contracts.control_route_request_from_command` - 27 calls
 - `src.vdisplay.control.selector.parse_selector` - 27 calls
+- `src.vdisplay.control.providers.ax_impl.PyobjcAxBackend.collect_elements` - 27 calls
 
 ## System Interactions
 

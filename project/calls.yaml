@@ -5,174 +5,6 @@ stats:
   total_edges: 500
   modules_count: 124
 nodes:
-  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider.build_example_uia:
-    name: build_example_uia
-    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
-    line: 86
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_host:
-    name: _capture_host
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
-    line: 74
-    cyclomatic_complexity: 11
-    calls_out: 23
-    calls_in: 2
-  src.vdisplay.client_routes._route_control_command:
-    name: _route_control_command
-    module: src.vdisplay.client_routes
-    line: 39
-    cyclomatic_complexity: 5
-    calls_out: 0
-    calls_in: 1
-  src.vdisplay.commands.session.command_request_from_control_args:
-    name: command_request_from_control_args
-    module: src.vdisplay.commands.session
-    line: 95
-    cyclomatic_complexity: 8
-    calls_out: 32
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.register:
-    name: register
-    module: packages.vdisplay-agent.src.vdisplay_agent.session_store
-    line: 33
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.control.focus_control:
-    name: focus_control
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 109
-    cyclomatic_complexity: 2
-    calls_out: 9
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release:
-    name: handle_release
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 105
-    cyclomatic_complexity: 3
-    calls_out: 12
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_replay.queue_replay:
-    name: queue_replay
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_replay
-    line: 43
-    cyclomatic_complexity: 4
-    calls_out: 3
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.default_task_db_path:
-    name: default_task_db_path
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 48
-    cyclomatic_complexity: 3
-    calls_out: 9
-    calls_in: 1
-  src.vdisplay.api.platform_summary:
-    name: platform_summary
-    module: src.vdisplay.api
-    line: 186
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.broker_events.log_broker_event:
-    name: log_broker_event
-    module: packages.vdisplay-agent.src.vdisplay_agent.broker_events
-    line: 22
-    cyclomatic_complexity: 3
-    calls_out: 7
-    calls_in: 2
-  examples.common.screenshot_meta.build_screenshot_meta:
-    name: build_screenshot_meta
-    module: examples.common.screenshot_meta
-    line: 91
-    cyclomatic_complexity: 6
-    calls_out: 10
-    calls_in: 1
-  src.vdisplay.discovery._attach_output_nl:
-    name: _attach_output_nl
-    module: src.vdisplay.discovery
-    line: 107
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.commands.history.handle_list:
-    name: handle_list
-    module: src.vdisplay.commands.history
-    line: 114
-    cyclomatic_complexity: 3
-    calls_out: 12
-    calls_in: 0
-  src.vdisplay.nlp._default_display_suffix:
-    name: _default_display_suffix
-    module: src.vdisplay.nlp
-    line: 27
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 3
-  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.register_plugin:
-    name: register_plugin
-    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin
-    line: 15
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.agent_config.resolve_agent_token:
-    name: resolve_agent_token
-    module: src.vdisplay.agent_config
-    line: 82
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.agent_dispatch.agent_client:
-    name: agent_client
-    module: src.vdisplay.agent_dispatch
-    line: 15
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 0
-  src.vdisplay.application.session_recorder.record_execution:
-    name: record_execution
-    module: src.vdisplay.application.session_recorder
-    line: 350
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 4
-  src.vdisplay.application.auto.runner.run_auto_once:
-    name: run_auto_once
-    module: src.vdisplay.application.auto.runner
-    line: 64
-    cyclomatic_complexity: 8
-    calls_out: 15
-    calls_in: 1
-  src.vdisplay.windows.query.find_windows:
-    name: find_windows
-    module: src.vdisplay.windows.query
-    line: 157
-    cyclomatic_complexity: 6
-    calls_out: 5
-    calls_in: 5
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release:
-    name: _parse_release
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 248
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.nlp._default_monitors:
-    name: _default_monitors
-    module: src.vdisplay.nlp
-    line: 35
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.application.session_context.audit_context_from_mapping:
-    name: audit_context_from_mapping
-    module: src.vdisplay.application.session_context
-    line: 113
-    cyclomatic_complexity: 3
-    calls_out: 12
-    calls_in: 1
   src.vdisplay.desktop_apps._expand_variants:
     name: _expand_variants
     module: src.vdisplay.desktop_apps
@@ -180,894 +12,12 @@ nodes:
     cyclomatic_complexity: 3
     calls_out: 4
     calls_in: 4
-  src.vdisplay.client_routes._route_outputs_query:
-    name: _route_outputs_query
-    module: src.vdisplay.client_routes
-    line: 12
-    cyclomatic_complexity: 4
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.windows.query.list_windows_enriched:
-    name: list_windows_enriched
-    module: src.vdisplay.windows.query
-    line: 25
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 6
-  src.vdisplay.commands.session.handle_reprocess:
-    name: handle_reprocess
-    module: src.vdisplay.commands.session
-    line: 250
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.routes.register_all_routes:
-    name: register_all_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes
-    line: 12
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.update_task:
-    name: update_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 229
-    cyclomatic_complexity: 1
-    calls_out: 10
-    calls_in: 0
-  examples.common.screenshot_meta.examples_common_dir:
-    name: examples_common_dir
-    module: examples.common.screenshot_meta
-    line: 11
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.control._run_on_browser_thread:
-    name: _run_on_browser_thread
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 13
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 5
-  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_headers.read_audit_headers:
-    name: read_audit_headers
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_headers
-    line: 16
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common:
-    name: _parse_control_common
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 142
-    cyclomatic_complexity: 9
-    calls_out: 12
-    calls_in: 5
-  src.vdisplay.nl.enrich_outputs_nl:
-    name: enrich_outputs_nl
-    module: src.vdisplay.nl
-    line: 151
-    cyclomatic_complexity: 4
-    calls_out: 2
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute._json_from_command_result:
-    name: _json_from_command_result
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
-    line: 90
-    cyclomatic_complexity: 8
-    calls_out: 6
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.create_task:
-    name: create_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 171
-    cyclomatic_complexity: 1
-    calls_out: 10
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.adopt_screencast:
-    name: adopt_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 111
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.shutdown:
-    name: shutdown
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 394
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.shutdown_tasks:
-    name: shutdown_tasks
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 188
-    cyclomatic_complexity: 5
-    calls_out: 10
-    calls_in: 0
-  src.vdisplay.discovery.resolve_host_display:
-    name: resolve_host_display
-    module: src.vdisplay.discovery
-    line: 12
-    cyclomatic_complexity: 11
-    calls_out: 7
-    calls_in: 33
-  examples.control-plane.control_demo.run_browser_demo:
-    name: run_browser_demo
-    module: examples.control-plane.control_demo
-    line: 107
-    cyclomatic_complexity: 6
-    calls_out: 30
-    calls_in: 1
-  src.vdisplay.api._default_virtual_backend:
-    name: _default_virtual_backend
-    module: src.vdisplay.api
-    line: 13
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.desktop_apps._is_gui_map_file:
-    name: _is_gui_map_file
-    module: src.vdisplay.desktop_apps
-    line: 340
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 2
-  examples.common.screenshot_meta.print_artifact:
-    name: print_artifact
-    module: examples.common.screenshot_meta
-    line: 161
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 4
-  src.vdisplay.discovery._display_hint:
-    name: _display_hint
-    module: src.vdisplay.discovery
-    line: 332
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.application.services.capture.capture_screenshot:
-    name: capture_screenshot
-    module: src.vdisplay.application.services.capture
-    line: 27
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.commands.all_cmd.register_outputs:
-    name: register_outputs
-    module: src.vdisplay.commands.all_cmd
-    line: 32
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.commands.common.control_selector_kwargs_from_args:
-    name: control_selector_kwargs_from_args
-    module: src.vdisplay.commands.common
-    line: 108
-    cyclomatic_complexity: 1
-    calls_out: 24
-    calls_in: 2
-  src.vdisplay.agent_config._default_agent_base:
-    name: _default_agent_base
+  src.vdisplay.agent_config.use_agent:
+    name: use_agent
     module: src.vdisplay.agent_config
-    line: 24
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 2
-  src.vdisplay.control.plugins.register_control_provider:
-    name: register_control_provider
-    module: src.vdisplay.control.plugins
-    line: 106
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 3
-  src.vdisplay.commands.session.add_root_session_args:
-    name: add_root_session_args
-    module: src.vdisplay.commands.session
-    line: 18
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.application.env_defaults.env_flag:
-    name: env_flag
-    module: src.vdisplay.application.env_defaults
-    line: 67
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 13
-  packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server:
-    name: create_server
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.windows
-    line: 19
-    cyclomatic_complexity: 1
-    calls_out: 10
-    calls_in: 0
-  src.vdisplay.nl.ensure_monitor_ids:
-    name: ensure_monitor_ids
-    module: src.vdisplay.nl
-    line: 110
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot:
-    name: handle_screenshot
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 29
-    cyclomatic_complexity: 2
-    calls_out: 10
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._ensure_virtual_session:
-    name: _ensure_virtual_session
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
-    line: 39
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._release_store_screencast_if_different:
-    name: _release_store_screencast_if_different
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 157
-    cyclomatic_complexity: 9
-    calls_out: 6
-    calls_in: 1
-  packages.cli2vdisplay.src.cli2vdisplay.cli.main:
-    name: main
-    module: packages.cli2vdisplay.src.cli2vdisplay.cli
-    line: 10
-    cyclomatic_complexity: 7
-    calls_out: 16
-    calls_in: 0
-  src.vdisplay.commands.history._resolve_root:
-    name: _resolve_root
-    module: src.vdisplay.commands.history
-    line: 83
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 4
-  src.vdisplay.nl.describe_output_nl:
-    name: describe_output_nl
-    module: src.vdisplay.nl
-    line: 59
-    cyclomatic_complexity: 13
-    calls_out: 13
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt:
-    name: _parse_adopt
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 124
-    cyclomatic_complexity: 6
-    calls_out: 5
-    calls_in: 0
-  src.vdisplay.commands.hmi.handle:
-    name: handle
-    module: src.vdisplay.commands.hmi
-    line: 79
-    cyclomatic_complexity: 7
-    calls_out: 6
-    calls_in: 0
-  src.vdisplay.capture.portal_screencast._screencast_multiple:
-    name: _screencast_multiple
-    module: src.vdisplay.capture.portal_screencast
-    line: 444
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 3
-  src.vdisplay.commands.common.add_all_arg:
-    name: add_all_arg
-    module: src.vdisplay.commands.common
-    line: 12
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_session:
-    name: _capture_session
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
-    line: 25
-    cyclomatic_complexity: 3
-    calls_out: 13
-    calls_in: 1
-  src.vdisplay.ide_prompt.wait_for_app_window:
-    name: wait_for_app_window
-    module: src.vdisplay.ide_prompt
-    line: 84
-    cyclomatic_complexity: 8
-    calls_out: 9
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery._recovery_cooldown_s:
-    name: _recovery_cooldown_s
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
-    line: 15
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture._region_from_body:
-    name: _region_from_body
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
-    line: 56
-    cyclomatic_complexity: 8
-    calls_out: 13
-    calls_in: 1
-  src.vdisplay.nlp._display_suffix:
-    name: _display_suffix
-    module: src.vdisplay.nlp
-    line: 23
-    cyclomatic_complexity: 2
-    calls_out: 0
-    calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line:
-    name: execute_dsl_line
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 136
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 5
-  src.vdisplay.desktop_apps.ide_hints_for:
-    name: ide_hints_for
-    module: src.vdisplay.desktop_apps
-    line: 295
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  src.vdisplay.commands.register_all:
-    name: register_all
-    module: src.vdisplay.commands
-    line: 61
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.end_sampler_task:
-    name: end_sampler_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 146
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  packages.uri2vdisplay.src.uri2vdisplay.cli.main:
-    name: main
-    module: packages.uri2vdisplay.src.uri2vdisplay.cli
-    line: 11
-    cyclomatic_complexity: 4
-    calls_out: 13
-    calls_in: 0
-  src.vdisplay.commands.agent._agent_client:
-    name: _agent_client
-    module: src.vdisplay.commands.agent
-    line: 105
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 7
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict:
-    name: validate_command_dict
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 43
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.__init__:
-    name: __init__
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 119
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.end_screencast_task:
-    name: end_screencast_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 181
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.control.invoke_control:
-    name: invoke_control
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 96
-    cyclomatic_complexity: 2
-    calls_out: 11
-    calls_in: 0
-  src.vdisplay.application.config_options.get_runtime_options:
-    name: get_runtime_options
-    module: src.vdisplay.application.config_options
-    line: 323
-    cyclomatic_complexity: 2
-    calls_out: 7
-    calls_in: 18
-  src.vdisplay.control.registry.ProviderRegistry.build:
-    name: build
-    module: src.vdisplay.control.registry
-    line: 43
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_virtual:
-    name: start_virtual
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 28
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._config_from_body:
-    name: _config_from_body
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
-    line: 17
-    cyclomatic_complexity: 12
-    calls_out: 26
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors:
-    name: handle_monitors
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 27
-    cyclomatic_complexity: 1
-    calls_out: 6
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display:
-    name: _with_display
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 62
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 3
-  packages.vdisplay-agent.src.vdisplay_agent.services.control.set_control_value:
-    name: set_control_value
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 120
-    cyclomatic_complexity: 3
-    calls_out: 13
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.cli.main:
-    name: main
-    module: packages.vdisplay-agent.src.vdisplay_agent.cli
-    line: 9
-    cyclomatic_complexity: 9
-    calls_out: 23
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_console.click_monitor_pointer:
-    name: click_monitor_pointer
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_console
-    line: 34
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  src.vdisplay.discovery._merge_output_metadata:
-    name: _merge_output_metadata
-    module: src.vdisplay.discovery
-    line: 210
-    cyclomatic_complexity: 4
-    calls_out: 22
-    calls_in: 1
-  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider.ExampleUiaProvider.__init__:
-    name: __init__
-    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
-    line: 69
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.commands.agent._screencast_clear_cooldown:
-    name: _screencast_clear_cooldown
-    module: src.vdisplay.commands.agent
-    line: 293
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error:
-    name: json_error
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 59
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 18
-  src.vdisplay.utils.auto_install_package:
-    name: auto_install_package
-    module: src.vdisplay.utils
-    line: 49
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 9
-  src.vdisplay.desktop_apps.list_desktop_apps:
-    name: list_desktop_apps
-    module: src.vdisplay.desktop_apps
-    line: 275
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 4
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pid_alive:
-    name: _pid_alive
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 18
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.hmi.pointer_probes.is_wayland_session:
-    name: is_wayland_session
-    module: src.vdisplay.hmi.pointer_probes
-    line: 59
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 10
-  src.vdisplay.api.MirrorSession.create:
-    name: create
-    module: src.vdisplay.api
-    line: 84
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._probe_is_vdisplay_agent:
-    name: _probe_is_vdisplay_agent
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 105
-    cyclomatic_complexity: 6
-    calls_out: 11
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.tasks
-    line: 16
-    cyclomatic_complexity: 1
-    calls_out: 27
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command:
-    name: split_command
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 8
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 2
-  src.vdisplay.application.services.web_pointer.pointer_click_at_monitor:
-    name: pointer_click_at_monitor
-    module: src.vdisplay.application.services.web_pointer
-    line: 78
-    cyclomatic_complexity: 11
-    calls_out: 20
-    calls_in: 1
-  src.vdisplay.application.env_defaults.env_float_value:
-    name: env_float_value
-    module: src.vdisplay.application.env_defaults
-    line: 90
-    cyclomatic_complexity: 6
-    calls_out: 4
-    calls_in: 6
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot:
-    name: _parse_screenshot
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 77
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 0
-  src.vdisplay.application.project_config.load_project_config:
-    name: load_project_config
-    module: src.vdisplay.application.project_config
-    line: 314
-    cyclomatic_complexity: 14
-    calls_out: 27
-    calls_in: 6
-  src.vdisplay.application.session_recorder.load_session_document:
-    name: load_session_document
-    module: src.vdisplay.application.session_recorder
-    line: 711
-    cyclomatic_complexity: 13
-    calls_out: 29
-    calls_in: 5
-  packages.vdisplay-agent.src.vdisplay_agent.task_store._sqlite_db_valid:
-    name: _sqlite_db_valid
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 61
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime:
-    name: from_runtime
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 41
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 3
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.ensure_broker_port_free:
-    name: ensure_broker_port_free
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 151
-    cyclomatic_complexity: 10
-    calls_out: 13
-    calls_in: 2
-  src.vdisplay.commands.session._resolve_session_dir:
-    name: _resolve_session_dir
-    module: src.vdisplay.commands.session
-    line: 151
-    cyclomatic_complexity: 9
-    calls_out: 21
-    calls_in: 2
-  src.vdisplay.desktop_apps._xwayland_variant:
-    name: _xwayland_variant
-    module: src.vdisplay.desktop_apps
-    line: 86
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.client_http.AgentHttpTransport.build_request:
-    name: build_request
-    module: src.vdisplay.client_http
-    line: 64
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 0
-  src.vdisplay.desktop_apps._binary_launch:
-    name: _binary_launch
-    module: src.vdisplay.desktop_apps
-    line: 79
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas:
-    name: all_schemas
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 16
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 3
-  src.vdisplay.nlp._default_all:
-    name: _default_all
-    module: src.vdisplay.nlp
-    line: 31
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.ide_prompt._handle_wait_window:
-    name: _handle_wait_window
-    module: src.vdisplay.ide_prompt
-    line: 250
-    cyclomatic_complexity: 9
-    calls_out: 10
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.broker_events._broker_log_path:
-    name: _broker_log_path
-    module: packages.vdisplay-agent.src.vdisplay_agent.broker_events
-    line: 12
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 1
-  examples.common.screenshot_meta.describe_screenshot_nl:
-    name: describe_screenshot_nl
-    module: examples.common.screenshot_meta
-    line: 50
-    cyclomatic_complexity: 14
-    calls_out: 15
-    calls_in: 1
-  src.vdisplay.capture.host.capture_host_to_file:
-    name: capture_host_to_file
-    module: src.vdisplay.capture.host
-    line: 302
-    cyclomatic_complexity: 3
-    calls_out: 10
-    calls_in: 6
-  src.vdisplay.commands.monitors.handle:
-    name: handle
-    module: src.vdisplay.commands.monitors
-    line: 17
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.cache_put:
-    name: cache_put
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 47
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_mirror:
-    name: start_mirror
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 45
-    cyclomatic_complexity: 3
-    calls_out: 5
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema:
-    name: _load_schema
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 8
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.commands.agent._handle_serve:
-    name: _handle_serve
-    module: src.vdisplay.commands.agent
-    line: 135
-    cyclomatic_complexity: 6
-    calls_out: 10
-    calls_in: 1
-  src.vdisplay.capture.screencast_keeper.stop_keeper:
-    name: stop_keeper
-    module: src.vdisplay.capture.screencast_keeper
-    line: 292
-    cyclomatic_complexity: 13
-    calls_out: 27
-    calls_in: 10
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_diagnose_control:
-    name: _parse_diagnose_control
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 210
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.agent_config._is_vdisplay_agent_health:
-    name: _is_vdisplay_agent_health
-    module: src.vdisplay.agent_config
-    line: 30
-    cyclomatic_complexity: 6
-    calls_out: 9
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.screencast_status:
-    name: screencast_status
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 273
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_focus:
-    name: _parse_control_focus
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 199
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.capture.portal_screencast._set_active_if_self:
-    name: _set_active_if_self
-    module: src.vdisplay.capture.portal_screencast
-    line: 439
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 4
-  src.vdisplay.application.session_recorder.export_session_zip:
-    name: export_session_zip
-    module: src.vdisplay.application.session_recorder
-    line: 731
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.outputs.list_outputs_payload:
-    name: list_outputs_payload
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.outputs
-    line: 11
+    line: 87
     cyclomatic_complexity: 2
     calls_out: 4
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_all_monitors:
-    name: _capture_all_monitors
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
-    line: 44
-    cyclomatic_complexity: 2
-    calls_out: 8
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._require_screencast:
-    name: _require_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 24
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.control.policy.assess_control_capability:
-    name: assess_control_capability
-    module: src.vdisplay.control.policy
-    line: 199
-    cyclomatic_complexity: 7
-    calls_out: 9
-    calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_click:
-    name: _parse_control_click
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 195
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta:
-    name: agent_meta
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 12
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 2
-  examples.control-plane.control_demo.run_terminal_demo:
-    name: run_terminal_demo
-    module: examples.control-plane.control_demo
-    line: 53
-    cyclomatic_complexity: 6
-    calls_out: 26
-    calls_in: 1
-  examples.host-relay.relay_demo.main:
-    name: main
-    module: examples.host-relay.relay_demo
-    line: 59
-    cyclomatic_complexity: 11
-    calls_out: 33
-    calls_in: 0
-  src.vdisplay.desktop_apps.submit_selectors_for:
-    name: submit_selectors_for
-    module: src.vdisplay.desktop_apps
-    line: 336
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.utils.run_command:
-    name: run_command
-    module: src.vdisplay.utils
-    line: 17
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 33
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_terminal:
-    name: start_terminal
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 282
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 0
-  src.vdisplay.application.executor.execute:
-    name: execute
-    module: src.vdisplay.application.executor
-    line: 116
-    cyclomatic_complexity: 5
-    calls_out: 13
-    calls_in: 8
-  src.vdisplay.ide_prompt._should_skip_window_wait:
-    name: _should_skip_window_wait
-    module: src.vdisplay.ide_prompt
-    line: 37
-    cyclomatic_complexity: 6
-    calls_out: 2
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.unregister_session_task:
-    name: unregister_session_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 114
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._capture_bulk_or_fallback:
-    name: _capture_bulk_or_fallback
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 119
-    cyclomatic_complexity: 9
-    calls_out: 13
-    calls_in: 1
-  src.vdisplay.application.session_recorder.reprocess_session_diagnostics:
-    name: reprocess_session_diagnostics
-    module: src.vdisplay.application.session_recorder
-    line: 679
-    cyclomatic_complexity: 3
-    calls_out: 12
-    calls_in: 1
-  src.vdisplay.nlp.nl_to_dsl:
-    name: nl_to_dsl
-    module: src.vdisplay.nlp
-    line: 111
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.ide_prompt._is_wayland_session:
-    name: _is_wayland_session
-    module: src.vdisplay.ide_prompt
-    line: 27
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 15
-  src.vdisplay.nl.assign_windows_to_monitors:
-    name: assign_windows_to_monitors
-    module: src.vdisplay.nl
-    line: 132
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 3
-  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand:
-    name: _main_subcommand
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
-    line: 43
-    cyclomatic_complexity: 9
-    calls_out: 19
     calls_in: 1
   src.vdisplay.discovery.diagnose_display:
     name: diagnose_display
@@ -1076,293 +26,13 @@ nodes:
     cyclomatic_complexity: 10
     calls_out: 19
     calls_in: 3
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._recover_screencast:
-    name: _recover_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
-    line: 80
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.commands.io.print_json:
-    name: print_json
-    module: src.vdisplay.commands.io
-    line: 6
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch:
-    name: _parse_launch
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 99
-    cyclomatic_complexity: 5
-    calls_out: 7
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.resolve_verb:
-    name: resolve_verb
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 41
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_browser_open:
-    name: _parse_browser_open
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 214
-    cyclomatic_complexity: 11
-    calls_out: 10
-    calls_in: 0
-  src.vdisplay.ide_prompt._handle_submit:
-    name: _handle_submit
-    module: src.vdisplay.ide_prompt
-    line: 312
-    cyclomatic_complexity: 11
-    calls_out: 19
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy:
-    name: _dispatch_legacy
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 39
-    cyclomatic_complexity: 3
-    calls_out: 13
-    calls_in: 1
-  src.vdisplay.integrations.vql_bridge.reverse_generation_descriptor:
-    name: reverse_generation_descriptor
-    module: src.vdisplay.integrations.vql_bridge
-    line: 243
-    cyclomatic_complexity: 9
-    calls_out: 13
-    calls_in: 3
-  src.vdisplay.capture.portal_screencast.ensure_portal_session_env:
-    name: ensure_portal_session_env
-    module: src.vdisplay.capture.portal_screencast
-    line: 75
-    cyclomatic_complexity: 11
-    calls_out: 10
-    calls_in: 15
-  src.vdisplay.ide_prompt._handle_focus_window:
-    name: _handle_focus_window
-    module: src.vdisplay.ide_prompt
-    line: 292
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.commands.ide.register:
-    name: register
-    module: src.vdisplay.commands.ide
-    line: 18
-    cyclomatic_complexity: 1
-    calls_out: 18
-    calls_in: 0
-  src.vdisplay.commands.observe.register:
-    name: register
-    module: src.vdisplay.commands.observe
-    line: 18
-    cyclomatic_complexity: 1
-    calls_out: 13
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror:
-    name: handle_mirror
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 60
-    cyclomatic_complexity: 3
-    calls_out: 13
-    calls_in: 0
-  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider._use_mock_backend:
-    name: _use_mock_backend
-    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
-    line: 52
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 1
-  src.vdisplay.commands.common._cli_options:
-    name: _cli_options
-    module: src.vdisplay.commands.common
-    line: 40
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.cli.main:
-    name: main
-    module: src.vdisplay.cli
-    line: 24
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.find_listener_pids:
-    name: find_listener_pids
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 70
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 4
-  src.vdisplay.nlp._default_windows:
-    name: _default_windows
-    module: src.vdisplay.nlp
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.cli_handlers.print_json:
-    name: print_json
-    module: src.vdisplay.cli_handlers
-    line: 11
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 67
-  src.vdisplay.commands.session.handle_list:
-    name: handle_list
-    module: src.vdisplay.commands.session
-    line: 179
-    cyclomatic_complexity: 3
-    calls_out: 14
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.stop_task:
-    name: stop_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 66
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 0
-  src.vdisplay.application.session_recorder.discover_session_dirs:
-    name: discover_session_dirs
-    module: src.vdisplay.application.session_recorder
-    line: 705
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 5
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_screencast:
-    name: start_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 182
-    cyclomatic_complexity: 8
-    calls_out: 17
-    calls_in: 0
-  src.vdisplay.capture.portal_screencast.prepare_portal_screencast_start:
-    name: prepare_portal_screencast_start
-    module: src.vdisplay.capture.portal_screencast
-    line: 454
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  src.vdisplay.application.auto.runner.run_auto_loop:
-    name: run_auto_loop
-    module: src.vdisplay.application.auto.runner
-    line: 107
-    cyclomatic_complexity: 14
-    calls_out: 24
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port.stop_pids:
-    name: stop_pids
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 118
-    cyclomatic_complexity: 13
-    calls_out: 10
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery.try_recover_screencast:
-    name: try_recover_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
-    line: 46
-    cyclomatic_complexity: 8
-    calls_out: 5
-    calls_in: 2
-  src.vdisplay.api._default_relay_backend:
-    name: _default_relay_backend
-    module: src.vdisplay.api
-    line: 25
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._frame_cache_ttl_s:
-    name: _frame_cache_ttl_s
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 20
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.capture.portal_screencast.stop_screencast_session:
-    name: stop_screencast_session
-    module: src.vdisplay.capture.portal_screencast
-    line: 504
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 7
-  src.vdisplay.ide_prompt.send_ide_prompt:
-    name: send_ide_prompt
-    module: src.vdisplay.ide_prompt
-    line: 538
-    cyclomatic_complexity: 13
-    calls_out: 18
-    calls_in: 1
-  src.vdisplay.discovery.list_outputs:
-    name: list_outputs
-    module: src.vdisplay.discovery
-    line: 56
-    cyclomatic_complexity: 8
-    calls_out: 27
-    calls_in: 9
-  src.vdisplay.desktop_apps._variants_for:
-    name: _variants_for
+  src.vdisplay.desktop_apps.map_target_candidates:
+    name: map_target_candidates
     module: src.vdisplay.desktop_apps
-    line: 98
-    cyclomatic_complexity: 9
-    calls_out: 11
-    calls_in: 5
-  src.vdisplay.desktop_apps.map_submit_target_candidates:
-    name: map_submit_target_candidates
-    module: src.vdisplay.desktop_apps
-    line: 416
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.commands.agent._screencast_start:
-    name: _screencast_start
-    module: src.vdisplay.commands.agent
-    line: 242
-    cyclomatic_complexity: 8
-    calls_out: 14
+    line: 432
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.stop_session:
-    name: stop_session
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 369
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 1
-  src.vdisplay.commands.app.handle:
-    name: handle
-    module: src.vdisplay.commands.app
-    line: 37
-    cyclomatic_complexity: 6
-    calls_out: 17
-    calls_in: 0
-  src.vdisplay.commands.session.handle_show:
-    name: handle_show
-    module: src.vdisplay.commands.session
-    line: 202
-    cyclomatic_complexity: 10
-    calls_out: 21
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.task_to_dict:
-    name: task_to_dict
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 100
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 4
-  src.vdisplay.application.auto.tasks.ensure_auto_dependencies:
-    name: ensure_auto_dependencies
-    module: src.vdisplay.application.auto.tasks
-    line: 30
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.application.history.loader.load_history_index:
-    name: load_history_index
-    module: src.vdisplay.application.history.loader
-    line: 200
-    cyclomatic_complexity: 8
-    calls_out: 14
-    calls_in: 2
   src.vdisplay.api.WindowRelaySession.create:
     name: create
     module: src.vdisplay.api
@@ -1370,286 +40,69 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 6
     calls_in: 0
-  src.vdisplay.application.project_config.clear_metadata_dir:
-    name: clear_metadata_dir
-    module: src.vdisplay.application.project_config
-    line: 403
-    cyclomatic_complexity: 10
-    calls_out: 16
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.cache_get:
-    name: cache_get
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 35
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 2
-  examples.common.host_capture.capture_host_screenshot:
-    name: capture_host_screenshot
-    module: examples.common.host_capture
-    line: 9
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.control
-    line: 25
-    cyclomatic_complexity: 1
-    calls_out: 68
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.mark_orphan_running_as_stale:
-    name: mark_orphan_running_as_stale
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 281
-    cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 0
-  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.register_plugin:
-    name: register_plugin
-    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin
-    line: 15
+  src.vdisplay.nlp._default_all:
+    name: _default_all
+    module: src.vdisplay.nlp
+    line: 31
     cyclomatic_complexity: 1
     calls_out: 1
+    calls_in: 1
+  src.vdisplay.commands.relay.handle_list_windows:
+    name: handle_list_windows
+    module: src.vdisplay.commands.relay
+    line: 60
+    cyclomatic_complexity: 1
+    calls_out: 2
     calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_terminal_open:
-    name: _parse_terminal_open
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 234
-    cyclomatic_complexity: 6
-    calls_out: 7
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt:
-    name: handle_adopt
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+  src.vdisplay.application.errors.error_from_exception:
+    name: error_from_exception
+    module: src.vdisplay.application.errors
+    line: 30
+    cyclomatic_complexity: 4
+    calls_out: 11
+    calls_in: 6
+  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider.build_example_uia:
+    name: build_example_uia
+    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
     line: 86
     cyclomatic_complexity: 3
-    calls_out: 13
+    calls_out: 3
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.capture.capture_frame:
-    name: capture_frame
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
-    line: 16
+  src.vdisplay.commands.session.handle_export:
+    name: handle_export
+    module: src.vdisplay.commands.session
+    line: 236
     cyclomatic_complexity: 3
-    calls_out: 6
+    calls_out: 12
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler:
-    name: start_sampler
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
-    line: 88
-    cyclomatic_complexity: 7
-    calls_out: 42
-    calls_in: 0
-  src.vdisplay.application.env_defaults.env_value:
-    name: env_value
-    module: src.vdisplay.application.env_defaults
-    line: 59
-    cyclomatic_complexity: 3
-    calls_out: 1
-    calls_in: 14
-  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery.screencast_recovery_cooldown_remaining:
-    name: screencast_recovery_cooldown_remaining
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
+  examples.host-relay.relay_demo._capture_phase:
+    name: _capture_phase
+    module: examples.host-relay.relay_demo
     line: 35
     cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 2
-  src.vdisplay.application.env_loader.load_project_env:
-    name: load_project_env
-    module: src.vdisplay.application.env_loader
-    line: 11
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 4
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._persist_captures_to_cache:
-    name: _persist_captures_to_cache
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 145
-    cyclomatic_complexity: 9
-    calls_out: 18
-    calls_in: 1
-  src.vdisplay.utils.run_command_bytes:
-    name: run_command_bytes
-    module: src.vdisplay.utils
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.health
-    line: 21
-    cyclomatic_complexity: 1
-    calls_out: 33
-    calls_in: 0
-  examples.host-mirror.mirror_demo.main:
-    name: main
-    module: examples.host-mirror.mirror_demo
-    line: 34
-    cyclomatic_complexity: 7
-    calls_out: 31
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch:
-    name: dispatch
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
-    line: 57
-    cyclomatic_complexity: 14
-    calls_out: 27
-    calls_in: 14
-  packages.vdisplay-agent.src.vdisplay_agent.routes.auth.expected_token:
-    name: expected_token
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.auth
-    line: 11
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.api._default_mirror_backend:
-    name: _default_mirror_backend
-    module: src.vdisplay.api
-    line: 19
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 2
-  src.vdisplay.capture.providers.engine.list_capture_providers:
-    name: list_capture_providers
-    module: src.vdisplay.capture.providers.engine
-    line: 56
-    cyclomatic_complexity: 4
     calls_out: 6
-    calls_in: 2
-  src.vdisplay.desktop_apps.chat_selectors_for:
-    name: chat_selectors_for
-    module: src.vdisplay.desktop_apps
-    line: 304
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.agent_config.agent_auto_enabled:
-    name: agent_auto_enabled
-    module: src.vdisplay.agent_config
-    line: 15
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  src.vdisplay.control.providers.terminal_session.default_registry:
-    name: default_registry
-    module: src.vdisplay.control.providers.terminal_session
-    line: 226
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 11
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._parse_ss_pids:
-    name: _parse_ss_pids
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 28
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.failure:
-    name: failure
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 25
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 2
-  src.vdisplay.discovery._display_socket_exists:
-    name: _display_socket_exists
-    module: src.vdisplay.discovery
-    line: 31
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 2
-  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider.build_example_ax:
-    name: build_example_ax
-    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
-    line: 85
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 0
-  src.vdisplay.capture.portal_screencast.portal_session_env_status:
-    name: portal_session_env_status
-    module: src.vdisplay.capture.portal_screencast
-    line: 97
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 10
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._cmdline:
-    name: _cmdline
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 79
-    cyclomatic_complexity: 2
-    calls_out: 5
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line:
-    name: parse_line
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 287
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 2
-  src.vdisplay.nl.describe_window_nl:
-    name: describe_window_nl
-    module: src.vdisplay.nl
-    line: 6
-    cyclomatic_complexity: 14
-    calls_out: 16
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_lsof:
-    name: _pids_from_lsof
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 50
-    cyclomatic_complexity: 5
-    calls_out: 6
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.capabilities.platform_capabilities:
-    name: platform_capabilities
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capabilities
-    line: 17
-    cyclomatic_complexity: 6
-    calls_out: 18
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror:
-    name: _parse_mirror
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 112
-    cyclomatic_complexity: 5
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.discovery.list_monitors:
-    name: list_monitors
-    module: src.vdisplay.discovery
-    line: 346
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 13
-  examples.control-plane.control_demo.run_diagnostics:
-    name: run_diagnostics
-    module: examples.control-plane.control_demo
-    line: 22
-    cyclomatic_complexity: 1
-    calls_out: 5
-    calls_in: 1
-  src.vdisplay.application.history.loader.resolve_metadata_root:
-    name: resolve_metadata_root
-    module: src.vdisplay.application.history.loader
-    line: 12
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 9
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err:
-    name: _err
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 19
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 6
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks._best_effort_task_op:
-    name: _best_effort_task_op
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.stop_task:
+    name: stop_task
     module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 20
+    line: 66
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 0
+  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider._use_mock_backend:
+    name: _use_mock_backend
+    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
+    line: 53
     cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 4
+    calls_out: 3
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.stop_session:
+    name: stop_session
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 369
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
   src.vdisplay.desktop_apps.map_manifest_path:
     name: map_manifest_path
     module: src.vdisplay.desktop_apps
@@ -1657,243 +110,47 @@ nodes:
     cyclomatic_complexity: 3
     calls_out: 6
     calls_in: 2
-  src.vdisplay.commands.config.handle:
-    name: handle
-    module: src.vdisplay.commands.config
-    line: 34
-    cyclomatic_complexity: 4
-    calls_out: 12
-    calls_in: 0
-  src.vdisplay.ide_prompt._build_set_value_failure_result:
-    name: _build_set_value_failure_result
-    module: src.vdisplay.ide_prompt
-    line: 473
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.capabilities.diagnostics:
-    name: diagnostics
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.capabilities
-    line: 63
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 0
-  src.vdisplay.application.services.screencast_cli.clear_local_start_cooldown:
-    name: clear_local_start_cooldown
-    module: src.vdisplay.application.services.screencast_cli
-    line: 36
-    cyclomatic_complexity: 2
-    calls_out: 1
-    calls_in: 4
-  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider._demo_backend:
-    name: _demo_backend
-    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
-    line: 60
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  examples.agent-broker.broker_demo.main:
-    name: main
-    module: examples.agent-broker.broker_demo
-    line: 15
-    cyclomatic_complexity: 9
-    calls_out: 35
-    calls_in: 0
-  src.vdisplay.agent_config.resolve_agent_url:
-    name: resolve_agent_url
-    module: src.vdisplay.agent_config
-    line: 72
-    cyclomatic_complexity: 6
-    calls_out: 5
-    calls_in: 24
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok:
-    name: _ok
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 9
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 5
-  src.vdisplay.capture.screencast_keeper.read_keeper_state:
-    name: read_keeper_state
-    module: src.vdisplay.capture.screencast_keeper
-    line: 271
-    cyclomatic_complexity: 8
-    calls_out: 12
-    calls_in: 11
-  src.vdisplay.capture.portal_screencast.get_active_screencast:
-    name: get_active_screencast
-    module: src.vdisplay.capture.portal_screencast
-    line: 64
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 12
-  src.vdisplay.discovery._list_monitors:
-    name: _list_monitors
-    module: src.vdisplay.discovery
-    line: 124
-    cyclomatic_complexity: 6
-    calls_out: 10
-    calls_in: 1
-  src.vdisplay.ide_prompt._build_write_kwargs:
-    name: _build_write_kwargs
-    module: src.vdisplay.ide_prompt
-    line: 433
-    cyclomatic_complexity: 9
-    calls_out: 10
-    calls_in: 1
-  src.vdisplay.control.gui_map_resolve.map_element_to_node:
-    name: map_element_to_node
-    module: src.vdisplay.control.gui_map_resolve
-    line: 26
-    cyclomatic_complexity: 5
-    calls_out: 7
-    calls_in: 3
-  src.vdisplay.agent_envelope.flatten_agent_envelope:
-    name: flatten_agent_envelope
-    module: src.vdisplay.agent_envelope
-    line: 8
-    cyclomatic_complexity: 6
-    calls_out: 3
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.list_sessions:
-    name: list_sessions
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 387
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy:
-    name: _main_legacy
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
-    line: 20
-    cyclomatic_complexity: 10
-    calls_out: 17
-    calls_in: 1
-  src.vdisplay.discovery.list_windows:
-    name: list_windows
-    module: src.vdisplay.discovery
-    line: 237
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_set_value:
-    name: _parse_control_set_value
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 203
+  src.vdisplay.application.session_context.current_audit_headers:
+    name: current_audit_headers
+    module: src.vdisplay.application.session_context
+    line: 97
     cyclomatic_complexity: 2
     calls_out: 2
-    calls_in: 0
-  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server:
-    name: create_server
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.server
-    line: 7
-    cyclomatic_complexity: 1
-    calls_out: 32
-    calls_in: 0
-  src.vdisplay.integrations.pipeline.observe_screen:
-    name: observe_screen
-    module: src.vdisplay.integrations.pipeline
-    line: 82
-    cyclomatic_complexity: 6
-    calls_out: 17
-    calls_in: 2
-  src.vdisplay.client_http.AgentHttpTransport.__init__:
-    name: __init__
-    module: src.vdisplay.client_http
-    line: 19
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 0
-  examples.common.validate_artifacts.main:
-    name: main
-    module: examples.common.validate_artifacts
-    line: 64
-    cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.commands.ide.handle:
-    name: handle
-    module: src.vdisplay.commands.ide
-    line: 54
-    cyclomatic_complexity: 8
-    calls_out: 45
-    calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb:
-    name: schema_for_verb
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 2
-  src.vdisplay.commands.monitors.register:
-    name: register
-    module: src.vdisplay.commands.monitors
+    calls_in: 1
+  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics:
+    name: extract_diagnostics
+    module: src.vdisplay.application.session_recorder_diagnostics
     line: 10
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider._demo_backend:
-    name: _demo_backend
-    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
-    line: 59
+    cyclomatic_complexity: 13
+    calls_out: 28
+    calls_in: 5
+  src.vdisplay.commands.common._cli_options:
+    name: _cli_options
+    module: src.vdisplay.commands.common
+    line: 40
     cyclomatic_complexity: 1
     calls_out: 1
-    calls_in: 1
-  src.vdisplay.application.env_defaults.env_int_value:
-    name: env_int_value
-    module: src.vdisplay.application.env_defaults
-    line: 80
-    cyclomatic_complexity: 6
-    calls_out: 4
-    calls_in: 7
-  examples.common.validate_artifacts.validate_directory:
-    name: validate_directory
-    module: examples.common.validate_artifacts
-    line: 53
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.commands.mirror.handle:
-    name: handle
-    module: src.vdisplay.commands.mirror
-    line: 30
-    cyclomatic_complexity: 3
-    calls_out: 5
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs:
+    name: handle_outputs
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
+    line: 40
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.heartbeat_task:
-    name: heartbeat_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 53
-    cyclomatic_complexity: 2
+  src.vdisplay.application.handlers.control.control_request_body:
+    name: control_request_body
+    module: src.vdisplay.application.handlers.control
+    line: 57
+    cyclomatic_complexity: 3
     calls_out: 3
-    calls_in: 0
-  packages.mcp2vdisplay.src.mcp2vdisplay.cli.main:
-    name: main
-    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
+    calls_in: 6
+  packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl:
+    name: uri_to_dsl
+    module: packages.uri2vdisplay.src.uri2vdisplay.decode
     line: 6
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.application.project_config.ensure_metadata_layout:
-    name: ensure_metadata_layout
-    module: src.vdisplay.application.project_config
-    line: 359
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 5
-  src.vdisplay.commands.map.handle:
-    name: handle
-    module: src.vdisplay.commands.map
-    line: 54
     cyclomatic_complexity: 7
-    calls_out: 31
-    calls_in: 0
-  src.vdisplay.hmi.watch.run_hmi_watch:
-    name: run_hmi_watch
-    module: src.vdisplay.hmi.watch
-    line: 231
-    cyclomatic_complexity: 6
-    calls_out: 8
+    calls_out: 12
     calls_in: 1
   packages.vdisplay-agent.src.vdisplay_agent.services.control.list_controls:
     name: list_controls
@@ -1902,69 +159,6 @@ nodes:
     cyclomatic_complexity: 4
     calls_out: 11
     calls_in: 0
-  src.vdisplay.ide_prompt._ide_find_timeout_seconds:
-    name: _ide_find_timeout_seconds
-    module: src.vdisplay.ide_prompt
-    line: 33
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  examples.common.screenshot_meta.meta_path_for:
-    name: meta_path_for
-    module: examples.common.screenshot_meta
-    line: 27
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 3
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag:
-    name: pick_flag
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 54
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 44
-  src.vdisplay.commands.agent._screencast_probe:
-    name: _screencast_probe
-    module: src.vdisplay.commands.agent
-    line: 306
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics:
-    name: extract_diagnostics
-    module: src.vdisplay.application.session_recorder_diagnostics
-    line: 10
-    cyclomatic_complexity: 13
-    calls_out: 28
-    calls_in: 5
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_browser:
-    name: start_browser
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 326
-    cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute.execute_audited_service:
-    name: execute_audited_service
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
-    line: 52
-    cyclomatic_complexity: 5
-    calls_out: 17
-    calls_in: 5
-  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider._use_mock_backend:
-    name: _use_mock_backend
-    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
-    line: 53
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 3
-  src.vdisplay.application.handlers.control.control_request_body:
-    name: control_request_body
-    module: src.vdisplay.application.handlers.control
-    line: 57
-    cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 6
   src.vdisplay.commands.screenshot.register:
     name: register
     module: src.vdisplay.commands.screenshot
@@ -1972,60 +166,200 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 15
     calls_in: 0
-  src.vdisplay.capture.screencast_keeper.keeper_capture_ready:
-    name: keeper_capture_ready
-    module: src.vdisplay.capture.screencast_keeper
-    line: 138
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 6
-  examples.common.screenshot_meta.ensure_common_on_path:
-    name: ensure_common_on_path
-    module: examples.common.screenshot_meta
-    line: 18
-    cyclomatic_complexity: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema:
+    name: _load_schema
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 8
+    cyclomatic_complexity: 1
     calls_out: 4
+    calls_in: 1
+  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.register_plugin:
+    name: register_plugin
+    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._session_started:
-    name: _session_started
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_screencast:
+    name: start_screencast
     module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 18
+    line: 182
+    cyclomatic_complexity: 8
+    calls_out: 17
+    calls_in: 0
+  src.vdisplay.application.project_config.load_project_config:
+    name: load_project_config
+    module: src.vdisplay.application.project_config
+    line: 314
+    cyclomatic_complexity: 14
+    calls_out: 27
+    calls_in: 6
+  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._capture_virtual_persistent:
+    name: _capture_virtual_persistent
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
+    line: 61
+    cyclomatic_complexity: 5
+    calls_out: 12
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.__init__:
+    name: __init__
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 119
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  examples.control-plane.control_demo.run_diagnostics:
+    name: run_diagnostics
+    module: examples.control-plane.control_demo
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.nl.enrich_outputs_nl:
+    name: enrich_outputs_nl
+    module: src.vdisplay.nl
+    line: 151
+    cyclomatic_complexity: 4
+    calls_out: 2
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success:
+    name: json_success
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 51
     cyclomatic_complexity: 1
     calls_out: 2
+    calls_in: 0
+  src.vdisplay.desktop_apps.ide_hints_for:
+    name: ide_hints_for
+    module: src.vdisplay.desktop_apps
+    line: 295
+    cyclomatic_complexity: 1
+    calls_out: 1
     calls_in: 3
-  src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open:
-    name: open
-    module: src.vdisplay.control.providers.browser_session
-    line: 82
+  src.vdisplay.commands.io.print_json:
+    name: print_json
+    module: src.vdisplay.commands.io
+    line: 6
     cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 5
-  packages.vdisplay-agent.src.vdisplay_agent.audit_context.apply_audit_env:
-    name: apply_audit_env
-    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
-    line: 32
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.application.config_options.get_runtime_options:
+    name: get_runtime_options
+    module: src.vdisplay.application.config_options
+    line: 323
+    cyclomatic_complexity: 2
+    calls_out: 7
+    calls_in: 18
+  src.vdisplay.control.policy.assess_control_capability:
+    name: assess_control_capability
+    module: src.vdisplay.control.policy
+    line: 199
     cyclomatic_complexity: 7
-    calls_out: 6
+    calls_out: 9
     calls_in: 2
-  src.vdisplay.client_http.AgentHttpTransport.normalize_payload:
-    name: normalize_payload
-    module: src.vdisplay.client_http
-    line: 103
+  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider._demo_backend:
+    name: _demo_backend
+    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
+    line: 59
     cyclomatic_complexity: 1
     calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.session_store.SessionStore.register:
+    name: register
+    module: packages.vdisplay-agent.src.vdisplay_agent.session_store
+    line: 33
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.commands.ide.handle:
+    name: handle
+    module: src.vdisplay.commands.ide
+    line: 54
+    cyclomatic_complexity: 8
+    calls_out: 45
     calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start:
-    name: _parse_virtual_start
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 89
+  src.vdisplay.discovery._merge_output_metadata:
+    name: _merge_output_metadata
+    module: src.vdisplay.discovery
+    line: 210
     cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 0
-  src.vdisplay.nl.find_monitor_for_window:
-    name: find_monitor_for_window
+    calls_out: 22
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.cache_get:
+    name: cache_get
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 35
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.capture.portal_screencast._set_active:
+    name: _set_active
+    module: src.vdisplay.capture.portal_screencast
+    line: 69
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 8
+  src.vdisplay.ide_prompt._find_first_selector:
+    name: _find_first_selector
+    module: src.vdisplay.ide_prompt
+    line: 166
+    cyclomatic_complexity: 11
+    calls_out: 10
+    calls_in: 2
+  src.vdisplay.nl._user_visible_app_labels:
+    name: _user_visible_app_labels
     module: src.vdisplay.nl
-    line: 122
-    cyclomatic_complexity: 3
+    line: 41
+    cyclomatic_complexity: 9
+    calls_out: 9
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.adopt_screencast:
+    name: adopt_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 111
+    cyclomatic_complexity: 7
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.application.session_context.enrich_command_request:
+    name: enrich_command_request
+    module: src.vdisplay.application.session_context
+    line: 46
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 2
+  examples.common.screenshot_meta.write_screenshot_meta:
+    name: write_screenshot_meta
+    module: examples.common.screenshot_meta
+    line: 141
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 5
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute.execute_audit_route:
+    name: execute_audit_route
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
+    line: 19
+    cyclomatic_complexity: 5
+    calls_out: 16
+    calls_in: 4
+  src.vdisplay.application.auto.tasks.ensure_auto_dependencies:
+    name: ensure_auto_dependencies
+    module: src.vdisplay.application.auto.tasks
+    line: 30
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.commands.common.add_control_selector_args:
+    name: add_control_selector_args
+    module: src.vdisplay.commands.common
+    line: 44
+    cyclomatic_complexity: 1
+    calls_out: 23
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_monitor_frame:
+    name: capture_monitor_frame
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 90
+    cyclomatic_complexity: 1
     calls_out: 1
     calls_in: 1
   src.vdisplay.commands.screenshot.handle:
@@ -2035,27 +369,111 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 2
     calls_in: 0
-  src.vdisplay.ide_prompt._build_no_selector_result:
-    name: _build_no_selector_result
-    module: src.vdisplay.ide_prompt
-    line: 397
-    cyclomatic_complexity: 10
-    calls_out: 7
-    calls_in: 1
-  src.vdisplay.desktop_apps.map_input_target_candidates:
-    name: map_input_target_candidates
-    module: src.vdisplay.desktop_apps
-    line: 399
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 2
-  examples.host-relay.relay_demo._capture_phase:
-    name: _capture_phase
-    module: examples.host-relay.relay_demo
-    line: 35
+  src.vdisplay.commands.history._resolve_root:
+    name: _resolve_root
+    module: src.vdisplay.commands.history
+    line: 83
     cyclomatic_complexity: 1
-    calls_out: 6
+    calls_out: 2
+    calls_in: 4
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag:
+    name: pick_flag
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 54
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 44
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok:
+    name: _ok
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 9
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 5
+  src.vdisplay.ide_prompt._try_control_set_value:
+    name: _try_control_set_value
+    module: src.vdisplay.ide_prompt
+    line: 483
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.commands.agent._screencast_clear_cooldown:
+    name: _screencast_clear_cooldown
+    module: src.vdisplay.commands.agent
+    line: 293
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.task_to_dict:
+    name: task_to_dict
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 100
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 4
+  src.vdisplay.application.session_recorder.reprocess_session_diagnostics:
+    name: reprocess_session_diagnostics
+    module: src.vdisplay.application.session_recorder
+    line: 679
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_click:
+    name: _parse_control_click
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 195
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.integrations.vql_bridge.reverse_generation_descriptor:
+    name: reverse_generation_descriptor
+    module: src.vdisplay.integrations.vql_bridge
+    line: 261
+    cyclomatic_complexity: 9
+    calls_out: 13
     calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_error:
+    name: json_error
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 59
+    cyclomatic_complexity: 7
+    calls_out: 12
+    calls_in: 18
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_headers.read_audit_headers:
+    name: read_audit_headers
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_headers
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.commands.map.handle:
+    name: handle
+    module: src.vdisplay.commands.map
+    line: 54
+    cyclomatic_complexity: 7
+    calls_out: 31
+    calls_in: 0
+  src.vdisplay.client_http.AgentHttpTransport.build_request:
+    name: build_request
+    module: src.vdisplay.client_http
+    line: 64
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.commands.session.handle_list:
+    name: handle_list
+    module: src.vdisplay.commands.session
+    line: 179
+    cyclomatic_complexity: 3
+    calls_out: 14
+    calls_in: 0
+  src.vdisplay.agent_dispatch.agent_client:
+    name: agent_client
+    module: src.vdisplay.agent_dispatch
+    line: 15
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 0
   src.vdisplay.capture.portal_screencast.start_screencast_session:
     name: start_screencast_session
     module: src.vdisplay.capture.portal_screencast
@@ -2063,27 +481,13 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 8
     calls_in: 2
-  src.vdisplay.application.session_recorder_readme.render_readme:
-    name: render_readme
-    module: src.vdisplay.application.session_recorder_readme
-    line: 30
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 4
-  src.vdisplay.client.AgentClient.request:
-    name: request
-    module: src.vdisplay.client
-    line: 29
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.agent_config._probe_default_agent:
-    name: _probe_default_agent
-    module: src.vdisplay.agent_config
-    line: 62
-    cyclomatic_complexity: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.heartbeat_task:
+    name: heartbeat_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 53
+    cyclomatic_complexity: 2
     calls_out: 3
-    calls_in: 1
+    calls_in: 0
   src.vdisplay.discovery.find_window_suggestions:
     name: find_window_suggestions
     module: src.vdisplay.discovery
@@ -2091,96 +495,61 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 2
     calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.cli.main:
-    name: main
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
-    line: 13
-    cyclomatic_complexity: 4
+  src.vdisplay.ide_prompt.send_ide_prompt:
+    name: send_ide_prompt
+    module: src.vdisplay.ide_prompt
+    line: 538
+    cyclomatic_complexity: 13
+    calls_out: 18
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.get_task:
+    name: get_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 46
+    cyclomatic_complexity: 2
     calls_out: 3
     calls_in: 0
-  src.vdisplay.desktop_apps.get_desktop_app:
-    name: get_desktop_app
-    module: src.vdisplay.desktop_apps
-    line: 279
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 13
-  src.vdisplay.ide_prompt._find_map_target:
-    name: _find_map_target
-    module: src.vdisplay.ide_prompt
-    line: 137
-    cyclomatic_complexity: 4
-    calls_out: 8
-    calls_in: 1
-  src.vdisplay.agent_config._probe_agent_url:
-    name: _probe_agent_url
-    module: src.vdisplay.agent_config
-    line: 43
-    cyclomatic_complexity: 5
-    calls_out: 7
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_outputs:
-    name: handle_outputs
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 40
+  src.vdisplay.discovery.list_monitors:
+    name: list_monitors
+    module: src.vdisplay.discovery
+    line: 346
     cyclomatic_complexity: 1
     calls_out: 1
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_ss:
-    name: _pids_from_ss
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 35
-    cyclomatic_complexity: 3
-    calls_out: 2
-    calls_in: 1
-  examples.control-plane.control_demo.main:
+    calls_in: 13
+  packages.vdisplay-agent.src.vdisplay_agent.cli.main:
     name: main
-    module: examples.control-plane.control_demo
-    line: 158
-    cyclomatic_complexity: 1
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.hmi.pointer_probes.probe_all_sources:
-    name: probe_all_sources
-    module: src.vdisplay.hmi.pointer_probes
-    line: 231
-    cyclomatic_complexity: 8
-    calls_out: 12
-    calls_in: 1
-  src.vdisplay.nlp.parse_display:
-    name: parse_display
-    module: src.vdisplay.nlp
-    line: 7
-    cyclomatic_complexity: 10
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.commands.all_cmd.register:
-    name: register
-    module: src.vdisplay.commands.all_cmd
-    line: 12
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.nl._user_visible_app_labels:
-    name: _user_visible_app_labels
-    module: src.vdisplay.nl
-    line: 41
+    module: packages.vdisplay-agent.src.vdisplay_agent.cli
+    line: 9
     cyclomatic_complexity: 9
-    calls_out: 9
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._has_flag:
-    name: _has_flag
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 138
+    calls_out: 23
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.capture
+    line: 18
     cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 1
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.normalize_tokens:
-    name: normalize_tokens
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 31
-    cyclomatic_complexity: 3
     calls_out: 5
+    calls_in: 0
+  src.vdisplay.commands.config.handle:
+    name: handle
+    module: src.vdisplay.commands.config
+    line: 34
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.utils.run_command:
+    name: run_command
+    module: src.vdisplay.utils
+    line: 17
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 33
+  src.vdisplay.client_routes.route_command:
+    name: route_command
+    module: src.vdisplay.client_routes
+    line: 104
+    cyclomatic_complexity: 7
+    calls_out: 7
     calls_in: 1
   src.vdisplay.ide_prompt._build_map_missing_result:
     name: _build_map_missing_result
@@ -2189,6 +558,1070 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 2
     calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_virtual_start:
+    name: _parse_virtual_start
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 89
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.from_runtime:
+    name: from_runtime
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 41
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 3
+  packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server:
+    name: create_server
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.server
+    line: 7
+    cyclomatic_complexity: 1
+    calls_out: 32
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows:
+    name: handle_windows
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
+    line: 46
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_all_monitor_frames:
+    name: capture_all_monitor_frames
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 163
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._get_cached_all_frames:
+    name: _get_cached_all_frames
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 106
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_launch:
+    name: _parse_launch
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 99
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 0
+  src.vdisplay.agent_config.agent_auto_enabled:
+    name: agent_auto_enabled
+    module: src.vdisplay.agent_config
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.integrations.pipeline.observe_screen:
+    name: observe_screen
+    module: src.vdisplay.integrations.pipeline
+    line: 82
+    cyclomatic_complexity: 6
+    calls_out: 17
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.task_store._sqlite_db_valid:
+    name: _sqlite_db_valid
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 61
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.api.VirtualDisplaySession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 36
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.create_task:
+    name: create_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 171
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.capabilities.diagnostics:
+    name: diagnostics
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capabilities
+    line: 63
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_session:
+    name: _capture_session
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.commands.agent._screencast_start:
+    name: _screencast_start
+    module: src.vdisplay.commands.agent
+    line: 242
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.ensure_portal_session_env:
+    name: ensure_portal_session_env
+    module: src.vdisplay.capture.portal_screencast
+    line: 75
+    cyclomatic_complexity: 11
+    calls_out: 10
+    calls_in: 15
+  packages.vdisplay-agent.src.vdisplay_agent.services.capture.capture_frame:
+    name: capture_frame
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
+    line: 16
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.api.MirrorSession.create:
+    name: create
+    module: src.vdisplay.api
+    line: 84
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.capture.host.capture_host_to_file:
+    name: capture_host_to_file
+    module: src.vdisplay.capture.host
+    line: 302
+    cyclomatic_complexity: 3
+    calls_out: 10
+    calls_in: 6
+  src.vdisplay.nlp.run_nl_prompt:
+    name: run_nl_prompt
+    module: src.vdisplay.nlp
+    line: 122
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 2
+  src.vdisplay.client_routes._route_outputs_query:
+    name: _route_outputs_query
+    module: src.vdisplay.client_routes
+    line: 12
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 1
+  examples.common.validate_artifacts.validate_image_and_meta:
+    name: validate_image_and_meta
+    module: examples.common.validate_artifacts
+    line: 11
+    cyclomatic_complexity: 12
+    calls_out: 22
+    calls_in: 1
+  src.vdisplay.nl.window_center_on_output:
+    name: window_center_on_output
+    module: src.vdisplay.nl
+    line: 94
+    cyclomatic_complexity: 3
+    calls_out: 18
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._probe_is_vdisplay_agent:
+    name: _probe_is_vdisplay_agent
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 105
+    cyclomatic_complexity: 6
+    calls_out: 11
+    calls_in: 1
+  src.vdisplay.commands.observe.handle_observe:
+    name: handle_observe
+    module: src.vdisplay.commands.observe
+    line: 36
+    cyclomatic_complexity: 9
+    calls_out: 25
+    calls_in: 0
+  src.vdisplay.commands.common.add_window_filter_args:
+    name: add_window_filter_args
+    module: src.vdisplay.commands.common
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 7
+    calls_in: 4
+  src.vdisplay.ide_prompt._find_map_target:
+    name: _find_map_target
+    module: src.vdisplay.ide_prompt
+    line: 137
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._with_display:
+    name: _with_display
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 62
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 3
+  src.vdisplay.commands.agent._handle_browser_open:
+    name: _handle_browser_open
+    module: src.vdisplay.commands.agent
+    line: 215
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.ide_prompt._handle_wait_window:
+    name: _handle_wait_window
+    module: src.vdisplay.ide_prompt
+    line: 250
+    cyclomatic_complexity: 9
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.agent_envelope.flatten_agent_envelope:
+    name: flatten_agent_envelope
+    module: src.vdisplay.agent_envelope
+    line: 8
+    cyclomatic_complexity: 6
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_terminal_open:
+    name: _parse_terminal_open
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 234
+    cyclomatic_complexity: 6
+    calls_out: 7
+    calls_in: 0
+  src.vdisplay.hmi.watch.run_hmi_watch:
+    name: run_hmi_watch
+    module: src.vdisplay.hmi.watch
+    line: 231
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.application.session_context.apply_cli_session_args:
+    name: apply_cli_session_args
+    module: src.vdisplay.application.session_context
+    line: 36
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.ide_prompt._should_skip_window_wait:
+    name: _should_skip_window_wait
+    module: src.vdisplay.ide_prompt
+    line: 37
+    cyclomatic_complexity: 6
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.normalize_tokens:
+    name: normalize_tokens
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 31
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 1
+  examples.common.screenshot_meta.png_dimensions:
+    name: png_dimensions
+    module: examples.common.screenshot_meta
+    line: 32
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.broker_events._broker_log_path:
+    name: _broker_log_path
+    module: packages.vdisplay-agent.src.vdisplay_agent.broker_events
+    line: 12
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 1
+  src.vdisplay.application.env_defaults.env_value:
+    name: env_value
+    module: src.vdisplay.application.env_defaults
+    line: 59
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 14
+  src.vdisplay.capture.screencast_keeper.keeper_capture_ready:
+    name: keeper_capture_ready
+    module: src.vdisplay.capture.screencast_keeper
+    line: 138
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 6
+  src.vdisplay.nlp._default_monitors:
+    name: _default_monitors
+    module: src.vdisplay.nlp
+    line: 35
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.cli.build_parser:
+    name: build_parser
+    module: src.vdisplay.cli
+    line: 13
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.api.platform_summary:
+    name: platform_summary
+    module: src.vdisplay.api
+    line: 186
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_virtual:
+    name: start_virtual
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 28
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.nl.describe_window_nl:
+    name: describe_window_nl
+    module: src.vdisplay.nl
+    line: 6
+    cyclomatic_complexity: 14
+    calls_out: 16
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.update_task:
+    name: update_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 229
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port.find_listener_pids:
+    name: find_listener_pids
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 70
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 4
+  packages.vdisplay-agent.src.vdisplay_agent.services.control._run_on_browser_thread:
+    name: _run_on_browser_thread
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 13
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 5
+  src.vdisplay.client_routes._route_windows_query:
+    name: _route_windows_query
+    module: src.vdisplay.client_routes
+    line: 23
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute.execute_audited_service:
+    name: execute_audited_service
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
+    line: 52
+    cyclomatic_complexity: 5
+    calls_out: 17
+    calls_in: 5
+  src.vdisplay.ide_prompt._handle_focus_window:
+    name: _handle_focus_window
+    module: src.vdisplay.ide_prompt
+    line: 292
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.ide_prompt._ide_find_timeout_seconds:
+    name: _ide_find_timeout_seconds
+    module: src.vdisplay.ide_prompt
+    line: 33
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.desktop_apps.get_desktop_app:
+    name: get_desktop_app
+    module: src.vdisplay.desktop_apps
+    line: 279
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 13
+  src.vdisplay.capture.portal_screencast._set_active_if_self:
+    name: _set_active_if_self
+    module: src.vdisplay.capture.portal_screencast
+    line: 439
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 4
+  packages.vdisplay-agent.src.vdisplay_agent.services.capture._region_from_body:
+    name: _region_from_body
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
+    line: 56
+    cyclomatic_complexity: 8
+    calls_out: 13
+    calls_in: 1
+  examples.control-plane.control_demo.show_active_controls:
+    name: show_active_controls
+    module: examples.control-plane.control_demo
+    line: 29
+    cyclomatic_complexity: 6
+    calls_out: 21
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.routes.tasks.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.tasks
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 27
+    calls_in: 0
+  src.vdisplay.control.registry.ProviderRegistry.build:
+    name: build
+    module: src.vdisplay.control.registry
+    line: 43
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.discovery._attach_output_nl:
+    name: _attach_output_nl
+    module: src.vdisplay.discovery
+    line: 107
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_adopt:
+    name: _parse_adopt
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 124
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.commands.all_cmd.handle:
+    name: handle
+    module: src.vdisplay.commands.all_cmd
+    line: 19
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore.mark_orphan_running_as_stale:
+    name: mark_orphan_running_as_stale
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 281
+    cyclomatic_complexity: 1
+    calls_out: 9
+    calls_in: 0
+  examples.control-plugin.src.vdisplay_example_plugin.register_plugin:
+    name: register_plugin
+    module: examples.control-plugin.src.vdisplay_example_plugin
+    line: 19
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt:
+    name: handle_adopt
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 86
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.control.focus_control:
+    name: focus_control
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 109
+    cyclomatic_complexity: 2
+    calls_out: 9
+    calls_in: 0
+  src.vdisplay.client_routes._route_control_command:
+    name: _route_control_command
+    module: src.vdisplay.client_routes
+    line: 39
+    cyclomatic_complexity: 5
+    calls_out: 0
+    calls_in: 1
+  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider.ExampleUiaProvider.__init__:
+    name: __init__
+    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
+    line: 69
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.commands.hmi.handle:
+    name: handle
+    module: src.vdisplay.commands.hmi
+    line: 79
+    cyclomatic_complexity: 7
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.capture.screencast_keeper.read_keeper_state:
+    name: read_keeper_state
+    module: src.vdisplay.capture.screencast_keeper
+    line: 271
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 11
+  src.vdisplay.commands.ide.register:
+    name: register
+    module: src.vdisplay.commands.ide
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 18
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.outputs.list_outputs_payload:
+    name: list_outputs_payload
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.outputs
+    line: 11
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.control
+    line: 25
+    cyclomatic_complexity: 1
+    calls_out: 68
+    calls_in: 0
+  examples.control-plane.control_demo.run_terminal_demo:
+    name: run_terminal_demo
+    module: examples.control-plane.control_demo
+    line: 53
+    cyclomatic_complexity: 6
+    calls_out: 26
+    calls_in: 1
+  src.vdisplay.application.session_recorder_readme.render_readme:
+    name: render_readme
+    module: src.vdisplay.application.session_recorder_readme
+    line: 30
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 4
+  src.vdisplay.ide_prompt._build_write_kwargs:
+    name: _build_write_kwargs
+    module: src.vdisplay.ide_prompt
+    line: 433
+    cyclomatic_complexity: 9
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.desktop_apps._xwayland_variant:
+    name: _xwayland_variant
+    module: src.vdisplay.desktop_apps
+    line: 86
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.hmi.pointer_probes.probe_all_sources:
+    name: probe_all_sources
+    module: src.vdisplay.hmi.pointer_probes
+    line: 231
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 1
+  packages.rest2vdisplay.src.rest2vdisplay.app.create_app:
+    name: create_app
+    module: packages.rest2vdisplay.src.rest2vdisplay.app
+    line: 14
+    cyclomatic_complexity: 2
+    calls_out: 38
+    calls_in: 3
+  src.vdisplay.commands.agent._screencast_probe:
+    name: _screencast_probe
+    module: src.vdisplay.commands.agent
+    line: 306
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.client_http.AgentHttpTransport.normalize_payload:
+    name: normalize_payload
+    module: src.vdisplay.client_http
+    line: 103
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider.ExampleAxProvider.__init__:
+    name: __init__
+    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
+    line: 68
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.application.services.web_pointer.pointer_click_at_monitor:
+    name: pointer_click_at_monitor
+    module: src.vdisplay.application.services.web_pointer
+    line: 78
+    cyclomatic_complexity: 11
+    calls_out: 20
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pid_alive:
+    name: _pid_alive
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 18
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.audit_context.audit_context_from_headers:
+    name: audit_context_from_headers
+    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 6
+  src.vdisplay.nlp.parse_display:
+    name: parse_display
+    module: src.vdisplay.nlp
+    line: 7
+    cyclomatic_complexity: 10
+    calls_out: 6
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.register_session_task:
+    name: register_session_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 77
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.end_sampler_task:
+    name: end_sampler_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 146
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_host:
+    name: _capture_host
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
+    line: 74
+    cyclomatic_complexity: 11
+    calls_out: 23
+    calls_in: 2
+  src.vdisplay.commands.all_cmd.register:
+    name: register
+    module: src.vdisplay.commands.all_cmd
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.commands.common.add_all_arg:
+    name: add_all_arg
+    module: src.vdisplay.commands.common
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.discovery._display_socket_exists:
+    name: _display_socket_exists
+    module: src.vdisplay.discovery
+    line: 31
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 2
+  src.vdisplay.control.plugins.register_control_provider:
+    name: register_control_provider
+    module: src.vdisplay.control.plugins
+    line: 106
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.commands.agent._screencast_stop:
+    name: _screencast_stop
+    module: src.vdisplay.commands.agent
+    line: 285
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_replay.queue_replay:
+    name: queue_replay
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_replay
+    line: 43
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.client.AgentClient.request:
+    name: request
+    module: src.vdisplay.client
+    line: 29
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.ide_prompt._build_ide_success_result:
+    name: _build_ide_success_result
+    module: src.vdisplay.ide_prompt
+    line: 505
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.ide_prompt._build_no_selector_result:
+    name: _build_no_selector_result
+    module: src.vdisplay.ide_prompt
+    line: 397
+    cyclomatic_complexity: 10
+    calls_out: 7
+    calls_in: 1
+  examples.dev-workflow.koru-audit-last-session.print:
+    name: print
+    module: examples.dev-workflow.koru-audit-last-session
+    line: 35
+    cyclomatic_complexity: 0
+    calls_out: 0
+    calls_in: 120
+  examples.common.screenshot_meta.ensure_common_on_path:
+    name: ensure_common_on_path
+    module: examples.common.screenshot_meta
+    line: 18
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.desktop_apps.prompt_chat_selectors_for:
+    name: prompt_chat_selectors_for
+    module: src.vdisplay.desktop_apps
+    line: 308
+    cyclomatic_complexity: 9
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.commands.common.control_selector_kwargs_for_service:
+    name: control_selector_kwargs_for_service
+    module: src.vdisplay.commands.common
+    line: 137
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.desktop_apps._variants_for:
+    name: _variants_for
+    module: src.vdisplay.desktop_apps
+    line: 98
+    cyclomatic_complexity: 9
+    calls_out: 11
+    calls_in: 5
+  src.vdisplay.cli.main:
+    name: main
+    module: src.vdisplay.cli
+    line: 24
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._config_from_body:
+    name: _config_from_body
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
+    line: 17
+    cyclomatic_complexity: 12
+    calls_out: 26
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start:
+    name: handle_virtual_start
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 46
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_terminal:
+    name: start_terminal
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 282
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.capabilities.platform_capabilities:
+    name: platform_capabilities
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capabilities
+    line: 17
+    cyclomatic_complexity: 6
+    calls_out: 18
+    calls_in: 1
+  src.vdisplay.commands.monitors.handle:
+    name: handle
+    module: src.vdisplay.commands.monitors
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_screenshot:
+    name: _parse_screenshot
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 77
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 0
+  src.vdisplay.agent_config.reset_agent_probe_cache:
+    name: reset_agent_probe_cache
+    module: src.vdisplay.agent_config
+    line: 19
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 3
+  src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open:
+    name: open
+    module: src.vdisplay.control.providers.browser_session
+    line: 82
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  src.vdisplay.application.session_recorder.discover_session_dirs:
+    name: discover_session_dirs
+    module: src.vdisplay.application.session_recorder
+    line: 705
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  src.vdisplay.capture.screencast_keeper.stop_keeper:
+    name: stop_keeper
+    module: src.vdisplay.capture.screencast_keeper
+    line: 292
+    cyclomatic_complexity: 13
+    calls_out: 27
+    calls_in: 10
+  src.vdisplay.application.history.loader.load_history_index:
+    name: load_history_index
+    module: src.vdisplay.application.history.loader
+    line: 200
+    cyclomatic_complexity: 8
+    calls_out: 14
+    calls_in: 2
+  src.vdisplay.capture.portal_screencast.refresh_screencast_adopt_payload:
+    name: refresh_screencast_adopt_payload
+    module: src.vdisplay.capture.portal_screencast
+    line: 134
+    cyclomatic_complexity: 14
+    calls_out: 14
+    calls_in: 1
+  src.vdisplay.desktop_apps.list_desktop_apps:
+    name: list_desktop_apps
+    module: src.vdisplay.desktop_apps
+    line: 275
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  src.vdisplay.control.session.parse_session_kind:
+    name: parse_session_kind
+    module: src.vdisplay.control.session
+    line: 23
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 2
+  src.vdisplay.agent_config._probe_default_agent:
+    name: _probe_default_agent
+    module: src.vdisplay.agent_config
+    line: 62
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  packages.cli2vdisplay.src.cli2vdisplay.cli.main:
+    name: main
+    module: packages.cli2vdisplay.src.cli2vdisplay.cli
+    line: 10
+    cyclomatic_complexity: 7
+    calls_out: 16
+    calls_in: 0
+  src.vdisplay.discovery._parse_xrandr_query:
+    name: _parse_xrandr_query
+    module: src.vdisplay.discovery
+    line: 153
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 1
+  src.vdisplay.commands.session._resolve_session_dir:
+    name: _resolve_session_dir
+    module: src.vdisplay.commands.session
+    line: 151
+    cyclomatic_complexity: 9
+    calls_out: 21
+    calls_in: 2
+  examples.common.screenshot_meta.examples_common_dir:
+    name: examples_common_dir
+    module: examples.common.screenshot_meta
+    line: 11
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_common:
+    name: _parse_control_common
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 142
+    cyclomatic_complexity: 9
+    calls_out: 12
+    calls_in: 5
+  src.vdisplay.application.auto.runner.list_auto_tasks:
+    name: list_auto_tasks
+    module: src.vdisplay.application.auto.runner
+    line: 177
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 2
+  src.vdisplay.nl.find_monitor_for_window:
+    name: find_monitor_for_window
+    module: src.vdisplay.nl
+    line: 122
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._is_vdisplay_agent_pid:
+    name: _is_vdisplay_agent_pid
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 87
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.api._default_virtual_backend:
+    name: _default_virtual_backend
+    module: src.vdisplay.api
+    line: 13
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.server.create_app:
+    name: create_app
+    module: packages.vdisplay-agent.src.vdisplay_agent.server
+    line: 14
+    cyclomatic_complexity: 4
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.application.replay.queue_session_replay:
+    name: queue_session_replay
+    module: src.vdisplay.application.replay
+    line: 302
+    cyclomatic_complexity: 4
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.commands.all_cmd.handle_outputs:
+    name: handle_outputs
+    module: src.vdisplay.commands.all_cmd
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.application.auto.runner.run_auto_once:
+    name: run_auto_once
+    module: src.vdisplay.application.auto.runner
+    line: 64
+    cyclomatic_complexity: 8
+    calls_out: 15
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._release_store_screencast_if_different:
+    name: _release_store_screencast_if_different
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 157
+    cyclomatic_complexity: 9
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.nl.describe_output_nl:
+    name: describe_output_nl
+    module: src.vdisplay.nl
+    line: 59
+    cyclomatic_complexity: 13
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.discovery.list_windows:
+    name: list_windows
+    module: src.vdisplay.discovery
+    line: 237
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.ide_prompt.wait_for_app_window:
+    name: wait_for_app_window
+    module: src.vdisplay.ide_prompt
+    line: 84
+    cyclomatic_complexity: 8
+    calls_out: 9
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.control.invoke_control:
+    name: invoke_control
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 96
+    cyclomatic_complexity: 2
+    calls_out: 11
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.get_active_screencast:
+    name: get_active_screencast
+    module: src.vdisplay.capture.portal_screencast
+    line: 64
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 12
+  src.vdisplay.application.env_defaults.env_float_value:
+    name: env_float_value
+    module: src.vdisplay.application.env_defaults
+    line: 90
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 6
+  packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server:
+    name: create_server
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
+    line: 17
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.commands.common.include_all_from_args:
+    name: include_all_from_args
+    module: src.vdisplay.commands.common
+    line: 36
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.list_sessions:
+    name: list_sessions
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 387
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.commands.agent.handle:
+    name: handle
+    module: src.vdisplay.commands.agent
+    line: 120
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.desktop_apps.submit_selectors_for:
+    name: submit_selectors_for
+    module: src.vdisplay.desktop_apps
+    line: 336
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.ide_prompt._wayland_ide_next_steps:
+    name: _wayland_ide_next_steps
+    module: src.vdisplay.ide_prompt
+    line: 282
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_ss:
+    name: _pids_from_ss
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 35
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.commands.history._resolve_session_from_args:
+    name: _resolve_session_from_args
+    module: src.vdisplay.commands.history
+    line: 89
+    cyclomatic_complexity: 7
+    calls_out: 16
+    calls_in: 3
+  src.vdisplay.desktop_apps._binary_launch:
+    name: _binary_launch
+    module: src.vdisplay.desktop_apps
+    line: 79
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.nlp._validate_dsl:
+    name: _validate_dsl
+    module: src.vdisplay.nlp
+    line: 67
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.split_command:
+    name: split_command
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 8
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.client_http.AgentHttpTransport.__init__:
+    name: __init__
+    module: src.vdisplay.client_http
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_screenshot:
+    name: handle_screenshot
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 29
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_diagnose_control:
+    name: _parse_diagnose_control
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 210
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
   src.vdisplay.commands.relay.handle:
     name: handle
     module: src.vdisplay.commands.relay
@@ -2196,6 +1629,867 @@ nodes:
     cyclomatic_complexity: 5
     calls_out: 9
     calls_in: 0
+  src.vdisplay.discovery._list_monitors:
+    name: _list_monitors
+    module: src.vdisplay.discovery
+    line: 124
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.desktop_apps.chat_selectors_for:
+    name: chat_selectors_for
+    module: src.vdisplay.desktop_apps
+    line: 304
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks._best_effort_task_op:
+    name: _best_effort_task_op
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 20
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 4
+  packages.vdisplay-agent.src.vdisplay_agent.services.control.set_control_value:
+    name: set_control_value
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 120
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.commands.session.command_request_from_control_args:
+    name: command_request_from_control_args
+    module: src.vdisplay.commands.session
+    line: 95
+    cyclomatic_complexity: 8
+    calls_out: 32
+    calls_in: 1
+  src.vdisplay.control.providers.browser_sync_executor.run_browser_sync:
+    name: run_browser_sync
+    module: src.vdisplay.control.providers.browser_sync_executor
+    line: 32
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 13
+  packages.vdisplay-agent.src.vdisplay_agent.routes.windows.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.windows
+    line: 19
+    cyclomatic_complexity: 1
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.nlp._default_display_suffix:
+    name: _default_display_suffix
+    module: src.vdisplay.nlp
+    line: 27
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_mirror:
+    name: start_mirror
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 45
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._has_flag:
+    name: _has_flag
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 138
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_mirror:
+    name: _parse_mirror
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 112
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.commands.agent._agent_client:
+    name: _agent_client
+    module: src.vdisplay.commands.agent
+    line: 105
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 7
+  src.vdisplay.desktop_apps.map_submit_target_candidates:
+    name: map_submit_target_candidates
+    module: src.vdisplay.desktop_apps
+    line: 416
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._screencast_payload:
+    name: _screencast_payload
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 78
+    cyclomatic_complexity: 7
+    calls_out: 3
+    calls_in: 4
+  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider._use_mock_backend:
+    name: _use_mock_backend
+    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
+    line: 52
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  src.vdisplay.discovery._display_hint:
+    name: _display_hint
+    module: src.vdisplay.discovery
+    line: 332
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.routes.auth.make_check_auth:
+    name: make_check_auth
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.auth
+    line: 15
+    cyclomatic_complexity: 1
+    calls_out: 5
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.shutdown_tasks:
+    name: shutdown_tasks
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 188
+    cyclomatic_complexity: 5
+    calls_out: 10
+    calls_in: 0
+  src.vdisplay.agent_dispatch.dispatch_via_agent:
+    name: dispatch_via_agent
+    module: src.vdisplay.agent_dispatch
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.nl.assign_windows_to_monitors:
+    name: assign_windows_to_monitors
+    module: src.vdisplay.nl
+    line: 132
+    cyclomatic_complexity: 3
+    calls_out: 6
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._cmdline:
+    name: _cmdline
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 79
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.nlp.nl_to_dsl:
+    name: nl_to_dsl
+    module: src.vdisplay.nlp
+    line: 111
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.application.auto.runner.run_auto_loop:
+    name: run_auto_loop
+    module: src.vdisplay.application.auto.runner
+    line: 107
+    cyclomatic_complexity: 14
+    calls_out: 24
+    calls_in: 1
+  examples.common.screenshot_meta.describe_screenshot_nl:
+    name: describe_screenshot_nl
+    module: examples.common.screenshot_meta
+    line: 50
+    cyclomatic_complexity: 14
+    calls_out: 15
+    calls_in: 1
+  src.vdisplay.commands.session.handle_show:
+    name: handle_show
+    module: src.vdisplay.commands.session
+    line: 202
+    cyclomatic_complexity: 10
+    calls_out: 21
+    calls_in: 0
+  src.vdisplay.desktop_apps._default_map_candidates:
+    name: _default_map_candidates
+    module: src.vdisplay.desktop_apps
+    line: 360
+    cyclomatic_complexity: 5
+    calls_out: 18
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._capture_bulk_or_fallback:
+    name: _capture_bulk_or_fallback
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 119
+    cyclomatic_complexity: 9
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.commands.all_cmd.register_outputs:
+    name: register_outputs
+    module: src.vdisplay.commands.all_cmd
+    line: 32
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.agent_config._probe_agent_url:
+    name: _probe_agent_url
+    module: src.vdisplay.agent_config
+    line: 43
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_monitor_frame_with_meta:
+    name: capture_monitor_frame_with_meta
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 51
+    cyclomatic_complexity: 9
+    calls_out: 18
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery.try_recover_screencast:
+    name: try_recover_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
+    line: 46
+    cyclomatic_complexity: 8
+    calls_out: 5
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore._reopen_after_corruption:
+    name: _reopen_after_corruption
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 159
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.stop_screencast:
+    name: stop_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 258
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.nlp._default_windows:
+    name: _default_windows
+    module: src.vdisplay.nlp
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute._json_from_command_result:
+    name: _json_from_command_result
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
+    line: 90
+    cyclomatic_complexity: 8
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.api._default_relay_backend:
+    name: _default_relay_backend
+    module: src.vdisplay.api
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.control.providers.terminal_session.default_registry:
+    name: default_registry
+    module: src.vdisplay.control.providers.terminal_session
+    line: 226
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 11
+  src.vdisplay.ide_prompt._submit_via_keyboard:
+    name: _submit_via_keyboard
+    module: src.vdisplay.ide_prompt
+    line: 222
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch:
+    name: dispatch
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 57
+    cyclomatic_complexity: 14
+    calls_out: 27
+    calls_in: 14
+  src.vdisplay.nlp._display_suffix:
+    name: _display_suffix
+    module: src.vdisplay.nlp
+    line: 23
+    cyclomatic_complexity: 2
+    calls_out: 0
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.failure:
+    name: failure
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 25
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror:
+    name: handle_mirror
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 60
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._frame_cache_ttl_s:
+    name: _frame_cache_ttl_s
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 20
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err:
+    name: _err
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 6
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli.main:
+    name: main
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
+    line: 13
+    cyclomatic_complexity: 4
+    calls_out: 3
+    calls_in: 0
+  src.vdisplay.desktop_apps.map_input_target_candidates:
+    name: map_input_target_candidates
+    module: src.vdisplay.desktop_apps
+    line: 399
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 2
+  src.vdisplay.desktop_apps.resolve_map_path:
+    name: resolve_map_path
+    module: src.vdisplay.desktop_apps
+    line: 387
+    cyclomatic_complexity: 5
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.windows.query.list_windows_enriched:
+    name: list_windows_enriched
+    module: src.vdisplay.windows.query
+    line: 25
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 6
+  src.vdisplay.cli_handlers.print_json:
+    name: print_json
+    module: src.vdisplay.cli_handlers
+    line: 11
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 67
+  examples.host-relay.relay_demo.main:
+    name: main
+    module: examples.host-relay.relay_demo
+    line: 59
+    cyclomatic_complexity: 11
+    calls_out: 33
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler:
+    name: start_sampler
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
+    line: 88
+    cyclomatic_complexity: 7
+    calls_out: 42
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.task_store._utcnow:
+    name: _utcnow
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 22
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.screencast_status:
+    name: screencast_status
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 273
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.commands.observe.register:
+    name: register
+    module: src.vdisplay.commands.observe
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 13
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.default_task_db_path:
+    name: default_task_db_path
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 48
+    cyclomatic_complexity: 3
+    calls_out: 9
+    calls_in: 1
+  src.vdisplay.utils.run_command_bytes:
+    name: run_command_bytes
+    module: src.vdisplay.utils
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.commands.agent._handle_serve:
+    name: _handle_serve
+    module: src.vdisplay.commands.agent
+    line: 135
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  src.vdisplay.capture.providers.engine.list_capture_providers:
+    name: list_capture_providers
+    module: src.vdisplay.capture.providers.engine
+    line: 56
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 2
+  src.vdisplay.commands.app.handle:
+    name: handle
+    module: src.vdisplay.commands.app
+    line: 37
+    cyclomatic_complexity: 6
+    calls_out: 17
+    calls_in: 0
+  src.vdisplay.api._default_mirror_backend:
+    name: _default_mirror_backend
+    module: src.vdisplay.api
+    line: 19
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery.screencast_recovery_cooldown_remaining:
+    name: screencast_recovery_cooldown_remaining
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
+    line: 35
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port.ensure_broker_port_free:
+    name: ensure_broker_port_free
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 151
+    cyclomatic_complexity: 10
+    calls_out: 13
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas:
+    name: all_schemas
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 16
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 3
+  src.vdisplay.application.services.screencast_cli.probe_screencast_capture:
+    name: probe_screencast_capture
+    module: src.vdisplay.application.services.screencast_cli
+    line: 251
+    cyclomatic_complexity: 8
+    calls_out: 17
+    calls_in: 1
+  examples.host-mirror.mirror_demo.main:
+    name: main
+    module: examples.host-mirror.mirror_demo
+    line: 34
+    cyclomatic_complexity: 7
+    calls_out: 31
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.audit_context.audit_context_from_fastapi_headers:
+    name: audit_context_from_fastapi_headers
+    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._ensure_virtual_session:
+    name: _ensure_virtual_session
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
+    line: 39
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 1
+  src.vdisplay.application.session_context.audit_context_from_mapping:
+    name: audit_context_from_mapping
+    module: src.vdisplay.application.session_context
+    line: 113
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 1
+  src.vdisplay.commands.monitors.register:
+    name: register
+    module: src.vdisplay.commands.monitors
+    line: 10
+    cyclomatic_complexity: 1
+    calls_out: 4
+    calls_in: 0
+  src.vdisplay.application.session_recorder.load_session_document:
+    name: load_session_document
+    module: src.vdisplay.application.session_recorder
+    line: 711
+    cyclomatic_complexity: 13
+    calls_out: 29
+    calls_in: 5
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.parse_line:
+    name: parse_line
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 287
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.agent_meta:
+    name: agent_meta
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 12
+    cyclomatic_complexity: 1
+    calls_out: 0
+    calls_in: 2
+  examples.common.screenshot_meta.meta_path_for:
+    name: meta_path_for
+    module: examples.common.screenshot_meta
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+  examples.common.screenshot_meta.build_screenshot_meta:
+    name: build_screenshot_meta
+    module: examples.common.screenshot_meta
+    line: 91
+    cyclomatic_complexity: 6
+    calls_out: 10
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.task_store.recover_corrupt_task_db:
+    name: recover_corrupt_task_db
+    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
+    line: 83
+    cyclomatic_complexity: 5
+    calls_out: 8
+    calls_in: 2
+  src.vdisplay.application.project_config.clear_metadata_dir:
+    name: clear_metadata_dir
+    module: src.vdisplay.application.project_config
+    line: 403
+    cyclomatic_complexity: 10
+    calls_out: 16
+    calls_in: 1
+  src.vdisplay.application.env_loader.load_project_env:
+    name: load_project_env
+    module: src.vdisplay.application.env_loader
+    line: 11
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 4
+  src.vdisplay.commands.common.control_selector_kwargs_from_args:
+    name: control_selector_kwargs_from_args
+    module: src.vdisplay.commands.common
+    line: 108
+    cyclomatic_complexity: 1
+    calls_out: 24
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._session_started:
+    name: _session_started
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._parse_ss_pids:
+    name: _parse_ss_pids
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 28
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.discovery.list_outputs:
+    name: list_outputs
+    module: src.vdisplay.discovery
+    line: 56
+    cyclomatic_complexity: 8
+    calls_out: 27
+    calls_in: 9
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._persist_captures_to_cache:
+    name: _persist_captures_to_cache
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 145
+    cyclomatic_complexity: 9
+    calls_out: 18
+    calls_in: 1
+  src.vdisplay.hmi.pointer_probes.is_wayland_session:
+    name: is_wayland_session
+    module: src.vdisplay.hmi.pointer_probes
+    line: 59
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 10
+  src.vdisplay.capture.portal_screencast.prepare_portal_screencast_start:
+    name: prepare_portal_screencast_start
+    module: src.vdisplay.capture.portal_screencast
+    line: 454
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  src.vdisplay.ide_prompt._handle_submit:
+    name: _handle_submit
+    module: src.vdisplay.ide_prompt
+    line: 312
+    cyclomatic_complexity: 11
+    calls_out: 19
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._pids_from_lsof:
+    name: _pids_from_lsof
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 50
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 1
+  src.vdisplay.commands.agent._handle_screencast:
+    name: _handle_screencast
+    module: src.vdisplay.commands.agent
+    line: 329
+    cyclomatic_complexity: 2
+    calls_out: 4
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.unregister_session_task:
+    name: unregister_session_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 114
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_browser_open:
+    name: _parse_browser_open
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 214
+    cyclomatic_complexity: 11
+    calls_out: 10
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.sampler
+    line: 16
+    cyclomatic_complexity: 1
+    calls_out: 18
+    calls_in: 0
+  src.vdisplay.desktop_apps._desktop_launch:
+    name: _desktop_launch
+    module: src.vdisplay.desktop_apps
+    line: 73
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_find:
+    name: _parse_controls_find
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 191
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.application.history.loader.resolve_metadata_root:
+    name: resolve_metadata_root
+    module: src.vdisplay.application.history.loader
+    line: 12
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 9
+  packages.vdisplay-agent.src.vdisplay_agent.services.capture._capture_all_monitors:
+    name: _capture_all_monitors
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.capture
+    line: 44
+    cyclomatic_complexity: 2
+    calls_out: 8
+    calls_in: 1
+  packages.mcp2vdisplay.src.mcp2vdisplay.cli.main:
+    name: main
+    module: packages.mcp2vdisplay.src.mcp2vdisplay.cli
+    line: 6
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 1
+  examples.common.screenshot_meta.save_png_with_meta:
+    name: save_png_with_meta
+    module: examples.common.screenshot_meta
+    line: 148
+    cyclomatic_complexity: 2
+    calls_out: 6
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus._dispatch_legacy:
+    name: _dispatch_legacy
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 39
+    cyclomatic_complexity: 3
+    calls_out: 13
+    calls_in: 1
+  src.vdisplay.client_routes._route_browser_open:
+    name: _route_browser_open
+    module: src.vdisplay.client_routes
+    line: 66
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
+  src.vdisplay.application.session_recorder.session_recording_enabled:
+    name: session_recording_enabled
+    module: src.vdisplay.application.session_recorder
+    line: 38
+    cyclomatic_complexity: 2
+    calls_out: 5
+    calls_in: 7
+  src.vdisplay.commands.history.handle_list:
+    name: handle_list
+    module: src.vdisplay.commands.history
+    line: 114
+    cyclomatic_complexity: 3
+    calls_out: 12
+    calls_in: 0
+  src.vdisplay.commands.mirror.handle:
+    name: handle
+    module: src.vdisplay.commands.mirror
+    line: 30
+    cyclomatic_complexity: 3
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.application.env_defaults.env_int_value:
+    name: env_int_value
+    module: src.vdisplay.application.env_defaults
+    line: 80
+    cyclomatic_complexity: 6
+    calls_out: 4
+    calls_in: 7
+  src.vdisplay.control.gui_map_resolve.map_element_to_node:
+    name: map_element_to_node
+    module: src.vdisplay.control.gui_map_resolve
+    line: 26
+    cyclomatic_complexity: 5
+    calls_out: 7
+    calls_in: 3
+  src.vdisplay.commands.register_all:
+    name: register_all
+    module: src.vdisplay.commands
+    line: 61
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 1
+  examples.common.screenshot_meta.print_artifact:
+    name: print_artifact
+    module: examples.common.screenshot_meta
+    line: 161
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 4
+  src.vdisplay.nlp._run_local_dsl:
+    name: _run_local_dsl
+    module: src.vdisplay.nlp
+    line: 141
+    cyclomatic_complexity: 7
+    calls_out: 7
+    calls_in: 1
+  src.vdisplay.application.services.screencast_cli.clear_local_start_cooldown:
+    name: clear_local_start_cooldown
+    module: src.vdisplay.application.services.screencast_cli
+    line: 36
+    cyclomatic_complexity: 2
+    calls_out: 1
+    calls_in: 4
+  examples.common.validate_artifacts.main:
+    name: main
+    module: examples.common.validate_artifacts
+    line: 64
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.desktop_apps._is_gui_map_file:
+    name: _is_gui_map_file
+    module: src.vdisplay.desktop_apps
+    line: 340
+    cyclomatic_complexity: 6
+    calls_out: 8
+    calls_in: 2
+  src.vdisplay.agent_config._default_agent_base:
+    name: _default_agent_base
+    module: src.vdisplay.agent_config
+    line: 24
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._require_screencast:
+    name: _require_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 24
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.control.find_controls:
+    name: find_controls
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 84
+    cyclomatic_complexity: 2
+    calls_out: 10
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_release:
+    name: _parse_release
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 248
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 0
+  examples.control-plane.control_demo.main:
+    name: main
+    module: examples.control-plane.control_demo
+    line: 158
+    cyclomatic_complexity: 1
+    calls_out: 8
+    calls_in: 0
+  src.vdisplay.application.session_recorder.record_execution:
+    name: record_execution
+    module: src.vdisplay.application.session_recorder
+    line: 350
+    cyclomatic_complexity: 5
+    calls_out: 4
+    calls_in: 4
+  src.vdisplay.commands.common.add_display_arg:
+    name: add_display_arg
+    module: src.vdisplay.commands.common
+    line: 8
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 14
+  src.vdisplay.discovery._looks_like_xvfb_only:
+    name: _looks_like_xvfb_only
+    module: src.vdisplay.discovery
+    line: 38
+    cyclomatic_complexity: 4
+    calls_out: 4
+    calls_in: 8
+  src.vdisplay.commands.agent._handle_preflight:
+    name: _handle_preflight
+    module: src.vdisplay.commands.agent
+    line: 170
+    cyclomatic_complexity: 11
+    calls_out: 24
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.routes.auth.expected_token:
+    name: expected_token
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.auth
+    line: 11
+    cyclomatic_complexity: 2
+    calls_out: 2
+    calls_in: 1
+  examples.common.validate_artifacts.validate_directory:
+    name: validate_directory
+    module: examples.common.validate_artifacts
+    line: 53
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 1
+  src.vdisplay.nl.ensure_monitor_ids:
+    name: ensure_monitor_ids
+    module: src.vdisplay.nl
+    line: 110
+    cyclomatic_complexity: 5
+    calls_out: 6
+    calls_in: 2
+  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._recover_screencast:
+    name: _recover_screencast
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
+    line: 80
+    cyclomatic_complexity: 3
+    calls_out: 1
+    calls_in: 0
+  src.vdisplay.application.env_defaults.env_flag:
+    name: env_flag
+    module: src.vdisplay.application.env_defaults
+    line: 67
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 13
   src.vdisplay.control.session.build_catalog_from_agent_store:
     name: build_catalog_from_agent_store
     module: src.vdisplay.control.session
@@ -2210,181 +2504,13 @@ nodes:
     cyclomatic_complexity: 8
     calls_out: 18
     calls_in: 0
-  src.vdisplay.commands.common.add_window_filter_args:
-    name: add_window_filter_args
-    module: src.vdisplay.commands.common
-    line: 22
-    cyclomatic_complexity: 1
-    calls_out: 7
-    calls_in: 4
-  src.vdisplay.desktop_apps.launch_env_for:
-    name: launch_env_for
-    module: src.vdisplay.desktop_apps
-    line: 437
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.validate_command_dict:
+    name: validate_command_dict
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 43
     cyclomatic_complexity: 3
-    calls_out: 3
-    calls_in: 1
-  examples.dev-workflow.koru-audit-last-session.print:
-    name: print
-    module: examples.dev-workflow.koru-audit-last-session
-    line: 35
-    cyclomatic_complexity: 0
-    calls_out: 0
-    calls_in: 120
-  packages.vdisplay-agent.src.vdisplay_agent.services.control._selector_kwargs:
-    name: _selector_kwargs
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 20
-    cyclomatic_complexity: 1
-    calls_out: 23
-    calls_in: 4
-  src.vdisplay.commands.session.handle_export:
-    name: handle_export
-    module: src.vdisplay.commands.session
-    line: 236
-    cyclomatic_complexity: 3
-    calls_out: 12
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_monitor_frame:
-    name: capture_monitor_frame
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 90
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 1
-  examples.common.screenshot_meta.png_dimensions:
-    name: png_dimensions
-    module: examples.common.screenshot_meta
-    line: 32
-    cyclomatic_complexity: 5
-    calls_out: 10
-    calls_in: 3
-  src.vdisplay.nlp.run_nl_prompt:
-    name: run_nl_prompt
-    module: src.vdisplay.nlp
-    line: 122
-    cyclomatic_complexity: 5
-    calls_out: 7
+    calls_out: 6
     calls_in: 2
-  src.vdisplay.capture.portal_screencast._set_active:
-    name: _set_active
-    module: src.vdisplay.capture.portal_screencast
-    line: 69
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 8
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_monitor_frame_with_meta:
-    name: capture_monitor_frame_with_meta
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 51
-    cyclomatic_complexity: 9
-    calls_out: 18
-    calls_in: 2
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_virtual_start:
-    name: handle_virtual_start
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
-    line: 46
-    cyclomatic_complexity: 2
-    calls_out: 10
-    calls_in: 0
-  examples.common.validate_artifacts.validate_image_and_meta:
-    name: validate_image_and_meta
-    module: examples.common.validate_artifacts
-    line: 11
-    cyclomatic_complexity: 12
-    calls_out: 22
-    calls_in: 1
-  src.vdisplay.application.replay.queue_session_replay:
-    name: queue_session_replay
-    module: src.vdisplay.application.replay
-    line: 302
-    cyclomatic_complexity: 4
-    calls_out: 10
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions._screencast_payload:
-    name: _screencast_payload
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 78
-    cyclomatic_complexity: 7
-    calls_out: 3
-    calls_in: 4
-  packages.vdisplay-agent.src.vdisplay_agent.server.create_app:
-    name: create_app
-    module: packages.vdisplay-agent.src.vdisplay_agent.server
-    line: 14
-    cyclomatic_complexity: 4
-    calls_out: 12
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_relay:
-    name: start_relay
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 62
-    cyclomatic_complexity: 4
-    calls_out: 5
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.recover_corrupt_task_db:
-    name: recover_corrupt_task_db
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 83
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 2
-  src.vdisplay.nlp._validate_dsl:
-    name: _validate_dsl
-    module: src.vdisplay.nlp
-    line: 67
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  src.vdisplay.ide_prompt._wayland_ide_next_steps:
-    name: _wayland_ide_next_steps
-    module: src.vdisplay.ide_prompt
-    line: 282
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 2
-  packages.uri2vdisplay.src.uri2vdisplay.decode.uri_to_dsl:
-    name: uri_to_dsl
-    module: packages.uri2vdisplay.src.uri2vdisplay.decode
-    line: 6
-    cyclomatic_complexity: 7
-    calls_out: 12
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.audit_context.audit_context_from_fastapi_headers:
-    name: audit_context_from_fastapi_headers
-    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
-    line: 27
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.commands.all_cmd.handle:
-    name: handle
-    module: src.vdisplay.commands.all_cmd
-    line: 19
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.task_store.TaskStore._reopen_after_corruption:
-    name: _reopen_after_corruption
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 159
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 0
-  packages.rest2vdisplay.src.rest2vdisplay.app.create_app:
-    name: create_app
-    module: packages.rest2vdisplay.src.rest2vdisplay.app
-    line: 14
-    cyclomatic_complexity: 2
-    calls_out: 38
-    calls_in: 3
-  src.vdisplay.commands.common.include_all_from_args:
-    name: include_all_from_args
-    module: src.vdisplay.commands.common
-    line: 36
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 3
   packages.vdisplay-agent.src.vdisplay_agent.envelope.success:
     name: success
     module: packages.vdisplay-agent.src.vdisplay_agent.envelope
@@ -2392,236 +2518,33 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 1
     calls_in: 16
-  src.vdisplay.desktop_apps._desktop_launch:
-    name: _desktop_launch
+  src.vdisplay.desktop_apps._build_registry:
+    name: _build_registry
     module: src.vdisplay.desktop_apps
-    line: 73
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.commands.relay.handle_list_windows:
-    name: handle_list_windows
-    module: src.vdisplay.commands.relay
-    line: 60
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 0
-  src.vdisplay.discovery._parse_xrandr_query:
-    name: _parse_xrandr_query
-    module: src.vdisplay.discovery
-    line: 153
+    line: 188
     cyclomatic_complexity: 8
-    calls_out: 12
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_replay.list_replay_sessions:
-    name: list_replay_sessions
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_replay
-    line: 14
-    cyclomatic_complexity: 9
-    calls_out: 21
-    calls_in: 1
-  examples.common.screenshot_meta.write_screenshot_meta:
-    name: write_screenshot_meta
-    module: examples.common.screenshot_meta
-    line: 141
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 5
-  src.vdisplay.agent_config.use_agent:
-    name: use_agent
-    module: src.vdisplay.agent_config
-    line: 87
+    calls_out: 20
+    calls_in: 0
+  src.vdisplay.commands.session.handle_reprocess:
+    name: handle_reprocess
+    module: src.vdisplay.commands.session
+    line: 250
     cyclomatic_complexity: 2
     calls_out: 4
-    calls_in: 1
-  src.vdisplay.application.session_context.apply_cli_session_args:
-    name: apply_cli_session_args
-    module: src.vdisplay.application.session_context
-    line: 36
-    cyclomatic_complexity: 3
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.discovery._looks_like_xvfb_only:
-    name: _looks_like_xvfb_only
-    module: src.vdisplay.discovery
-    line: 38
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 8
-  src.vdisplay.commands.common.add_display_arg:
-    name: add_display_arg
-    module: src.vdisplay.commands.common
-    line: 8
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 14
-  packages.vdisplay-agent.src.vdisplay_agent.services.sampler._capture_virtual_persistent:
-    name: _capture_virtual_persistent
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sampler
-    line: 61
-    cyclomatic_complexity: 5
-    calls_out: 12
-    calls_in: 1
-  src.vdisplay.desktop_apps.prompt_chat_selectors_for:
-    name: prompt_chat_selectors_for
-    module: src.vdisplay.desktop_apps
-    line: 308
-    cyclomatic_complexity: 9
-    calls_out: 6
-    calls_in: 1
-  src.vdisplay.ide_prompt.open_desktop_app:
-    name: open_desktop_app
-    module: src.vdisplay.ide_prompt
-    line: 52
-    cyclomatic_complexity: 3
-    calls_out: 8
-    calls_in: 2
-  src.vdisplay.commands.history._resolve_session_from_args:
-    name: _resolve_session_from_args
-    module: src.vdisplay.commands.history
-    line: 89
-    cyclomatic_complexity: 7
-    calls_out: 16
-    calls_in: 3
-  packages.vdisplay-agent.src.vdisplay_agent.task_store._utcnow:
-    name: _utcnow
-    module: packages.vdisplay-agent.src.vdisplay_agent.task_store
-    line: 22
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 3
-  src.vdisplay.commands.agent._handle_browser_open:
-    name: _handle_browser_open
-    module: src.vdisplay.commands.agent
-    line: 215
-    cyclomatic_complexity: 3
-    calls_out: 9
-    calls_in: 1
-  src.vdisplay.commands.agent.handle:
-    name: handle
-    module: src.vdisplay.commands.agent
-    line: 120
+    calls_in: 0
+  src.vdisplay.windows.query.find_windows:
+    name: find_windows
+    module: src.vdisplay.windows.query
+    line: 157
     cyclomatic_complexity: 6
-    calls_out: 8
-    calls_in: 0
-  src.vdisplay.ide_prompt._find_first_selector:
-    name: _find_first_selector
-    module: src.vdisplay.ide_prompt
-    line: 166
-    cyclomatic_complexity: 11
-    calls_out: 10
-    calls_in: 2
-  src.vdisplay.commands.common.control_selector_kwargs_for_service:
-    name: control_selector_kwargs_for_service
-    module: src.vdisplay.commands.common
-    line: 137
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.commands.all_cmd.handle_outputs:
-    name: handle_outputs
-    module: src.vdisplay.commands.all_cmd
-    line: 39
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.routes.auth.make_check_auth:
-    name: make_check_auth
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.auth
-    line: 15
-    cyclomatic_complexity: 1
     calls_out: 5
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache._get_cached_all_frames:
-    name: _get_cached_all_frames
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 106
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.list_tasks:
-    name: list_tasks
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 32
+    calls_in: 5
+  src.vdisplay.application.services.capture.capture_screenshot:
+    name: capture_screenshot
+    module: src.vdisplay.application.services.capture
+    line: 27
     cyclomatic_complexity: 3
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.client_routes._route_terminal_open:
-    name: _route_terminal_open
-    module: src.vdisplay.client_routes
-    line: 52
-    cyclomatic_complexity: 4
-    calls_out: 0
-    calls_in: 1
-  src.vdisplay.commands.agent._handle_screencast:
-    name: _handle_screencast
-    module: src.vdisplay.commands.agent
-    line: 329
-    cyclomatic_complexity: 2
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.ide_prompt._try_control_set_value:
-    name: _try_control_set_value
-    module: src.vdisplay.ide_prompt
-    line: 483
-    cyclomatic_complexity: 5
-    calls_out: 8
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_from_runtime:
-    name: json_from_runtime
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 55
-    cyclomatic_complexity: 1
-    calls_out: 2
-    calls_in: 15
-  src.vdisplay.ide_prompt._build_ide_success_result:
-    name: _build_ide_success_result
-    module: src.vdisplay.ide_prompt
-    line: 505
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.cli.build_parser:
-    name: build_parser
-    module: src.vdisplay.cli
-    line: 13
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 1
-  src.vdisplay.application.errors.error_from_exception:
-    name: error_from_exception
-    module: src.vdisplay.application.errors
-    line: 30
-    cyclomatic_complexity: 4
-    calls_out: 11
-    calls_in: 6
-  src.vdisplay.control.providers.browser_sync_executor.run_browser_sync:
-    name: run_browser_sync
-    module: src.vdisplay.control.providers.browser_sync_executor
-    line: 32
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 13
-  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_find:
-    name: _parse_controls_find
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
-    line: 191
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 0
-  src.vdisplay.api.VirtualDisplaySession.create:
-    name: create
-    module: src.vdisplay.api
-    line: 36
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 0
-  src.vdisplay.application.session_context.current_audit_headers:
-    name: current_audit_headers
-    module: src.vdisplay.application.session_context
-    line: 97
-    cyclomatic_complexity: 2
-    calls_out: 2
+    calls_out: 3
     calls_in: 1
   src.vdisplay.commands.agent._screencast_status:
     name: _screencast_status
@@ -2630,102 +2553,137 @@ nodes:
     cyclomatic_complexity: 1
     calls_out: 2
     calls_in: 0
-  src.vdisplay.agent_dispatch.dispatch_via_agent:
-    name: dispatch_via_agent
-    module: src.vdisplay.agent_dispatch
-    line: 22
-    cyclomatic_complexity: 1
-    calls_out: 4
-    calls_in: 0
-  src.vdisplay.nlp._run_local_dsl:
-    name: _run_local_dsl
-    module: src.vdisplay.nlp
-    line: 141
-    cyclomatic_complexity: 7
+  src.vdisplay.discovery.resolve_host_display:
+    name: resolve_host_display
+    module: src.vdisplay.discovery
+    line: 12
+    cyclomatic_complexity: 11
     calls_out: 7
-    calls_in: 1
-  src.vdisplay.application.auto.runner.list_auto_tasks:
-    name: list_auto_tasks
-    module: src.vdisplay.application.auto.runner
-    line: 177
-    cyclomatic_complexity: 3
-    calls_out: 9
-    calls_in: 2
-  src.vdisplay.application.session_context.enrich_command_request:
-    name: enrich_command_request
-    module: src.vdisplay.application.session_context
-    line: 46
-    cyclomatic_complexity: 6
-    calls_out: 5
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.services.control.find_controls:
-    name: find_controls
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
-    line: 84
-    cyclomatic_complexity: 2
-    calls_out: 10
-    calls_in: 0
-  src.vdisplay.commands.observe.handle_observe:
-    name: handle_observe
-    module: src.vdisplay.commands.observe
-    line: 36
-    cyclomatic_complexity: 9
-    calls_out: 25
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.get_task:
-    name: get_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 46
-    cyclomatic_complexity: 2
-    calls_out: 3
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.stop_screencast:
-    name: stop_screencast
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
-    line: 258
-    cyclomatic_complexity: 5
-    calls_out: 5
-    calls_in: 1
-  src.vdisplay.application.services.screencast_cli.probe_screencast_capture:
-    name: probe_screencast_capture
-    module: src.vdisplay.application.services.screencast_cli
-    line: 251
-    cyclomatic_complexity: 8
+    calls_in: 33
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy:
+    name: _main_legacy
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
+    line: 20
+    cyclomatic_complexity: 10
     calls_out: 17
     calls_in: 1
-  src.vdisplay.desktop_apps.resolve_map_path:
-    name: resolve_map_path
-    module: src.vdisplay.desktop_apps
-    line: 387
-    cyclomatic_complexity: 5
-    calls_out: 9
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.audit_context.audit_context_from_headers:
-    name: audit_context_from_headers
-    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.shutdown:
+    name: shutdown
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 394
+    cyclomatic_complexity: 4
+    calls_out: 8
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.routes.register_all_routes:
+    name: register_all_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes
     line: 12
+    cyclomatic_complexity: 2
+    calls_out: 3
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.list_tasks:
+    name: list_tasks
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 32
+    cyclomatic_complexity: 3
+    calls_out: 4
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand:
+    name: _main_subcommand
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.cli
+    line: 43
+    cyclomatic_complexity: 9
+    calls_out: 19
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_relay:
+    name: start_relay
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 62
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 0
+  src.vdisplay.payloads.all_payload:
+    name: all_payload
+    module: src.vdisplay.payloads
+    line: 68
     cyclomatic_complexity: 1
     calls_out: 1
-    calls_in: 6
-  packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute.execute_audit_route:
-    name: execute_audit_route
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes._audit_execute
-    line: 19
-    cyclomatic_complexity: 5
-    calls_out: 16
-    calls_in: 4
-  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.register_session_task:
-    name: register_session_task
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
-    line: 77
-    cyclomatic_complexity: 4
-    calls_out: 10
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_release:
+    name: handle_release
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command
+    line: 105
+    cyclomatic_complexity: 3
+    calls_out: 12
     calls_in: 0
-  src.vdisplay.ide_prompt._submit_via_keyboard:
-    name: _submit_via_keyboard
-    module: src.vdisplay.ide_prompt
-    line: 222
-    cyclomatic_complexity: 5
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_replay.list_replay_sessions:
+    name: list_replay_sessions
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_replay
+    line: 14
+    cyclomatic_complexity: 9
+    calls_out: 21
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb:
+    name: schema_for_verb
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry
+    line: 39
+    cyclomatic_complexity: 1
+    calls_out: 3
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_monitors:
+    name: handle_monitors
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 6
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery._mark_recovery_attempt:
+    name: _mark_recovery_attempt
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
+    line: 41
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 1
+  src.vdisplay.capture.portal_screencast._screencast_multiple:
+    name: _screencast_multiple
+    module: src.vdisplay.capture.portal_screencast
+    line: 444
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 3
+  src.vdisplay.commands.session.add_root_session_args:
+    name: add_root_session_args
+    module: src.vdisplay.commands.session
+    line: 18
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  examples.common.host_capture.capture_host_screenshot:
+    name: capture_host_screenshot
+    module: examples.common.host_capture
+    line: 9
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 2
+  src.vdisplay.desktop_apps.launch_env_for:
+    name: launch_env_for
+    module: src.vdisplay.desktop_apps
+    line: 437
+    cyclomatic_complexity: 3
+    calls_out: 3
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.cache_put:
+    name: cache_put
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
+    line: 47
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar.resolve_verb:
+    name: resolve_verb
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 41
+    cyclomatic_complexity: 4
     calls_out: 6
     calls_in: 1
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_windows:
@@ -2735,62 +2693,20 @@ nodes:
     cyclomatic_complexity: 3
     calls_out: 2
     calls_in: 0
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query.handle_windows:
-    name: handle_windows
-    module: packages.dsl2vdisplay.src.dsl2vdisplay.handlers.query
-    line: 46
+  packages.vdisplay-agent.src.vdisplay_agent.services.control._selector_kwargs:
+    name: _selector_kwargs
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.control
+    line: 20
     cyclomatic_complexity: 1
-    calls_out: 9
-    calls_in: 1
-  src.vdisplay.agent_config.reset_agent_probe_cache:
-    name: reset_agent_probe_cache
-    module: src.vdisplay.agent_config
-    line: 19
-    cyclomatic_complexity: 1
-    calls_out: 0
-    calls_in: 3
-  src.vdisplay.client_routes._route_browser_open:
-    name: _route_browser_open
-    module: src.vdisplay.client_routes
-    line: 66
+    calls_out: 23
+    calls_in: 4
+  src.vdisplay.application.project_config.ensure_metadata_layout:
+    name: ensure_metadata_layout
+    module: src.vdisplay.application.project_config
+    line: 359
     cyclomatic_complexity: 4
-    calls_out: 0
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache.capture_all_monitor_frames:
-    name: capture_all_monitor_frames
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_frame_cache
-    line: 163
-    cyclomatic_complexity: 4
-    calls_out: 4
-    calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._is_vdisplay_agent_pid:
-    name: _is_vdisplay_agent_pid
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 87
-    cyclomatic_complexity: 2
-    calls_out: 2
-    calls_in: 1
-  src.vdisplay.client_routes._route_windows_query:
-    name: _route_windows_query
-    module: src.vdisplay.client_routes
-    line: 23
-    cyclomatic_complexity: 6
-    calls_out: 4
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes.sampler.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.sampler
-    line: 16
-    cyclomatic_complexity: 1
-    calls_out: 18
-    calls_in: 0
-  examples.common.screenshot_meta.save_png_with_meta:
-    name: save_png_with_meta
-    module: examples.common.screenshot_meta
-    line: 148
-    cyclomatic_complexity: 2
-    calls_out: 6
-    calls_in: 0
+    calls_out: 8
+    calls_in: 5
   src.vdisplay.control.gui_map.load_gui_map:
     name: load_gui_map
     module: src.vdisplay.control.gui_map
@@ -2798,96 +2714,138 @@ nodes:
     cyclomatic_complexity: 2
     calls_out: 6
     calls_in: 10
-  examples.control-plugin.src.vdisplay_example_plugin.register_plugin:
-    name: register_plugin
-    module: examples.control-plugin.src.vdisplay_example_plugin
-    line: 19
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_focus:
+    name: _parse_control_focus
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 199
     cyclomatic_complexity: 1
     calls_out: 1
     calls_in: 0
-  src.vdisplay.commands.common.add_control_selector_args:
-    name: add_control_selector_args
-    module: src.vdisplay.commands.common
-    line: 44
+  src.vdisplay.agent_config.resolve_agent_url:
+    name: resolve_agent_url
+    module: src.vdisplay.agent_config
+    line: 72
+    cyclomatic_complexity: 6
+    calls_out: 5
+    calls_in: 24
+  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_from_runtime:
+    name: json_from_runtime
+    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
+    line: 55
     cyclomatic_complexity: 1
-    calls_out: 23
-    calls_in: 2
-  src.vdisplay.payloads.all_payload:
-    name: all_payload
-    module: src.vdisplay.payloads
-    line: 68
-    cyclomatic_complexity: 1
-    calls_out: 1
-    calls_in: 2
-  packages.vdisplay-agent.src.vdisplay_agent.serve_port._partition_listener_pids:
-    name: _partition_listener_pids
-    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
-    line: 92
-    cyclomatic_complexity: 4
-    calls_out: 6
-    calls_in: 3
-  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider.ExampleAxProvider.__init__:
-    name: __init__
-    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
-    line: 68
+    calls_out: 2
+    calls_in: 15
+  packages.vdisplay-agent.src.vdisplay_agent.services.sessions.start_browser:
+    name: start_browser
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.sessions
+    line: 326
     cyclomatic_complexity: 3
     calls_out: 4
     calls_in: 0
-  src.vdisplay.capture.portal_screencast.refresh_screencast_adopt_payload:
-    name: refresh_screencast_adopt_payload
-    module: src.vdisplay.capture.portal_screencast
-    line: 134
-    cyclomatic_complexity: 14
-    calls_out: 14
-    calls_in: 1
-  src.vdisplay.control.session.parse_session_kind:
-    name: parse_session_kind
-    module: src.vdisplay.control.session
-    line: 23
+  examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider.build_example_ax:
+    name: build_example_ax
+    module: examples.control-plugin-ax.src.vdisplay_example_ax_plugin.provider
+    line: 85
     cyclomatic_complexity: 3
-    calls_out: 5
+    calls_out: 3
+    calls_in: 0
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line:
+    name: execute_dsl_line
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.bus
+    line: 136
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 5
+  packages.vdisplay-agent.src.vdisplay_agent.audit_context.apply_audit_env:
+    name: apply_audit_env
+    module: packages.vdisplay-agent.src.vdisplay_agent.audit_context
+    line: 32
+    cyclomatic_complexity: 7
+    calls_out: 6
     calls_in: 2
-  src.vdisplay.desktop_apps.map_target_candidates:
-    name: map_target_candidates
-    module: src.vdisplay.desktop_apps
-    line: 432
+  examples.control-plane.control_demo.run_browser_demo:
+    name: run_browser_demo
+    module: examples.control-plane.control_demo
+    line: 107
+    cyclomatic_complexity: 6
+    calls_out: 30
+    calls_in: 1
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port.stop_pids:
+    name: stop_pids
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 118
+    cyclomatic_complexity: 13
+    calls_out: 10
+    calls_in: 2
+  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider._demo_backend:
+    name: _demo_backend
+    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin.provider
+    line: 60
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 3
+  packages.vdisplay-agent.src.vdisplay_agent.broker_events.log_broker_event:
+    name: log_broker_event
+    module: packages.vdisplay-agent.src.vdisplay_agent.broker_events
+    line: 22
+    cyclomatic_complexity: 3
+    calls_out: 7
+    calls_in: 2
+  examples.control-plugin-uia.src.vdisplay_example_uia_plugin.register_plugin:
+    name: register_plugin
+    module: examples.control-plugin-uia.src.vdisplay_example_uia_plugin
+    line: 15
     cyclomatic_complexity: 1
     calls_out: 1
     calls_in: 0
-  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery._mark_recovery_attempt:
-    name: _mark_recovery_attempt
-    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
-    line: 41
-    cyclomatic_complexity: 1
-    calls_out: 1
+  src.vdisplay.application.session_recorder.export_session_zip:
+    name: export_session_zip
+    module: src.vdisplay.application.session_recorder
+    line: 731
+    cyclomatic_complexity: 4
+    calls_out: 10
     calls_in: 1
-  src.vdisplay.client_routes.route_command:
-    name: route_command
-    module: src.vdisplay.client_routes
-    line: 104
-    cyclomatic_complexity: 7
-    calls_out: 7
-    calls_in: 1
-  examples.control-plane.control_demo.show_active_controls:
-    name: show_active_controls
-    module: examples.control-plane.control_demo
-    line: 29
+  src.vdisplay.agent_config._is_vdisplay_agent_health:
+    name: _is_vdisplay_agent_health
+    module: src.vdisplay.agent_config
+    line: 30
     cyclomatic_complexity: 6
-    calls_out: 21
+    calls_out: 9
     calls_in: 1
-  src.vdisplay.desktop_apps._default_map_candidates:
-    name: _default_map_candidates
-    module: src.vdisplay.desktop_apps
-    line: 360
-    cyclomatic_complexity: 5
-    calls_out: 18
-    calls_in: 1
-  packages.vdisplay-agent.src.vdisplay_agent.routes.capture.register_routes:
-    name: register_routes
-    module: packages.vdisplay-agent.src.vdisplay_agent.routes.capture
-    line: 18
+  src.vdisplay.capture.host.capture_all_monitors:
+    name: capture_all_monitors
+    module: src.vdisplay.capture.host
+    line: 408
+    cyclomatic_complexity: 8
+    calls_out: 12
+    calls_in: 4
+  packages.vdisplay-agent.src.vdisplay_agent.services.web_console.click_monitor_pointer:
+    name: click_monitor_pointer
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.web_console
+    line: 34
     cyclomatic_complexity: 1
-    calls_out: 5
+    calls_out: 2
+    calls_in: 0
+  src.vdisplay.application.executor.execute:
+    name: execute
+    module: src.vdisplay.application.executor
+    line: 116
+    cyclomatic_complexity: 5
+    calls_out: 13
+    calls_in: 8
+  packages.vdisplay-agent.src.vdisplay_agent.services.tasks.end_screencast_task:
+    name: end_screencast_task
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.tasks
+    line: 181
+    cyclomatic_complexity: 1
+    calls_out: 2
+    calls_in: 1
+  packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_control_set_value:
+    name: _parse_control_set_value
+    module: packages.dsl2vdisplay.src.dsl2vdisplay.grammar
+    line: 203
+    cyclomatic_complexity: 2
+    calls_out: 2
     calls_in: 0
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar._parse_controls_list:
     name: _parse_controls_list
@@ -2896,55 +2854,97 @@ nodes:
     cyclomatic_complexity: 3
     calls_out: 4
     calls_in: 0
-  src.vdisplay.capture.host.capture_all_monitors:
-    name: capture_all_monitors
-    module: src.vdisplay.capture.host
-    line: 408
-    cyclomatic_complexity: 8
-    calls_out: 12
-    calls_in: 4
-  src.vdisplay.nl.window_center_on_output:
-    name: window_center_on_output
-    module: src.vdisplay.nl
-    line: 94
-    cyclomatic_complexity: 3
-    calls_out: 18
-    calls_in: 2
-  src.vdisplay.commands.agent._screencast_stop:
-    name: _screencast_stop
-    module: src.vdisplay.commands.agent
-    line: 285
-    cyclomatic_complexity: 1
-    calls_out: 3
-    calls_in: 0
-  src.vdisplay.commands.agent._handle_preflight:
-    name: _handle_preflight
-    module: src.vdisplay.commands.agent
-    line: 170
-    cyclomatic_complexity: 11
-    calls_out: 24
-    calls_in: 1
-  src.vdisplay.desktop_apps._build_registry:
-    name: _build_registry
-    module: src.vdisplay.desktop_apps
-    line: 188
-    cyclomatic_complexity: 8
-    calls_out: 20
-    calls_in: 0
-  src.vdisplay.application.session_recorder.session_recording_enabled:
-    name: session_recording_enabled
-    module: src.vdisplay.application.session_recorder
-    line: 38
+  src.vdisplay.capture.portal_screencast.stop_screencast_session:
+    name: stop_screencast_session
+    module: src.vdisplay.capture.portal_screencast
+    line: 504
     cyclomatic_complexity: 2
-    calls_out: 5
+    calls_out: 2
     calls_in: 7
-  packages.vdisplay-agent.src.vdisplay_agent.envelope.json_success:
-    name: json_success
-    module: packages.vdisplay-agent.src.vdisplay_agent.envelope
-    line: 51
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes:
+    name: register_routes
+    module: packages.vdisplay-agent.src.vdisplay_agent.routes.health
+    line: 21
+    cyclomatic_complexity: 1
+    calls_out: 33
+    calls_in: 0
+  packages.vdisplay-agent.src.vdisplay_agent.serve_port._partition_listener_pids:
+    name: _partition_listener_pids
+    module: packages.vdisplay-agent.src.vdisplay_agent.serve_port
+    line: 92
+    cyclomatic_complexity: 4
+    calls_out: 6
+    calls_in: 3
+  packages.uri2vdisplay.src.uri2vdisplay.cli.main:
+    name: main
+    module: packages.uri2vdisplay.src.uri2vdisplay.cli
+    line: 11
+    cyclomatic_complexity: 4
+    calls_out: 13
+    calls_in: 0
+  src.vdisplay.capture.portal_screencast.portal_session_env_status:
+    name: portal_session_env_status
+    module: src.vdisplay.capture.portal_screencast
+    line: 97
+    cyclomatic_complexity: 5
+    calls_out: 5
+    calls_in: 10
+  packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery._recovery_cooldown_s:
+    name: _recovery_cooldown_s
+    module: packages.vdisplay-agent.src.vdisplay_agent.services.screencast_recovery
+    line: 15
     cyclomatic_complexity: 1
     calls_out: 2
+    calls_in: 1
+  examples.agent-broker.broker_demo.main:
+    name: main
+    module: examples.agent-broker.broker_demo
+    line: 15
+    cyclomatic_complexity: 9
+    calls_out: 35
     calls_in: 0
+  src.vdisplay.utils.auto_install_package:
+    name: auto_install_package
+    module: src.vdisplay.utils
+    line: 49
+    cyclomatic_complexity: 4
+    calls_out: 5
+    calls_in: 9
+  src.vdisplay.ide_prompt._build_set_value_failure_result:
+    name: _build_set_value_failure_result
+    module: src.vdisplay.ide_prompt
+    line: 473
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 2
+  src.vdisplay.ide_prompt._is_wayland_session:
+    name: _is_wayland_session
+    module: src.vdisplay.ide_prompt
+    line: 27
+    cyclomatic_complexity: 1
+    calls_out: 1
+    calls_in: 15
+  src.vdisplay.ide_prompt.open_desktop_app:
+    name: open_desktop_app
+    module: src.vdisplay.ide_prompt
+    line: 52
+    cyclomatic_complexity: 3
+    calls_out: 8
+    calls_in: 2
+  src.vdisplay.agent_config.resolve_agent_token:
+    name: resolve_agent_token
+    module: src.vdisplay.agent_config
+    line: 82
+    cyclomatic_complexity: 3
+    calls_out: 2
+    calls_in: 1
+  src.vdisplay.client_routes._route_terminal_open:
+    name: _route_terminal_open
+    module: src.vdisplay.client_routes
+    line: 52
+    cyclomatic_complexity: 4
+    calls_out: 0
+    calls_in: 1
 edges:
 - caller: packages.mcp2vdisplay.src.mcp2vdisplay.cli.main
   callee: packages.mcp2vdisplay.src.mcp2vdisplay.cli.create_server

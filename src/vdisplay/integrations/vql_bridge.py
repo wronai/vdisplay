@@ -58,6 +58,11 @@ def _try_from_screen_context(ctx: ScreenContext) -> dict[str, Any] | None:
         if not hasattr(program, "to_dict"):
             return None
         payload = program.to_dict()
+        # Only use this result if it has meaningful layers/elements
+        scene_layers = payload.get("scene", {}).get("layers") or []
+        top_elements = payload.get("elements") or []
+        if not scene_layers and not top_elements:
+            return None  # Fall through to _try_imgl_scene / _try_adopt_screenshot
         metadata = dict(payload.get("metadata") or {})
         metadata["render_intent"] = _enrich_render_intent(
             ctx,
@@ -94,6 +99,38 @@ def _try_imgl_scene(ctx: ScreenContext) -> dict[str, Any] | None:
     }
 
 
+def _adopted_element_to_layer(el: dict[str, Any]) -> dict[str, Any] | None:
+    """Convert a single adopted element dict to a VQL layer dict."""
+    bbox = el.get("bbox")
+    if not isinstance(bbox, (list, tuple)) or len(bbox) < 4:
+        return None
+    x, y, w, h = bbox[0], bbox[1], bbox[2], bbox[3]
+    bbox_dict = {"x": x, "y": y, "w": w, "h": h}
+    center = {"x": x + w // 2, "y": y + h // 2}
+    return {
+        "kind": str(el.get("role") or "element"),
+        "id": str(el.get("id") or ""),
+        "text": el.get("label") or el.get("text") or "",
+        "bbox": bbox_dict,
+        "center": center,
+        "click_center": center,
+        "confidence": float(el.get("confidence") or 0.0) or None,
+        "metadata": {"source": "img2vql-adopt", "location": el.get("location")},
+    }
+
+
+def _adopted_elements_to_layers(elements: list[Any]) -> list[dict[str, Any]]:
+    """Convert adopted element list to VQL layer list."""
+    layers: list[dict[str, Any]] = []
+    for el in elements:
+        if not isinstance(el, dict):
+            continue
+        layer = _adopted_element_to_layer(el)
+        if layer:
+            layers.append(layer)
+    return layers
+
+
 def _try_adopt_screenshot(ctx: ScreenContext) -> dict[str, Any] | None:
     """Use img2vql.adopt_screenshot for top-level elements (bboxes, click_centers)."""
     if not ctx.image_path or not Path(ctx.image_path).is_file():
@@ -110,26 +147,7 @@ def _try_adopt_screenshot(ctx: ScreenContext) -> dict[str, Any] | None:
         capture = ctx.capture
         width = int(capture.get("width") or 0)
         height = int(capture.get("height") or 0)
-        layers = []
-        for el in elements:
-            bbox = el.get("bbox")
-            if not isinstance(bbox, (list, tuple)) or len(bbox) < 4:
-                continue
-            x, y, w, h = bbox[0], bbox[1], bbox[2], bbox[3]
-            # Normalize to bbox dict format
-            bbox_dict = {"x": x, "y": y, "w": w, "h": h}
-            center = {"x": x + w // 2, "y": y + h // 2}
-            layer = {
-                "kind": str(el.get("role") or "element"),
-                "id": str(el.get("id") or ""),
-                "text": el.get("label") or el.get("text") or "",
-                "bbox": bbox_dict,
-                "center": center,
-                "click_center": center,
-                "confidence": float(el.get("confidence") or 0.0) or None,
-                "metadata": {"source": "img2vql-adopt", "location": el.get("location")},
-            }
-            layers.append(layer)
+        layers = _adopted_elements_to_layers(elements)
         return {
             "version": "1.0",
             "scene": {"width": width, "height": height, "layers": layers, "elements": elements},
@@ -404,13 +422,50 @@ def _extract_imgl_scene(imgl: dict[str, Any]) -> dict[str, Any] | None:
     return None
 
 
+def _element_layer_from_dict(element: dict[str, Any]) -> dict[str, Any] | None:
+    """Build a layer dict from an element dict (handles type/role fallbacks)."""
+    kind = str(element.get("type") or element.get("role") or "element")
+    return _layer_from_bbox(
+        kind=kind,
+        layer_id=str(element.get("id") or ""),
+        text=element.get("text"),
+        bbox=element.get("bbox"),
+        confidence=float(element.get("confidence") or 0.0) or None,
+    )
+
+
+def _ocr_layer_from_dict(ocr: dict[str, Any]) -> dict[str, Any] | None:
+    """Build an OCR layer dict from an ocr_box dict."""
+    text = str(ocr.get("text") or "").strip()
+    if not text:
+        return None
+    return _layer_from_bbox(
+        kind="ocr",
+        text=text,
+        bbox=ocr.get("bbox"),
+        confidence=float(ocr.get("confidence") or 0.0) or None,
+    )
+
+
+def _extend_element_layers(
+    layers: list[dict[str, Any]],
+    elements: list[Any],
+) -> None:
+    """Append valid element layers from an iterable to the layers list."""
+    for element in elements:
+        if not isinstance(element, dict):
+            continue
+        item = _element_layer_from_dict(element)
+        if item:
+            layers.append(item)
+
+
 def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
     """Build actuation layers from imgl scene data (windows+elements+ocr)."""
     limit = get_runtime_options().vql.layer_export_limit
     scene = _extract_imgl_scene(imgl)
     if not isinstance(scene, dict):
         return []
-    # Build layers from scene windows + elements + orphan + ocr
     layers: list[dict[str, Any]] = []
     for window in scene.get("windows") or []:
         if not isinstance(window, dict):
@@ -423,54 +478,13 @@ def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
         )
         if window_layer:
             layers.append(window_layer)
-        for element in window.get("elements") or []:
-            if not isinstance(element, dict):
-                continue
-            item = _layer_from_bbox(
-                kind=str(element.get("type") or element.get("role") or "element"),
-                layer_id=str(element.get("id") or ""),
-                text=element.get("text"),
-                bbox=element.get("bbox"),
-                confidence=float(element.get("confidence") or 0.0) or None,
-            )
-            if item:
-                layers.append(item)
-    for element in scene.get("elements") or []:
-        if not isinstance(element, dict):
-            continue
-        item = _layer_from_bbox(
-            kind=str(element.get("role") or element.get("type") or "element"),
-            layer_id=str(element.get("id") or ""),
-            text=element.get("text"),
-            bbox=element.get("bbox"),
-            confidence=float(element.get("confidence") or 0.0) or None,
-        )
-        if item:
-            layers.append(item)
-    for element in scene.get("orphan_elements") or []:
-        if not isinstance(element, dict):
-            continue
-        item = _layer_from_bbox(
-            kind=str(element.get("role") or element.get("type") or "element"),
-            layer_id=str(element.get("id") or ""),
-            text=element.get("text"),
-            bbox=element.get("bbox"),
-            confidence=float(element.get("confidence") or 0.0) or None,
-        )
-        if item:
-            layers.append(item)
+        _extend_element_layers(layers, window.get("elements") or [])
+    _extend_element_layers(layers, scene.get("elements") or [])
+    _extend_element_layers(layers, scene.get("orphan_elements") or [])
     for ocr in scene.get("ocr_boxes") or []:
         if not isinstance(ocr, dict):
             continue
-        text = str(ocr.get("text") or "").strip()
-        if not text:
-            continue
-        item = _layer_from_bbox(
-            kind="ocr",
-            text=text,
-            bbox=ocr.get("bbox"),
-            confidence=float(ocr.get("confidence") or 0.0) or None,
-        )
+        item = _ocr_layer_from_dict(ocr)
         if item:
             layers.append(item)
     return layers[:limit]

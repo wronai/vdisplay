@@ -71,14 +71,18 @@ def window_titles_from_layers(layers: list[dict[str, Any]]) -> list[str]:
     return titles
 
 
-def _layer_center(layer: dict[str, Any]) -> tuple[int, int] | None:
-    center = layer.get("click_center") or layer.get("center")
-    if isinstance(center, dict):
-        try:
-            return int(center.get("x") or 0), int(center.get("y") or 0)
-        except (TypeError, ValueError):
-            pass
-    bbox = layer.get("bbox") or layer.get("bounds") or {}
+def _center_from_dict(center: Any) -> tuple[int, int] | None:
+    """Safely extract (x, y) from a center dict."""
+    if not isinstance(center, dict):
+        return None
+    try:
+        return int(center.get("x") or 0), int(center.get("y") or 0)
+    except (TypeError, ValueError):
+        return None
+
+
+def _bbox_center(bbox: Any) -> tuple[int, int] | None:
+    """Compute center (x, y) from a bbox dict."""
     if not isinstance(bbox, dict):
         return None
     try:
@@ -91,6 +95,13 @@ def _layer_center(layer: dict[str, Any]) -> tuple[int, int] | None:
     if w <= 0 or h <= 0:
         return None
     return x + w // 2, y + h // 2
+
+
+def _layer_center(layer: dict[str, Any]) -> tuple[int, int] | None:
+    center = _center_from_dict(layer.get("click_center") or layer.get("center"))
+    if center is not None:
+        return center
+    return _bbox_center(layer.get("bbox") or layer.get("bounds"))
 
 
 def _layer_label(layer: dict[str, Any]) -> str:

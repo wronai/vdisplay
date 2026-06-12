@@ -6,42 +6,42 @@
 HUBS[20]:
   examples.dev-workflow.koru-audit-last-session.print
     CC=0  in:120  out:0  total:120
-  src.vdisplay.cli_handlers.print_json
-    CC=1  in:67  out:1  total:68
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
     CC=1  in:0  out:68  total:68
+  src.vdisplay.cli_handlers.print_json
+    CC=1  in:67  out:1  total:68
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
     CC=3  in:44  out:2  total:46
   src.vdisplay.commands.ide.handle
     CC=8  in:0  out:45  total:45
   packages.vdisplay-agent.src.vdisplay_agent.services.sampler.start_sampler
     CC=7  in:0  out:42  total:42
-  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
-    CC=14  in:14  out:27  total:41
   packages.rest2vdisplay.src.rest2vdisplay.app.create_app
     CC=2  in:3  out:38  total:41
+  packages.dsl2vdisplay.src.dsl2vdisplay.bus.dispatch
+    CC=14  in:14  out:27  total:41
   src.vdisplay.discovery.resolve_host_display
     CC=11  in:33  out:7  total:40
-  src.vdisplay.capture.screencast_keeper.stop_keeper
-    CC=13  in:10  out:27  total:37
   src.vdisplay.utils.run_command
     CC=2  in:33  out:4  total:37
+  src.vdisplay.capture.screencast_keeper.stop_keeper
+    CC=13  in:10  out:27  total:37
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
   src.vdisplay.application.session_recorder.load_session_document
     CC=13  in:5  out:29  total:34
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
+  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
+    CC=13  in:5  out:28  total:33
   src.vdisplay.application.project_config.load_project_config
     CC=14  in:6  out:27  total:33
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
   packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
     CC=1  in:0  out:33  total:33
-  src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
-    CC=13  in:5  out:28  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
 

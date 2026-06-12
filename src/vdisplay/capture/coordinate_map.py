@@ -52,17 +52,11 @@ def _desktop_bounds(display: str | None) -> tuple[int, int, int, int]:
     return min_x, min_y, max_x, max_y
 
 
-def _clamp_global_pointer(
-    gx: int,
-    gy: int,
-    *,
+def _resolve_monitor_bounds(
     display: str | None,
-    monitor_name: str | None = None,
-) -> tuple[int, int, dict[str, Any] | None]:
-    margin = _pointer_safe_margin_px()
-    if margin <= 0:
-        return gx, gy, None
-
+    monitor_name: str | None,
+) -> tuple[int, int, int, int]:
+    """Return (min_x, min_y, max_x, max_y) for a monitor or the desktop."""
     min_x = min_y = 0
     max_x = max_y = 0
     if monitor_name:
@@ -74,7 +68,21 @@ def _clamp_global_pointer(
             max_y = min_y + int(monitor.get("height") or monitor.get("height_px") or 0)
     if max_x <= min_x or max_y <= min_y:
         min_x, min_y, max_x, max_y = _desktop_bounds(display)
+    return min_x, min_y, max_x, max_y
 
+
+def _clamp_global_pointer(
+    gx: int,
+    gy: int,
+    *,
+    display: str | None,
+    monitor_name: str | None = None,
+) -> tuple[int, int, dict[str, Any] | None]:
+    margin = _pointer_safe_margin_px()
+    if margin <= 0:
+        return gx, gy, None
+
+    min_x, min_y, max_x, max_y = _resolve_monitor_bounds(display, monitor_name)
     safe_x, safe_y = gx, gy
     adjusted: dict[str, Any] = {"margin_px": margin, "monitor": monitor_name}
     if safe_x > max_x - margin:

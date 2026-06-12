@@ -1,24 +1,24 @@
-# vdisplay | 2342 func | 262f | 227773L | python | 2026-06-12
+# vdisplay | 2356 func | 262f | 142125L | python | 2026-06-12
 # generated in 0.00s
 
 HEALTH:
   CC̄=4.1  critical=213 (limit:10)  dup=1  cycles=0
 
 ALERTS[20]:
-  !!! cc_exceeded      _build_imgl_layers = 42 (limit:15)
   !!! high_fan_out     _start_screencast_impl = 41 (limit:10)
-  !!! cc_exceeded      analyze_history = 36 (limit:15)
   !!! high_fan_out     register_routes = 33 (limit:10)
-  !!! high_fan_out     analyze_history = 32 (limit:10)
   !!! high_fan_out     register_routes = 27 (limit:10)
   !!! high_fan_out     SessionRecorder.record = 26 (limit:10)
   !!! high_fan_out     start_sampler = 24 (limit:10)
   !!! high_fan_out     create_app = 23 (limit:10)
   !!! high_fan_out     _portal_impl = 23 (limit:10)
+  !!! high_fan_out     main = 22 (limit:10)
+  !!! high_fan_out     _render_match_overlay_local = 22 (limit:10)
+  !!! high_fan_out     _start_capture_server = 22 (limit:10)
 
 MODULES[367] (top by size):
-  M[screen.png.context.json] 105421L C:0 F:0 CC↑0 D:0 (json)
-  M[screen.png.vql.json] 57902L C:0 F:0 CC↑0 D:0 (json)
+  M[screen.png.context.json] 54007L C:0 F:0 CC↑0 D:0 (json)
+  M[screen.png.vql.json] 23595L C:0 F:0 CC↑0 D:0 (json)
   M[screen.png.vql.imgl.json] 8523L C:0 F:0 CC↑0 D:0 (json)
   M[ui.vql.json] 1696L C:0 F:0 CC↑0 D:0 (json)
   M[src/vdisplay/capture/portal_screencast.py] 1602L C:1 F:79 CC↑14 D:13 (python)
@@ -37,16 +37,16 @@ MODULES[367] (top by size):
 HOTSPOTS[10]:
   ★ _start_screencast_impl fan=41  // Orchestrates 41 calls
   ★ register_routes fan=33  // Orchestrates 33 calls
-  ★ analyze_history fan=32  // Analysis pipeline, 32 stages
   ★ register_routes fan=27  // Orchestrates 27 calls
   ★ SessionRecorder.record fan=26  // Orchestrates 26 calls
+  ★ start_sampler fan=24  // Orchestrates 24 calls
 
 REFACTOR[15]:
-  [1] H/L Split analyze_history (CC=36)
-  [2] H/L Split _build_imgl_layers (CC=42)
-  [3] H/H Split god module src/vdisplay/integrations/vql_bridge.py (609L, 0 classes)
-  [4] H/H Split god module src/vdisplay/application/auto/feedback.py (534L, 1 classes)
-  [5] H/H Split god module src/vdisplay/application/services/control.py (1079L, 0 classes)
+  [1] H/H Split god module src/vdisplay/application/auto/feedback.py (534L, 1 classes)
+  [2] H/H Split god module src/vdisplay/application/services/control.py (1079L, 0 classes)
+  [3] H/H Split god module src/vdisplay/application/session_recorder.py (764L, 3 classes)
+  [4] H/H Split god module src/vdisplay/capture/portal_screencast.py (1602L, 1 classes)
+  [5] H/H Split god module src/vdisplay/capture/screencast_crop.py (503L, 0 classes)
 
 EVOLUTION:
-  2026-06-12 CC̄=4.1 crit=213 227773L // Automated analysis
+  2026-06-12 CC̄=4.1 crit=213 142125L // Automated analysis
