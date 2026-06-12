@@ -1,5 +1,5 @@
 flowchart TD
-%% generated in 0.01s
+%% generated in 0.02s
     subgraph brain__scratch_find_pycharm_chat
         brain__scratch_find_pycharm_chat___get_role_safe["_get_role_safe"]
         brain__scratch_find_pycharm_chat___get_name_safe["_get_name_safe"]
@@ -72,9 +72,9 @@ flowchart TD
     subgraph examples__dev_workflow
         examples__dev_workflow__koru_audit_last_session__print["print"]
         examples__dev_workflow__koru_audit_last_session__audit_file["audit_file"]
+        examples__dev_workflow__run_dev_automation___ensure_koru_daemon["_ensure_koru_daemon"]
         examples__dev_workflow__koru_drive_photo_vql__print["print"]
         examples__dev_workflow__koru_drive_photo_vql__persist_autonomy_phase["persist_autonomy_phase"]
-        examples__dev_workflow__run_dev_automation___ensure_koru_daemon["_ensure_koru_daemon"]
     end
     subgraph examples__headless_virtual
         examples__headless_virtual__run_virtual___load_common["_load_common"]

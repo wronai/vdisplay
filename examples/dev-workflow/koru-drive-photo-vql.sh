@@ -98,13 +98,23 @@ import sys
 from pathlib import Path
 
 from koru.integrations.autonomy_session import find_latest_koru_session, persist_autonomy_phase
-from koru.integrations.vdisplay_client import prepare_photo_vql_for_drive, send_chat
+from koru.integrations.photo_vql_drive import run_photo_vql_drive
 
 ide = os.environ["KORU_DRIVE_IDE"]
 prompt = os.environ["KORU_DRIVE_PROMPT"]
 submit = os.environ.get("KORU_DRIVE_SUBMIT", "0") in {"1", "true", "yes"}
+dry_run = os.environ.get("KORU_VDISPLAY_DRY_RUN", "").strip().lower() in {"1", "true", "yes"}
+source = os.environ.get("KORU_VDISPLAY_SOURCE", "").strip() or None
 
-observe = prepare_photo_vql_for_drive(ide=ide)
+reply = run_photo_vql_drive(
+    prompt,
+    ide=ide,
+    source=source,
+    submit=submit,
+    dry_run=dry_run,
+    reuse_prepare=False,
+)
+observe = reply.get("photo_vql_observe") or {}
 print("photo_vql_observe:", json.dumps(observe, indent=2))
 
 probe = observe.get("desktop_probe") or {}
@@ -117,14 +127,14 @@ if probe:
         "window_count": probe.get("window_count"),
         "ide_process_count": len(probe.get("ide_processes") or []),
     }, indent=2))
-if not observe.get("ok"):
-    err = observe.get("error") or "prepare failed"
+if not observe.get("ok") and not reply.get("ok"):
+    err = observe.get("error") or reply.get("error") or "prepare failed"
     print(f"prepare_aborted: {err}", file=sys.stderr)
-    if observe.get("hint"):
-        print(f"hint: {observe.get('hint')}", file=sys.stderr)
+    if observe.get("hint") or reply.get("hint"):
+        print(f"hint: {observe.get('hint') or reply.get('hint')}", file=sys.stderr)
     sys.exit(1)
 
-prov = observe.get("capture_provenance") or {}
+prov = observe.get("capture_provenance") or reply.get("capture_provenance") or {}
 if prov:
     print("capture_confirmation:", json.dumps({
         "capture_confirmed": prov.get("capture_confirmed"),
@@ -153,17 +163,6 @@ if visual_guard_failed and not allow_mismatch:
         file=sys.stderr,
     )
     sys.exit(1)
-
-reply = send_chat(
-    prompt,
-    ide=ide,
-    submit=submit,
-    dry_run=os.environ.get("KORU_VDISPLAY_DRY_RUN", "").strip().lower() in {"1", "true", "yes"},
-)
-reply = reply or {"ok": False, "error": "no reply"}
-reply.setdefault("photo_vql_observe", observe)
-if prov and "capture_provenance" not in reply:
-    reply["capture_provenance"] = prov
 
 plan = (reply.get("photo_vql") or {}).get("vql_command_plan") or reply.get("vql_command_plan")
 if plan:

@@ -6,6 +6,7 @@ from vdisplay.application.commands import CommandRequest, CommandVerb
 from vdisplay.application.handlers import agent as agent_handlers
 from vdisplay.application.handlers import local as local_handlers
 from vdisplay.application.services import capture
+from vdisplay.exceptions import VDisplayError
 
 
 def test_resolve_screenshot_routing_host_with_source(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -102,3 +103,34 @@ def test_agent_screenshot_handler_uses_host_for_source(monkeypatch: pytest.Monke
     assert calls[0]["mode"] == "host"
     assert calls[0]["source"] == "DP-1"
     assert calls[0]["display"] == ":0"
+
+
+def test_agent_screenshot_handler_rejects_unknown_source(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("DISPLAY", ":0")
+    monkeypatch.setattr(
+        "vdisplay.application.services.capture.list_monitors",
+        lambda _display: [
+            {"name": "DP-1"},
+            {"name": "HDMI-1"},
+        ],
+        raising=False,
+    )
+    monkeypatch.setattr(
+        "vdisplay.discovery.list_monitors",
+        lambda _display: [
+            {"name": "DP-1"},
+            {"name": "HDMI-1"},
+        ],
+    )
+    monkeypatch.setattr("vdisplay.discovery.resolve_host_display", lambda _display: ":0")
+    monkeypatch.setattr("vdisplay.application.services.capture.resolve_host_display", lambda _display: ":0", raising=False)
+    monkeypatch.setattr(agent_handlers, "agent_client_required", lambda: object())
+
+    with pytest.raises(VDisplayError, match="monitor not found: DP-2"):
+        agent_handlers.execute_agent(
+            CommandRequest(
+                verb=CommandVerb.SCREENSHOT,
+                output="/tmp/host.png",
+                source="DP-2",
+            )
+        )

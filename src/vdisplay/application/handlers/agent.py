@@ -112,6 +112,12 @@ def _screenshot(client: AgentClient, cmd: CommandRequest) -> dict[str, Any]:
     from ..services import capture
 
     mode, display, vd_display = capture.resolve_screenshot_routing(cmd)
+    capture.validate_screenshot_source(
+        display=None if mode == "virtual" else display,
+        source=cmd.source,
+        mode=mode,
+        all_monitors=cmd.all_monitors,
+    )
     return capture.capture_screenshot_via_client(
         client,
         output=cmd.output or "screen.png",

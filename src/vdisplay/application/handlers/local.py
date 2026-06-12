@@ -85,6 +85,12 @@ def _screenshot(cmd: CommandRequest) -> dict[str, Any]:
     from ..services import capture
 
     mode, display, vd_display = capture.resolve_screenshot_routing(cmd)
+    capture.validate_screenshot_source(
+        display=None if mode == "virtual" else display,
+        source=cmd.source,
+        mode=mode,
+        all_monitors=cmd.all_monitors,
+    )
     return capture.capture_screenshot_local(
         output=cmd.output or "screen.png",
         display=None if mode == "virtual" else display,

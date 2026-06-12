@@ -1,6 +1,6 @@
-# code2llm | 367f 142278L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
-# generated in 0.14s
-# CC̅=4.0 | critical:0/2367 | dups:0 | cycles:0
+# code2llm | 367f 142318L | python:288,json:29,shell:12,yaml:11,toml:11,yml:5,proto:4,txt:2 | 2026-06-12
+# generated in 0.15s
+# CC̅=4.1 | critical:0/2368 | dups:0 | cycles:0
 
 HEALTH[0]: ok
 
@@ -150,9 +150,9 @@ LAYERS:
   │ vql_capture_validation     311L  0C   13m  CC=14     ←1
   │ keyboard                   300L  2C   11m  CC=12     ←0
   │ uia_impl                   299L  4C   29m  CC=13     ←3
+  │ local                      297L  0C   21m  CC=4      ←1
   │ pointer_probes             297L  0C   12m  CC=13     ←8
   │ watch                      293L  0C   10m  CC=8      ←1
-  │ local                      291L  0C   21m  CC=4      ←1
   │ sampler_loop               284L  3C   13m  CC=8      ←1
   │ vision_template            282L  1C   11m  CC=11     ←5
   │ loader                     277L  0C   16m  CC=12     ←2
@@ -163,7 +163,8 @@ LAYERS:
   │ session                    260L  0C    8m  CC=10     ←2
   │ terminal_screen            260L  3C   14m  CC=7      ←3
   │ linux_x11_mirror           259L  1C   17m  CC=10     ←0
-  │ agent                      251L  0C   23m  CC=6      ←1
+  │ capture                    259L  0C    7m  CC=13     ←1
+  │ agent                      257L  0C   23m  CC=6      ←1
   │ codec                      248L  5C   16m  CC=14     ←1
   │ defaults                   248L  0C   13m  CC=12     ←1
   │ atspi                      247L  1C   15m  CC=10     ←0
@@ -176,7 +177,6 @@ LAYERS:
   │ discovery                  239L  0C   11m  CC=4      ←0
   │ vision_llm                 236L  1C   12m  CC=12     ←2
   │ mouse                      231L  2C   16m  CC=13     ←1
-  │ capture                    230L  0C    6m  CC=13     ←1
   │ terminal_session           227L  2C   16m  CC=7      ←6
   │ observe_cache              224L  0C   15m  CC=13     ←2
   │ portal                     221L  1C    7m  CC=11     ←2
@@ -412,7 +412,7 @@ LAYERS:
   │
   examples/                       CC̄=2.4    ←in:0  →out:0
   │ planfile.yaml              335L  0C    0m  CC=0.0    ←0
-  │ koru-drive-photo-vql.sh    193L  0C    2m  CC=0.0    ←0
+  │ koru-drive-photo-vql.sh    192L  0C    2m  CC=0.0    ←0
   │ control_demo               172L  0C    5m  CC=6      ←0
   │ planfile-automation.yaml   170L  0C    0m  CC=0.0    ←0
   │ screenshot_meta            162L  0C    9m  CC=14     ←6
@@ -513,19 +513,19 @@ COUPLING:
     packages.nlp2vdisplay                        1                        3                                                                                                                                                                                                                               ←1                                                                         ──                         
         examples.ci-agent                                                 1                                                                                                                            2                                                                                                                                                                                                      ──
   CYCLES: none
+  HUB: packages.vdisplay-agent/ (fan-in=5)
   HUB: src.vdisplay/ (fan-in=92)
+  HUB: examples.common/ (fan-in=11)
   HUB: packages.dsl2vdisplay/ (fan-in=18)
   HUB: examples.dev-workflow/ (fan-in=120)
-  HUB: packages.vdisplay-agent/ (fan-in=5)
-  HUB: examples.common/ (fan-in=11)
-  SMELL: examples.agent-broker/ fan-out=13 → split needed
-  SMELL: examples.control-plane/ fan-out=33 → split needed
-  SMELL: brain/ fan-out=17 → split needed
-  SMELL: src.vdisplay/ fan-out=48 → split needed
   SMELL: examples.host-mirror/ fan-out=8 → split needed
-  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
   SMELL: packages.vdisplay-agent/ fan-out=72 → split needed
+  SMELL: src.vdisplay/ fan-out=48 → split needed
+  SMELL: examples.agent-broker/ fan-out=13 → split needed
   SMELL: examples.host-relay/ fan-out=9 → split needed
+  SMELL: examples.control-plane/ fan-out=33 → split needed
+  SMELL: packages.dsl2vdisplay/ fan-out=12 → split needed
+  SMELL: brain/ fan-out=17 → split needed
 
 EXTERNAL:
   validation: run `vallm batch .` → validation.toon

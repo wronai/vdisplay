@@ -1,9 +1,9 @@
-# vdisplay | 367f 142278L | json:29,yaml:11,txt:2,shell:12,toml:11,python:288,yml:5,proto:4 | 2026-06-12
+# vdisplay | 367f 142318L | json:29,yaml:11,toml:11,txt:2,shell:12,python:288,yml:5,proto:4 | 2026-06-12
 # generated in 0.05s
-# stats: 2367 func | 0 cls | 367 mod | CC̄=4.0 | critical:0 | cycles:0
+# stats: 2368 func | 0 cls | 367 mod | CC̄=4.1 | critical:0 | cycles:0
 # alerts[5]: fan-out _start_screencast_impl=41; fan-out register_routes=33; fan-out register_routes=27; fan-out SessionRecorder.record=26; fan-out start_sampler=24
 # hotspots[5]: _start_screencast_impl fan=41; register_routes fan=33; register_routes fan=27; SessionRecorder.record fan=26; start_sampler fan=24
-# evolution: CC̄ 4.1→4.0 (improved -0.1)
+# evolution: CC̄ 4.1→4.1 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
 M[367]:
   app.vql.json,127
@@ -33,7 +33,7 @@ M[367]:
   examples/control-plugin/src/vdisplay_example_plugin/__init__.py,27
   examples/control-plugin/src/vdisplay_example_plugin/my_provider.py,92
   examples/dev-workflow/koru-audit-last-session.sh,119
-  examples/dev-workflow/koru-drive-photo-vql.sh,193
+  examples/dev-workflow/koru-drive-photo-vql.sh,192
   examples/dev-workflow/koru-photo-vql.sh,97
   examples/dev-workflow/planfile.yaml,335
   examples/dev-workflow/planfile-autonomy.yaml,36
@@ -181,9 +181,9 @@ M[367]:
   src/vdisplay/application/executor.py,141
   src/vdisplay/application/gui_map_events.py,91
   src/vdisplay/application/handlers/__init__.py,6
-  src/vdisplay/application/handlers/agent.py,251
+  src/vdisplay/application/handlers/agent.py,257
   src/vdisplay/application/handlers/control.py,72
-  src/vdisplay/application/handlers/local.py,291
+  src/vdisplay/application/handlers/local.py,297
   src/vdisplay/application/history/__init__.py,28
   src/vdisplay/application/history/analyze.py,218
   src/vdisplay/application/history/loader.py,277
@@ -200,7 +200,7 @@ M[367]:
   src/vdisplay/application/replay.py,370
   src/vdisplay/application/runtime.py,111
   src/vdisplay/application/services/__init__.py,3
-  src/vdisplay/application/services/capture.py,230
+  src/vdisplay/application/services/capture.py,259
   src/vdisplay/application/services/control.py,1079
   src/vdisplay/application/services/discovery.py,239
   src/vdisplay/application/services/img2nl_enrich.py,245
@@ -996,6 +996,22 @@ D:
     _passes_uia_filters(record)
     filter_records(records;selector)
     create_uia_backend(backend)
+  src/vdisplay/capture/host.py:
+    e: _wayland_host_session,_monitor_source_name,resolve_window_region,_monitor_capture_region,_capture_all_from_driver_full,_monitor_for_name,_try_mirror_capture,_try_driver_capture,capture_host_png,_host_capture_error,capture_host_to_file,_capture_individual_monitors,_try_bulk_capture,capture_all_monitors
+    _wayland_host_session(display)
+    _monitor_source_name(display;monitor;source)
+    resolve_window_region(display)
+    _monitor_capture_region(display;output_name)
+    _capture_all_from_driver_full(display;monitors;output_dir)
+    _monitor_for_name(display;source_name)
+    _try_mirror_capture(monitors;source_name;target;resolved;errors)
+    _try_driver_capture(resolved;region;errors)
+    capture_host_png()
+    _host_capture_error(display;source;errors)
+    capture_host_to_file(path)
+    _capture_individual_monitors(monitors;resolved;output_dir;target;method;prefer_mirror;screencast_session)
+    _try_bulk_capture(resolved;monitors;output_dir;method;prefer_mirror;screencast_session)
+    capture_all_monitors()
   src/vdisplay/capture/screencast_keeper.py:
     e: _keeper_capture_client_timeout_s,keeper_state_path,keeper_stop_path,keeper_socket_path,_keeper_runtime_dir,session_uses_keeper,keeper_manages_session,_resolve_keeper_socket_path,ping_keeper_socket,keeper_capture_ready,_capture_server_running,_ensure_capture_server,_resolve_capture_socket,_exchange_capture_request,_decode_capture_png,request_keeper_capture,read_keeper_state,stop_keeper,_read_keeper_state_unchecked,_terminate_pid,_terminate_orphan_keepers,_pid_alive,_write_state,_mark_socket_ready,_dispatch_capture_request,_send_capture_response,_read_capture_request,_handle_capture_connection,_start_capture_server,run_keeper_daemon,spawn_keeper,main
     _keeper_capture_client_timeout_s()
@@ -1051,8 +1067,9 @@ D:
     _merge_diagnostics(primary;overlay)
     _legacy_control_diagnostics(data)
   src/vdisplay/application/services/capture.py:
-    e: resolve_screenshot_routing,capture_screenshot,capture_screenshot_local,_ensure_wayland_screencast,_capture_via_agent,capture_screenshot_via_client
+    e: resolve_screenshot_routing,validate_screenshot_source,capture_screenshot,capture_screenshot_local,_ensure_wayland_screencast,_capture_via_agent,capture_screenshot_via_client
     resolve_screenshot_routing(cmd)
+    validate_screenshot_source()
     capture_screenshot()
     capture_screenshot_local()
     _ensure_wayland_screencast(client)
@@ -1108,22 +1125,6 @@ D:
     evaluate_map_drift(ctx;png)
     _item_to_ocr_box(item)
     ocr_boxes_from_cached_context(ctx)
-  src/vdisplay/capture/host.py:
-    e: _wayland_host_session,_monitor_source_name,resolve_window_region,_monitor_capture_region,_capture_all_from_driver_full,_monitor_for_name,_try_mirror_capture,_try_driver_capture,capture_host_png,_host_capture_error,capture_host_to_file,_capture_individual_monitors,_try_bulk_capture,capture_all_monitors
-    _wayland_host_session(display)
-    _monitor_source_name(display;monitor;source)
-    resolve_window_region(display)
-    _monitor_capture_region(display;output_name)
-    _capture_all_from_driver_full(display;monitors;output_dir)
-    _monitor_for_name(display;source_name)
-    _try_mirror_capture(monitors;source_name;target;resolved;errors)
-    _try_driver_capture(resolved;region;errors)
-    capture_host_png()
-    _host_capture_error(display;source;errors)
-    capture_host_to_file(path)
-    _capture_individual_monitors(monitors;resolved;output_dir;target;method;prefer_mirror;screencast_session)
-    _try_bulk_capture(resolved;monitors;output_dir;method;prefer_mirror;screencast_session)
-    capture_all_monitors()
   packages/vdisplay-agent/src/vdisplay_agent/services/sampler.py:
     e: _config_from_body,_ensure_virtual_session,_capture_virtual_persistent,_recover_screencast,start_sampler,stop_sampler,sampler_status
     _config_from_body(body)
@@ -2781,6 +2782,7 @@ D:
   planfile.yaml:
   koru.yaml:
   vdisplay.yaml:
+  pyproject.toml:
   tree.txt:
   screen.png.context.json:
   screen.png.vql.json:
@@ -2811,6 +2813,7 @@ D:
   packages/nlp2vdisplay/pyproject.toml:
   packages/vdisplay-agent/pyproject.toml:
   packages/vdisplay-agent/src/vdisplay_agent/schemas.py:
+  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
   packages/vdisplay-agent/src/vdisplay_agent/services/__init__.py:
   packages/vdisplay-agent/src/vdisplay_agent/static/__init__.py:
   maps/pycharm-chat-fresh.json:
@@ -2854,13 +2857,6 @@ D:
     audit_file()
   examples/dev-workflow/planfile.yaml:
   examples/dev-workflow/planfile-autonomy.yaml:
-  examples/dev-workflow/koru-drive-photo-vql.sh:
-    e: print,print,persist_autonomy_phase,print,print
-    print()
-    print()
-    persist_autonomy_phase()
-    print()
-    print()
   examples/dev-workflow/vdisplay.override.example.yaml:
   examples/dev-workflow/run-dev-automation.sh:
     e: _ensure_koru_daemon
@@ -2925,5 +2921,10 @@ D:
   proto/vdisplay/v1/common.proto:
   proto/vdisplay/v1/event.proto:
   proto/vdisplay/v1/command.proto:
-  pyproject.toml:
-  packages/vdisplay-agent/src/vdisplay_agent/__init__.py:
+  examples/dev-workflow/koru-drive-photo-vql.sh:
+    e: print,print,persist_autonomy_phase,print,print
+    print()
+    print()
+    persist_autonomy_phase()
+    print()
+    print()

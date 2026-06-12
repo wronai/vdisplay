@@ -1,12 +1,12 @@
-# redup/duplication | 52 groups | 286f 46224L | 2026-06-12
+# redup/duplication | 52 groups | 286f 46265L | 2026-06-12
 
 SUMMARY:
   files_scanned: 286
-  total_lines:   46224
+  total_lines:   46265
   dup_groups:    52
   dup_fragments: 121
   saved_lines:   499
-  scan_ms:       3457
+  scan_ms:       3441
 
 HOTSPOTS[7] (files with most duplication):
   src/vdisplay/control/scoring.py  dup=105L  groups=3  frags=7  (0.2%)
@@ -46,11 +46,11 @@ DUPLICATES[52] (ranked by impact):
       packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:46-62  (handle_windows)
       packages/dsl2vdisplay/src/dsl2vdisplay/handlers/query.py:65-81  (handle_all)
   [94948b88ff78a042]   STRU  _controls_list  L=4 N=5 saved=16 sim=1.00
-      src/vdisplay/application/handlers/agent.py:190-193  (_controls_list)
-      src/vdisplay/application/handlers/agent.py:196-199  (_controls_find)
-      src/vdisplay/application/handlers/agent.py:202-205  (_control_click)
-      src/vdisplay/application/handlers/agent.py:208-211  (_control_focus)
-      src/vdisplay/application/handlers/agent.py:214-217  (_control_set_value)
+      src/vdisplay/application/handlers/agent.py:196-199  (_controls_list)
+      src/vdisplay/application/handlers/agent.py:202-205  (_controls_find)
+      src/vdisplay/application/handlers/agent.py:208-211  (_control_click)
+      src/vdisplay/application/handlers/agent.py:214-217  (_control_focus)
+      src/vdisplay/application/handlers/agent.py:220-223  (_control_set_value)
   [83f6aff43414a50f]   STRU  _uia_ready  L=7 N=3 saved=14 sim=1.00
       src/vdisplay/control/scoring.py:119-125  (_uia_ready)
       src/vdisplay/control/scoring.py:128-134  (_ax_ready)

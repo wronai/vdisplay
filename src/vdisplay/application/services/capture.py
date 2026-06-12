@@ -24,6 +24,28 @@ def resolve_screenshot_routing(cmd: CommandRequest) -> tuple[str, str | None, st
     return cmd.mode, cmd.display or host_display, cmd.vd_display
 
 
+def validate_screenshot_source(
+    *,
+    display: str | None,
+    source: str | None,
+    mode: str,
+    all_monitors: bool = False,
+) -> None:
+    """Reject explicit monitor names that are not connected before any capture route."""
+    if mode == "virtual" or all_monitors:
+        return
+    raw = (source or "").strip()
+    if not raw or raw.lower() in {"primary", "default"}:
+        return
+    from ...discovery import list_monitors, resolve_host_display
+
+    resolved = resolve_host_display(display)
+    monitors = list_monitors(resolved)
+    available = [str(item.get("name") or "") for item in monitors if item.get("name")]
+    if raw not in available:
+        raise VDisplayError(f"monitor not found: {raw} (available: {available})")
+
+
 def capture_screenshot(
     *,
     output: str | None = None,
@@ -196,6 +218,13 @@ def _capture_via_agent(
             client.stop_session(session_id)
 
     _ensure_wayland_screencast(client)
+
+    validate_screenshot_source(
+        display=display,
+        source=source,
+        mode=mode,
+        all_monitors=all_monitors,
+    )
 
     if all_monitors:
         directory = out_dir or "."
