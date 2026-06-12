@@ -42,6 +42,35 @@ Each project using vdisplay should have **`vdisplay.yaml`** at the repo root wit
 
 All runtime metadata (observe PNG, VQL, context, auto run logs) goes under **`.vdisplay/`**.
 
+**Koru photo-VQL drives (2026-06-12+):** each run is scoped to a **date folder**:
+
+```
+.vdisplay/
+  YYYY-MM-DD/
+    YYYY-MM-DDTHH-MM-SSZ__koru-{ide}/
+      session.json          # manifest (ide, source, max_age)
+      index.jsonl             # observe → decide → act timeline
+      observe/
+        prepare.json          # prepare_photo_vql_for_drive output
+        capture.png           # fresh screenshot (only source for decide)
+        capture.png.vql.json
+      decide/
+        vql_target.json       # VQL target + llm_decision
+        stale_abort.json      # when sidecar too old / mismatch
+      act/
+        drive_result.json     # focus + edit + coords + llm_used
+      verify/                 # post-paste checks (future)
+```
+
+Stale global files (`.vdisplay/koru-cont-dp*.png` older than `KORU_VDISPLAY_VQL_MAX_AGE_S`, analysis JSONs, IMGL sidecars older than PNG) are **ignored** by `load_vql_metadata()` — decide/act never reads them during an active session.
+
+**Reset** (delete sessions, captures, broker log; recreates empty layout):
+
+```bash
+vdisplay config --project . clear
+vdisplay config --project . clear --dry-run
+```
+
 ```bash
 vdisplay config --project .
 vdisplay auto --project . --planfile examples/dev-workflow/planfile-autonomy.yaml --source yaml run
@@ -152,6 +181,52 @@ vdisplay nlp "otwórz Cursor, wpisz prompt, zweryfikuj screenshotem DP-1"
 ```
 
 System must: screencast/observe → understand UI (NL/vision) → multi-step act → verify → recover from keeper/AT-SPI failures.
+
+## Koru photo-VQL decision loop (step-by-step)
+
+Used by `koru-drive-photo-vql.sh`, `prepare_photo_vql_for_drive()`, `send_chat()` with `KORU_VDISPLAY_LLM_VISION_DECISION=1`.
+
+| Step | Function | Input | Output in session |
+|------|----------|-------|-------------------|
+| 1. **Session** | `begin_autonomy_session()` | ide, source | `.vdisplay/YYYY-MM-DD/ISO__koru-{ide}/` |
+| 2. **Observe** | `ensure_vdisplay_ide_control` + `refresh_photo_vql_sidecar` | live screenshot | `observe/capture.png` + `.vql.json` |
+| 3. **Freshness gate** | `load_vql_metadata()` / `vql_sidecar_is_stale()` | max age (default 300s) | skip stale; abort if session active |
+| 4. **IDE match** | `_photo_vql_ide_window_warning()` | **window title layer only** | `ide_window_warning` if Cursor≠PyCharm |
+| 5. **Decide** | `get_vql_chat_target_from_photo` + `_resolve_photo_vql_llm_coords` | PNG + VQL + OpenRouter | `decide/vql_target.json` |
+| 6. **Act** | `move_mouse_to_vql_target_and_focus_keyboard` + `_type_text_at_vql_coords` | refined x,y | `act/drive_result.json` |
+| 7. **Audit** | `record_koru_drive_step` | full payload | vdisplay session steps + `index.jsonl` |
+
+### Cursor positioning logs (chat write failures)
+
+When typing misses the chat composer, inspect (in order):
+
+1. `.vdisplay/YYYY-MM-DD/*/decide/vql_chat_candidates.json` — all VQL input layers scored
+2. `.vdisplay/YYYY-MM-DD/*/decide/vql_chat_target_selected.json` — chosen target + `warnings`
+3. `.vdisplay/YYYY-MM-DD/*/act/cursor_positioning.jsonl` — **exact local/global coords at each command stage**
+4. `.vdisplay/YYYY-MM-DD/*/act/command_plan_*.json` — generated `POINTER_MOVE` / `CLIPBOARD_PASTE` sequence from VQL
+5. `drive_reply.vql_command_plan.warnings` — e.g. `chat_local_y=799_below_850` means editor not chat
+
+Logger keys (grep): `VQL_CHAT_TARGET_CANDIDATES`, `VQL_CURSOR_POSITIONING`, `VQL_CURSOR_POSITIONING_SUSPICIOUS`, `VQL_YDOTOOL_COMMAND_MAPPED`, `VQL_CHAT_WRITE_PASTE_OK`.
+
+### Freshness env vars
+
+| Variable | Default | Meaning |
+|----------|---------|---------|
+| `KORU_VDISPLAY_VQL_MAX_AGE_S` | `300` | Sidecars older than this are not used for decide |
+| `KORU_VDISPLAY_PHOTO_VQL_REFRESH` | `auto` | `auto` = refresh when missing/stale/mismatch; `always` = every run |
+| `VDISPLAY_SESSION` | `1` in drive script | Enables `record_koru_drive_step` audit |
+
+### Entry command (JetBrains DP-2)
+
+```bash
+export KORU_VDISPLAY_LLM_VISION_DECISION=1
+export KORU_VDISPLAY_PREFER_PHOTO_VQL=1
+export KORU_VDISPLAY_SOURCE=DP-2
+export KORU_VDISPLAY_VQL_MAX_AGE_S=300
+bash examples/dev-workflow/koru-drive-photo-vql.sh \
+  --ide jetbrains --source DP-2 --prompt "twoje polecenie"
+# Inspect: .vdisplay/$(date +%Y-%m-%d)/*/act/drive_result.json
+```
 
 ## Risks
 

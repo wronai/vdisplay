@@ -1,0 +1,8523 @@
+{
+  "version": "1.0",
+  "scene": {
+    "width": 2048,
+    "height": 1280,
+    "source_image": "/home/tom/github/wronai/vdisplay/screen.png"
+  },
+  "windows": [
+    {
+      "id": "window_0",
+      "bbox": {
+        "x": 0,
+        "y": 0,
+        "w": 2040,
+        "h": 1272
+      },
+      "title": "z File Edit Selection View Go Run Terminal Help automation-gap-analysis - ts - Cursor",
+      "z": 1,
+      "elements": [
+        {
+          "id": "window_0-button-0",
+          "type": "button",
+          "text": "Path(str(vql_path) .replace(\".png. and imgl_path.stat().s sidecar older than",
+          "bbox": {
+            "x": 1824,
+            "y": 838,
+            "w": 204,
+            "h": 70
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-1",
+          "type": "button",
+          "text": "Opening a folder will close currently open editors. To keep them open, add a",
+          "bbox": {
+            "x": 25,
+            "y": 243,
+            "w": 192,
+            "h": 70
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-2",
+          "type": "button",
+          "text": "imgl_path = if imgl_path.is reasons.append(\"imal",
+          "bbox": {
+            "x": 1644,
+            "y": 838,
+            "w": 154,
+            "h": 70
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-3",
+          "type": "button",
+          "text": "recznie vdisplay",
+          "bbox": {
+            "x": 620,
+            "y": 1113,
+            "w": 96,
+            "h": 45
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-4",
+          "type": "button",
+          "text": "po clear:",
+          "bbox": {
+            "x": 864,
+            "y": 1177,
+            "w": 83,
+            "h": 45
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-5",
+          "type": "button",
+          "text": "--source",
+          "bbox": {
+            "x": 537,
+            "y": 1177,
+            "w": 77,
+            "h": 45
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-6",
+          "type": "button",
+          "text": "wpisz",
+          "bbox": {
+            "x": 947,
+            "y": 1177,
+            "w": 77,
+            "h": 45
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-7",
+          "type": "button",
+          "text": "to do",
+          "bbox": {
+            "x": 1017,
+            "y": 1177,
+            "w": 71,
+            "h": 45
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-8",
+          "type": "button",
+          "text": "faster responses",
+          "bbox": {
+            "x": 1574,
+            "y": 1145,
+            "w": 102,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-9",
+          "type": "button",
+          "text": "Re-run",
+          "bbox": {
+            "x": 1529,
+            "y": 928,
+            "w": 77,
+            "h": 32
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-10",
+          "type": "button",
+          "text": "drive after",
+          "bbox": {
+            "x": 1612,
+            "y": 928,
+            "w": 77,
+            "h": 32
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-11",
+          "type": "button",
+          "text": "You have folder.",
+          "bbox": {
+            "x": 25,
+            "y": 128,
+            "w": 64,
+            "h": 38
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-12",
+          "type": "button",
+          "text": "247K /",
+          "bbox": {
+            "x": 1228,
+            "y": 620,
+            "w": 71,
+            "h": 32
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-13",
+          "type": "button",
+          "text": "@ Publish v",
+          "bbox": {
+            "x": 1350,
+            "y": 96,
+            "w": 90,
+            "h": 25
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-14",
+          "type": "button",
+          "text": "Gap Analysis",
+          "bbox": {
+            "x": 403,
+            "y": 96,
+            "w": 89,
+            "h": 25
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-15",
+          "type": "button",
+          "text": "Monitored",
+          "bbox": {
+            "x": 1516,
+            "y": 1094,
+            "w": 84,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-16",
+          "type": "button",
+          "text": "screenshot",
+          "bbox": {
+            "x": 774,
+            "y": 1132,
+            "w": 83,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-17",
+          "type": "button",
+          "text": "Terminal",
+          "bbox": {
+            "x": 460,
+            "y": 556,
+            "w": 64,
+            "h": 32
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-18",
+          "type": "button",
+          "text": "act/cursor_positioning.jsonl",
+          "bbox": {
+            "x": 1625,
+            "y": 678,
+            "w": 77,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-19",
+          "type": "button",
+          "text": "Explored",
+          "bbox": {
+            "x": 1510,
+            "y": 742,
+            "w": 77,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-20",
+          "type": "button",
+          "text": "Explored",
+          "bbox": {
+            "x": 1510,
+            "y": 544,
+            "w": 77,
+            "h": 25
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-21",
+          "type": "button",
+          "text": "passed",
+          "bbox": {
+            "x": 1548,
+            "y": 230,
+            "w": 71,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-22",
+          "type": "button",
+          "text": "© Clear",
+          "bbox": {
+            "x": 1529,
+            "y": 300,
+            "w": 71,
+            "h": 26
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-button-23",
+          "type": "button",
+          "text": "folder",
+          "bbox": {
+            "x": 179,
+            "y": 281,
+            "w": 57,
+            "h": 32
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "source": "contrast_blob",
+            "detected_label": "button"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-24",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 25,
+            "y": 192,
+            "w": 218,
+            "h": 34
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-25",
+          "type": "input",
+          "text": "PREFER LLM",
+          "bbox": {
+            "x": 494,
+            "y": 1024,
+            "w": 94,
+            "h": 42
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-26",
+          "type": "input",
+          "text": "KORU_VDISPLAY_DRY_RUN",
+          "bbox": {
+            "x": 401,
+            "y": 1070,
+            "w": 213,
+            "h": 18
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-27",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 136,
+            "y": 192,
+            "w": 107,
+            "h": 34
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-28",
+          "type": "input",
+          "text": "IDE CONTROL=1",
+          "bbox": {
+            "x": 614,
+            "y": 896,
+            "w": 94,
+            "h": 38
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-29",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 85,
+            "y": 204,
+            "w": 158,
+            "h": 22
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-30",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 896,
+            "y": 1186,
+            "w": 115,
+            "h": 30
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-31",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 452,
+            "y": 1062,
+            "w": 162,
+            "h": 21
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-32",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 580,
+            "y": 981,
+            "w": 89,
+            "h": 38
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-label-33",
+          "type": "label",
+          "text": "KORU_VDISPLAY",
+          "bbox": {
+            "x": 414,
+            "y": 916,
+            "w": 319,
+            "h": 17
+          },
+          "confidence": 0.89,
+          "metadata": {
+            "source": "ocr",
+            "for_input": "window_0-input-33"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-33",
+          "type": "input",
+          "text": "KORU_VDISPLAY IDE=1",
+          "bbox": {
+            "x": 494,
+            "y": 938,
+            "w": 197,
+            "h": 17
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": "KORU_VDISPLAY"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-34",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 874,
+            "y": 1181,
+            "w": 94,
+            "h": 35
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-35",
+          "type": "input",
+          "text": "PHOTO_VQL=auto",
+          "bbox": {
+            "x": 665,
+            "y": 1024,
+            "w": 85,
+            "h": 38
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-36",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 388,
+            "y": 896,
+            "w": 94,
+            "h": 34
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-37",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 601,
+            "y": 989,
+            "w": 98,
+            "h": 30
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-38",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 439,
+            "y": 1058,
+            "w": 94,
+            "h": 30
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-39",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 443,
+            "y": 1177,
+            "w": 128,
+            "h": 21
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-40",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 665,
+            "y": 1181,
+            "w": 145,
+            "h": 17
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-41",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 584,
+            "y": 917,
+            "w": 137,
+            "h": 17
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-label-42",
+          "type": "label",
+          "text": "KORU_VDISPLAY",
+          "bbox": {
+            "x": 414,
+            "y": 1026,
+            "w": 349,
+            "h": 17
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "source": "ocr",
+            "for_input": "window_0-input-42"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-42",
+          "type": "input",
+          "text": "KORU_VDISPLAY",
+          "bbox": {
+            "x": 494,
+            "y": 1049,
+            "w": 137,
+            "h": 17
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": "KORU_VDISPLAY"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-label-43",
+          "type": "label",
+          "text": "Swieza",
+          "bbox": {
+            "x": 484,
+            "y": 1113,
+            "w": 59,
+            "h": 14
+          },
+          "confidence": 0.7,
+          "metadata": {
+            "source": "ocr",
+            "for_input": "window_0-input-43"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-43",
+          "type": "input",
+          "text": "VDISPLAY_METADATA_DIR=.vdisplay",
+          "bbox": {
+            "x": 465,
+            "y": 1134,
+            "w": 98,
+            "h": 22
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": "Swieza"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-44",
+          "type": "input",
+          "text": "KORU_VDISPLAY_CONTROL_FALLBACK=1",
+          "bbox": {
+            "x": 558,
+            "y": 981,
+            "w": 111,
+            "h": 17
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-label-45",
+          "type": "label",
+          "text": "opcjonalnie",
+          "bbox": {
+            "x": 364,
+            "y": 1113,
+            "w": 109,
+            "h": 18
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "source": "ocr",
+            "for_input": "window_0-input-45"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-45",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 375,
+            "y": 1134,
+            "w": 85,
+            "h": 22
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": "opcjonalnie"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-46",
+          "type": "input",
+          "text": "AUTO",
+          "bbox": {
+            "x": 494,
+            "y": 913,
+            "w": 86,
+            "h": 21
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-47",
+          "type": "input",
+          "text": "session.py",
+          "bbox": {
+            "x": 1600,
+            "y": 789,
+            "w": 106,
+            "h": 17
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-48",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 422,
+            "y": 1036,
+            "w": 60,
+            "h": 30
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-49",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 593,
+            "y": 1032,
+            "w": 59,
+            "h": 30
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-50",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 516,
+            "y": 1070,
+            "w": 98,
+            "h": 18
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-51",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 384,
+            "y": 896,
+            "w": 98,
+            "h": 17
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-52",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 422,
+            "y": 908,
+            "w": 60,
+            "h": 26
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-53",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 601,
+            "y": 938,
+            "w": 90,
+            "h": 17
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-54",
+          "type": "input",
+          "text": "background",
+          "bbox": {
+            "x": 1608,
+            "y": 1096,
+            "w": 90,
+            "h": 17
+          },
+          "confidence": 0.65,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-input-55",
+          "type": "input",
+          "text": null,
+          "bbox": {
+            "x": 541,
+            "y": 1041,
+            "w": 60,
+            "h": 25
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "source": "frame_detect",
+            "label": null
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-60",
+          "type": "label",
+          "text": "z",
+          "bbox": {
+            "x": 14,
+            "y": 12,
+            "w": 16,
+            "h": 18
+          },
+          "confidence": 0.68,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-61",
+          "type": "label",
+          "text": "not",
+          "bbox": {
+            "x": 96,
+            "y": 135,
+            "w": 24,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-62",
+          "type": "label",
+          "text": "yet",
+          "bbox": {
+            "x": 123,
+            "y": 135,
+            "w": 23,
+            "h": 14
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-63",
+          "type": "label",
+          "text": "opened",
+          "bbox": {
+            "x": 151,
+            "y": 134,
+            "w": 54,
+            "h": 15
+          },
+          "confidence": 0.83,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-64",
+          "type": "label",
+          "text": "a",
+          "bbox": {
+            "x": 210,
+            "y": 137,
+            "w": 7,
+            "h": 9
+          },
+          "confidence": 0.83,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-65",
+          "type": "label",
+          "text": "File",
+          "bbox": {
+            "x": 55,
+            "y": 15,
+            "w": 24,
+            "h": 11
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-66",
+          "type": "label",
+          "text": "Edit",
+          "bbox": {
+            "x": 102,
+            "y": 15,
+            "w": 26,
+            "h": 11
+          },
+          "confidence": 0.94,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-67",
+          "type": "label",
+          "text": "Bav",
+          "bbox": {
+            "x": 44,
+            "y": 56,
+            "w": 138,
+            "h": 19
+          },
+          "confidence": 0.41,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-68",
+          "type": "text",
+          "text": "BB",
+          "bbox": {
+            "x": 161,
+            "y": 52,
+            "w": 25,
+            "h": 33
+          },
+          "confidence": 0.4,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-69",
+          "type": "label",
+          "text": "Selection",
+          "bbox": {
+            "x": 149,
+            "y": 15,
+            "w": 64,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-70",
+          "type": "label",
+          "text": "View",
+          "bbox": {
+            "x": 235,
+            "y": 15,
+            "w": 32,
+            "h": 11
+          },
+          "confidence": 0.94,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-71",
+          "type": "label",
+          "text": "all",
+          "bbox": {
+            "x": 223,
+            "y": 247,
+            "w": 16,
+            "h": 12
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-72",
+          "type": "label",
+          "text": "instead.",
+          "bbox": {
+            "x": 26,
+            "y": 315,
+            "w": 56,
+            "h": 12
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-73",
+          "type": "label",
+          "text": "Co",
+          "bbox": {
+            "x": 344,
+            "y": 784,
+            "w": 19,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-74",
+          "type": "label",
+          "text": "zrobié",
+          "bbox": {
+            "x": 374,
+            "y": 783,
+            "w": 59,
+            "h": 14
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-75",
+          "type": "label",
+          "text": "teraz,",
+          "bbox": {
+            "x": 443,
+            "y": 785,
+            "w": 57,
+            "h": 15
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-76",
+          "type": "label",
+          "text": "zeby",
+          "bbox": {
+            "x": 514,
+            "y": 783,
+            "w": 39,
+            "h": 18
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-77",
+          "type": "label",
+          "text": "tekst",
+          "bbox": {
+            "x": 563,
+            "y": 784,
+            "w": 50,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-78",
+          "type": "label",
+          "text": "trafit",
+          "bbox": {
+            "x": 623,
+            "y": 783,
+            "w": 60,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-79",
+          "type": "label",
+          "text": "do",
+          "bbox": {
+            "x": 693,
+            "y": 784,
+            "w": 20,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-80",
+          "type": "label",
+          "text": "chatu",
+          "bbox": {
+            "x": 724,
+            "y": 784,
+            "w": 48,
+            "h": 13
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-81",
+          "type": "label",
+          "text": "PyCharm",
+          "bbox": {
+            "x": 784,
+            "y": 784,
+            "w": 69,
+            "h": 17
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-82",
+          "type": "label",
+          "text": "1.",
+          "bbox": {
+            "x": 345,
+            "y": 828,
+            "w": 15,
+            "h": 13
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-83",
+          "type": "label",
+          "text": "Upewnij",
+          "bbox": {
+            "x": 374,
+            "y": 828,
+            "w": 66,
+            "h": 17
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-84",
+          "type": "label",
+          "text": "sie,",
+          "bbox": {
+            "x": 454,
+            "y": 828,
+            "w": 36,
+            "h": 17
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-85",
+          "type": "label",
+          "text": "ze",
+          "bbox": {
+            "x": 504,
+            "y": 828,
+            "w": 19,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-86",
+          "type": "label",
+          "text": "PyCharm",
+          "bbox": {
+            "x": 534,
+            "y": 828,
+            "w": 69,
+            "h": 17
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-87",
+          "type": "label",
+          "text": "jest",
+          "bbox": {
+            "x": 614,
+            "y": 827,
+            "w": 39,
+            "h": 18
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-88",
+          "type": "label",
+          "text": "na",
+          "bbox": {
+            "x": 664,
+            "y": 831,
+            "w": 19,
+            "h": 10
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-89",
+          "type": "label",
+          "text": "wierzchu",
+          "bbox": {
+            "x": 693,
+            "y": 827,
+            "w": 80,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-90",
+          "type": "label",
+          "text": "i",
+          "bbox": {
+            "x": 784,
+            "y": 827,
+            "w": 10,
+            "h": 14
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-91",
+          "type": "label",
+          "text": "focused",
+          "bbox": {
+            "x": 804,
+            "y": 828,
+            "w": 69,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-92",
+          "type": "label",
+          "text": "na",
+          "bbox": {
+            "x": 884,
+            "y": 831,
+            "w": 19,
+            "h": 10
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-93",
+          "type": "text",
+          "text": "DP-2",
+          "bbox": {
+            "x": 914,
+            "y": 828,
+            "w": 39,
+            "h": 13
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-94",
+          "type": "label",
+          "text": "(to",
+          "bbox": {
+            "x": 966,
+            "y": 828,
+            "w": 27,
+            "h": 15
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-95",
+          "type": "label",
+          "text": "najwazniejsze).",
+          "bbox": {
+            "x": 1004,
+            "y": 828,
+            "w": 146,
+            "h": 17
+          },
+          "confidence": 0.89,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-96",
+          "type": "label",
+          "text": "2.",
+          "bbox": {
+            "x": 344,
+            "y": 850,
+            "w": 16,
+            "h": 13
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-97",
+          "type": "label",
+          "text": "Powt6rz",
+          "bbox": {
+            "x": 374,
+            "y": 849,
+            "w": 68,
+            "h": 14
+          },
+          "confidence": 0.43,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-98",
+          "type": "label",
+          "text": "(lub",
+          "bbox": {
+            "x": 456,
+            "y": 849,
+            "w": 37,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-99",
+          "type": "label",
+          "text": "uruchom",
+          "bbox": {
+            "x": 504,
+            "y": 850,
+            "w": 69,
+            "h": 13
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-100",
+          "type": "label",
+          "text": "recznie):",
+          "bbox": {
+            "x": 586,
+            "y": 850,
+            "w": 84,
+            "h": 17
+          },
+          "confidence": 0.8,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-101",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 917,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-102",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 939,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-103",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 961,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-104",
+          "type": "text",
+          "text": "KORU_VDISPLAY_SOURCE=DP-2",
+          "bbox": {
+            "x": 414,
+            "y": 960,
+            "w": 248,
+            "h": 17
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-105",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 983,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-106",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 1005,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-107",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 1027,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-108",
+          "type": "label",
+          "text": "export",
+          "bbox": {
+            "x": 343,
+            "y": 1049,
+            "w": 60,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-109",
+          "type": "label",
+          "text": "unset",
+          "bbox": {
+            "x": 344,
+            "y": 1071,
+            "w": 48,
+            "h": 12
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-110",
+          "type": "label",
+          "text": "#",
+          "bbox": {
+            "x": 343,
+            "y": 1115,
+            "w": 11,
+            "h": 12
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-111",
+          "type": "label",
+          "text": "capture",
+          "bbox": {
+            "x": 554,
+            "y": 1115,
+            "w": 69,
+            "h": 16
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-112",
+          "type": "label",
+          "text": "--source",
+          "bbox": {
+            "x": 865,
+            "y": 1139,
+            "w": 78,
+            "h": 11
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-113",
+          "type": "text",
+          "text": "DP-2",
+          "bbox": {
+            "x": 954,
+            "y": 1136,
+            "w": 38,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-114",
+          "type": "label",
+          "text": "--ide",
+          "bbox": {
+            "x": 365,
+            "y": 1201,
+            "w": 48,
+            "h": 15
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-115",
+          "type": "label",
+          "text": "jetbrains",
+          "bbox": {
+            "x": 424,
+            "y": 1202,
+            "w": 88,
+            "h": 17
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-116",
+          "type": "text",
+          "text": "DP-2",
+          "bbox": {
+            "x": 614,
+            "y": 1202,
+            "w": 38,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-117",
+          "type": "label",
+          "text": "--prompt",
+          "bbox": {
+            "x": 665,
+            "y": 1202,
+            "w": 77,
+            "h": 17
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-118",
+          "type": "label",
+          "text": "\"Real",
+          "bbox": {
+            "x": 764,
+            "y": 1201,
+            "w": 38,
+            "h": 14
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-119",
+          "type": "label",
+          "text": "test",
+          "bbox": {
+            "x": 814,
+            "y": 1203,
+            "w": 38,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-120",
+          "type": "label",
+          "text": "chatu",
+          "bbox": {
+            "x": 1084,
+            "y": 1202,
+            "w": 48,
+            "h": 13
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-121",
+          "type": "label",
+          "text": "PyCharm\"",
+          "bbox": {
+            "x": 1144,
+            "y": 1202,
+            "w": 77,
+            "h": 17
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-122",
+          "type": "label",
+          "text": "3.",
+          "bbox": {
+            "x": 344,
+            "y": 1246,
+            "w": 16,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-123",
+          "type": "label",
+          "text": "Albo",
+          "bbox": {
+            "x": 373,
+            "y": 1245,
+            "w": 40,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-124",
+          "type": "label",
+          "text": "python",
+          "bbox": {
+            "x": 554,
+            "y": 1246,
+            "w": 59,
+            "h": 17
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-125",
+          "type": "label",
+          "text": "(jak",
+          "bbox": {
+            "x": 626,
+            "y": 1246,
+            "w": 37,
+            "h": 17
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-126",
+          "type": "label",
+          "text": "wyzej)",
+          "bbox": {
+            "x": 673,
+            "y": 1246,
+            "w": 57,
+            "h": 17
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-127",
+          "type": "label",
+          "text": "z",
+          "bbox": {
+            "x": 744,
+            "y": 1249,
+            "w": 8,
+            "h": 10
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-128",
+          "type": "label",
+          "text": "tym",
+          "bbox": {
+            "x": 764,
+            "y": 1247,
+            "w": 29,
+            "h": 16
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-129",
+          "type": "label",
+          "text": "samym",
+          "bbox": {
+            "x": 804,
+            "y": 1249,
+            "w": 49,
+            "h": 14
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-130",
+          "type": "label",
+          "text": "promptem.",
+          "bbox": {
+            "x": 864,
+            "y": 1247,
+            "w": 86,
+            "h": 16
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-131",
+          "type": "label",
+          "text": "Go",
+          "bbox": {
+            "x": 291,
+            "y": 15,
+            "w": 20,
+            "h": 11
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-132",
+          "type": "label",
+          "text": "Run",
+          "bbox": {
+            "x": 333,
+            "y": 15,
+            "w": 27,
+            "h": 11
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-133",
+          "type": "label",
+          "text": "Terminal",
+          "bbox": {
+            "x": 385,
+            "y": 15,
+            "w": 56,
+            "h": 11
+          },
+          "confidence": 0.88,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-134",
+          "type": "label",
+          "text": "Help",
+          "bbox": {
+            "x": 464,
+            "y": 15,
+            "w": 31,
+            "h": 14
+          },
+          "confidence": 0.88,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-135",
+          "type": "label",
+          "text": "automation-gap-analysis",
+          "bbox": {
+            "x": 1147,
+            "y": 15,
+            "w": 267,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-136",
+          "type": "label",
+          "text": "-",
+          "bbox": {
+            "x": 1326,
+            "y": 5,
+            "w": 6,
+            "h": 31
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-137",
+          "type": "label",
+          "text": "ts",
+          "bbox": {
+            "x": 1339,
+            "y": 5,
+            "w": 14,
+            "h": 31
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-138",
+          "type": "label",
+          "text": "-",
+          "bbox": {
+            "x": 1357,
+            "y": 5,
+            "w": 9,
+            "h": 31
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-139",
+          "type": "label",
+          "text": "Cursor",
+          "bbox": {
+            "x": 1370,
+            "y": 5,
+            "w": 47,
+            "h": 31
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-140",
+          "type": "label",
+          "text": "@",
+          "bbox": {
+            "x": 285,
+            "y": 58,
+            "w": 14,
+            "h": 14
+          },
+          "confidence": 0.55,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-141",
+          "type": "label",
+          "text": "e",
+          "bbox": {
+            "x": 652,
+            "y": 57,
+            "w": 16,
+            "h": 16
+          },
+          "confidence": 0.83,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-142",
+          "type": "label",
+          "text": "@",
+          "bbox": {
+            "x": 855,
+            "y": 58,
+            "w": 13,
+            "h": 14
+          },
+          "confidence": 0.71,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-143",
+          "type": "label",
+          "text": "automation-gap-analysis",
+          "bbox": {
+            "x": 1089,
+            "y": 57,
+            "w": 203,
+            "h": 16
+          },
+          "confidence": 0.41,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-144",
+          "type": "label",
+          "text": "x",
+          "bbox": {
+            "x": 1309,
+            "y": 61,
+            "w": 12,
+            "h": 10
+          },
+          "confidence": 0.55,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-145",
+          "type": "text",
+          "text": "[I]",
+          "bbox": {
+            "x": 1399,
+            "y": 56,
+            "w": 16,
+            "h": 17
+          },
+          "confidence": 0.38,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-146",
+          "type": "label",
+          "text": "Automation",
+          "bbox": {
+            "x": 310,
+            "y": 103,
+            "w": 81,
+            "h": 12
+          },
+          "confidence": 0.78,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-147",
+          "type": "text",
+          "text": "CANVASES",
+          "bbox": {
+            "x": 278,
+            "y": 148,
+            "w": 74,
+            "h": 10
+          },
+          "confidence": 0.81,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-148",
+          "type": "label",
+          "text": "No",
+          "bbox": {
+            "x": 278,
+            "y": 182,
+            "w": 18,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-149",
+          "type": "label",
+          "text": "canvases",
+          "bbox": {
+            "x": 301,
+            "y": 185,
+            "w": 63,
+            "h": 8
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-150",
+          "type": "label",
+          "text": "found",
+          "bbox": {
+            "x": 369,
+            "y": 182,
+            "w": 36,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-151",
+          "type": "label",
+          "text": "cross-cutting",
+          "bbox": {
+            "x": 1288,
+            "y": 196,
+            "w": 72,
+            "h": 10
+          },
+          "confidence": 0.94,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-152",
+          "type": "label",
+          "text": "+",
+          "bbox": {
+            "x": 279,
+            "y": 218,
+            "w": 12,
+            "h": 11
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-153",
+          "type": "label",
+          "text": "Create",
+          "bbox": {
+            "x": 298,
+            "y": 216,
+            "w": 44,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-154",
+          "type": "label",
+          "text": "new",
+          "bbox": {
+            "x": 347,
+            "y": 219,
+            "w": 27,
+            "h": 8
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-155",
+          "type": "label",
+          "text": "canvas",
+          "bbox": {
+            "x": 379,
+            "y": 219,
+            "w": 47,
+            "h": 8
+          },
+          "confidence": 0.82,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-156",
+          "type": "label",
+          "text": "Add",
+          "bbox": {
+            "x": 645,
+            "y": 247,
+            "w": 20,
+            "h": 26
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-157",
+          "type": "label",
+          "text": "at",
+          "bbox": {
+            "x": 677,
+            "y": 247,
+            "w": 16,
+            "h": 26
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-158",
+          "type": "label",
+          "text": "least",
+          "bbox": {
+            "x": 699,
+            "y": 251,
+            "w": 39,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-159",
+          "type": "label",
+          "text": "one",
+          "bbox": {
+            "x": 744,
+            "y": 255,
+            "w": 25,
+            "h": 9
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-160",
+          "type": "label",
+          "text": "header.",
+          "bbox": {
+            "x": 777,
+            "y": 251,
+            "w": 57,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-161",
+          "type": "label",
+          "text": "Problems",
+          "bbox": {
+            "x": 294,
+            "y": 566,
+            "w": 63,
+            "h": 12
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-162",
+          "type": "label",
+          "text": "Output",
+          "bbox": {
+            "x": 383,
+            "y": 568,
+            "w": 50,
+            "h": 13
+          },
+          "confidence": 0.74,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-163",
+          "type": "label",
+          "text": "Ports",
+          "bbox": {
+            "x": 544,
+            "y": 567,
+            "w": 35,
+            "h": 11
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-164",
+          "type": "label",
+          "text": "Debug",
+          "bbox": {
+            "x": 605,
+            "y": 566,
+            "w": 43,
+            "h": 15
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-165",
+          "type": "label",
+          "text": "Console",
+          "bbox": {
+            "x": 654,
+            "y": 561,
+            "w": 54,
+            "h": 27
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-166",
+          "type": "label",
+          "text": "@ok",
+          "bbox": {
+            "x": 1145,
+            "y": 564,
+            "w": 51,
+            "h": 20
+          },
+          "confidence": 0.73,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-167",
+          "type": "label",
+          "text": "+»",
+          "bbox": {
+            "x": 1212,
+            "y": 565,
+            "w": 32,
+            "h": 17
+          },
+          "confidence": 0.31,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-168",
+          "type": "label",
+          "text": "&",
+          "bbox": {
+            "x": 1263,
+            "y": 565,
+            "w": 19,
+            "h": 18
+          },
+          "confidence": 0.88,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-169",
+          "type": "text",
+          "text": "O",
+          "bbox": {
+            "x": 1299,
+            "y": 565,
+            "w": 18,
+            "h": 17
+          },
+          "confidence": 0.34,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-170",
+          "type": "label",
+          "text": "a",
+          "bbox": {
+            "x": 1405,
+            "y": 571,
+            "w": 9,
+            "h": 6
+          },
+          "confidence": 0.66,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-171",
+          "type": "label",
+          "text": "x",
+          "bbox": {
+            "x": 1431,
+            "y": 570,
+            "w": 11,
+            "h": 10
+          },
+          "confidence": 0.66,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-172",
+          "type": "text",
+          "text": "Y",
+          "bbox": {
+            "x": 313,
+            "y": 629,
+            "w": 9,
+            "h": 20
+          },
+          "confidence": 0.5,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-173",
+          "type": "label",
+          "text": "main",
+          "bbox": {
+            "x": 334,
+            "y": 630,
+            "w": 38,
+            "h": 13
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-174",
+          "type": "label",
+          "text": "~/github/semcod/koru",
+          "bbox": {
+            "x": 384,
+            "y": 630,
+            "w": 198,
+            "h": 17
+          },
+          "confidence": 0.89,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-175",
+          "type": "label",
+          "text": "|",
+          "bbox": {
+            "x": 1218,
+            "y": 627,
+            "w": 1,
+            "h": 22
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-176",
+          "type": "text",
+          "text": "512K",
+          "bbox": {
+            "x": 1304,
+            "y": 630,
+            "w": 40,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-177",
+          "type": "label",
+          "text": "|",
+          "bbox": {
+            "x": 1358,
+            "y": 627,
+            "w": 1,
+            "h": 22
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-178",
+          "type": "label",
+          "text": ">",
+          "bbox": {
+            "x": 345,
+            "y": 697,
+            "w": 7,
+            "h": 14
+          },
+          "confidence": 0.42,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-179",
+          "type": "label",
+          "text": "uruchom",
+          "bbox": {
+            "x": 364,
+            "y": 695,
+            "w": 69,
+            "h": 15
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-180",
+          "type": "label",
+          "text": "real",
+          "bbox": {
+            "x": 445,
+            "y": 695,
+            "w": 38,
+            "h": 15
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-181",
+          "type": "label",
+          "text": "autonomie",
+          "bbox": {
+            "x": 494,
+            "y": 696,
+            "w": 89,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-182",
+          "type": "label",
+          "text": "10:13",
+          "bbox": {
+            "x": 1265,
+            "y": 696,
+            "w": 48,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-183",
+          "type": "text",
+          "text": "AM",
+          "bbox": {
+            "x": 1323,
+            "y": 696,
+            "w": 20,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-184",
+          "type": "label",
+          "text": "co",
+          "bbox": {
+            "x": 1423,
+            "y": 714,
+            "w": 18,
+            "h": 8
+          },
+          "confidence": 0.6,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-185",
+          "type": "label",
+          "text": "Corun",
+          "bbox": {
+            "x": 2000,
+            "y": 58,
+            "w": 48,
+            "h": 13
+          },
+          "confidence": 0.87,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-186",
+          "type": "label",
+          "text": "skasuj",
+          "bbox": {
+            "x": 1520,
+            "y": 115,
+            "w": 46,
+            "h": 18
+          },
+          "confidence": 0.88,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-187",
+          "type": "label",
+          "text": "wszystko",
+          "bbox": {
+            "x": 1571,
+            "y": 115,
+            "w": 70,
+            "h": 18
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-188",
+          "type": "label",
+          "text": "co",
+          "bbox": {
+            "x": 1646,
+            "y": 111,
+            "w": 13,
+            "h": 26
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-189",
+          "type": "label",
+          "text": "jest",
+          "bbox": {
+            "x": 1654,
+            "y": 116,
+            "w": 60,
+            "h": 17
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-190",
+          "type": "label",
+          "text": "w",
+          "bbox": {
+            "x": 1704,
+            "y": 111,
+            "w": 7,
+            "h": 26
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-191",
+          "type": "label",
+          "text": ".vdisplay",
+          "bbox": {
+            "x": 1719,
+            "y": 115,
+            "w": 66,
+            "h": 18
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-192",
+          "type": "label",
+          "text": "za",
+          "bbox": {
+            "x": 1789,
+            "y": 119,
+            "w": 16,
+            "h": 11
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-193",
+          "type": "label",
+          "text": "pomoca",
+          "bbox": {
+            "x": 1811,
+            "y": 119,
+            "w": 61,
+            "h": 14
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-194",
+          "type": "label",
+          "text": "komendy",
+          "bbox": {
+            "x": 1878,
+            "y": 115,
+            "w": 71,
+            "h": 18
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-195",
+          "type": "label",
+          "text": "vdisplay",
+          "bbox": {
+            "x": 1953,
+            "y": 115,
+            "w": 63,
+            "h": 18
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-196",
+          "type": "label",
+          "text": "con",
+          "bbox": {
+            "x": 2020,
+            "y": 119,
+            "w": 28,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-197",
+          "type": "label",
+          "text": "sparwdz",
+          "bbox": {
+            "x": 1520,
+            "y": 141,
+            "w": 65,
+            "h": 18
+          },
+          "confidence": 0.88,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-198",
+          "type": "label",
+          "text": "czy",
+          "bbox": {
+            "x": 1590,
+            "y": 145,
+            "w": 24,
+            "h": 14
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-199",
+          "type": "label",
+          "text": "system",
+          "bbox": {
+            "x": 1618,
+            "y": 143,
+            "w": 54,
+            "h": 16
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-200",
+          "type": "label",
+          "text": "poprawnie",
+          "bbox": {
+            "x": 1678,
+            "y": 142,
+            "w": 83,
+            "h": 17
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-201",
+          "type": "label",
+          "text": "wystartuje",
+          "bbox": {
+            "x": 1765,
+            "y": 142,
+            "w": 83,
+            "h": 17
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-202",
+          "type": "label",
+          "text": "i",
+          "bbox": {
+            "x": 1853,
+            "y": 142,
+            "w": 3,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-203",
+          "type": "label",
+          "text": "bedzie",
+          "bbox": {
+            "x": 1861,
+            "y": 141,
+            "w": 51,
+            "h": 18
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-204",
+          "type": "label",
+          "text": "realziowat",
+          "bbox": {
+            "x": 1917,
+            "y": 137,
+            "w": 80,
+            "h": 26
+          },
+          "confidence": 0.91,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-205",
+          "type": "label",
+          "text": "auton",
+          "bbox": {
+            "x": 2003,
+            "y": 143,
+            "w": 43,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-206",
+          "type": "label",
+          "text": "Run",
+          "bbox": {
+            "x": 1557,
+            "y": 185,
+            "w": 29,
+            "h": 4
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-207",
+          "type": "label",
+          "text": "koru",
+          "bbox": {
+            "x": 1593,
+            "y": 185,
+            "w": 31,
+            "h": 4
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-208",
+          "type": "label",
+          "text": "and",
+          "bbox": {
+            "x": 1631,
+            "y": 185,
+            "w": 27,
+            "h": 4
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-209",
+          "type": "label",
+          "text": "vaisplay",
+          "bbox": {
+            "x": 1666,
+            "y": 185,
+            "w": 57,
+            "h": 8
+          },
+          "confidence": 0.73,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-210",
+          "type": "label",
+          "text": "tesis",
+          "bbox": {
+            "x": 1732,
+            "y": 185,
+            "w": 33,
+            "h": 4
+          },
+          "confidence": 0.66,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-211",
+          "type": "label",
+          "text": "after",
+          "bbox": {
+            "x": 1771,
+            "y": 185,
+            "w": 31,
+            "h": 4
+          },
+          "confidence": 0.52,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-212",
+          "type": "label",
+          "text": "staleness",
+          "bbox": {
+            "x": 1810,
+            "y": 185,
+            "w": 71,
+            "h": 4
+          },
+          "confidence": 0.61,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-213",
+          "type": "label",
+          "text": "ix",
+          "bbox": {
+            "x": 1888,
+            "y": 185,
+            "w": 15,
+            "h": 4
+          },
+          "confidence": 0.74,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-214",
+          "type": "label",
+          "text": "21",
+          "bbox": {
+            "x": 1534,
+            "y": 236,
+            "w": 18,
+            "h": 12
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-215",
+          "type": "label",
+          "text": "in",
+          "bbox": {
+            "x": 1631,
+            "y": 239,
+            "w": 17,
+            "h": 9
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-216",
+          "type": "label",
+          "text": "3.64s",
+          "bbox": {
+            "x": 1660,
+            "y": 236,
+            "w": 46,
+            "h": 12
+          },
+          "confidence": 0.87,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-217",
+          "type": "label",
+          "text": ".vdisplay",
+          "bbox": {
+            "x": 1603,
+            "y": 304,
+            "w": 65,
+            "h": 17
+          },
+          "confidence": 0.74,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-218",
+          "type": "label",
+          "text": "again",
+          "bbox": {
+            "x": 1673,
+            "y": 304,
+            "w": 40,
+            "h": 17
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-219",
+          "type": "label",
+          "text": "before",
+          "bbox": {
+            "x": 1720,
+            "y": 304,
+            "w": 47,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-220",
+          "type": "label",
+          "text": "re-test",
+          "bbox": {
+            "x": 1773,
+            "y": 305,
+            "w": 47,
+            "h": 12
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-221",
+          "type": "label",
+          "text": "cd,",
+          "bbox": {
+            "x": 1826,
+            "y": 305,
+            "w": 21,
+            "h": 14
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-222",
+          "type": "label",
+          "text": "3+",
+          "bbox": {
+            "x": 1854,
+            "y": 305,
+            "w": 18,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-223",
+          "type": "label",
+          "text": "removed",
+          "bbox": {
+            "x": 1536,
+            "y": 341,
+            "w": 64,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-224",
+          "type": "label",
+          "text": "7",
+          "bbox": {
+            "x": 1612,
+            "y": 341,
+            "w": 7,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-225",
+          "type": "label",
+          "text": "ok",
+          "bbox": {
+            "x": 1631,
+            "y": 341,
+            "w": 18,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-226",
+          "type": "label",
+          "text": "True",
+          "bbox": {
+            "x": 1660,
+            "y": 341,
+            "w": 37,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-227",
+          "type": "label",
+          "text": "Re-run",
+          "bbox": {
+            "x": 1557,
+            "y": 387,
+            "w": 51,
+            "h": 13
+          },
+          "confidence": 0.45,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-228",
+          "type": "label",
+          "text": "real",
+          "bbox": {
+            "x": 1613,
+            "y": 387,
+            "w": 28,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-229",
+          "type": "label",
+          "text": "JetBrains",
+          "bbox": {
+            "x": 1646,
+            "y": 387,
+            "w": 71,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-230",
+          "type": "label",
+          "text": "drive",
+          "bbox": {
+            "x": 1722,
+            "y": 387,
+            "w": 37,
+            "h": 13
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-231",
+          "type": "label",
+          "text": "after",
+          "bbox": {
+            "x": 1764,
+            "y": 387,
+            "w": 34,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-232",
+          "type": "label",
+          "text": "staleness",
+          "bbox": {
+            "x": 1803,
+            "y": 387,
+            "w": 72,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-233",
+          "type": "label",
+          "text": "fix",
+          "bbox": {
+            "x": 1879,
+            "y": 387,
+            "w": 17,
+            "h": 13
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-234",
+          "type": "label",
+          "text": "cd,",
+          "bbox": {
+            "x": 1901,
+            "y": 388,
+            "w": 22,
+            "h": 14
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-235",
+          "type": "label",
+          "text": "3+",
+          "bbox": {
+            "x": 1929,
+            "y": 388,
+            "w": 19,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-236",
+          "type": "label",
+          "text": "},",
+          "bbox": {
+            "x": 1574,
+            "y": 439,
+            "w": 14,
+            "h": 15
+          },
+          "confidence": 0.36,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-237",
+          "type": "label",
+          "text": "“ide",
+          "bbox": {
+            "x": 1574,
+            "y": 462,
+            "w": 36,
+            "h": 12
+          },
+          "confidence": 0.39,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-238",
+          "type": "label",
+          "text": "control_attempts\":",
+          "bbox": {
+            "x": 1612,
+            "y": 461,
+            "w": 179,
+            "h": 17
+          },
+          "confidence": 0.39,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-239",
+          "type": "label",
+          "text": "2",
+          "bbox": {
+            "x": 1805,
+            "y": 462,
+            "w": 8,
+            "h": 12
+          },
+          "confidence": 0.97,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-240",
+          "type": "label",
+          "text": "}",
+          "bbox": {
+            "x": 1554,
+            "y": 484,
+            "w": 7,
+            "h": 15
+          },
+          "confidence": 0.62,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-241",
+          "type": "label",
+          "text": "1",
+          "bbox": {
+            "x": 1597,
+            "y": 547,
+            "w": 5,
+            "h": 12
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-242",
+          "type": "label",
+          "text": "search",
+          "bbox": {
+            "x": 1610,
+            "y": 546,
+            "w": 49,
+            "h": 13
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-243",
+          "type": "label",
+          "text": "©",
+          "bbox": {
+            "x": 1529,
+            "y": 576,
+            "w": 11,
+            "h": 33
+          },
+          "confidence": 0.84,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-244",
+          "type": "label",
+          "text": "Inspect",
+          "bbox": {
+            "x": 1557,
+            "y": 586,
+            "w": 54,
+            "h": 17
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-245",
+          "type": "label",
+          "text": "latest",
+          "bbox": {
+            "x": 1616,
+            "y": 586,
+            "w": 41,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-246",
+          "type": "label",
+          "text": "autonomy",
+          "bbox": {
+            "x": 1661,
+            "y": 587,
+            "w": 76,
+            "h": 16
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-247",
+          "type": "label",
+          "text": "session",
+          "bbox": {
+            "x": 1741,
+            "y": 586,
+            "w": 58,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-248",
+          "type": "label",
+          "text": "artifacts",
+          "bbox": {
+            "x": 1804,
+            "y": 586,
+            "w": 59,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-249",
+          "type": "label",
+          "text": "cd,",
+          "bbox": {
+            "x": 1869,
+            "y": 587,
+            "w": 21,
+            "h": 14
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-250",
+          "type": "label",
+          "text": "5+",
+          "bbox": {
+            "x": 1896,
+            "y": 587,
+            "w": 19,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-251",
+          "type": "label",
+          "text": "===",
+          "bbox": {
+            "x": 1534,
+            "y": 643,
+            "w": 28,
+            "h": 4
+          },
+          "confidence": 0.86,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-252",
+          "type": "label",
+          "text": "act/drive",
+          "bbox": {
+            "x": 1573,
+            "y": 638,
+            "w": 86,
+            "h": 13
+          },
+          "confidence": 0.82,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-253",
+          "type": "text",
+          "text": "MISSING",
+          "bbox": {
+            "x": 1534,
+            "y": 661,
+            "w": 66,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-254",
+          "type": "text",
+          "text": "MISSING",
+          "bbox": {
+            "x": 1534,
+            "y": 706,
+            "w": 66,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-255",
+          "type": "label",
+          "text": "2",
+          "bbox": {
+            "x": 1593,
+            "y": 734,
+            "w": 7,
+            "h": 34
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-256",
+          "type": "label",
+          "text": "files",
+          "bbox": {
+            "x": 1610,
+            "y": 744,
+            "w": 31,
+            "h": 14
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-257",
+          "type": "label",
+          "text": "®",
+          "bbox": {
+            "x": 1538,
+            "y": 790,
+            "w": 11,
+            "h": 12
+          },
+          "confidence": 0.43,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-258",
+          "type": "label",
+          "text": "autonomy",
+          "bbox": {
+            "x": 1561,
+            "y": 778,
+            "w": 77,
+            "h": 32
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-259",
+          "type": "label",
+          "text": "-5",
+          "bbox": {
+            "x": 1737,
+            "y": 788,
+            "w": 14,
+            "h": 13
+          },
+          "confidence": 0.87,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-260",
+          "type": "label",
+          "text": "file()",
+          "bbox": {
+            "x": 1788,
+            "y": 870,
+            "w": 51,
+            "h": 16
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-261",
+          "type": "label",
+          "text": "imgl",
+          "bbox": {
+            "x": 1694,
+            "y": 937,
+            "w": 30,
+            "h": 17
+          },
+          "confidence": 0.9,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-262",
+          "type": "label",
+          "text": "staleness",
+          "bbox": {
+            "x": 1730,
+            "y": 937,
+            "w": 72,
+            "h": 13
+          },
+          "confidence": 0.84,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-263",
+          "type": "label",
+          "text": "fix",
+          "bbox": {
+            "x": 1806,
+            "y": 937,
+            "w": 17,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-264",
+          "type": "label",
+          "text": "cd,",
+          "bbox": {
+            "x": 1828,
+            "y": 938,
+            "w": 22,
+            "h": 14
+          },
+          "confidence": 0.95,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-265",
+          "type": "label",
+          "text": "5+",
+          "bbox": {
+            "x": 1856,
+            "y": 938,
+            "w": 19,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-266",
+          "type": "label",
+          "text": "y':",
+          "bbox": {
+            "x": 1545,
+            "y": 975,
+            "w": 23,
+            "h": 7
+          },
+          "confidence": 0.31,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-267",
+          "type": "label",
+          "text": "797}",
+          "bbox": {
+            "x": 1585,
+            "y": 974,
+            "w": 33,
+            "h": 8
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-268",
+          "type": "label",
+          "text": "warnil",
+          "bbox": {
+            "x": 1632,
+            "y": 974,
+            "w": 46,
+            "h": 5
+          },
+          "confidence": 0.48,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-269",
+          "type": "label",
+          "text": "vql_command",
+          "bbox": {
+            "x": 1534,
+            "y": 989,
+            "w": 105,
+            "h": 17
+          },
+          "confidence": 0.75,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-270",
+          "type": "label",
+          "text": "plan:",
+          "bbox": {
+            "x": 1648,
+            "y": 989,
+            "w": 46,
+            "h": 17
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-271",
+          "type": "label",
+          "text": "{",
+          "bbox": {
+            "x": 1709,
+            "y": 990,
+            "w": 7,
+            "h": 15
+          },
+          "confidence": 0.92,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-272",
+          "type": "label",
+          "text": "write",
+          "bbox": {
+            "x": 1630,
+            "y": 1001,
+            "w": 50,
+            "h": 33
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-273",
+          "type": "label",
+          "text": "command:",
+          "bbox": {
+            "x": 1687,
+            "y": 1012,
+            "w": 75,
+            "h": 16
+          },
+          "confidence": 0.76,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-274",
+          "type": "label",
+          "text": "{",
+          "bbox": {
+            "x": 1777,
+            "y": 1012,
+            "w": 6,
+            "h": 15
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-275",
+          "type": "label",
+          "text": "drive",
+          "bbox": {
+            "x": 1534,
+            "y": 1035,
+            "w": 47,
+            "h": 12
+          },
+          "confidence": 0.41,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-276",
+          "type": "label",
+          "text": "reply:",
+          "bbox": {
+            "x": 1590,
+            "y": 1034,
+            "w": 56,
+            "h": 17
+          },
+          "confidence": 0.41,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-277",
+          "type": "label",
+          "text": "{",
+          "bbox": {
+            "x": 1661,
+            "y": 1035,
+            "w": 6,
+            "h": 15
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-278",
+          "type": "label",
+          "text": "exit=0",
+          "bbox": {
+            "x": 1534,
+            "y": 1057,
+            "w": 57,
+            "h": 12
+          },
+          "confidence": 0.89,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-279",
+          "type": "text",
+          "text": "s=['chat_local_y=797_below_850_Likel",
+          "bbox": {
+            "x": 1700,
+            "y": 974,
+            "w": 345,
+            "h": 9
+          },
+          "confidence": 0.43,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-280",
+          "type": "label",
+          "text": "task",
+          "bbox": {
+            "x": 1705,
+            "y": 1097,
+            "w": 31,
+            "h": 13
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-281",
+          "type": "label",
+          "text": "1",
+          "bbox": {
+            "x": 1743,
+            "y": 1098,
+            "w": 5,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-282",
+          "type": "label",
+          "text": "complete",
+          "bbox": {
+            "x": 1756,
+            "y": 1097,
+            "w": 73,
+            "h": 16
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-283",
+          "type": "label",
+          "text": "Get",
+          "bbox": {
+            "x": 1550,
+            "y": 1141,
+            "w": 20,
+            "h": 30
+          },
+          "confidence": 0.93,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-284",
+          "type": "label",
+          "text": "&",
+          "bbox": {
+            "x": 1529,
+            "y": 1192,
+            "w": 16,
+            "h": 15
+          },
+          "confidence": 0.51,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-285",
+          "type": "label",
+          "text": "Canvas:",
+          "bbox": {
+            "x": 1552,
+            "y": 1194,
+            "w": 45,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-286",
+          "type": "label",
+          "text": "Automation",
+          "bbox": {
+            "x": 1605,
+            "y": 1194,
+            "w": 79,
+            "h": 11
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-287",
+          "type": "label",
+          "text": "Gap",
+          "bbox": {
+            "x": 1691,
+            "y": 1188,
+            "w": 20,
+            "h": 24
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-288",
+          "type": "label",
+          "text": "Analysis",
+          "bbox": {
+            "x": 1708,
+            "y": 1193,
+            "w": 64,
+            "h": 15
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-289",
+          "type": "label",
+          "text": ">",
+          "bbox": {
+            "x": 1535,
+            "y": 1231,
+            "w": 5,
+            "h": 7
+          },
+          "confidence": 0.94,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-290",
+          "type": "label",
+          "text": "1",
+          "bbox": {
+            "x": 1553,
+            "y": 1229,
+            "w": 3,
+            "h": 10
+          },
+          "confidence": 0.86,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-291",
+          "type": "label",
+          "text": "background",
+          "bbox": {
+            "x": 1564,
+            "y": 1227,
+            "w": 77,
+            "h": 15
+          },
+          "confidence": 0.86,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-292",
+          "type": "label",
+          "text": "terminal",
+          "bbox": {
+            "x": 1647,
+            "y": 1227,
+            "w": 55,
+            "h": 12
+          },
+          "confidence": 0.96,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-293",
+          "type": "label",
+          "text": "2",
+          "bbox": {
+            "x": 1552,
+            "y": 1263,
+            "w": 6,
+            "h": 10
+          },
+          "confidence": 0.6,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        },
+        {
+          "id": "window_0-text-294",
+          "type": "label",
+          "text": "Queued",
+          "bbox": {
+            "x": 1564,
+            "y": 1262,
+            "w": 52,
+            "h": 14
+          },
+          "confidence": 0.71,
+          "metadata": {
+            "ocr_level": "word",
+            "source": "ocr"
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "orphan_elements": [
+    {
+      "id": "orphan-271",
+      "type": "label",
+      "text": "\\",
+      "bbox": {
+        "x": 2041,
+        "y": 899,
+        "w": 7,
+        "h": 8
+      },
+      "confidence": 0.91,
+      "metadata": {
+        "ocr_level": "word",
+        "source": "ocr"
+      },
+      "children": []
+    }
+  ],
+  "ocr_boxes": [
+    {
+      "text": "z",
+      "bbox": {
+        "x": 14,
+        "y": 12,
+        "w": 16,
+        "h": 18
+      },
+      "confidence": 68.0,
+      "level": "word"
+    },
+    {
+      "text": "You",
+      "bbox": {
+        "x": 25,
+        "y": 135,
+        "w": 27,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "have",
+      "bbox": {
+        "x": 57,
+        "y": 134,
+        "w": 33,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "not",
+      "bbox": {
+        "x": 96,
+        "y": 135,
+        "w": 24,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "yet",
+      "bbox": {
+        "x": 123,
+        "y": 135,
+        "w": 23,
+        "h": 14
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "opened",
+      "bbox": {
+        "x": 151,
+        "y": 134,
+        "w": 54,
+        "h": 15
+      },
+      "confidence": 83.0,
+      "level": "word"
+    },
+    {
+      "text": "a",
+      "bbox": {
+        "x": 210,
+        "y": 137,
+        "w": 7,
+        "h": 9
+      },
+      "confidence": 83.0,
+      "level": "word"
+    },
+    {
+      "text": "File",
+      "bbox": {
+        "x": 55,
+        "y": 15,
+        "w": 24,
+        "h": 11
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "folder.",
+      "bbox": {
+        "x": 26,
+        "y": 156,
+        "w": 46,
+        "h": 13
+      },
+      "confidence": 83.0,
+      "level": "word"
+    },
+    {
+      "text": "Edit",
+      "bbox": {
+        "x": 102,
+        "y": 15,
+        "w": 26,
+        "h": 11
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "Bav",
+      "bbox": {
+        "x": 44,
+        "y": 56,
+        "w": 138,
+        "h": 19
+      },
+      "confidence": 41.0,
+      "level": "word"
+    },
+    {
+      "text": "BB",
+      "bbox": {
+        "x": 161,
+        "y": 52,
+        "w": 25,
+        "h": 33
+      },
+      "confidence": 40.0,
+      "level": "word"
+    },
+    {
+      "text": "Selection",
+      "bbox": {
+        "x": 149,
+        "y": 15,
+        "w": 64,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "View",
+      "bbox": {
+        "x": 235,
+        "y": 15,
+        "w": 32,
+        "h": 11
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "Opening",
+      "bbox": {
+        "x": 26,
+        "y": 248,
+        "w": 61,
+        "h": 14
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "a",
+      "bbox": {
+        "x": 92,
+        "y": 250,
+        "w": 7,
+        "h": 9
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "folder",
+      "bbox": {
+        "x": 105,
+        "y": 246,
+        "w": 113,
+        "h": 13
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "will",
+      "bbox": {
+        "x": 152,
+        "y": 237,
+        "w": 25,
+        "h": 32
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "close",
+      "bbox": {
+        "x": 184,
+        "y": 246,
+        "w": 30,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "all",
+      "bbox": {
+        "x": 223,
+        "y": 247,
+        "w": 16,
+        "h": 12
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "currently",
+      "bbox": {
+        "x": 26,
+        "y": 270,
+        "w": 65,
+        "h": 15
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "open",
+      "bbox": {
+        "x": 95,
+        "y": 273,
+        "w": 36,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "editors.",
+      "bbox": {
+        "x": 136,
+        "y": 270,
+        "w": 54,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "To",
+      "bbox": {
+        "x": 195,
+        "y": 271,
+        "w": 17,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "keep",
+      "bbox": {
+        "x": 26,
+        "y": 292,
+        "w": 34,
+        "h": 15
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "them",
+      "bbox": {
+        "x": 65,
+        "y": 292,
+        "w": 37,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "open,",
+      "bbox": {
+        "x": 107,
+        "y": 295,
+        "w": 40,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "add",
+      "bbox": {
+        "x": 152,
+        "y": 291,
+        "w": 26,
+        "h": 13
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "a",
+      "bbox": {
+        "x": 183,
+        "y": 295,
+        "w": 7,
+        "h": 9
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "folder",
+      "bbox": {
+        "x": 196,
+        "y": 291,
+        "w": 43,
+        "h": 13
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "instead.",
+      "bbox": {
+        "x": 26,
+        "y": 315,
+        "w": 56,
+        "h": 12
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "Co",
+      "bbox": {
+        "x": 344,
+        "y": 784,
+        "w": 19,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "zrobié",
+      "bbox": {
+        "x": 374,
+        "y": 783,
+        "w": 59,
+        "h": 14
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "teraz,",
+      "bbox": {
+        "x": 443,
+        "y": 785,
+        "w": 57,
+        "h": 15
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "zeby",
+      "bbox": {
+        "x": 514,
+        "y": 783,
+        "w": 39,
+        "h": 18
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "tekst",
+      "bbox": {
+        "x": 563,
+        "y": 784,
+        "w": 50,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "trafit",
+      "bbox": {
+        "x": 623,
+        "y": 783,
+        "w": 60,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "do",
+      "bbox": {
+        "x": 693,
+        "y": 784,
+        "w": 20,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "chatu",
+      "bbox": {
+        "x": 724,
+        "y": 784,
+        "w": 48,
+        "h": 13
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "PyCharm",
+      "bbox": {
+        "x": 784,
+        "y": 784,
+        "w": 69,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "1.",
+      "bbox": {
+        "x": 345,
+        "y": 828,
+        "w": 15,
+        "h": 13
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "Upewnij",
+      "bbox": {
+        "x": 374,
+        "y": 828,
+        "w": 66,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "sie,",
+      "bbox": {
+        "x": 454,
+        "y": 828,
+        "w": 36,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "ze",
+      "bbox": {
+        "x": 504,
+        "y": 828,
+        "w": 19,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "PyCharm",
+      "bbox": {
+        "x": 534,
+        "y": 828,
+        "w": 69,
+        "h": 17
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "jest",
+      "bbox": {
+        "x": 614,
+        "y": 827,
+        "w": 39,
+        "h": 18
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "na",
+      "bbox": {
+        "x": 664,
+        "y": 831,
+        "w": 19,
+        "h": 10
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "wierzchu",
+      "bbox": {
+        "x": 693,
+        "y": 827,
+        "w": 80,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "i",
+      "bbox": {
+        "x": 784,
+        "y": 827,
+        "w": 10,
+        "h": 14
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "focused",
+      "bbox": {
+        "x": 804,
+        "y": 828,
+        "w": 69,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "na",
+      "bbox": {
+        "x": 884,
+        "y": 831,
+        "w": 19,
+        "h": 10
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "DP-2",
+      "bbox": {
+        "x": 914,
+        "y": 828,
+        "w": 39,
+        "h": 13
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "(to",
+      "bbox": {
+        "x": 966,
+        "y": 828,
+        "w": 27,
+        "h": 15
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "najwazniejsze).",
+      "bbox": {
+        "x": 1004,
+        "y": 828,
+        "w": 146,
+        "h": 17
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "2.",
+      "bbox": {
+        "x": 344,
+        "y": 850,
+        "w": 16,
+        "h": 13
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "Powt6rz",
+      "bbox": {
+        "x": 374,
+        "y": 849,
+        "w": 68,
+        "h": 14
+      },
+      "confidence": 43.0,
+      "level": "word"
+    },
+    {
+      "text": "(lub",
+      "bbox": {
+        "x": 456,
+        "y": 849,
+        "w": 37,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "uruchom",
+      "bbox": {
+        "x": 504,
+        "y": 850,
+        "w": 69,
+        "h": 13
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "recznie):",
+      "bbox": {
+        "x": 586,
+        "y": 850,
+        "w": 84,
+        "h": 17
+      },
+      "confidence": 80.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 917,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY",
+      "bbox": {
+        "x": 414,
+        "y": 916,
+        "w": 319,
+        "h": 17
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "AUTO",
+      "bbox": {
+        "x": 554,
+        "y": 905,
+        "w": 40,
+        "h": 34
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "IDE",
+      "bbox": {
+        "x": 602,
+        "y": 905,
+        "w": 32,
+        "h": 34
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "CONTROL=1",
+      "bbox": {
+        "x": 642,
+        "y": 916,
+        "w": 91,
+        "h": 17
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 939,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY",
+      "bbox": {
+        "x": 414,
+        "y": 938,
+        "w": 289,
+        "h": 17
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "IDE=1",
+      "bbox": {
+        "x": 653,
+        "y": 927,
+        "w": 55,
+        "h": 34
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 961,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY_SOURCE=DP-2",
+      "bbox": {
+        "x": 414,
+        "y": 960,
+        "w": 248,
+        "h": 17
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 983,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY_CONTROL_FALLBACK=1",
+      "bbox": {
+        "x": 414,
+        "y": 982,
+        "w": 319,
+        "h": 17
+      },
+      "confidence": 75.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 1005,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 1027,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY",
+      "bbox": {
+        "x": 414,
+        "y": 1026,
+        "w": 349,
+        "h": 17
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "PREFER",
+      "bbox": {
+        "x": 554,
+        "y": 1015,
+        "w": 60,
+        "h": 34
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "PHOTO_VQL=auto",
+      "bbox": {
+        "x": 625,
+        "y": 1026,
+        "w": 138,
+        "h": 17
+      },
+      "confidence": 59.0,
+      "level": "word"
+    },
+    {
+      "text": "export",
+      "bbox": {
+        "x": 343,
+        "y": 1049,
+        "w": 60,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY",
+      "bbox": {
+        "x": 414,
+        "y": 1048,
+        "w": 349,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "LLM",
+      "bbox": {
+        "x": 554,
+        "y": 1037,
+        "w": 29,
+        "h": 34
+      },
+      "confidence": 86.0,
+      "level": "word"
+    },
+    {
+      "text": "unset",
+      "bbox": {
+        "x": 344,
+        "y": 1071,
+        "w": 48,
+        "h": 12
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "KORU_VDISPLAY_DRY_RUN",
+      "bbox": {
+        "x": 404,
+        "y": 1070,
+        "w": 209,
+        "h": 18
+      },
+      "confidence": 81.0,
+      "level": "word"
+    },
+    {
+      "text": "#",
+      "bbox": {
+        "x": 343,
+        "y": 1115,
+        "w": 11,
+        "h": 12
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "opcjonalnie",
+      "bbox": {
+        "x": 364,
+        "y": 1113,
+        "w": 109,
+        "h": 18
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "Swieza",
+      "bbox": {
+        "x": 484,
+        "y": 1113,
+        "w": 59,
+        "h": 14
+      },
+      "confidence": 70.0,
+      "level": "word"
+    },
+    {
+      "text": "capture",
+      "bbox": {
+        "x": 554,
+        "y": 1115,
+        "w": 69,
+        "h": 16
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "recznie",
+      "bbox": {
+        "x": 635,
+        "y": 1114,
+        "w": 68,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "VDISPLAY_METADATA_DIR=.vdisplay",
+      "bbox": {
+        "x": 343,
+        "y": 1135,
+        "w": 310,
+        "h": 18
+      },
+      "confidence": 73.0,
+      "level": "word"
+    },
+    {
+      "text": "vdisplay",
+      "bbox": {
+        "x": 664,
+        "y": 1135,
+        "w": 79,
+        "h": 18
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "screenshot",
+      "bbox": {
+        "x": 754,
+        "y": 1136,
+        "w": 98,
+        "h": 14
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "--source",
+      "bbox": {
+        "x": 865,
+        "y": 1139,
+        "w": 78,
+        "h": 11
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "DP-2",
+      "bbox": {
+        "x": 954,
+        "y": 1136,
+        "w": 38,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "--ide",
+      "bbox": {
+        "x": 365,
+        "y": 1201,
+        "w": 48,
+        "h": 15
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "jetbrains",
+      "bbox": {
+        "x": 424,
+        "y": 1202,
+        "w": 88,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "--source",
+      "bbox": {
+        "x": 525,
+        "y": 1205,
+        "w": 78,
+        "h": 11
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "DP-2",
+      "bbox": {
+        "x": 614,
+        "y": 1202,
+        "w": 38,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "--prompt",
+      "bbox": {
+        "x": 665,
+        "y": 1202,
+        "w": 77,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "\"Real",
+      "bbox": {
+        "x": 764,
+        "y": 1201,
+        "w": 38,
+        "h": 14
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "test",
+      "bbox": {
+        "x": 814,
+        "y": 1203,
+        "w": 38,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "po",
+      "bbox": {
+        "x": 864,
+        "y": 1205,
+        "w": 19,
+        "h": 14
+      },
+      "confidence": 97.0,
+      "level": "word"
+    },
+    {
+      "text": "clear:",
+      "bbox": {
+        "x": 894,
+        "y": 1201,
+        "w": 49,
+        "h": 14
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "wpisz",
+      "bbox": {
+        "x": 963,
+        "y": 1202,
+        "w": 49,
+        "h": 17
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "to",
+      "bbox": {
+        "x": 1024,
+        "y": 1203,
+        "w": 19,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "do",
+      "bbox": {
+        "x": 1054,
+        "y": 1202,
+        "w": 19,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "chatu",
+      "bbox": {
+        "x": 1084,
+        "y": 1202,
+        "w": 48,
+        "h": 13
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "PyCharm\"",
+      "bbox": {
+        "x": 1144,
+        "y": 1202,
+        "w": 77,
+        "h": 17
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "3.",
+      "bbox": {
+        "x": 344,
+        "y": 1246,
+        "w": 16,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "Albo",
+      "bbox": {
+        "x": 373,
+        "y": 1245,
+        "w": 40,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "python",
+      "bbox": {
+        "x": 554,
+        "y": 1246,
+        "w": 59,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "(jak",
+      "bbox": {
+        "x": 626,
+        "y": 1246,
+        "w": 37,
+        "h": 17
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "wyzej)",
+      "bbox": {
+        "x": 673,
+        "y": 1246,
+        "w": 57,
+        "h": 17
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "z",
+      "bbox": {
+        "x": 744,
+        "y": 1249,
+        "w": 8,
+        "h": 10
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "tym",
+      "bbox": {
+        "x": 764,
+        "y": 1247,
+        "w": 29,
+        "h": 16
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "samym",
+      "bbox": {
+        "x": 804,
+        "y": 1249,
+        "w": 49,
+        "h": 14
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "promptem.",
+      "bbox": {
+        "x": 864,
+        "y": 1247,
+        "w": 86,
+        "h": 16
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "Go",
+      "bbox": {
+        "x": 291,
+        "y": 15,
+        "w": 20,
+        "h": 11
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "Run",
+      "bbox": {
+        "x": 333,
+        "y": 15,
+        "w": 27,
+        "h": 11
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "Terminal",
+      "bbox": {
+        "x": 385,
+        "y": 15,
+        "w": 56,
+        "h": 11
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "Help",
+      "bbox": {
+        "x": 464,
+        "y": 15,
+        "w": 31,
+        "h": 14
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "automation-gap-analysis",
+      "bbox": {
+        "x": 1147,
+        "y": 15,
+        "w": 267,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "-",
+      "bbox": {
+        "x": 1326,
+        "y": 5,
+        "w": 6,
+        "h": 31
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "ts",
+      "bbox": {
+        "x": 1339,
+        "y": 5,
+        "w": 14,
+        "h": 31
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "-",
+      "bbox": {
+        "x": 1357,
+        "y": 5,
+        "w": 9,
+        "h": 31
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "Cursor",
+      "bbox": {
+        "x": 1370,
+        "y": 5,
+        "w": 47,
+        "h": 31
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "@",
+      "bbox": {
+        "x": 285,
+        "y": 58,
+        "w": 14,
+        "h": 14
+      },
+      "confidence": 55.0,
+      "level": "word"
+    },
+    {
+      "text": "e",
+      "bbox": {
+        "x": 652,
+        "y": 57,
+        "w": 16,
+        "h": 16
+      },
+      "confidence": 83.0,
+      "level": "word"
+    },
+    {
+      "text": "@",
+      "bbox": {
+        "x": 855,
+        "y": 58,
+        "w": 13,
+        "h": 14
+      },
+      "confidence": 71.0,
+      "level": "word"
+    },
+    {
+      "text": "automation-gap-analysis",
+      "bbox": {
+        "x": 1089,
+        "y": 57,
+        "w": 203,
+        "h": 16
+      },
+      "confidence": 41.0,
+      "level": "word"
+    },
+    {
+      "text": "x",
+      "bbox": {
+        "x": 1309,
+        "y": 61,
+        "w": 12,
+        "h": 10
+      },
+      "confidence": 55.0,
+      "level": "word"
+    },
+    {
+      "text": "[I]",
+      "bbox": {
+        "x": 1399,
+        "y": 56,
+        "w": 16,
+        "h": 17
+      },
+      "confidence": 38.0,
+      "level": "word"
+    },
+    {
+      "text": "Automation",
+      "bbox": {
+        "x": 310,
+        "y": 103,
+        "w": 81,
+        "h": 12
+      },
+      "confidence": 78.0,
+      "level": "word"
+    },
+    {
+      "text": "Gap",
+      "bbox": {
+        "x": 397,
+        "y": 99,
+        "w": 24,
+        "h": 25
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Analysis",
+      "bbox": {
+        "x": 429,
+        "y": 99,
+        "w": 63,
+        "h": 25
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "@",
+      "bbox": {
+        "x": 1346,
+        "y": 97,
+        "w": 11,
+        "h": 26
+      },
+      "confidence": 81.0,
+      "level": "word"
+    },
+    {
+      "text": "Publish",
+      "bbox": {
+        "x": 1370,
+        "y": 101,
+        "w": 51,
+        "h": 14
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "v",
+      "bbox": {
+        "x": 1428,
+        "y": 107,
+        "w": 12,
+        "h": 7
+      },
+      "confidence": 69.0,
+      "level": "word"
+    },
+    {
+      "text": "CANVASES",
+      "bbox": {
+        "x": 278,
+        "y": 148,
+        "w": 74,
+        "h": 10
+      },
+      "confidence": 81.0,
+      "level": "word"
+    },
+    {
+      "text": "No",
+      "bbox": {
+        "x": 278,
+        "y": 182,
+        "w": 18,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "canvases",
+      "bbox": {
+        "x": 301,
+        "y": 185,
+        "w": 63,
+        "h": 8
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "found",
+      "bbox": {
+        "x": 369,
+        "y": 182,
+        "w": 36,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "cross-cutting",
+      "bbox": {
+        "x": 1288,
+        "y": 196,
+        "w": 72,
+        "h": 10
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "+",
+      "bbox": {
+        "x": 279,
+        "y": 218,
+        "w": 12,
+        "h": 11
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "Create",
+      "bbox": {
+        "x": 298,
+        "y": 216,
+        "w": 44,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "new",
+      "bbox": {
+        "x": 347,
+        "y": 219,
+        "w": 27,
+        "h": 8
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "canvas",
+      "bbox": {
+        "x": 379,
+        "y": 219,
+        "w": 47,
+        "h": 8
+      },
+      "confidence": 82.0,
+      "level": "word"
+    },
+    {
+      "text": "Add",
+      "bbox": {
+        "x": 645,
+        "y": 247,
+        "w": 20,
+        "h": 26
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "at",
+      "bbox": {
+        "x": 677,
+        "y": 247,
+        "w": 16,
+        "h": 26
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "least",
+      "bbox": {
+        "x": 699,
+        "y": 251,
+        "w": 39,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "one",
+      "bbox": {
+        "x": 744,
+        "y": 255,
+        "w": 25,
+        "h": 9
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "header.",
+      "bbox": {
+        "x": 777,
+        "y": 251,
+        "w": 57,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Problems",
+      "bbox": {
+        "x": 294,
+        "y": 566,
+        "w": 63,
+        "h": 12
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "Output",
+      "bbox": {
+        "x": 383,
+        "y": 568,
+        "w": 50,
+        "h": 13
+      },
+      "confidence": 74.0,
+      "level": "word"
+    },
+    {
+      "text": "Terminal",
+      "bbox": {
+        "x": 457,
+        "y": 566,
+        "w": 61,
+        "h": 13
+      },
+      "confidence": 70.0,
+      "level": "word"
+    },
+    {
+      "text": "Ports",
+      "bbox": {
+        "x": 544,
+        "y": 567,
+        "w": 35,
+        "h": 11
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "Debug",
+      "bbox": {
+        "x": 605,
+        "y": 566,
+        "w": 43,
+        "h": 15
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "Console",
+      "bbox": {
+        "x": 654,
+        "y": 561,
+        "w": 54,
+        "h": 27
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "@ok",
+      "bbox": {
+        "x": 1145,
+        "y": 564,
+        "w": 51,
+        "h": 20
+      },
+      "confidence": 73.0,
+      "level": "word"
+    },
+    {
+      "text": "+»",
+      "bbox": {
+        "x": 1212,
+        "y": 565,
+        "w": 32,
+        "h": 17
+      },
+      "confidence": 31.0,
+      "level": "word"
+    },
+    {
+      "text": "&",
+      "bbox": {
+        "x": 1263,
+        "y": 565,
+        "w": 19,
+        "h": 18
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "O",
+      "bbox": {
+        "x": 1299,
+        "y": 565,
+        "w": 18,
+        "h": 17
+      },
+      "confidence": 34.0,
+      "level": "word"
+    },
+    {
+      "text": "a",
+      "bbox": {
+        "x": 1405,
+        "y": 571,
+        "w": 9,
+        "h": 6
+      },
+      "confidence": 66.0,
+      "level": "word"
+    },
+    {
+      "text": "x",
+      "bbox": {
+        "x": 1431,
+        "y": 570,
+        "w": 11,
+        "h": 10
+      },
+      "confidence": 66.0,
+      "level": "word"
+    },
+    {
+      "text": "Y",
+      "bbox": {
+        "x": 313,
+        "y": 629,
+        "w": 9,
+        "h": 20
+      },
+      "confidence": 50.0,
+      "level": "word"
+    },
+    {
+      "text": "main",
+      "bbox": {
+        "x": 334,
+        "y": 630,
+        "w": 38,
+        "h": 13
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "~/github/semcod/koru",
+      "bbox": {
+        "x": 384,
+        "y": 630,
+        "w": 198,
+        "h": 17
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "|",
+      "bbox": {
+        "x": 1218,
+        "y": 627,
+        "w": 1,
+        "h": 22
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "247K",
+      "bbox": {
+        "x": 1234,
+        "y": 630,
+        "w": 40,
+        "h": 13
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "/",
+      "bbox": {
+        "x": 1284,
+        "y": 630,
+        "w": 9,
+        "h": 15
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "512K",
+      "bbox": {
+        "x": 1304,
+        "y": 630,
+        "w": 40,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "|",
+      "bbox": {
+        "x": 1358,
+        "y": 627,
+        "w": 1,
+        "h": 22
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": ">",
+      "bbox": {
+        "x": 345,
+        "y": 697,
+        "w": 7,
+        "h": 14
+      },
+      "confidence": 42.0,
+      "level": "word"
+    },
+    {
+      "text": "uruchom",
+      "bbox": {
+        "x": 364,
+        "y": 695,
+        "w": 69,
+        "h": 15
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "real",
+      "bbox": {
+        "x": 445,
+        "y": 695,
+        "w": 38,
+        "h": 15
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "autonomie",
+      "bbox": {
+        "x": 494,
+        "y": 696,
+        "w": 89,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "10:13",
+      "bbox": {
+        "x": 1265,
+        "y": 696,
+        "w": 48,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "AM",
+      "bbox": {
+        "x": 1323,
+        "y": 696,
+        "w": 20,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "co",
+      "bbox": {
+        "x": 1423,
+        "y": 714,
+        "w": 18,
+        "h": 8
+      },
+      "confidence": 60.0,
+      "level": "word"
+    },
+    {
+      "text": "Corun",
+      "bbox": {
+        "x": 2000,
+        "y": 58,
+        "w": 48,
+        "h": 13
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "skasuj",
+      "bbox": {
+        "x": 1520,
+        "y": 115,
+        "w": 46,
+        "h": 18
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "wszystko",
+      "bbox": {
+        "x": 1571,
+        "y": 115,
+        "w": 70,
+        "h": 18
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "co",
+      "bbox": {
+        "x": 1646,
+        "y": 111,
+        "w": 13,
+        "h": 26
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "jest",
+      "bbox": {
+        "x": 1654,
+        "y": 116,
+        "w": 60,
+        "h": 17
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "w",
+      "bbox": {
+        "x": 1704,
+        "y": 111,
+        "w": 7,
+        "h": 26
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": ".vdisplay",
+      "bbox": {
+        "x": 1719,
+        "y": 115,
+        "w": 66,
+        "h": 18
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "za",
+      "bbox": {
+        "x": 1789,
+        "y": 119,
+        "w": 16,
+        "h": 11
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "pomoca",
+      "bbox": {
+        "x": 1811,
+        "y": 119,
+        "w": 61,
+        "h": 14
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "komendy",
+      "bbox": {
+        "x": 1878,
+        "y": 115,
+        "w": 71,
+        "h": 18
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "vdisplay",
+      "bbox": {
+        "x": 1953,
+        "y": 115,
+        "w": 63,
+        "h": 18
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "con",
+      "bbox": {
+        "x": 2020,
+        "y": 119,
+        "w": 28,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "sparwdz",
+      "bbox": {
+        "x": 1520,
+        "y": 141,
+        "w": 65,
+        "h": 18
+      },
+      "confidence": 88.0,
+      "level": "word"
+    },
+    {
+      "text": "czy",
+      "bbox": {
+        "x": 1590,
+        "y": 145,
+        "w": 24,
+        "h": 14
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "system",
+      "bbox": {
+        "x": 1618,
+        "y": 143,
+        "w": 54,
+        "h": 16
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "poprawnie",
+      "bbox": {
+        "x": 1678,
+        "y": 142,
+        "w": 83,
+        "h": 17
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "wystartuje",
+      "bbox": {
+        "x": 1765,
+        "y": 142,
+        "w": 83,
+        "h": 17
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "i",
+      "bbox": {
+        "x": 1853,
+        "y": 142,
+        "w": 3,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "bedzie",
+      "bbox": {
+        "x": 1861,
+        "y": 141,
+        "w": 51,
+        "h": 18
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "realziowat",
+      "bbox": {
+        "x": 1917,
+        "y": 137,
+        "w": 80,
+        "h": 26
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "auton",
+      "bbox": {
+        "x": 2003,
+        "y": 143,
+        "w": 43,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Run",
+      "bbox": {
+        "x": 1557,
+        "y": 185,
+        "w": 29,
+        "h": 4
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "koru",
+      "bbox": {
+        "x": 1593,
+        "y": 185,
+        "w": 31,
+        "h": 4
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "and",
+      "bbox": {
+        "x": 1631,
+        "y": 185,
+        "w": 27,
+        "h": 4
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "vaisplay",
+      "bbox": {
+        "x": 1666,
+        "y": 185,
+        "w": 57,
+        "h": 8
+      },
+      "confidence": 73.0,
+      "level": "word"
+    },
+    {
+      "text": "tesis",
+      "bbox": {
+        "x": 1732,
+        "y": 185,
+        "w": 33,
+        "h": 4
+      },
+      "confidence": 66.0,
+      "level": "word"
+    },
+    {
+      "text": "after",
+      "bbox": {
+        "x": 1771,
+        "y": 185,
+        "w": 31,
+        "h": 4
+      },
+      "confidence": 52.0,
+      "level": "word"
+    },
+    {
+      "text": "staleness",
+      "bbox": {
+        "x": 1810,
+        "y": 185,
+        "w": 71,
+        "h": 4
+      },
+      "confidence": 61.0,
+      "level": "word"
+    },
+    {
+      "text": "ix",
+      "bbox": {
+        "x": 1888,
+        "y": 185,
+        "w": 15,
+        "h": 4
+      },
+      "confidence": 74.0,
+      "level": "word"
+    },
+    {
+      "text": "21",
+      "bbox": {
+        "x": 1534,
+        "y": 236,
+        "w": 18,
+        "h": 12
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "passed",
+      "bbox": {
+        "x": 1563,
+        "y": 236,
+        "w": 56,
+        "h": 15
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "in",
+      "bbox": {
+        "x": 1631,
+        "y": 239,
+        "w": 17,
+        "h": 9
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "3.64s",
+      "bbox": {
+        "x": 1660,
+        "y": 236,
+        "w": 46,
+        "h": 12
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "©",
+      "bbox": {
+        "x": 1534,
+        "y": 306,
+        "w": 14,
+        "h": 11
+      },
+      "confidence": 43.0,
+      "level": "word"
+    },
+    {
+      "text": "Clear",
+      "bbox": {
+        "x": 1557,
+        "y": 304,
+        "w": 40,
+        "h": 13
+      },
+      "confidence": 74.0,
+      "level": "word"
+    },
+    {
+      "text": ".vdisplay",
+      "bbox": {
+        "x": 1603,
+        "y": 304,
+        "w": 65,
+        "h": 17
+      },
+      "confidence": 74.0,
+      "level": "word"
+    },
+    {
+      "text": "again",
+      "bbox": {
+        "x": 1673,
+        "y": 304,
+        "w": 40,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "before",
+      "bbox": {
+        "x": 1720,
+        "y": 304,
+        "w": 47,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "re-test",
+      "bbox": {
+        "x": 1773,
+        "y": 305,
+        "w": 47,
+        "h": 12
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "cd,",
+      "bbox": {
+        "x": 1826,
+        "y": 305,
+        "w": 21,
+        "h": 14
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "3+",
+      "bbox": {
+        "x": 1854,
+        "y": 305,
+        "w": 18,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "removed",
+      "bbox": {
+        "x": 1536,
+        "y": 341,
+        "w": 64,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "7",
+      "bbox": {
+        "x": 1612,
+        "y": 341,
+        "w": 7,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "ok",
+      "bbox": {
+        "x": 1631,
+        "y": 341,
+        "w": 18,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "True",
+      "bbox": {
+        "x": 1660,
+        "y": 341,
+        "w": 37,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Re-run",
+      "bbox": {
+        "x": 1557,
+        "y": 387,
+        "w": 51,
+        "h": 13
+      },
+      "confidence": 45.0,
+      "level": "word"
+    },
+    {
+      "text": "real",
+      "bbox": {
+        "x": 1613,
+        "y": 387,
+        "w": 28,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "JetBrains",
+      "bbox": {
+        "x": 1646,
+        "y": 387,
+        "w": 71,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "drive",
+      "bbox": {
+        "x": 1722,
+        "y": 387,
+        "w": 37,
+        "h": 13
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "after",
+      "bbox": {
+        "x": 1764,
+        "y": 387,
+        "w": 34,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "staleness",
+      "bbox": {
+        "x": 1803,
+        "y": 387,
+        "w": 72,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "fix",
+      "bbox": {
+        "x": 1879,
+        "y": 387,
+        "w": 17,
+        "h": 13
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "cd,",
+      "bbox": {
+        "x": 1901,
+        "y": 388,
+        "w": 22,
+        "h": 14
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "3+",
+      "bbox": {
+        "x": 1929,
+        "y": 388,
+        "w": 19,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "},",
+      "bbox": {
+        "x": 1574,
+        "y": 439,
+        "w": 14,
+        "h": 15
+      },
+      "confidence": 36.0,
+      "level": "word"
+    },
+    {
+      "text": "“ide",
+      "bbox": {
+        "x": 1574,
+        "y": 462,
+        "w": 36,
+        "h": 12
+      },
+      "confidence": 39.0,
+      "level": "word"
+    },
+    {
+      "text": "control_attempts\":",
+      "bbox": {
+        "x": 1612,
+        "y": 461,
+        "w": 179,
+        "h": 17
+      },
+      "confidence": 39.0,
+      "level": "word"
+    },
+    {
+      "text": "2",
+      "bbox": {
+        "x": 1805,
+        "y": 462,
+        "w": 8,
+        "h": 12
+      },
+      "confidence": 97.0,
+      "level": "word"
+    },
+    {
+      "text": "}",
+      "bbox": {
+        "x": 1554,
+        "y": 484,
+        "w": 7,
+        "h": 15
+      },
+      "confidence": 62.0,
+      "level": "word"
+    },
+    {
+      "text": "Explored",
+      "bbox": {
+        "x": 1521,
+        "y": 545,
+        "w": 68,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "1",
+      "bbox": {
+        "x": 1597,
+        "y": 547,
+        "w": 5,
+        "h": 12
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "search",
+      "bbox": {
+        "x": 1610,
+        "y": 546,
+        "w": 49,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "©",
+      "bbox": {
+        "x": 1529,
+        "y": 576,
+        "w": 11,
+        "h": 33
+      },
+      "confidence": 84.0,
+      "level": "word"
+    },
+    {
+      "text": "Inspect",
+      "bbox": {
+        "x": 1557,
+        "y": 586,
+        "w": 54,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "latest",
+      "bbox": {
+        "x": 1616,
+        "y": 586,
+        "w": 41,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "autonomy",
+      "bbox": {
+        "x": 1661,
+        "y": 587,
+        "w": 76,
+        "h": 16
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "session",
+      "bbox": {
+        "x": 1741,
+        "y": 586,
+        "w": 58,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "artifacts",
+      "bbox": {
+        "x": 1804,
+        "y": 586,
+        "w": 59,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "cd,",
+      "bbox": {
+        "x": 1869,
+        "y": 587,
+        "w": 21,
+        "h": 14
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "5+",
+      "bbox": {
+        "x": 1896,
+        "y": 587,
+        "w": 19,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "===",
+      "bbox": {
+        "x": 1534,
+        "y": 643,
+        "w": 28,
+        "h": 4
+      },
+      "confidence": 86.0,
+      "level": "word"
+    },
+    {
+      "text": "act/drive",
+      "bbox": {
+        "x": 1573,
+        "y": 638,
+        "w": 86,
+        "h": 13
+      },
+      "confidence": 82.0,
+      "level": "word"
+    },
+    {
+      "text": "MISSING",
+      "bbox": {
+        "x": 1534,
+        "y": 661,
+        "w": 66,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "act/cursor_positioning.jsonl",
+      "bbox": {
+        "x": 1573,
+        "y": 682,
+        "w": 269,
+        "h": 17
+      },
+      "confidence": 68.0,
+      "level": "word"
+    },
+    {
+      "text": "MISSING",
+      "bbox": {
+        "x": 1534,
+        "y": 706,
+        "w": 66,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Explored",
+      "bbox": {
+        "x": 1521,
+        "y": 744,
+        "w": 68,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "2",
+      "bbox": {
+        "x": 1593,
+        "y": 734,
+        "w": 7,
+        "h": 34
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "files",
+      "bbox": {
+        "x": 1610,
+        "y": 744,
+        "w": 31,
+        "h": 14
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "®",
+      "bbox": {
+        "x": 1538,
+        "y": 790,
+        "w": 11,
+        "h": 12
+      },
+      "confidence": 43.0,
+      "level": "word"
+    },
+    {
+      "text": "autonomy",
+      "bbox": {
+        "x": 1561,
+        "y": 778,
+        "w": 77,
+        "h": 32
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "session.py",
+      "bbox": {
+        "x": 1646,
+        "y": 778,
+        "w": 83,
+        "h": 32
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "-5",
+      "bbox": {
+        "x": 1737,
+        "y": 788,
+        "w": 14,
+        "h": 13
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "imgl_path",
+      "bbox": {
+        "x": 1644,
+        "y": 845,
+        "w": 80,
+        "h": 16
+      },
+      "confidence": 83.0,
+      "level": "word"
+    },
+    {
+      "text": "=",
+      "bbox": {
+        "x": 1734,
+        "y": 850,
+        "w": 9,
+        "h": 5
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "Path(str(vql_path)",
+      "bbox": {
+        "x": 1751,
+        "y": 837,
+        "w": 160,
+        "h": 29
+      },
+      "confidence": 85.0,
+      "level": "word"
+    },
+    {
+      "text": ".replace(\".png.",
+      "bbox": {
+        "x": 1917,
+        "y": 837,
+        "w": 129,
+        "h": 29
+      },
+      "confidence": 85.0,
+      "level": "word"
+    },
+    {
+      "text": "if",
+      "bbox": {
+        "x": 1643,
+        "y": 870,
+        "w": 19,
+        "h": 12
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "imgl_path.is",
+      "bbox": {
+        "x": 1671,
+        "y": 861,
+        "w": 107,
+        "h": 31
+      },
+      "confidence": 87.0,
+      "level": "word"
+    },
+    {
+      "text": "file()",
+      "bbox": {
+        "x": 1788,
+        "y": 870,
+        "w": 51,
+        "h": 16
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "and",
+      "bbox": {
+        "x": 1851,
+        "y": 870,
+        "w": 26,
+        "h": 12
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "imgl_path.stat().s",
+      "bbox": {
+        "x": 1888,
+        "y": 870,
+        "w": 160,
+        "h": 16
+      },
+      "confidence": 81.0,
+      "level": "word"
+    },
+    {
+      "text": "reasons.append(\"imal",
+      "bbox": {
+        "x": 1682,
+        "y": 895,
+        "w": 176,
+        "h": 12
+      },
+      "confidence": 62.0,
+      "level": "word"
+    },
+    {
+      "text": "sidecar",
+      "bbox": {
+        "x": 1870,
+        "y": 895,
+        "w": 62,
+        "h": 12
+      },
+      "confidence": 62.0,
+      "level": "word"
+    },
+    {
+      "text": "older",
+      "bbox": {
+        "x": 1942,
+        "y": 895,
+        "w": 44,
+        "h": 12
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "than",
+      "bbox": {
+        "x": 1996,
+        "y": 895,
+        "w": 35,
+        "h": 12
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "\\",
+      "bbox": {
+        "x": 2041,
+        "y": 899,
+        "w": 7,
+        "h": 8
+      },
+      "confidence": 91.0,
+      "level": "word"
+    },
+    {
+      "text": "Re-run",
+      "bbox": {
+        "x": 1557,
+        "y": 937,
+        "w": 51,
+        "h": 13
+      },
+      "confidence": 84.0,
+      "level": "word"
+    },
+    {
+      "text": "drive",
+      "bbox": {
+        "x": 1613,
+        "y": 937,
+        "w": 37,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "after",
+      "bbox": {
+        "x": 1655,
+        "y": 937,
+        "w": 34,
+        "h": 13
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "imgl",
+      "bbox": {
+        "x": 1694,
+        "y": 937,
+        "w": 30,
+        "h": 17
+      },
+      "confidence": 90.0,
+      "level": "word"
+    },
+    {
+      "text": "staleness",
+      "bbox": {
+        "x": 1730,
+        "y": 937,
+        "w": 72,
+        "h": 13
+      },
+      "confidence": 84.0,
+      "level": "word"
+    },
+    {
+      "text": "fix",
+      "bbox": {
+        "x": 1806,
+        "y": 937,
+        "w": 17,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "cd,",
+      "bbox": {
+        "x": 1828,
+        "y": 938,
+        "w": 22,
+        "h": 14
+      },
+      "confidence": 95.0,
+      "level": "word"
+    },
+    {
+      "text": "5+",
+      "bbox": {
+        "x": 1856,
+        "y": 938,
+        "w": 19,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "y':",
+      "bbox": {
+        "x": 1545,
+        "y": 975,
+        "w": 23,
+        "h": 7
+      },
+      "confidence": 31.0,
+      "level": "word"
+    },
+    {
+      "text": "797}",
+      "bbox": {
+        "x": 1585,
+        "y": 974,
+        "w": 33,
+        "h": 8
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "warnil",
+      "bbox": {
+        "x": 1632,
+        "y": 974,
+        "w": 46,
+        "h": 5
+      },
+      "confidence": 48.0,
+      "level": "word"
+    },
+    {
+      "text": "vql_command",
+      "bbox": {
+        "x": 1534,
+        "y": 989,
+        "w": 105,
+        "h": 17
+      },
+      "confidence": 75.0,
+      "level": "word"
+    },
+    {
+      "text": "plan:",
+      "bbox": {
+        "x": 1648,
+        "y": 989,
+        "w": 46,
+        "h": 17
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "{",
+      "bbox": {
+        "x": 1709,
+        "y": 990,
+        "w": 7,
+        "h": 15
+      },
+      "confidence": 92.0,
+      "level": "word"
+    },
+    {
+      "text": "write",
+      "bbox": {
+        "x": 1630,
+        "y": 1001,
+        "w": 50,
+        "h": 33
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "command:",
+      "bbox": {
+        "x": 1687,
+        "y": 1012,
+        "w": 75,
+        "h": 16
+      },
+      "confidence": 76.0,
+      "level": "word"
+    },
+    {
+      "text": "{",
+      "bbox": {
+        "x": 1777,
+        "y": 1012,
+        "w": 6,
+        "h": 15
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "drive",
+      "bbox": {
+        "x": 1534,
+        "y": 1035,
+        "w": 47,
+        "h": 12
+      },
+      "confidence": 41.0,
+      "level": "word"
+    },
+    {
+      "text": "reply:",
+      "bbox": {
+        "x": 1590,
+        "y": 1034,
+        "w": 56,
+        "h": 17
+      },
+      "confidence": 41.0,
+      "level": "word"
+    },
+    {
+      "text": "{",
+      "bbox": {
+        "x": 1661,
+        "y": 1035,
+        "w": 6,
+        "h": 15
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "exit=0",
+      "bbox": {
+        "x": 1534,
+        "y": 1057,
+        "w": 57,
+        "h": 12
+      },
+      "confidence": 89.0,
+      "level": "word"
+    },
+    {
+      "text": "s=['chat_local_y=797_below_850_Likel",
+      "bbox": {
+        "x": 1700,
+        "y": 974,
+        "w": 345,
+        "h": 9
+      },
+      "confidence": 43.0,
+      "level": "word"
+    },
+    {
+      "text": "Monitored",
+      "bbox": {
+        "x": 1521,
+        "y": 1097,
+        "w": 81,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "background",
+      "bbox": {
+        "x": 1608,
+        "y": 1096,
+        "w": 91,
+        "h": 17
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "task",
+      "bbox": {
+        "x": 1705,
+        "y": 1097,
+        "w": 31,
+        "h": 13
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "1",
+      "bbox": {
+        "x": 1743,
+        "y": 1098,
+        "w": 5,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "complete",
+      "bbox": {
+        "x": 1756,
+        "y": 1097,
+        "w": 73,
+        "h": 16
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Get",
+      "bbox": {
+        "x": 1550,
+        "y": 1141,
+        "w": 20,
+        "h": 30
+      },
+      "confidence": 93.0,
+      "level": "word"
+    },
+    {
+      "text": "faster",
+      "bbox": {
+        "x": 1575,
+        "y": 1141,
+        "w": 35,
+        "h": 30
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "responses",
+      "bbox": {
+        "x": 1615,
+        "y": 1154,
+        "w": 61,
+        "h": 10
+      },
+      "confidence": 75.0,
+      "level": "word"
+    },
+    {
+      "text": "&",
+      "bbox": {
+        "x": 1529,
+        "y": 1192,
+        "w": 16,
+        "h": 15
+      },
+      "confidence": 51.0,
+      "level": "word"
+    },
+    {
+      "text": "Canvas:",
+      "bbox": {
+        "x": 1552,
+        "y": 1194,
+        "w": 45,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Automation",
+      "bbox": {
+        "x": 1605,
+        "y": 1194,
+        "w": 79,
+        "h": 11
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Gap",
+      "bbox": {
+        "x": 1691,
+        "y": 1188,
+        "w": 20,
+        "h": 24
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "Analysis",
+      "bbox": {
+        "x": 1708,
+        "y": 1193,
+        "w": 64,
+        "h": 15
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": ">",
+      "bbox": {
+        "x": 1535,
+        "y": 1231,
+        "w": 5,
+        "h": 7
+      },
+      "confidence": 94.0,
+      "level": "word"
+    },
+    {
+      "text": "1",
+      "bbox": {
+        "x": 1553,
+        "y": 1229,
+        "w": 3,
+        "h": 10
+      },
+      "confidence": 86.0,
+      "level": "word"
+    },
+    {
+      "text": "background",
+      "bbox": {
+        "x": 1564,
+        "y": 1227,
+        "w": 77,
+        "h": 15
+      },
+      "confidence": 86.0,
+      "level": "word"
+    },
+    {
+      "text": "terminal",
+      "bbox": {
+        "x": 1647,
+        "y": 1227,
+        "w": 55,
+        "h": 12
+      },
+      "confidence": 96.0,
+      "level": "word"
+    },
+    {
+      "text": "2",
+      "bbox": {
+        "x": 1552,
+        "y": 1263,
+        "w": 6,
+        "h": 10
+      },
+      "confidence": 60.0,
+      "level": "word"
+    },
+    {
+      "text": "Queued",
+      "bbox": {
+        "x": 1564,
+        "y": 1262,
+        "w": 52,
+        "h": 14
+      },
+      "confidence": 71.0,
+      "level": "word"
+    }
+  ],
+  "metadata": {
+    "ocr_backend": "tesseract",
+    "lang": "pl",
+    "scale": 1.0,
+    "detect_source": "local",
+    "element_count": 296,
+    "roles": {
+      "button": 24,
+      "input": 32,
+      "label": 226,
+      "text": 14
+    },
+    "content_check": {
+      "source": "img2nl",
+      "worth_analyzing": true,
+      "is_blank": false,
+      "scene_class": "general",
+      "recommendation": "proceed_with_layout",
+      "summary": "Obraz 2048×1280 px. Widocznych ~541 kolorów w próbce. Dominują: #181818, #141414, #1C1C1C. Jasność 13–171 (zakres dynamiki 238). Widoczny szum lub drobna tekstura. Wykryto 2 dużych regionów/obiektów. Wykryte elementy: button, window, titlebar."
+    }
+  }
+}

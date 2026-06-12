@@ -10,6 +10,7 @@ from typing import Any
 from ..application.env_defaults import env_flag
 from .imgl_bridge import imgl_available
 from .screen_context import ScreenContext
+from .vql_capture_validation import expected_ide_from_env, validate_vql_capture
 from ..application.config_options import get_runtime_options
 
 
@@ -161,6 +162,21 @@ def _try_validate_metadata(program: dict[str, Any], metadata: dict[str, Any]) ->
     return metadata
 
 
+def _attach_capture_validation(metadata: dict[str, Any]) -> dict[str, Any]:
+    """Embed IDE/structure validation for autonomy observe → decide → act."""
+    render = dict(metadata.get("render_intent") or {})
+    layers = render.get("layers") or []
+    if not isinstance(layers, list):
+        layers = []
+    ide = expected_ide_from_env()
+    nl = str(metadata.get("describe", {}).get("nl") or render.get("nl") or "")
+    validation = validate_vql_capture(layers=layers, ide=ide, reverse=render, nl=nl or None)
+    metadata["capture_validation"] = validation
+    render["capture_validation"] = validation
+    metadata["render_intent"] = render
+    return metadata
+
+
 def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
     """Build or merge a VQLProgram-compatible dict from ScreenContext."""
     program = _try_from_screen_context(ctx)
@@ -176,6 +192,7 @@ def context_to_vql_program(ctx: ScreenContext) -> dict[str, Any]:
     metadata = _assemble_metadata(ctx, program)
     metadata = _try_merge_metadata(ctx, metadata)
     metadata = _try_validate_metadata(program, metadata)
+    metadata = _attach_capture_validation(metadata)
     program["metadata"] = metadata
     return program
 
@@ -516,7 +533,12 @@ def write_vql_artifacts(
     """Persist VQL JSON and optional SVG derived from context."""
     program = context_to_vql_program(ctx)
     ctx.vql["program"] = program
-    ctx.vql["reverse"] = reverse_generation_descriptor(ctx)
+    reverse = reverse_generation_descriptor(ctx)
+    validation = (program.get("metadata") or {}).get("capture_validation")
+    if isinstance(validation, dict):
+        reverse["capture_validation"] = validation
+        ctx.vql["capture_validation"] = validation
+    ctx.vql["reverse"] = reverse
     _warn_empty_vql_layers(ctx, program)
 
     written: dict[str, str] = {}

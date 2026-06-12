@@ -1,15 +1,15 @@
 # code2llm call graph | /home/tom/github/wronai/vdisplay
-# generated in 0.24s
-# nodes: 432 | edges: 500 | modules: 125
-# CC̄=4.0
+# generated in 0.39s
+# nodes: 420 | edges: 500 | modules: 124
+# CC̄=4.1
 
 HUBS[20]:
+  examples.dev-workflow.koru-audit-last-session.print
+    CC=0  in:120  out:0  total:120
   packages.vdisplay-agent.src.vdisplay_agent.routes.control.register_routes
     CC=1  in:0  out:68  total:68
   src.vdisplay.cli_handlers.print_json
-    CC=1  in:66  out:1  total:67
-  src.vdisplay.application.history.analyze.analyze_history
-    CC=36  in:1  out:59  total:60
+    CC=1  in:67  out:1  total:68
   packages.dsl2vdisplay.src.dsl2vdisplay.grammar.pick_flag
     CC=3  in:44  out:2  total:46
   src.vdisplay.commands.ide.handle
@@ -22,26 +22,26 @@ HUBS[20]:
     CC=14  in:14  out:27  total:41
   src.vdisplay.discovery.resolve_host_display
     CC=11  in:33  out:7  total:40
-  src.vdisplay.capture.screencast_keeper.stop_keeper
-    CC=13  in:10  out:27  total:37
   src.vdisplay.utils.run_command
     CC=2  in:33  out:4  total:37
+  src.vdisplay.capture.screencast_keeper.stop_keeper
+    CC=13  in:10  out:27  total:37
   src.vdisplay.discovery.list_outputs
     CC=8  in:9  out:27  total:36
   examples.agent-broker.broker_demo.main
     CC=9  in:0  out:35  total:35
   src.vdisplay.application.session_recorder.load_session_document
     CC=13  in:5  out:29  total:34
-  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
-    CC=1  in:0  out:33  total:33
-  src.vdisplay.commands.session.command_request_from_control_args
-    CC=8  in:1  out:32  total:33
   src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics
     CC=13  in:5  out:28  total:33
+  src.vdisplay.commands.session.command_request_from_control_args
+    CC=8  in:1  out:32  total:33
+  packages.vdisplay-agent.src.vdisplay_agent.routes.health.register_routes
+    CC=1  in:0  out:33  total:33
   examples.host-relay.relay_demo.main
     CC=11  in:0  out:33  total:33
   src.vdisplay.application.project_config.load_project_config
-    CC=14  in:5  out:27  total:32
+    CC=14  in:6  out:27  total:33
   packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
     CC=1  in:0  out:32  total:32
 
@@ -86,6 +86,8 @@ MODULES:
     build_example_uia  CC=3  out:3
   examples.control-plugin.src.vdisplay_example_plugin  [1 funcs]
     register_plugin  CC=1  out:1
+  examples.dev-workflow.koru-audit-last-session  [1 funcs]
+    print  CC=0  out:0
   examples.host-mirror.mirror_demo  [1 funcs]
     main  CC=7  out:31
   examples.host-relay.relay_demo  [2 funcs]
@@ -318,20 +320,15 @@ MODULES:
     execute  CC=5  out:13
   src.vdisplay.application.handlers.control  [1 funcs]
     control_request_body  CC=3  out:3
-  src.vdisplay.application.history.analyze  [2 funcs]
-    analyze_history  CC=36  out:59
-    collect_events  CC=13  out:17
-  src.vdisplay.application.history.loader  [4 funcs]
+  src.vdisplay.application.history.loader  [2 funcs]
     load_history_index  CC=8  out:14
-    load_run_detail  CC=5  out:11
-    load_session_ref  CC=1  out:3
     resolve_metadata_root  CC=3  out:4
-  src.vdisplay.application.project_config  [2 funcs]
+  src.vdisplay.application.project_config  [3 funcs]
+    clear_metadata_dir  CC=10  out:16
     ensure_metadata_layout  CC=4  out:8
     load_project_config  CC=14  out:27
-  src.vdisplay.application.replay  [2 funcs]
+  src.vdisplay.application.replay  [1 funcs]
     queue_session_replay  CC=4  out:10
-    replay_session  CC=11  out:21
   src.vdisplay.application.services.capture  [1 funcs]
     capture_screenshot  CC=3  out:3
   src.vdisplay.application.services.screencast_cli  [2 funcs]
@@ -425,23 +422,18 @@ MODULES:
     control_selector_kwargs_from_args  CC=1  out:24
     include_all_from_args  CC=2  out:3
   src.vdisplay.commands.config  [1 funcs]
-    handle  CC=1  out:6
-  src.vdisplay.commands.history  [8 funcs]
-    _print_analyze_summary  CC=8  out:24
+    handle  CC=4  out:12
+  src.vdisplay.commands.history  [3 funcs]
     _resolve_root  CC=1  out:2
     _resolve_session_from_args  CC=7  out:16
-    handle_analyze  CC=2  out:6
-    handle_events  CC=2  out:6
     handle_list  CC=3  out:12
-    handle_replay  CC=2  out:5
-    handle_show  CC=10  out:17
   src.vdisplay.commands.hmi  [1 funcs]
     handle  CC=7  out:6
   src.vdisplay.commands.ide  [2 funcs]
     handle  CC=8  out:45
     register  CC=1  out:18
-  src.vdisplay.commands.info  [1 funcs]
-    handle  CC=1  out:2
+  src.vdisplay.commands.io  [1 funcs]
+    print_json  CC=1  out:2
   src.vdisplay.commands.map  [1 funcs]
     handle  CC=7  out:31
   src.vdisplay.commands.mirror  [1 funcs]
@@ -455,12 +447,6 @@ MODULES:
   src.vdisplay.commands.relay  [2 funcs]
     handle  CC=5  out:9
     handle_list_windows  CC=1  out:2
-  src.vdisplay.commands.sampler  [5 funcs]
-    _handle_start  CC=4  out:6
-    _handle_status  CC=2  out:4
-    _handle_stop  CC=2  out:4
-    handle  CC=3  out:4
-    register  CC=1  out:23
   src.vdisplay.commands.screenshot  [2 funcs]
     handle  CC=1  out:2
     register  CC=1  out:15
@@ -555,7 +541,8 @@ MODULES:
     run_nl_prompt  CC=5  out:7
   src.vdisplay.payloads  [1 funcs]
     all_payload  CC=1  out:1
-  src.vdisplay.utils  [2 funcs]
+  src.vdisplay.utils  [3 funcs]
+    auto_install_package  CC=4  out:5
     run_command  CC=2  out:4
     run_command_bytes  CC=1  out:1
   src.vdisplay.windows.query  [2 funcs]
@@ -572,8 +559,10 @@ EDGES:
   packages.dsl2vdisplay.src.dsl2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy
   packages.dsl2vdisplay.src.dsl2vdisplay.cli.main → packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy → packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy → examples.dev-workflow.koru-audit-last-session.print
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_legacy → src.vdisplay.control.providers.browser_session.BrowserSessionRegistry.open
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand → packages.dsl2vdisplay.src.dsl2vdisplay.bus.execute_dsl_line
+  packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand → examples.dev-workflow.koru-audit-last-session.print
   packages.dsl2vdisplay.src.dsl2vdisplay.cli._main_subcommand → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry._load_schema
   packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.schema_for_verb → packages.dsl2vdisplay.src.dsl2vdisplay.schema_registry.all_schemas
@@ -611,5 +600,3 @@ EDGES:
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror → src.vdisplay.discovery.list_outputs
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
   packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_mirror → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._ok
-  packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command.handle_adopt → packages.dsl2vdisplay.src.dsl2vdisplay.handlers.command._err

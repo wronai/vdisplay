@@ -1,11 +1,11 @@
-# vdisplay | 362f 53585L | yaml:11,json:26,toml:11,txt:2,shell:11,python:287,yml:5,proto:4 | 2026-06-12
-# generated in 0.05s
-# stats: 2322 func | 0 cls | 362 mod | CC̄=4.0 | critical:8 | cycles:0
+# vdisplay | 367f 212943L | json:29,yaml:11,toml:11,txt:2,shell:12,python:288,yml:5,proto:4 | 2026-06-12
+# generated in 0.10s
+# stats: 2338 func | 0 cls | 367 mod | CC̄=4.1 | critical:9 | cycles:0
 # alerts[5]: fan-out _start_screencast_impl=41; CC _build_imgl_layers=37; CC analyze_history=36; fan-out register_routes=33; fan-out analyze_history=32
 # hotspots[5]: _start_screencast_impl fan=41; register_routes fan=33; analyze_history fan=32; register_routes fan=27; SessionRecorder.record fan=26
-# evolution: CC̄ 4.1→4.0 (improved -0.1)
+# evolution: CC̄ 4.1→4.1 (flat 0.0)
 # Keys: M=modules, D=details, i=imports, e=exports, c=classes, f=functions, m=methods
-M[362]:
+M[367]:
   app.vql.json,127
   brain/scratch_atspi.py,18
   brain/scratch_atspi_dump.txt,311
@@ -32,7 +32,8 @@ M[362]:
   examples/control-plugin/pyproject.toml,16
   examples/control-plugin/src/vdisplay_example_plugin/__init__.py,27
   examples/control-plugin/src/vdisplay_example_plugin/my_provider.py,92
-  examples/dev-workflow/koru-drive-photo-vql.sh,103
+  examples/dev-workflow/koru-audit-last-session.sh,84
+  examples/dev-workflow/koru-drive-photo-vql.sh,165
   examples/dev-workflow/koru-photo-vql.sh,97
   examples/dev-workflow/planfile.yaml,335
   examples/dev-workflow/planfile-autonomy.yaml,36
@@ -151,6 +152,9 @@ M[362]:
   proto/vdisplay/v1/event.proto,16
   proto/vdisplay/v1/result.proto,16
   pyproject.toml,190
+  screen.png.context.json,98895
+  screen.png.vql.json,51376
+  screen.png.vql.imgl.json,8523
   src/vdisplay/__init__.py,12
   src/vdisplay/__main__.py,4
   src/vdisplay/agent_config.py,90
@@ -186,7 +190,7 @@ M[362]:
   src/vdisplay/application/history/models.py,167
   src/vdisplay/application/models.py,7
   src/vdisplay/application/parsers.py,7
-  src/vdisplay/application/project_config.py,389
+  src/vdisplay/application/project_config.py,463
   src/vdisplay/application/projections/__init__.py,83
   src/vdisplay/application/projections/backend_scores.py,216
   src/vdisplay/application/projections/map_health.py,41
@@ -250,7 +254,7 @@ M[362]:
   src/vdisplay/commands/app.py,59
   src/vdisplay/commands/auto.py,95
   src/vdisplay/commands/common.py,141
-  src/vdisplay/commands/config.py,31
+  src/vdisplay/commands/config.py,57
   src/vdisplay/commands/control.py,168
   src/vdisplay/commands/diagnose.py,55
   src/vdisplay/commands/history.py,239
@@ -347,10 +351,11 @@ M[362]:
   src/vdisplay/integrations/__init__.py,11
   src/vdisplay/integrations/imgl_bridge.py,163
   src/vdisplay/integrations/observe_cache.py,224
-  src/vdisplay/integrations/pipeline.py,170
+  src/vdisplay/integrations/pipeline.py,175
   src/vdisplay/integrations/screen_context.py,172
   src/vdisplay/integrations/vision_backend.py,172
-  src/vdisplay/integrations/vql_bridge.py,545
+  src/vdisplay/integrations/vql_bridge.py,567
+  src/vdisplay/integrations/vql_capture_validation.py,291
   src/vdisplay/models.py,26
   src/vdisplay/monitor_geometry.py,34
   src/vdisplay/nl.py,158
@@ -370,7 +375,7 @@ M[362]:
   vdisplay.yaml,218
 D:
   src/vdisplay/integrations/vql_bridge.py:
-    e: vql_enabled,vql_available,_capture_block,_environment_block,_try_from_screen_context,_try_imgl_scene,_try_adopt_screenshot,_fallback_program,_assemble_metadata,_try_merge_metadata,_try_validate_metadata,context_to_vql_program,reverse_generation_descriptor,_resolve_canvas_size,_resolve_scene_class,_bbox_center,_layer_from_bbox,_normalize_imgl_scene_payload,_extract_imgl_scene,_build_imgl_layers,_warn_empty_vql_layers,_maybe_add_map_targets,_maybe_add_routing_hint,_enrich_render_intent,write_vql_artifacts
+    e: vql_enabled,vql_available,_capture_block,_environment_block,_try_from_screen_context,_try_imgl_scene,_try_adopt_screenshot,_fallback_program,_assemble_metadata,_try_merge_metadata,_try_validate_metadata,_attach_capture_validation,context_to_vql_program,reverse_generation_descriptor,_resolve_canvas_size,_resolve_scene_class,_bbox_center,_layer_from_bbox,_normalize_imgl_scene_payload,_extract_imgl_scene,_build_imgl_layers,_warn_empty_vql_layers,_maybe_add_map_targets,_maybe_add_routing_hint,_enrich_render_intent,write_vql_artifacts
     vql_enabled()
     vql_available()
     _capture_block(ctx)
@@ -382,6 +387,7 @@ D:
     _assemble_metadata(ctx;program)
     _try_merge_metadata(ctx;metadata)
     _try_validate_metadata(program;metadata)
+    _attach_capture_validation(metadata)
     context_to_vql_program(ctx)
     reverse_generation_descriptor(ctx)
     _resolve_canvas_size(capture;descriptor)
@@ -417,6 +423,19 @@ D:
     _global_from_monitor(local_x;local_y)
     _rotation_for_monitor(display;name)
     _monitor_by_name(display;name)
+  src/vdisplay/integrations/vql_capture_validation.py:
+    e: expected_ide_from_env,_canonical_ide,window_titles_from_layers,_layer_center,_layer_label,ide_window_warning,body_ide_mentions,chat_composer_candidates,validate_vql_structure,validate_vql_capture,validate_vql_sidecar_file
+    expected_ide_from_env()
+    _canonical_ide(ide)
+    window_titles_from_layers(layers)
+    _layer_center(layer)
+    _layer_label(layer)
+    ide_window_warning()
+    body_ide_mentions()
+    chat_composer_candidates(layers)
+    validate_vql_structure()
+    validate_vql_capture()
+    validate_vql_sidecar_file(path)
   src/vdisplay/application/auto/defaults.py:
     e: _resolve_action_map,_resolve_task_monitor,_resolve_task_map_path,_resolve_task_command,apply_project_defaults,_wants_vision_injection,_inject_vision_anchor,_vql_layers_from_program,_vql_target_entry,vql_decision_slice,build_decision_data
     _resolve_action_map(config;action_spec)
@@ -686,7 +705,7 @@ D:
     _capture_single_stream_monitors(display;monitors;output_dir;screencast_session)
     capture_all_from_screencast(display;monitors;output_dir;screencast_session)
   src/vdisplay/application/project_config.py:
-    e: MonitorSpec,WindowSpec,ActionSpec,AutomationDefaults,ProjectConfig,_yaml,_action_field,_bool_from_config,_resolve_bool,_resolve_str,_deep_merge,_load_yaml_file,discover_config_paths,_build_specs,load_project_config,ensure_metadata_layout
+    e: MonitorSpec,WindowSpec,ActionSpec,AutomationDefaults,ProjectConfig,_yaml,_action_field,_bool_from_config,_resolve_bool,_resolve_str,_deep_merge,_load_yaml_file,discover_config_paths,_build_specs,load_project_config,ensure_metadata_layout,clear_metadata_dir
     MonitorSpec: from_mapping(1)
     WindowSpec: from_mapping(1)
     ActionSpec: from_mapping(2)
@@ -703,6 +722,7 @@ D:
     _build_specs(merged)
     load_project_config(project)
     ensure_metadata_layout(project;config)
+    clear_metadata_dir(project)
   src/vdisplay/application/events.py:
     e: DomainEvent,_now_ms,_event_id,session_started,command_received,command_completed,step_recorded,_create_planned_event,_create_executed_event,_create_verification_event,_create_retry_event,_create_recovery_event,control_events_from_diagnostics,gui_map_built,gui_map_drift_detected,map_events_from_diagnostics
     DomainEvent: to_dict(0),from_dict(1)
@@ -1575,6 +1595,18 @@ D:
   src/vdisplay/hmi/pointer_types.py:
     e: PointerSample
     PointerSample: _format_stale_sources(0),_format_live_sources(0),primary_label(0)
+  src/vdisplay/integrations/pipeline.py:
+    e: _observe_flag,observe_enabled,_evaluate_drift_with_png,_resolve_cached_or_imgl,_maybe_write_vql,_persist_observe_sidecar,observe_screen,_build_enriched_payload,_env_bool,enrich_capture_payload
+    _observe_flag()
+    observe_enabled()
+    _evaluate_drift_with_png(ctx;path)
+    _resolve_cached_or_imgl(ctx)
+    _maybe_write_vql(ctx;path)
+    _persist_observe_sidecar(ctx)
+    observe_screen()
+    _build_enriched_payload(ctx;payload)
+    _env_bool(key;default)
+    enrich_capture_payload(payload)
   packages/dsl2vdisplay/src/dsl2vdisplay/cli.py:
     e: main,_main_legacy,_main_subcommand
     main(argv)
@@ -1851,18 +1883,6 @@ D:
     find_windows(display)
     pick_best_window(matches)
     find_companion_frames(display;window)
-  src/vdisplay/integrations/pipeline.py:
-    e: _observe_flag,observe_enabled,_evaluate_drift_with_png,_resolve_cached_or_imgl,_maybe_write_vql,_persist_observe_sidecar,observe_screen,_build_enriched_payload,_env_bool,enrich_capture_payload
-    _observe_flag()
-    observe_enabled()
-    _evaluate_drift_with_png(ctx;path)
-    _resolve_cached_or_imgl(ctx)
-    _maybe_write_vql(ctx;path)
-    _persist_observe_sidecar(ctx)
-    observe_screen()
-    _build_enriched_payload(ctx;payload)
-    _env_bool(key;default)
-    enrich_capture_payload(payload)
   packages/vdisplay-agent/src/vdisplay_agent/services/screencast_recovery.py:
     e: _recovery_cooldown_s,is_recoverable_screencast_error,screencast_recovery_cooldown_remaining,_mark_recovery_attempt,try_recover_screencast
     _recovery_cooldown_s()
@@ -2368,6 +2388,10 @@ D:
     run_command(args)
     run_command_bytes(args)
     auto_install_package(package_name)
+  src/vdisplay/commands/config.py:
+    e: register,handle
+    register(sub)
+    handle(args)
   src/vdisplay/control/vision_disambiguate.py:
     e: _HasConfidence,item_confidence,filter_by_confidence,pick_by_index,resolve_vision_matches,vision_threshold,disambiguation_meta
     _HasConfidence(Protocol):
@@ -2678,10 +2702,6 @@ D:
     all_payload()
     screenshot_payload()
     dispatch_cli(args)
-  src/vdisplay/commands/config.py:
-    e: register,handle
-    register(sub)
-    handle(args)
   src/vdisplay/commands/io.py:
     e: print_json
     print_json(payload)
@@ -2727,6 +2747,7 @@ D:
     e: ProviderResult,CaptureProvider
     ProviderResult:
     CaptureProvider(Protocol): available(0),capture_full(0),capture_region(1)
+  screen.png.vql.imgl.json:
   goal.yaml:
   app.vql.json:
   planfile.yaml:
@@ -2734,6 +2755,8 @@ D:
   vdisplay.yaml:
   pyproject.toml:
   tree.txt:
+  screen.png.context.json:
+  screen.png.vql.json:
   prefact.yaml:
   project.sh:
   ui.vql.json:
@@ -2799,6 +2822,10 @@ D:
   examples/ci-agent/output/frame-000.png.meta.json:
   examples/dev-workflow/planfile-cross-ide.yaml:
   examples/dev-workflow/koru-photo-vql.sh:
+  examples/dev-workflow/koru-audit-last-session.sh:
+    e: print,audit_file
+    print()
+    audit_file()
   examples/dev-workflow/planfile.yaml:
   examples/dev-workflow/planfile-autonomy.yaml:
   examples/dev-workflow/vdisplay.override.example.yaml:
@@ -2866,3 +2893,6 @@ D:
   proto/vdisplay/v1/event.proto:
   proto/vdisplay/v1/command.proto:
   examples/dev-workflow/koru-drive-photo-vql.sh:
+    e: print,print
+    print()
+    print()

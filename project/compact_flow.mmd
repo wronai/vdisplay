@@ -1,5 +1,7 @@
 flowchart TD
-%% generated in 0.11s
+%% generated in 0.17s
+    brain__scratch_find_pycharm_chat["brain.scratch_find_pycharm_chat<br/>6 funcs"]
+    brain__scratch_test_screencast["brain.scratch_test_screencast<br/>1 funcs"]
     examples__agent_broker["examples.agent-broker<br/>2 funcs"]
     examples__ci_agent["examples.ci-agent<br/>2 funcs"]
     examples__common["examples.common<br/>13 funcs"]
@@ -7,6 +9,7 @@ flowchart TD
     examples__control_plugin["examples.control-plugin<br/>10 funcs"]
     examples__control_plugin_ax["examples.control-plugin-ax<br/>6 funcs"]
     examples__control_plugin_uia["examples.control-plugin-uia<br/>6 funcs"]
+    examples__dev_workflow["examples.dev-workflow<br/>4 funcs"]
     examples__headless_virtual["examples.headless-virtual<br/>2 funcs"]
     examples__host_mirror["examples.host-mirror<br/>3 funcs"]
     examples__host_relay["examples.host-relay<br/>4 funcs"]
@@ -17,20 +20,32 @@ flowchart TD
     packages__rest2vdisplay["packages.rest2vdisplay<br/>2 funcs"]
     packages__uri2vdisplay["packages.uri2vdisplay<br/>2 funcs"]
     packages__vdisplay_agent["packages.vdisplay-agent<br/>173 funcs"]
-    src__vdisplay["src.vdisplay<br/>2011 funcs"]
+    src__vdisplay["src.vdisplay<br/>2024 funcs"]
     packages__vdisplay_agent ==>|67| src__vdisplay
+    examples__control_plane ==>|32| examples__dev_workflow
+    src__vdisplay ==>|30| examples__dev_workflow
+    brain__scratch_test_screencast ==>|16| examples__dev_workflow
+    examples__agent_broker ==>|12| examples__dev_workflow
     src__vdisplay ==>|9| packages__dsl2vdisplay
     packages__dsl2vdisplay ==>|6| src__vdisplay
+    packages__dsl2vdisplay ==>|6| examples__dev_workflow
     src__vdisplay ==>|5| packages__vdisplay_agent
     packages__mcp2vdisplay ==>|4| src__vdisplay
     packages__rest2vdisplay ==>|4| packages__dsl2vdisplay
+    packages__vdisplay_agent ==>|4| examples__dev_workflow
+    examples__common ==>|4| examples__dev_workflow
+    packages__cli2vdisplay -->|3| examples__dev_workflow
+    packages__nlp2vdisplay -->|3| examples__dev_workflow
     examples__host_mirror -->|3| src__vdisplay
     examples__host_mirror -->|3| examples__common
     examples__host_relay -->|3| src__vdisplay
     examples__host_relay -->|3| examples__common
+    examples__host_relay -->|3| examples__dev_workflow
     packages__mcp2vdisplay -->|2| packages__dsl2vdisplay
     packages__cli2vdisplay -->|2| packages__dsl2vdisplay
+    packages__uri2vdisplay -->|2| examples__dev_workflow
     packages__rest2vdisplay -->|2| src__vdisplay
+    examples__host_mirror -->|2| examples__dev_workflow
     examples__headless_virtual -->|2| examples__common
     examples__ci_agent -->|2| examples__common
     examples__control_plugin_ax -->|2| examples__control_plugin_uia
@@ -39,6 +54,8 @@ flowchart TD
     packages__nlp2vdisplay -->|1| src__vdisplay
     packages__vdisplay_agent -->|1| packages__rest2vdisplay
     examples__control_plugin -->|1| src__vdisplay
+    examples__headless_virtual -->|1| examples__dev_workflow
+    examples__ci_agent -->|1| examples__dev_workflow
     examples__control_plane -->|1| src__vdisplay
     examples__agent_broker -->|1| src__vdisplay
     examples__control_plugin_uia -->|1| src__vdisplay
@@ -48,3 +65,4 @@ flowchart TD
     src__vdisplay -->|1| examples__common
     src__vdisplay -->|1| examples__control_plugin
     src__vdisplay -->|1| packages__mcp2vdisplay
+    brain__scratch_find_pycharm_chat -->|1| examples__dev_workflow

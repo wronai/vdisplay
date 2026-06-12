@@ -129,7 +129,12 @@ def _build_enriched_payload(ctx: ScreenContext, payload: dict[str, Any]) -> dict
     if ctx.imgl.get("cache_hit"):
         enriched["screen_context"]["cache_hit"] = True
     if ctx.vql.get("program"):
-        enriched["vql"] = {"path": ctx.artifacts.get("vql"), "reverse": ctx.vql.get("reverse")}
+        vql_block: dict[str, Any] = {"path": ctx.artifacts.get("vql"), "reverse": ctx.vql.get("reverse")}
+        if ctx.vql.get("capture_validation"):
+            vql_block["capture_validation"] = ctx.vql["capture_validation"]
+        enriched["vql"] = vql_block
+    if ctx.vql.get("capture_validation"):
+        enriched["capture_validation"] = ctx.vql["capture_validation"]
     if ctx.imgl.get("ok"):
         enriched["imgl"] = {
             "ok": True,

@@ -5,12 +5,12 @@
 
 - **Project**: /home/tom/github/wronai/vdisplay
 - **Primary Language**: python
-- **Languages**: python: 287, json: 26, yaml: 11, toml: 11, shell: 11
+- **Languages**: python: 288, json: 29, shell: 12, yaml: 11, toml: 11
 - **Analysis Mode**: static
-- **Total Functions**: 2322
+- **Total Functions**: 2338
 - **Total Classes**: 176
-- **Modules**: 362
-- **Entry Points**: 967
+- **Modules**: 367
+- **Entry Points**: 970
 
 ## Architecture by Module
 
@@ -91,6 +91,10 @@
 - **Classes**: 4
 - **File**: `ax_impl.py`
 
+### src.vdisplay.integrations.vql_bridge
+- **Functions**: 26
+- **File**: `vql_bridge.py`
+
 ### src.vdisplay.desktop_apps
 - **Functions**: 25
 - **Classes**: 2
@@ -99,10 +103,6 @@
 ### src.vdisplay.control.verify
 - **Functions**: 25
 - **File**: `verify.py`
-
-### src.vdisplay.integrations.vql_bridge
-- **Functions**: 25
-- **File**: `vql_bridge.py`
 
 ### src.vdisplay.backends.linux_x11_relay
 - **Functions**: 24
@@ -123,7 +123,7 @@ Main execution flows into the system:
 - **Calls**: app.get, app.get, app.post, app.post, app.post, app.post, app.post, Header
 
 ### brain.scratch_test_screencast.test_screencast
-- **Calls**: DBusGMainLoop, dbus.SessionBus, bus.get_object, dbus.Interface, GLib.MainLoop, None.replace, bus.add_signal_receiver, print
+- **Calls**: DBusGMainLoop, dbus.SessionBus, bus.get_object, dbus.Interface, GLib.MainLoop, None.replace, bus.add_signal_receiver, examples.dev-workflow.koru-audit-last-session.print
 
 ### src.vdisplay.commands.control.register
 - **Calls**: src.vdisplay.application.config_options.get_runtime_options, sub.add_parser, parser.add_subparsers, control_sub.add_parser, src.vdisplay.commands.common.add_display_arg, listing.add_argument, listing.add_argument, listing.add_argument
@@ -147,7 +147,7 @@ Main execution flows into the system:
 - **Calls**: step_dir.mkdir, src.vdisplay.application.session_recorder.request_to_dict, src.vdisplay.application.session_recorder.result_to_dict, None.write_text, None.write_text, src.vdisplay.application.session_recorder.collect_artifacts, src.vdisplay.application.session_recorder_diagnostics.extract_diagnostics, None.write_text
 
 ### examples.agent-broker.broker_demo.main
-- **Calls**: src.vdisplay.agent_config.resolve_agent_url, AgentClient, print, print, print, client.outputs, print, print
+- **Calls**: src.vdisplay.agent_config.resolve_agent_url, AgentClient, examples.dev-workflow.koru-audit-last-session.print, examples.dev-workflow.koru-audit-last-session.print, examples.dev-workflow.koru-audit-last-session.print, client.outputs, examples.dev-workflow.koru-audit-last-session.print, examples.dev-workflow.koru-audit-last-session.print
 
 ### src.vdisplay.commands.map.register
 - **Calls**: sub.add_parser, parser.add_subparsers, map_sub.add_parser, build.add_argument, build.add_argument, build.add_argument, build.add_argument, build.add_argument
@@ -156,7 +156,7 @@ Main execution flows into the system:
 - **Calls**: app.get, app.get, app.get, app.get, app.get, app.get, Header, check_auth
 
 ### examples.host-relay.relay_demo.main
-- **Calls**: os.environ.get, src.vdisplay.discovery.resolve_host_display, Path, output_dir.mkdir, print, examples.host-relay.relay_demo._capture_phase, WindowRelaySession.create, session.start
+- **Calls**: os.environ.get, src.vdisplay.discovery.resolve_host_display, Path, output_dir.mkdir, examples.dev-workflow.koru-audit-last-session.print, examples.host-relay.relay_demo._capture_phase, WindowRelaySession.create, session.start
 
 ### packages.mcp2vdisplay.src.mcp2vdisplay.server.create_server
 - **Calls**: FastMCP, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool, app.tool
@@ -165,7 +165,7 @@ Main execution flows into the system:
 - **Calls**: dict, extra.update, cls, cls.__dataclass_fields__.values, payload.get, payload.get, payload.get, payload.get
 
 ### examples.host-mirror.mirror_demo.main
-- **Calls**: Path, output_dir.mkdir, os.environ.get, os.environ.get, src.vdisplay.discovery.diagnose_display, print, src.vdisplay.discovery.list_monitors, src.vdisplay.payloads.all_payload
+- **Calls**: Path, output_dir.mkdir, os.environ.get, os.environ.get, src.vdisplay.discovery.diagnose_display, examples.dev-workflow.koru-audit-last-session.print, src.vdisplay.discovery.list_monitors, src.vdisplay.payloads.all_payload
 
 ### src.vdisplay.commands.map.handle
 - **Calls**: src.vdisplay.cli_handlers.print_json, src.vdisplay.cli_handlers.print_json, map_svc.map_diff, src.vdisplay.cli_handlers.print_json, map_svc.map_refresh, src.vdisplay.cli_handlers.print_json, map_svc.map_build, map_svc.map_show
@@ -263,6 +263,8 @@ main [examples.agent-broker.broker_demo]
       └─> _probe_default_agent
           └─> _probe_agent_url
           └─> _default_agent_base
+  └─ →> print
+  └─ →> print
 ```
 
 ### Flow 9: create_server

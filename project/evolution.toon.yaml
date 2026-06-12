@@ -1,42 +1,42 @@
-# code2llm/evolution | 2259 func | 239f | 2026-06-12
+# code2llm/evolution | 2272 func | 240f | 2026-06-12
 # generated in 0.01s
 
 NEXT[6] (ranked by impact):
-  [1] !! SPLIT           src/vdisplay/capture/portal_screencast.py
-      WHY: 1602L, 1 classes, max CC=14
-      EFFORT: ~4h  IMPACT: 22428
-
-  [2] !! SPLIT-FUNC      analyze_history  CC=36  fan=32
+  [1] !! SPLIT-FUNC      analyze_history  CC=36  fan=32
       WHY: CC=36 exceeds 15
       EFFORT: ~1h  IMPACT: 1152
 
-  [3] !! SPLIT-FUNC      _build_imgl_layers  CC=37  fan=15
+  [2] !! SPLIT-FUNC      _build_imgl_layers  CC=37  fan=15
       WHY: CC=37 exceeds 15
       EFFORT: ~1h  IMPACT: 555
 
-  [4] !  SPLIT-FUNC      load_task_record  CC=15  fan=13
+  [3] !  SPLIT-FUNC      load_task_record  CC=15  fan=13
       WHY: CC=15 exceeds 15
       EFFORT: ~1h  IMPACT: 195
 
-  [5] !! SPLIT           maps/pycharm-chat.json
-      WHY: 1588L, 0 classes, max CC=0
+  [4] !! SPLIT           screen.png.context.json
+      WHY: 98895L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
-  [6] !! SPLIT           planfile.yaml
-      WHY: 1319L, 0 classes, max CC=0
+  [5] !! SPLIT           screen.png.vql.json
+      WHY: 51376L, 0 classes, max CC=0
+      EFFORT: ~4h  IMPACT: 0
+
+  [6] !! SPLIT           screen.png.vql.imgl.json
+      WHY: 8523L, 0 classes, max CC=0
       EFFORT: ~4h  IMPACT: 0
 
 
 RISKS[3]:
-  ⚠ Splitting src/vdisplay/capture/portal_screencast.py may break 79 import paths
-  ⚠ Splitting maps/pycharm-chat.json may break 0 import paths
-  ⚠ Splitting planfile.yaml may break 0 import paths
+  ⚠ Splitting screen.png.context.json may break 0 import paths
+  ⚠ Splitting screen.png.vql.json may break 0 import paths
+  ⚠ Splitting screen.png.vql.imgl.json may break 0 import paths
 
 METRICS-TARGET:
   CC̄:          4.1 → ≤2.9
   max-CC:      37 → ≤18
-  god-modules: 17 → 0
-  high-CC(≥15): 8 → ≤4
+  god-modules: 20 → 0
+  high-CC(≥15): 9 → ≤4
   hub-types:   0 → ≤0
 
 PATTERNS (language parser shared logic):

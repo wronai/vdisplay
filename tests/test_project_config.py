@@ -283,3 +283,29 @@ def test_finalize_allows_vision_stub_on_find() -> None:
     result = ExecuteResult(ok=True, method="vdisplay-cli", output=stub_json)
     feedback = TaskFeedback(prepared_command="vdisplay control find --backend vision")
     assert finalize_result_ok(result, feedback, config=config) is True
+
+
+def test_clear_metadata_dir_removes_runtime_artifacts(tmp_path: Path) -> None:
+    from vdisplay.application.project_config import clear_metadata_dir, load_project_config
+
+    (tmp_path / "vdisplay.yaml").write_text(
+        "automation:\n  metadata_dir: .vdisplay\n",
+        encoding="utf-8",
+    )
+    meta = tmp_path / ".vdisplay"
+    meta.mkdir()
+    (meta / "broker.jsonl").write_text("{}\n", encoding="utf-8")
+    (meta / "koru-cont-dp2.png").write_bytes(b"png")
+    (meta / "vdisplay.override.yaml").write_text("version: '1'\n", encoding="utf-8")
+    session = meta / "2026-06-12"
+    session.mkdir()
+    (session / "dummy.json").write_text("{}", encoding="utf-8")
+
+    result = clear_metadata_dir(tmp_path)
+    assert result["ok"] is True
+    assert "broker.jsonl" in result["removed"]
+    assert "vdisplay.override.yaml" in result["preserved"]
+    assert not (meta / "broker.jsonl").exists()
+    assert (meta / "vdisplay.override.yaml").is_file()
+    assert (meta / "config" / "vdisplay.effective.json").is_file()
+

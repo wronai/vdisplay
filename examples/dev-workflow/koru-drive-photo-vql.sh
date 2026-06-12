@@ -65,6 +65,8 @@ esac
 export KORU_VDISPLAY_PHOTO_VQL_REFRESH="${KORU_VDISPLAY_PHOTO_VQL_REFRESH:-auto}"
 export PYTHONPATH="${IMGL_SRC}:${KORU_SRC}:${ROOT}/src:${ROOT}/packages/vdisplay-agent/src${PYTHONPATH:+:$PYTHONPATH}"
 export KORU_VDISPLAY_LLM_VISION_DECISION="${KORU_VDISPLAY_LLM_VISION_DECISION:-1}"
+export KORU_VDISPLAY_VQL_MAX_AGE_S="${KORU_VDISPLAY_VQL_MAX_AGE_S:-300}"
+export VDISPLAY_SESSION="${VDISPLAY_SESSION:-1}"
 export KORU_VDISPLAY_AUTO_IDE_CONTROL="${KORU_VDISPLAY_AUTO_IDE_CONTROL:-1}"
 export KORU_VDISPLAY_IDE_CONTROL_RETRIES="${KORU_VDISPLAY_IDE_CONTROL_RETRIES:-3}"
 export KORU_VDISPLAY_RAISE_ALT_TAB="${KORU_VDISPLAY_RAISE_ALT_TAB:-0}"
@@ -85,7 +87,9 @@ python3 << 'PY'
 import json
 import os
 import sys
+from pathlib import Path
 
+from koru.integrations.autonomy_session import find_latest_koru_session
 from koru.integrations.vdisplay_client import prepare_photo_vql_for_drive, send_chat
 
 ide = os.environ["KORU_DRIVE_IDE"]
@@ -95,9 +99,67 @@ submit = os.environ.get("KORU_DRIVE_SUBMIT", "0") in {"1", "true", "yes"}
 observe = prepare_photo_vql_for_drive(ide=ide)
 print("photo_vql_observe:", json.dumps(observe, indent=2))
 
-reply = send_chat(prompt, ide=ide, submit=submit, dry_run=os.environ.get("KORU_VDISPLAY_DRY_RUN", "").strip().lower() in {"1", "true", "yes"})
+prov = observe.get("capture_provenance") or {}
+if prov:
+    print("capture_confirmation:", json.dumps({
+        "capture_confirmed": prov.get("capture_confirmed"),
+        "window_titles": prov.get("window_titles"),
+        "png_mtime_iso": prov.get("png_mtime_iso"),
+        "vql_mtime_iso": prov.get("vql_mtime_iso"),
+    }, indent=2))
+
+if observe.get("ide_window_warning"):
+    print(
+        "capture_warning: foreground window is not the target IDE - drive will abort unless "
+        "KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH=1",
+        file=sys.stderr,
+    )
+
+ide_control = observe.get("ide_control") or {}
+visual_guard_failed = ide_control.get("visual_guard_failed")
+allow_mismatch = os.environ.get("KORU_VDISPLAY_ALLOW_MAP_ON_MISMATCH", "").strip().lower() in {"1", "true", "yes", "on"} or os.environ.get("KORU_VDISPLAY_ALLOW_IDE_MISMATCH", "").strip().lower() in {"1", "true", "yes", "on"}
+if visual_guard_failed and not allow_mismatch:
+    print(
+        "drive_aborted: capture IDE mismatch (visual_guard_failed=true). "
+        f"window_titles={prov.get('window_titles')!r}. "
+        "Focus the correct IDE on the target monitor and retry.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+reply = send_chat(
+    prompt,
+    ide=ide,
+    submit=submit,
+    dry_run=os.environ.get("KORU_VDISPLAY_DRY_RUN", "").strip().lower() in {"1", "true", "yes"},
+)
 reply = reply or {"ok": False, "error": "no reply"}
 reply.setdefault("photo_vql_observe", observe)
+if prov and "capture_provenance" not in reply:
+    reply["capture_provenance"] = prov
+
+plan = (reply.get("photo_vql") or {}).get("vql_command_plan") or reply.get("vql_command_plan")
+if plan:
+    print("vql_command_plan:", json.dumps({
+        "selection_method": plan.get("selection_method"),
+        "final_local": plan.get("final_local"),
+        "final_global": plan.get("final_global"),
+        "warnings": plan.get("warnings"),
+        "inference_ok": plan.get("inference_ok"),
+        "capture_confirmed": plan.get("capture_confirmed"),
+        "commands": plan.get("commands"),
+    }, indent=2, default=str))
+coords = reply.get("coords") or (reply.get("photo_vql") or {}).get("coords")
+if coords:
+    print("cursor_at_write_command:", json.dumps(coords, indent=2))
+
+session = find_latest_koru_session(ide=ide, root=Path(os.environ.get("VDISPLAY_METADATA_DIR", ".vdisplay")))
+if session is not None:
+    print(f"SESSION={session.resolve()}")
+    print(f"# audit: bash examples/dev-workflow/koru-audit-last-session.sh --ide {ide}")
+else:
+    print("SESSION=none")
+
 print("drive_reply:", json.dumps(reply, indent=2, default=str))
 sys.exit(0 if reply.get("ok") else 1)
 PY
