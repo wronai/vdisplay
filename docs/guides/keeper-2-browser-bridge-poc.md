@@ -291,7 +291,7 @@ Use a hidden `BrowserWindow` for `getDisplayMedia` (required in Electron).
 vdisplay-agent serve
 
 # Terminal 2 — start the same Electron manager and click Share HDMI-1.
-vdisplay electron-share start --install --instance pycharm --target "PyCharm chat" --port 8799
+vdisplay electron-share up --install --instance pycharm --target "PyCharm chat" --port 8799
 
 curl -s http://127.0.0.1:8766/session/browser-bridge/status | jq
 

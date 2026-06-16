@@ -13,12 +13,14 @@ contextBridge.exposeInMainWorld("vdisplayShare", {
     ipcRenderer.invoke("share:list-sources", { displayId, includeWindows }),
   selectSource: (payload) => ipcRenderer.invoke("share:select-source", payload),
   restoreCaptureHandler: () => ipcRenderer.invoke("share:restore-capture-handler"),
+  openScreenRecordingSettings: () => ipcRenderer.invoke("share:open-screen-recording-settings"),
   prepareSystemPicker: () => ipcRenderer.invoke("share:prepare-system-picker"),
   setMode: (mode) => ipcRenderer.invoke("share:set-mode", mode),
   setAlwaysOnTop: (value) => ipcRenderer.invoke("share:set-always-on-top", value),
   minimizeToTray: () => ipcRenderer.invoke("share:minimize-to-tray"),
   openWeb: () => ipcRenderer.invoke("share:open-web"),
   setTarget: (targetLabel) => ipcRenderer.invoke("share:set-target", targetLabel),
+  selectAutomationTarget: (payload) => ipcRenderer.invoke("share:select-automation-target", payload || {}),
   exportLogs: () => ipcRenderer.invoke("share:export-logs"),
   log: (level, message, details = null) =>
     ipcRenderer.send("share:renderer-log", { level, message, details }),
@@ -27,4 +29,6 @@ contextBridge.exposeInMainWorld("vdisplayShare", {
   onMode: (handler) => ipcRenderer.on("share:mode", (_event, payload) => handler(payload)),
   onAutoStartCapture: (handler) =>
     ipcRenderer.on("share:auto-start-capture", (_event, payload) => handler(payload)),
+  onCaptureActive: (handler) =>
+    ipcRenderer.on("share:capture-active", (_event, payload) => handler(payload)),
 });

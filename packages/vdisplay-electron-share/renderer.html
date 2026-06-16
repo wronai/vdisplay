@@ -183,6 +183,20 @@
         max-height: 220px;
         overflow: auto;
       }
+      .status-toolbar {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .status-toolbar label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
       .preview-wrap {
         position: relative;
       }
@@ -361,10 +375,12 @@
       <header class="panel topbar">
         <div class="topbar-title">
           <strong>vdisplay share manager</strong>
-          <span>Share, window mode, tray, web and stop controls.</span>
+          <span>Share a monitor first; then optionally select the automation target window.</span>
         </div>
         <div class="actions">
-          <button id="start">Share target</button>
+          <button id="openSettings" class="secondary">Screen Recording settings</button>
+          <button id="grantAccess" class="secondary">Grant via GNOME</button>
+          <button id="start">Share monitor</button>
           <button id="compact" class="secondary">Compact 20%</button>
           <button id="full" class="secondary">Full manager</button>
           <button id="tray" class="secondary">Tray</button>
@@ -376,13 +392,17 @@
       <section class="panel side">
         <h1>vdisplay share</h1>
         <p>
-          Choose a monitor to share, then pick a window from the list on the right.
-          The live preview stays visible while automation runs.
+          Choose a monitor to share the whole screen first. After capture is live, optionally pick
+          an app window from the list on the right.
         </p>
         <div class="settings">
-          <label for="target">Target app/window label</label>
-          <input id="target" placeholder="PyCharm chat, Chrome, Cursor..." />
+          <label for="target">Optional automation target label</label>
+          <input id="target" placeholder="Set after monitor share, e.g. PyCharm chat" />
           <label><input id="alwaysOnTop" type="checkbox" /> Always on top</label>
+        </div>
+        <div class="status-toolbar">
+          <label for="status">Status JSON</label>
+          <button id="copyStatus" class="secondary small" type="button">Copy JSON</button>
         </div>
         <pre id="status" class="status">starting...</pre>
       </section>
@@ -391,7 +411,7 @@
           <div class="picker-head">
             <div>
               <h2>Choose monitor</h2>
-              <p>Pick the screen you want to share. Window previews for the selected screen are listed on the right.</p>
+          <p>Pick the whole monitor to share. Do not choose a single app in the system dialog.</p>
             </div>
             <button id="refreshScreens" class="secondary small" type="button">Refresh</button>
           </div>

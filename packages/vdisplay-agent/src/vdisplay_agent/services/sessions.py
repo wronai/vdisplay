@@ -165,17 +165,19 @@ def _annotate_screencast_capture_status(
         payload["capture_last_error"] = store.screencast_capture_error
         payload["capture_hint"] = (
             "ScreenCast portal session is active, but the last frame capture failed. "
-            "Run `vdisplay agent screencast probe --via-agent --source <monitor>`; "
-            "if it fails, restart with `vdisplay agent screencast start --force` "
-            "from a local GNOME terminal and choose All Screens/the IDE monitor."
+            "On GNOME Wayland prefer browser bridge: open "
+            "`http://127.0.0.1:<agent-port>/api/web/browser-bridge?source=<monitor>`, "
+            "click Share screen, select the IDE monitor, and keep the tab open. "
+            "Keeper fallback: `vdisplay agent screencast start --force`, then "
+            "`vdisplay agent screencast probe --via-agent --source <monitor>`."
         )
     elif payload.get("active") and payload.get("ready") and not capture_ready:
         payload["capture_hint"] = (
             "ScreenCast portal session is active, but the frame keeper is not running. "
-            "On GNOME Wayland prefer Electron bridge: "
-            "`vdisplay electron-share start --source <monitor>` (pick monitor in GNOME Share). "
-            "Or run `vdisplay agent screencast start --force` from a local GNOME terminal, "
-            "choose All Screens/the IDE monitor, then verify with "
+            "On GNOME Wayland prefer browser bridge: open "
+            "`http://127.0.0.1:<agent-port>/api/web/browser-bridge?source=<monitor>`, "
+            "click Share screen, select the IDE monitor, and keep the tab open. "
+            "Keeper fallback: `vdisplay agent screencast start --force`, then "
             "`vdisplay agent screencast probe --via-agent --source <monitor>`."
         )
 
@@ -202,10 +204,10 @@ def _reject_wayland_adopt_without_capture(
         pass
     raise VDisplayError(
         "adopted screencast session is not frame-capture ready on GNOME Wayland: "
-        "frame keeper is not running. Prefer Electron bridge: "
-        "`vdisplay electron-share start --source <monitor>` (pick monitor in GNOME Share). "
-        "Or start capture with `vdisplay agent screencast start --force` from a local GNOME "
-        "terminal, choose All Screens/the IDE monitor, then verify with "
+        "frame keeper is not running. Prefer browser bridge: open "
+        "`http://127.0.0.1:<agent-port>/api/web/browser-bridge?source=<monitor>`, "
+        "click Share screen, select the IDE monitor, and keep the tab open. "
+        "Keeper fallback: `vdisplay agent screencast start --force`, then "
         "`vdisplay agent screencast probe --via-agent --source <monitor>`."
     )
 

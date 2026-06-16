@@ -10,7 +10,7 @@ from ..capture.linux_xwd import _crop_png, _is_wayland_session, capture_display_
 from ..capture.providers.engine import capture_full_png
 from ..discovery import _looks_like_xvfb_only, list_monitors, resolve_host_display
 from ..exceptions import BackendNotAvailableError, VDisplayError
-from .electron_share import try_electron_share_capture
+from .electron_share import electron_share_manager_status, try_electron_share_capture
 from .screencast_crop import capture_all_from_screencast, try_screencast_capture
 
 
@@ -252,6 +252,9 @@ def capture_host_png(
         meta["monitor_name"] = source_name
         return png, meta
 
+    if _electron_share_fail_fast(errors):
+        raise VDisplayError(_host_capture_error(resolved, source_name, errors))
+
     screencast_hit = try_screencast_capture(
         screencast_session,
         region,
@@ -300,6 +303,19 @@ def capture_host_png(
     raise VDisplayError(_host_capture_error(resolved, source_name, errors))
 
 
+def _electron_share_fail_fast(errors: list[str]) -> bool:
+    raw = os.environ.get("VDISPLAY_ELECTRON_SHARE_FALLBACK_ON_ERROR")
+    if str(raw or "").strip().lower() in {"1", "true", "yes", "on"}:
+        return False
+
+    fatal_markers = (
+        "electron-share: stale frame",
+        "electron-share: manager is not sharing",
+        "electron-share is sharing display",
+    )
+    return any(any(marker in error for marker in fatal_markers) for error in errors)
+
+
 def _host_capture_error(display: str, source: str, errors: list[str]) -> str:
     from .linux_xwd import _is_wayland_session
 
@@ -310,8 +326,13 @@ def _host_capture_error(display: str, source: str, errors: list[str]) -> str:
         f"Tried: {'; '.join(errors) or 'no strategy'}."
     )
     if electron_attempted:
+        manager = electron_share_manager_status()
+        manager_agent_url = ""
+        if isinstance(manager.get("browser_bridge"), dict):
+            manager_agent_url = str(manager["browser_bridge"].get("agent_url") or "").strip().rstrip("/")
         bridge_url = (
-            os.environ.get("VDISPLAY_AGENT_URL", "").rstrip("/")
+            manager_agent_url
+            or os.environ.get("VDISPLAY_AGENT_URL", "").rstrip("/")
             or "http://127.0.0.1:8766"
         )
         bridge_url = f"{bridge_url}/api/web/browser-bridge?source={source}"

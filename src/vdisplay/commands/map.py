@@ -48,6 +48,11 @@ def register(sub: argparse._SubParsersAction) -> None:
     refresh.add_argument("--scope", help="Limit refresh to one map region id")
     refresh.add_argument("--min-confidence", type=float, default=0.5, help="OCR confidence threshold")
     refresh.add_argument("--add-new", action="store_true", help="Append newly seen OCR labels to the map")
+    refresh.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite map even when drift assessment says refresh_required",
+    )
     refresh.set_defaults(func=handle)
 
 
@@ -90,6 +95,7 @@ def handle(args: argparse.Namespace) -> int:
             scope=getattr(args, "scope", None),
             min_confidence=getattr(args, "min_confidence", 0.5),
             add_new=getattr(args, "add_new", False),
+            force=getattr(args, "force", False),
             md=getattr(args, "md", None),
             svg=getattr(args, "svg", None),
         )

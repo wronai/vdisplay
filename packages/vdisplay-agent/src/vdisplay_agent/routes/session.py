@@ -168,6 +168,16 @@ def register_routes(
         check_auth(authorization)
         return success("browser_bridge_status", strip_ok(broker.browser_bridge_status()))
 
+    @app.post("/session/browser-bridge/clear")
+    def session_browser_bridge_clear(
+        authorization: str | None = Header(default=None),
+    ) -> JSONResponse:
+        check_auth(authorization)
+        try:
+            return json_from_runtime("browser_bridge_clear", broker.clear_browser_bridge())
+        except Exception as exc:
+            return json_error("browser_bridge_clear", exc)
+
     @app.post("/session/screencast/stop")
     def session_screencast_stop(
         authorization: str | None = Header(default=None),

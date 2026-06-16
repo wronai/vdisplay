@@ -33,15 +33,25 @@ def is_blank_png(data: bytes) -> bool:
         # Minimal PNG encoder (no Pillow) produces small but valid captures.
         return not _is_valid_png(data)
 
-    image = Image.open(io.BytesIO(data)).convert("RGB")
-    sample = image.resize((min(64, image.width), min(64, image.height)))
-    pixels = list(sample.get_flattened_data())
+    try:
+        image = Image.open(io.BytesIO(data)).convert("RGB")
+        sample = image.resize((min(64, image.width), min(64, image.height)))
+        pixels = list(sample.get_flattened_data())
+    except Exception:
+        return True
     if not pixels:
         return True
     brightness = [0.299 * r + 0.587 * g + 0.114 * b for r, g, b in pixels]
     if max(brightness) < 8:
         return True
     if len(set(pixels)) <= 1 and max(brightness) < 32:
+        return True
+    mean_brightness = sum(brightness) / len(brightness)
+    bright_ratio = sum(1 for item in brightness if item > 24) / len(brightness)
+    very_dark_ratio = sum(1 for item in brightness if item < 12) / len(brightness)
+    if mean_brightness < 4 and bright_ratio < 0.02:
+        return True
+    if very_dark_ratio > 0.995 and bright_ratio < 0.01:
         return True
     return False
 

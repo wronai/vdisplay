@@ -85,6 +85,36 @@ def _browser_bridge_html() -> str:
       statusEl.textContent = JSON.stringify(payload, null, 2);
     }
 
+    async function refreshBridgeStatus(extra = {}) {
+      const source = sourceInput.value.trim() || "HDMI-1";
+      try {
+        const response = await fetch("/session/browser-bridge/status", { cache: "no-store" });
+        const payload = await response.json();
+        const data = payload.data || payload;
+        const monitor = (data.monitors && data.monitors[source]) || null;
+        log({
+          ok: payload.ok !== false,
+          phase: "bridge_status",
+          source,
+          bridge_id: data.bridge_id || bridgeId || "",
+          client: data.client || "",
+          registered: Boolean(data.registered),
+          sharing: Boolean(data.sharing),
+          capture_ready: Boolean(data.capture_ready),
+          last_frame_age_ms: data.last_frame_age_ms ?? null,
+          stream_active: Boolean(stream),
+          local_seq: seq,
+          monitor,
+            hint: data.capture_ready
+            ? "Frames are reaching vdisplay-agent. Keep this tab open while automation runs."
+            : "Click Share screen, approve GNOME once for the whole monitor (not a single app), and keep this tab open until capture_ready=true.",
+          ...extra,
+        });
+      } catch (error) {
+        log({ ok: false, phase: "bridge_status", source, error: String(error), ...extra });
+      }
+    }
+
     async function postJson(path, payload) {
       const response = await fetch(path, {
         method: "POST",
@@ -151,7 +181,7 @@ def _browser_bridge_html() -> str:
         captured_at_ms: Date.now(),
         source_name: document.title,
       });
-      log({ ok: true, bridge_id: bridgeId, source, seq, width: canvas.width, height: canvas.height });
+      await refreshBridgeStatus({ pushed_frame: { bridge_id: bridgeId, source, seq, width: canvas.width, height: canvas.height } });
     }
 
     function stop() {
@@ -165,6 +195,16 @@ def _browser_bridge_html() -> str:
       stream = null;
       video.srcObject = null;
       log({ ok: true, stopped: true, bridge_id: bridgeId });
+      refreshBridgeStatus({ stopped: true }).catch(() => {});
+    }
+
+    function displayMediaVideoConstraints() {
+      // Prefer whole-monitor capture on GNOME/Wayland (avoids window-only picker spam).
+      return {
+        cursor: "always",
+        displaySurface: "monitor",
+        frameRate: { ideal: 5, max: 15 },
+      };
     }
 
     async function start() {
@@ -172,7 +212,7 @@ def _browser_bridge_html() -> str:
       await registerBridge();
       stream = await navigator.mediaDevices.getDisplayMedia({
         audio: false,
-        video: { cursor: "always", frameRate: { ideal: 5, max: 15 } },
+        video: displayMediaVideoConstraints(),
       });
       video.srcObject = stream;
       for (const track of stream.getVideoTracks()) track.addEventListener("ended", stop);
@@ -195,13 +235,16 @@ def _browser_bridge_html() -> str:
       });
       await heartbeat();
       await pushFrame();
+      await refreshBridgeStatus({ started: true });
       heartbeatTimer = setInterval(() => heartbeat().catch((error) => log({ ok: false, error: String(error) })), 2000);
-      frameTimer = setInterval(() => pushFrame().catch((error) => log({ ok: false, error: String(error) })), 500);
+      frameTimer = setInterval(() => pushFrame().catch((error) => log({ ok: false, phase: "pushFrame", error: String(error) })), 500);
     }
 
     document.getElementById("start").addEventListener("click", () => start().catch((error) => log({ ok: false, error: String(error) })));
     document.getElementById("stop").addEventListener("click", stop);
-    log({ ok: true, url: location.href, source: sourceInput.value, hint: "Click Share screen, choose the IDE monitor, then keep this tab open." });
+    log({ ok: true, url: location.href, source: sourceInput.value, hint: "Click Share screen, choose the whole monitor (HDMI-1), then keep this tab open." });
+    setInterval(() => refreshBridgeStatus().catch(() => {}), 2000);
+    refreshBridgeStatus().catch(() => {});
   </script>
 </body>
 </html>"""

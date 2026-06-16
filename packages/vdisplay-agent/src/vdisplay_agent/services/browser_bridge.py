@@ -95,6 +95,12 @@ class BrowserFrameStore:
     def register(self, body: dict[str, Any]) -> dict[str, Any]:
         sources = _sources_from_body(body)
         bridge_id = f"bb_{uuid.uuid4().hex[:12]}"
+        for entry in list(self.frames.values()):
+            try:
+                entry.path.unlink(missing_ok=True)
+            except Exception:
+                pass
+        self.frames.clear()
         self.bridge = BrowserBridgeState(
             bridge_id=bridge_id,
             client=str(body.get("client") or "browser-bridge"),
@@ -146,6 +152,10 @@ class BrowserFrameStore:
             raise VDisplayError(f"frame too large: {len(png)} bytes")
         if not png.startswith(_PNG_MAGIC):
             raise VDisplayError("ingest accepts PNG frames only")
+        from vdisplay.capture.linux_xwd import is_blank_png
+
+        if is_blank_png(png):
+            raise VDisplayError("browser bridge frame blank")
 
         display = _display_key(body.get("display") or bridge.display)
         directory = Path(tempfile.gettempdir()) / "vdisplay-browser-bridge" / bridge.bridge_id
@@ -211,8 +221,12 @@ class BrowserFrameStore:
         for (display, _key), entry in sorted(self.frames.items()):
             if display != bridge.display:
                 continue
+            if entry.bridge_id != bridge.bridge_id:
+                continue
             age_ms = int((now - entry.received_at) * 1000)
             source = entry.source
+            if bridge.sources and source not in bridge.sources:
+                continue
             existing = monitors.get(source)
             if existing and int(existing.get("age_ms") or 0) <= age_ms:
                 continue
@@ -252,7 +266,10 @@ class BrowserFrameStore:
             return any(self._entry_fresh(entry) for entry in self.frames.values())
         if bridge.sources:
             return all(self.get_fresh(source=source, display=bridge.display) is not None for source in bridge.sources)
-        return any(self._entry_fresh(entry) for entry in self.frames.values())
+        return any(
+            entry.bridge_id == bridge.bridge_id and self._entry_fresh(entry)
+            for entry in self.frames.values()
+        )
 
     def get_fresh(
         self,
@@ -265,11 +282,16 @@ class BrowserFrameStore:
             return None
         display_name = _display_key(display or bridge.display)
         wanted = str(source or "").strip()
+        if wanted and wanted.lower() not in {"primary", "default"} and bridge.sources and wanted not in bridge.sources:
+            return None
         if wanted and wanted.lower() not in {"primary", "default"}:
             fresh = [
                 entry
                 for (entry_display, _key), entry in self.frames.items()
-                if entry_display == display_name and entry.source == wanted and self._entry_fresh(entry)
+                if entry_display == display_name
+                and entry.bridge_id == bridge.bridge_id
+                and entry.source == wanted
+                and self._entry_fresh(entry)
             ]
             if not fresh:
                 return None
@@ -278,7 +300,10 @@ class BrowserFrameStore:
         fresh = [
             entry
             for (entry_display, _key), entry in self.frames.items()
-            if entry_display == display_name and self._entry_fresh(entry)
+            if entry_display == display_name
+            and entry.bridge_id == bridge.bridge_id
+            and (not bridge.sources or entry.source in bridge.sources)
+            and self._entry_fresh(entry)
         ]
         if not fresh:
             return None
@@ -332,7 +357,9 @@ class BrowserFrameStore:
         out_dir.mkdir(parents=True, exist_ok=True)
         captures: list[dict[str, Any]] = []
         for (entry_display, _key), entry in sorted(self.frames.items()):
-            if entry_display != display_name or not self._entry_fresh(entry):
+            if entry_display != display_name or entry.bridge_id != bridge.bridge_id or not self._entry_fresh(entry):
+                continue
+            if bridge.sources and entry.source not in bridge.sources:
                 continue
             source = entry.source
             meta = self.copy_fresh(out_dir / f"{source}.png", source=source, display=display_name)
@@ -411,6 +438,17 @@ def heartbeat_browser_bridge(store: Any, body: dict[str, Any]) -> dict[str, Any]
 
 def browser_bridge_status(store: Any) -> dict[str, Any]:
     return store.browser_bridge.status()
+
+
+def clear_browser_bridge(store: Any) -> dict[str, Any]:
+    store.browser_bridge.clear()
+    return {
+        "ok": True,
+        "registered": False,
+        "sharing": False,
+        "capture_ready": False,
+        "keeper_mode": "browser_bridge",
+    }
 
 
 def ingest_browser_frame(store: Any, body: dict[str, Any]) -> dict[str, Any]:

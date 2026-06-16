@@ -7,7 +7,7 @@
   "description": "Electron screen-share broker for vdisplay on GNOME Wayland",
   "main": "main.js",
   "scripts": {
-    "start": "env -u ELECTRON_RUN_AS_NODE LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME:-none} electron --no-sandbox --ozone-platform=${VDISPLAY_ELECTRON_OZONE_PLATFORM:-x11} .",
+    "start": "env -u ELECTRON_RUN_AS_NODE -u GSETTINGS_SCHEMA_DIR XDG_DATA_DIRS=${VDISPLAY_ELECTRON_XDG_DATA_DIRS:-/usr/share/ubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop} LIBVA_DRIVER_NAME=${LIBVA_DRIVER_NAME:-none} electron --no-sandbox --disable-gpu --disable-gpu-compositing --disable-dev-shm-usage --gtk-version=${VDISPLAY_ELECTRON_GTK_VERSION:-3} --ozone-platform=${VDISPLAY_ELECTRON_OZONE_PLATFORM:-x11} .",
     "stop": "pkill -f 'vdisplay-electron-share/node_modules/.bin/electron' 2>/dev/null || pkill -f 'vdisplay-electron-share/node_modules/electron/dist/electron' 2>/dev/null || true",
     "build": "electron-builder --linux dir"
   },

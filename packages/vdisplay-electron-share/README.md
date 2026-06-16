@@ -1,6 +1,6 @@
 # vdisplay-electron-share
 
-Small Electron screen-share manager/broker for GNOME Wayland.
+Small Electron share manager/tray UI for GNOME Wayland automation.
 
 Full solution guide: [../../docs/electron-share-manager.md](../../docs/electron-share-manager.md).
 
@@ -8,22 +8,36 @@ This package is the canonical Electron implementation for vdisplay. It supports
 both pull broker mode (`GET /frame.png`) and push bridge mode
 (`/capture/ingest` into `vdisplay-agent`).
 
-It keeps the portal permission attached to a stable desktop app instead of a
-random Python/terminal process. The app exposes the latest shared frame over
-localhost for `vdisplay`.
+It provides the manager window, tray, display/window lists, logs, and local HTTP
+control API. On GNOME Wayland systems where Electron capture is unreliable, use
+the agent browser bridge as the actual frame source.
 
-The default window mode is a compact always-on-top preview, approximately 20%
-of a FullHD workspace. It can be expanded to a FullHD-optimized manager window,
-hidden to tray, or opened as a web view.
+The default window mode is the full manager, optimized for a FullHD workspace.
+It can be reduced to a compact always-on-top preview, hidden to tray, or opened
+as a browser bridge/web view.
 
 ## Run
 
-One-command first run via `vdisplay`:
+Recommended one-command automation stack:
 
 ```bash
 cd ~/github/wronai/vdisplay
 source .venv/bin/activate
 
+vdisplay services up --install \
+  --instance jetbrains \
+  --target jetbrains \
+  --source HDMI-1 \
+  --open-browser-bridge
+```
+
+In the opened browser bridge tab, click `Share screen`, select the IDE monitor,
+and keep the tab open. `vdisplay-agent` receives frames through
+`POST /capture/ingest`.
+
+Direct manager-only run:
+
+```bash
 vdisplay electron-share start --install \
   --instance pycharm \
   --target "PyCharm chat" \
@@ -42,8 +56,9 @@ npm start
 The start script unsets `ELECTRON_RUN_AS_NODE`; if you launch the built binary
 directly from an environment that has this variable, unset it first.
 
-In the Electron window click `Share target`, then select the app/window you want
-to automate. If monitor-composite capture is needed, choose `All Screens`.
+In the Electron window use `Browser bridge` for the agent-hosted Chrome bridge.
+`Share target`/Electron capture can still be used where the Electron runtime
+supports it, but on GNOME Wayland/NVIDIA it may return no stream or time out.
 
 ## Use from vdisplay
 
@@ -55,9 +70,10 @@ export VDISPLAY_ELECTRON_SHARE_URL=http://127.0.0.1:8799
 vdisplay screenshot -o /tmp/test-hdmi1.png --source HDMI-1
 ```
 
-The provider is opt-in. If `VDISPLAY_ELECTRON_SHARE_URL` and
+The direct Electron provider is opt-in. If `VDISPLAY_ELECTRON_SHARE_URL` and
 `VDISPLAY_ELECTRON_SHARE=1` are unset, `vdisplay` uses the existing capture
-pipeline.
+pipeline. The recommended browser bridge path uses `VDISPLAY_AGENT_URL` and
+does not require direct `VDISPLAY_ELECTRON_SHARE_URL` for screenshots.
 
 If `VDISPLAY_AGENT_URL` is set, the agent process performs the capture. In that
 case start the agent with the same Electron URL:
@@ -84,7 +100,7 @@ pipeline.
   doing anything.
 - `Full manager`: expands to up to 1920x1080 or the current work area.
 - `Tray`: hides the window while keeping capture and HTTP alive.
-- `Web`: opens `http://127.0.0.1:<port>/web`.
+- `Browser bridge`: opens the agent browser bridge page for frame ingest.
 - `Always on top`: enabled by default; can be changed in the manager or tray.
 
 Closing the window hides it to tray by default. Set
@@ -95,15 +111,15 @@ Closing the window hides it to tray by default. Set
 Run one instance per automation target. Use a unique port and instance name:
 
 ```bash
-vdisplay electron-share start --instance pycharm --target "PyCharm chat" --port 8799
-vdisplay electron-share start --instance chrome --target "Chrome" --port 8800
+vdisplay services up --instance pycharm --target "PyCharm chat" --source HDMI-1 --port 8799 --open-browser-bridge
+vdisplay services up --instance chrome --target "Chrome" --source DP-1 --port 8800 --open-browser-bridge
 ```
 
 Point each automation process at the right broker:
 
 ```bash
-VDISPLAY_ELECTRON_SHARE_URL=http://127.0.0.1:8799 vdisplay screenshot -o /tmp/pycharm.png --source HDMI-1
-VDISPLAY_ELECTRON_SHARE_URL=http://127.0.0.1:8800 vdisplay screenshot -o /tmp/chrome.png --source HDMI-1
+VDISPLAY_AGENT_URL=http://127.0.0.1:8766 vdisplay screenshot -o /tmp/pycharm.png --source HDMI-1
+VDISPLAY_AGENT_URL=http://127.0.0.1:8766 vdisplay screenshot -o /tmp/chrome.png --source DP-1
 ```
 
 ## Environment
@@ -127,6 +143,7 @@ VDISPLAY_ELECTRON_SHARE_URL=http://127.0.0.1:8800 vdisplay screenshot -o /tmp/ch
 ## CLI
 
 ```bash
+vdisplay services up --install --instance pycharm --target "PyCharm chat" --source HDMI-1 --open-browser-bridge
 vdisplay electron-share install
 vdisplay electron-share start --install --instance pycharm --target "PyCharm chat" --source HDMI-1 --port 8799
 vdisplay electron-share status --port 8799
@@ -137,8 +154,10 @@ vdisplay electron-share build --install
 vdisplay electron-share path
 ```
 
-`start --install` installs npm dependencies if needed and launches the manager.
-`build --install` installs npm dependencies if needed and runs `electron-builder`.
+`services up --install --open-browser-bridge` is the recommended first command
+for automation. `electron-share start --install` only launches the manager.
+`build --install` installs npm dependencies if needed and runs
+`electron-builder`.
 
 ## Local HTTP manager API
 

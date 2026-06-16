@@ -160,6 +160,7 @@ def map_refresh(
     scope: str | None = None,
     min_confidence: float = 0.4,
     add_new: bool = False,
+    force: bool = False,
     md: str | None = None,
     svg: str | None = None,
     capture_fn: Any | None = None,
@@ -180,15 +181,24 @@ def map_refresh(
         min_confidence=min_confidence,
         add_new=add_new,
     )
+    if monitor_name:
+        updated.monitor = monitor_name
+    if rotation:
+        updated.rotation = rotation
+    updated.capture_meta = dict(meta)
     out_path = output or map_path
-    written = write_map_artifacts(
-        updated,
-        json_path=out_path,
-        md_path=md,
-        svg_path=svg,
-        png=png if svg else None,
-        title=f"{monitor_name or updated.monitor or 'screen'} / refresh",
-    )
+    write_skipped = bool(diff.recommendation == "refresh_required" and not force)
+    if write_skipped:
+        written = {}
+    else:
+        written = write_map_artifacts(
+            updated,
+            json_path=out_path,
+            md_path=md,
+            svg_path=svg,
+            png=png if svg else None,
+            title=f"{monitor_name or updated.monitor or 'screen'} / refresh",
+        )
     if diff.drifted:
         try:
             from ..gui_map_events import record_gui_map_drift
@@ -196,18 +206,19 @@ def map_refresh(
             record_gui_map_drift(map_path=map_path, drift=diff.to_dict(), scope_id=scope)
         except Exception:
             pass
-    try:
-        from ..gui_map_events import record_gui_map_built
+    if not write_skipped:
+        try:
+            from ..gui_map_events import record_gui_map_built
 
-        record_gui_map_built(
-            map_path=out_path,
-            element_count=len(updated.elements),
-            region_count=len(updated.regions),
-            scope_ids=list(updated.regions.keys()),
-        )
-    except Exception:
-        pass
-    return {
+            record_gui_map_built(
+                map_path=out_path,
+                element_count=len(updated.elements),
+                region_count=len(updated.regions),
+                scope_ids=list(updated.regions.keys()),
+            )
+        except Exception:
+            pass
+    payload = {
         "ok": diff.ok,
         "drifted": diff.drifted,
         "map": map_path,
@@ -217,6 +228,13 @@ def map_refresh(
         "diff": diff.to_dict(),
         "artifacts": written,
     }
+    if write_skipped:
+        payload["write_skipped"] = True
+        payload["hint"] = (
+            "map refresh detected refresh_required and did not overwrite the map. "
+            "Rebuild/recalibrate the map for this screen, or rerun with --force for manual debugging."
+        )
+    return payload
 
 
 def _capture(

@@ -1544,7 +1544,7 @@
       "verify_mode": "identity+region"
     }
   },
-  "monitor": "HDMI-1",
+  "monitor": "DP-2",
   "regions": {
     "pycharm.ai_chat": {
       "anchors": [
@@ -1601,6 +1601,6 @@
       }
     }
   },
-  "rotation": "normal",
+  "rotation": "left",
   "version": 1
 }

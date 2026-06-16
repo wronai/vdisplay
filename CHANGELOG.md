@@ -92,6 +92,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.36] - 2026-06-17
+
+### Docs
+- Update README.md
+- Update docs/electron-share-manager.md
+- Update docs/guides/keeper-2-browser-bridge-poc.md
+- Update packages/vdisplay-electron-share/README.md
+
+### Test
+- Update tests/test_agent.py
+- Update tests/test_agent_web_console.py
+- Update tests/test_capture_crop.py
+- Update tests/test_electron_share_cli.py
+- Update tests/test_gui_map_diff.py
+- Update tests/test_host_capture_errors.py
+- Update tests/test_services_cli.py
+
+### Other
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update maps/pycharm-chat.json
+- Update maps/pycharm-chat.json.bak-dp2
+- Update nlp2uri.yaml
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/session.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/routes/web.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/runtime.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/services/browser_bridge.py
+- Update packages/vdisplay-agent/src/vdisplay_agent/services/capture.py
+- ... and 8 more files
+
 ## [0.1.35] - 2026-06-12
 
 ### Docs

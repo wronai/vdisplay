@@ -2,10 +2,26 @@ from __future__ import annotations
 
 import base64
 import shutil
+import struct
+import zlib
 
 import pytest
 
-_PNG = b"\x89PNG\r\n\x1a\n" + b"x" * 200
+
+def _make_png(width: int = 2, height: int = 2, color: tuple[int, int, int] = (20, 40, 200)) -> bytes:
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    rows = b"".join(b"\x00" + bytes(color) * width for _ in range(height))
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(rows))
+        + chunk(b"IEND", b"")
+    )
+
+
+_PNG = _make_png()
 
 
 def test_agent_health(agent_client) -> None:
@@ -102,6 +118,22 @@ def test_agent_capture_recovers_missing_screencast(
     assert payload["ok"] is True
     assert calls["n"] == 2
     assert out.is_file()
+
+
+def test_agent_browser_bridge_clear_resets_registered_bridge(agent_client) -> None:
+    client, _runtime = agent_client
+    registered = client.post(
+        "/session/browser-bridge/register",
+        json={"client": "test", "sources": ["HDMI-1"]},
+    ).json()
+    assert registered["ok"] is True
+    assert client.get("/session/browser-bridge/status").json()["data"]["registered"] is True
+
+    cleared = client.post("/session/browser-bridge/clear").json()
+
+    assert cleared["ok"] is True
+    assert cleared["data"]["registered"] is False
+    assert client.get("/session/browser-bridge/status").json()["data"]["registered"] is False
 
 
 def test_agent_capture_reraises_non_recoverable_screencast_error(
@@ -251,6 +283,47 @@ def test_agent_capture_rejects_wayland_screencast_without_keeper(
     assert "frame keeper is not running" in payload["error"]["message"]
     assert "screencast start --force" in payload["error"]["message"]
     assert not out.is_file()
+
+
+def test_agent_capture_allows_electron_share_when_screencast_without_keeper(
+    agent_client,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    client, runtime = agent_client
+    from vdisplay.capture.portal_screencast import PortalScreenCastSession
+
+    session = PortalScreenCastSession()
+    session.active = True
+    session.session_path = "/org/test/session"
+    session.node_ids = [80, 81]
+    runtime.store.screencast = session
+    monkeypatch.setenv("XDG_SESSION_TYPE", "wayland")
+    monkeypatch.delenv("VDISPLAY_ALLOW_DIRECT_SCREENCAST_CAPTURE", raising=False)
+    monkeypatch.setattr("vdisplay_agent.services.capture._electron_share_enabled", lambda: True)
+
+    def fake_capture_host_to_file(path, **_kwargs):
+        out = __import__("pathlib").Path(path)
+        out.write_bytes(_PNG)
+        return {
+            "path": str(out),
+            "bytes": out.stat().st_size,
+            "method": "electron-share",
+            "monitor_name": "HDMI-1",
+        }
+
+    monkeypatch.setattr("vdisplay_agent.services.capture.capture_host_to_file", fake_capture_host_to_file)
+
+    out = tmp_path / "host.png"
+    response = client.post(
+        "/capture/frame",
+        json={"output": str(out), "source": "HDMI-1", "monitor": 1},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["ok"] is True
+    assert payload["data"]["method"] == "electron-share"
+    assert out.is_file()
 
 
 def test_agent_browser_bridge_ingest_drives_capture(agent_client, tmp_path) -> None:

@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs");
+const { spawn } = require("child_process");
 const http = require("http");
 const os = require("os");
 const path = require("path");
@@ -20,6 +21,7 @@ const {
 
 if (process.platform === "linux") {
   app.setName("vdisplay share");
+  app.commandLine.appendSwitch("class", "vdisplay-share");
 }
 
 if (process.platform === "linux" && process.env.VDISPLAY_ELECTRON_DISABLE_GPU !== "0") {
@@ -40,7 +42,24 @@ const AGENT_URL = (process.env.VDISPLAY_ELECTRON_AGENT_URL || process.env.VDISPL
 const AGENT_TOKEN = process.env.VDISPLAY_AGENT_TOKEN || "";
 const BRIDGE_SOURCE = process.env.VDISPLAY_ELECTRON_BRIDGE_SOURCE || process.env.VDISPLAY_ELECTRON_SHARE_SOURCE || "HDMI-1";
 const BRIDGE_PUSH = Boolean(AGENT_URL) && process.env.VDISPLAY_ELECTRON_BRIDGE_PUSH !== "0";
-const AUTO_START_CAPTURE = process.env.VDISPLAY_ELECTRON_AUTO_START_CAPTURE !== "0";
+const UNSAFE_AUTO_CAPTURE = process.env.VDISPLAY_ELECTRON_UNSAFE_AUTO_CAPTURE === "1";
+const AUTO_START_CAPTURE =
+  process.env.VDISPLAY_ELECTRON_AUTO_START_CAPTURE === "1" && UNSAFE_AUTO_CAPTURE;
+const AUTO_RESUME_CAPTURE =
+  process.env.VDISPLAY_ELECTRON_AUTO_RESUME_CAPTURE === "1" &&
+  process.env.VDISPLAY_ELECTRON_ALLOW_AUTO_RESUME_CAPTURE === "1" &&
+  UNSAFE_AUTO_CAPTURE &&
+  BRIDGE_PUSH;
+const AUTO_RESUME_DELAY_MS = Number(process.env.VDISPLAY_ELECTRON_AUTO_RESUME_DELAY_MS || "2500");
+const AUTO_RESUME_INTERVAL_MS = Number(
+  process.env.VDISPLAY_ELECTRON_AUTO_RESUME_INTERVAL_MS || "60000",
+);
+const DEBUG_ENUMERATE_SOURCES = process.env.VDISPLAY_ELECTRON_DEBUG_ENUMERATE_SOURCES === "1";
+const ALLOW_SOURCE_PREVIEWS = process.env.VDISPLAY_ELECTRON_ALLOW_SOURCE_PREVIEWS === "1";
+const REMOTE_START_CAPTURE =
+  process.env.VDISPLAY_ELECTRON_REMOTE_START_CAPTURE === "1" &&
+  process.env.VDISPLAY_ELECTRON_ALLOW_REMOTE_START_CAPTURE === "1" &&
+  UNSAFE_AUTO_CAPTURE;
 
 function requestRendererAutoStartCapture() {
   if (!mainWindow || mainWindow.isDestroyed()) {
@@ -54,8 +73,48 @@ function requestRendererAutoStartCapture() {
 }
 
 function handleShareStartRequest() {
+  if (rendererStatus.sharing && lastFrame && frameAgeMs() < 15000) {
+    return Promise.resolve({
+      ok: true,
+      skipped: true,
+      already_sharing: true,
+      sharedDisplayId: rendererStatus.sharedDisplayId || "",
+      sharedDisplayLabel: rendererStatus.sharedDisplayLabel || "",
+      hint: "capture already active — no new GNOME Share dialog needed",
+    });
+  }
   openManager();
-  return ensureCaptureFocus({ lock: true }).then(() => {
+  if (!REMOTE_START_CAPTURE) {
+    return Promise.resolve({
+      ok: true,
+      triggered: false,
+      awaiting_user: true,
+      sharedDisplayId: rendererStatus.sharedDisplayId || "",
+      sharedDisplayLabel: rendererStatus.sharedDisplayLabel || "",
+      hint: "manager opened — click Share monitor once to request whole-monitor access",
+    });
+  }
+  return ensureCaptureFocus({ lock: true }).then(async () => {
+    if (!USE_SYSTEM_PICKER && mainCaptureAllowed()) {
+      const payload = await startMainProcessCapture({
+        displayId: rendererStatus.sharedDisplayId || "",
+        displayLabel: rendererStatus.sharedDisplayLabel || "",
+        monitorOnly: true,
+      });
+      return {
+        ok: Boolean(payload && payload.ok),
+        triggered: true,
+        captureMode: (payload && payload.captureMode) || "main-desktopCapturer",
+        skipped: Boolean(payload && payload.skipped),
+        sharedDisplayId: rendererStatus.sharedDisplayId || "",
+        sharedDisplayLabel: rendererStatus.sharedDisplayLabel || "",
+        hint:
+          payload && payload.ok
+            ? "Monitor capture active — one GNOME screen prompt at most; pick whole monitor if asked"
+            : (payload && payload.error) ||
+              "Monitor capture failed — keep Electron focused and grant Screen Recording once in Settings",
+      };
+    }
     const sent = requestRendererAutoStartCapture();
     return {
       ok: true,
@@ -63,8 +122,8 @@ function handleShareStartRequest() {
       sharedDisplayId: rendererStatus.sharedDisplayId || "",
       sharedDisplayLabel: rendererStatus.sharedDisplayLabel || "",
       hint: sent
-        ? "GNOME Screen Share dialog should open — approve the KEB/HDMI-1 monitor and keep Electron focused"
-        : "Electron window not ready yet — open the manager and click the IDE monitor",
+        ? "GNOME may ask once for screen access — choose the monitor (whole screen), not a single app"
+        : "Electron window not ready yet — open the manager and click Share monitor",
     };
   });
 }
@@ -162,6 +221,9 @@ let lastFrameMeta = {};
 let frameSeq = 0;
 let bridgeId = null;
 let bridgeLastOk = "";
+let bridgeLastIngestOk = "";
+let bridgeLastIngestAt = 0;
+let bridgeLastHeartbeatOk = "";
 let bridgeLastError = "";
 let bridgeHeartbeatTimer = null;
 let windowMode = process.env.VDISPLAY_ELECTRON_SHARE_MODE === "compact" ? "compact" : "full";
@@ -179,7 +241,16 @@ let rendererStatus = {
 let pendingCaptureSourceId = null;
 let mainCaptureTimer = null;
 let mainCaptureState = null;
+let mainCaptureInFlight = false;
+let mainCaptureFailureCount = 0;
 let captureFocusLock = false;
+let lastFailedCaptureAt = 0;
+let lastEnsureCaptureFocusAt = 0;
+let autoResumeAttemptAt = 0;
+let autoResumeInFlight = false;
+let autoResumeStartupTimer = null;
+let autoResumeFailureCount = 0;
+const AUTO_RESUME_MAX_FAILURES = Number(process.env.VDISPLAY_ELECTRON_AUTO_RESUME_MAX_FAILURES || "2");
 
 const THUMBNAIL_SIZE = { width: 320, height: 180 };
 const MAIN_CAPTURE_THUMBNAIL_SIZE = {
@@ -188,15 +259,27 @@ const MAIN_CAPTURE_THUMBNAIL_SIZE = {
 };
 const GET_SOURCES_TIMEOUT_MS = Number(process.env.VDISPLAY_ELECTRON_GET_SOURCES_TIMEOUT_MS || "5000");
 const MAIN_CAPTURE_TIMEOUT_MS = Number(process.env.VDISPLAY_ELECTRON_MAIN_CAPTURE_TIMEOUT_MS || "15000");
+const MAIN_CAPTURE_INTERVAL_MS = Number(process.env.VDISPLAY_ELECTRON_MAIN_CAPTURE_INTERVAL_MS || "500");
+const MAIN_CAPTURE_REENUMERATE_MS = Number(
+  process.env.VDISPLAY_ELECTRON_MAIN_CAPTURE_REENUMERATE_MS ||
+    (IS_WAYLAND ? "300000" : "15000"),
+);
+const MAIN_CAPTURE_MAX_FRAME_AGE_MS = Number(process.env.VDISPLAY_ELECTRON_MAIN_CAPTURE_MAX_FRAME_AGE_MS || "30000");
+const CAPTURE_FAIL_COOLDOWN_MS = Number(process.env.VDISPLAY_ELECTRON_CAPTURE_FAIL_COOLDOWN_MS || "45000");
+const ENSURE_CAPTURE_FOCUS_DEBOUNCE_MS = Number(
+  process.env.VDISPLAY_ELECTRON_CAPTURE_FOCUS_DEBOUNCE_MS || "2500",
+);
 const APP_ICON_PATH = path.join(__dirname, "assets", "vdisplay-share.svg");
 const SESSION_STARTED_AT = new Date();
 const SESSION_LOG_LIMIT = Number(process.env.VDISPLAY_ELECTRON_SESSION_LOG_LIMIT || "2000");
+const USER_ACTION_LOG_LIMIT = Number(process.env.VDISPLAY_ELECTRON_USER_ACTION_LOG_LIMIT || "1000");
 const originalConsole = {
   log: console.log.bind(console),
   warn: console.warn.bind(console),
   error: console.error.bind(console),
 };
 let sessionLog = [];
+let userActionLog = [];
 let lastStatusLogKey = "";
 
 function formatLogArg(value) {
@@ -259,6 +342,19 @@ function logSession(level, message, details = null) {
   if (sessionLog.length > SESSION_LOG_LIMIT) {
     sessionLog = sessionLog.slice(sessionLog.length - SESSION_LOG_LIMIT);
   }
+}
+
+function logUserAction(action, details = null) {
+  const event = {
+    ts: new Date().toISOString(),
+    action: String(action || "user.action"),
+    details: details == null ? null : redactDebugValue(details),
+  };
+  userActionLog.push(event);
+  if (userActionLog.length > USER_ACTION_LOG_LIMIT) {
+    userActionLog = userActionLog.slice(userActionLog.length - USER_ACTION_LOG_LIMIT);
+  }
+  logSession("user-action", event.action, event.details);
 }
 
 for (const level of ["log", "warn", "error"]) {
@@ -354,6 +450,28 @@ function serializeSource(source) {
 
 async function listCaptureSources({ displayId = null, includeWindows = true } = {}) {
   const displays = screen.getAllDisplays().map(serializeDisplay);
+  // Never tie enumeration to mainCaptureTimer — while capture is active the renderer
+  // polls /sources for window sidebar updates and would spam GNOME monitor/app prompts.
+  const allowDesktopEnumeration = ALLOW_SOURCE_PREVIEWS || DEBUG_ENUMERATE_SOURCES;
+  if (!allowDesktopEnumeration) {
+    const screens = fallbackScreensFromDisplays(displays);
+    let agentWindowSources = [];
+    if (includeWindows) {
+      agentWindowSources = await listAgentWindowSources(displayId).catch(() => []);
+    }
+    return {
+      ok: true,
+      passive: true,
+      displays,
+      screens,
+      windows: agentWindowSources,
+      windowsFallback: agentWindowSources.length ? "agent-windows" : "",
+      filtered: Boolean(displayId),
+      usingFallback: true,
+      sourcesError: "",
+    };
+  }
+
   let screenSources = [];
   let windowSources = [];
   let agentWindowSources = [];
@@ -510,6 +628,35 @@ function frameAgeMs() {
   return Math.max(0, Date.now() - Number(lastFrameMeta.ts));
 }
 
+function agentEnvDiagnostics() {
+  let expectedHost = "";
+  let expectedPort = "";
+  if (AGENT_URL) {
+    try {
+      const parsed = new URL(AGENT_URL);
+      expectedHost = parsed.hostname || "";
+      expectedPort = parsed.port || "";
+    } catch {
+      expectedHost = "";
+      expectedPort = "";
+    }
+  }
+  const envHost = String(process.env.VDISPLAY_AGENT_HOST || "");
+  const envPort = String(process.env.VDISPLAY_AGENT_PORT || "");
+  const mismatch = Boolean(
+    (expectedHost && envHost && expectedHost !== envHost) ||
+      (expectedPort && envPort && expectedPort !== envPort),
+  );
+  return {
+    agent_url: AGENT_URL || null,
+    expected_host: expectedHost || null,
+    expected_port: expectedPort || null,
+    env_host: envHost || null,
+    env_port: envPort || null,
+    mismatch,
+  };
+}
+
 function appIconSvg() {
   try {
     return fs.readFileSync(APP_ICON_PATH, "utf8");
@@ -531,29 +678,51 @@ function appIconImage() {
 }
 
 function statusPayload() {
+  const sharing = Boolean(rendererStatus.sharing && lastFrame);
+  const normalizedRendererStatus = sharing
+    ? {
+        ...rendererStatus,
+        sharing: true,
+        error: "",
+        hint: `Monitor capture active for ${BRIDGE_SOURCE}`,
+      }
+    : rendererStatus;
   return {
     ok: true,
     service: "vdisplay-electron-share",
     instance: INSTANCE_ID,
     url: `http://${HOST}:${PORT}`,
-    targetLabel: rendererStatus.targetLabel || INITIAL_TARGET_LABEL,
+    targetLabel: normalizedRendererStatus.targetLabel || INITIAL_TARGET_LABEL,
     mode: windowMode,
     alwaysOnTop,
     mainCaptureFallbackEnabled: mainCaptureAllowed(),
-    sharing: Boolean(rendererStatus.sharing && lastFrame),
-    sharedDisplayId: rendererStatus.sharedDisplayId || "",
-    sharedDisplayLabel: rendererStatus.sharedDisplayLabel || "",
-    activeSourceId: rendererStatus.activeSourceId || "",
-    activeSourceName: rendererStatus.activeSourceName || "",
-    renderer_status: rendererStatus,
+    sharing,
+    sharedDisplayId: normalizedRendererStatus.sharedDisplayId || "",
+    sharedDisplayLabel: normalizedRendererStatus.sharedDisplayLabel || "",
+    activeSourceId: normalizedRendererStatus.activeSourceId || "",
+    activeSourceName: normalizedRendererStatus.activeSourceName || "",
+    renderer_status: normalizedRendererStatus,
+    capture_policy: {
+      auto_start_capture: AUTO_START_CAPTURE,
+      auto_resume_capture: AUTO_RESUME_CAPTURE,
+      remote_start_capture: REMOTE_START_CAPTURE,
+      unsafe_auto_capture: UNSAFE_AUTO_CAPTURE,
+      allow_source_previews: ALLOW_SOURCE_PREVIEWS,
+      use_system_picker: USE_SYSTEM_PICKER,
+    },
     browser_bridge: {
       enabled: BRIDGE_PUSH,
       agent_url: AGENT_URL || null,
       bridge_id: bridgeId,
       source: BRIDGE_SOURCE,
-      last_ok: bridgeLastOk,
+      last_ok: bridgeLastIngestOk || bridgeLastOk,
+      last_ingest_ok: bridgeLastIngestOk,
+      last_lifecycle_ok: bridgeLastOk,
+      last_heartbeat_ok: bridgeLastHeartbeatOk,
       last_error: bridgeLastError,
     },
+    agent_env: agentEnvDiagnostics(),
+    user_actions: userActionLog.slice(-100),
     frame: lastFrame
       ? {
           bytes: lastFrame.length,
@@ -618,6 +787,8 @@ function buildDebugMarkdown(bundle) {
     jsonBlock(bundle.status),
     `## Capture sources`,
     jsonBlock(bundle.sources),
+    `## User actions`,
+    jsonBlock(bundle.user_actions),
     `## Environment`,
     jsonBlock(bundle.environment),
     `## Session log`,
@@ -627,18 +798,26 @@ function buildDebugMarkdown(bundle) {
 
 async function exportSessionLogsMarkdown() {
   const generatedAt = new Date().toISOString();
-  let sources = null;
-  try {
-    sources = await withTimeout(
-      listCaptureSources({
-        displayId: rendererStatus.sharedDisplayId || null,
-        includeWindows: true,
-      }),
-      1500,
-      "debug source enumeration",
-    );
-  } catch (error) {
-    sources = { ok: false, error: String(error && error.message ? error.message : error) };
+  let sources = {
+    ok: true,
+    skipped: true,
+    reason:
+      "passive debug export: desktopCapturer enumeration is disabled by default to avoid triggering screen-access prompts",
+    enable_with: "VDISPLAY_ELECTRON_DEBUG_ENUMERATE_SOURCES=1",
+  };
+  if (DEBUG_ENUMERATE_SOURCES) {
+    try {
+      sources = await withTimeout(
+        listCaptureSources({
+          displayId: rendererStatus.sharedDisplayId || null,
+          includeWindows: true,
+        }),
+        1500,
+        "debug source enumeration",
+      );
+    } catch (error) {
+      sources = { ok: false, error: String(error && error.message ? error.message : error) };
+    }
   }
   const status = statusPayload();
   const bundle = {
@@ -659,15 +838,26 @@ async function exportSessionLogsMarkdown() {
       bridgePush: BRIDGE_PUSH,
       bridgeSource: BRIDGE_SOURCE,
       agentUrl: AGENT_URL || null,
+      agentEnv: agentEnvDiagnostics(),
+      capturePolicy: {
+        auto_start_capture: AUTO_START_CAPTURE,
+        auto_resume_capture: AUTO_RESUME_CAPTURE,
+        remote_start_capture: REMOTE_START_CAPTURE,
+        unsafe_auto_capture: UNSAFE_AUTO_CAPTURE,
+        allow_source_previews: ALLOW_SOURCE_PREVIEWS,
+        use_system_picker: USE_SYSTEM_PICKER,
+      },
       pid: process.pid,
       platform: process.platform,
       arch: process.arch,
       node: process.versions.node,
       electron: process.versions.electron,
       chrome: process.versions.chrome,
+      userActionCount: userActionLog.length,
     },
     status,
     sources,
+    user_actions: userActionLog,
     environment: debugEnvironment(),
     session_log: sessionLog,
   };
@@ -715,6 +905,76 @@ async function postAgent(pathname, payload) {
   return data.data || data;
 }
 
+async function getAgent(pathname) {
+  if (!AGENT_URL) {
+    return null;
+  }
+  const response = await fetch(`${AGENT_URL}${pathname}`, {
+    method: "GET",
+    headers: agentHeaders(),
+    cache: "no-store",
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) {
+    const message = data.error && data.error.message ? data.error.message : response.statusText;
+    throw new Error(`${pathname}: ${message}`);
+  }
+  return data.data || data;
+}
+
+const AGENT_BRIDGE_FRESH_MS = Number(process.env.VDISPLAY_ELECTRON_AGENT_BRIDGE_FRESH_MS || "5000");
+const ELECTRON_BRIDGE_CLIENT = "vdisplay-electron-share";
+
+function bridgeStatusFresh(status) {
+  if (!status || !status.capture_ready) {
+    return false;
+  }
+  const ageMs = status.last_frame_age_ms;
+  if (ageMs != null && Number(ageMs) > AGENT_BRIDGE_FRESH_MS) {
+    return false;
+  }
+  const monitor = (status.monitors || {})[BRIDGE_SOURCE];
+  if (monitor && monitor.fresh === false) {
+    return false;
+  }
+  if (monitor && monitor.fresh === true) {
+    return true;
+  }
+  return ageMs == null || Number(ageMs) <= AGENT_BRIDGE_FRESH_MS;
+}
+
+async function agentBrowserBridgeStatus() {
+  if (!AGENT_URL) {
+    return null;
+  }
+  try {
+    return await getAgent("/session/browser-bridge/status");
+  } catch (error) {
+    logSession("info", "agent browser-bridge status unavailable", {
+      error: String(error && error.message ? error.message : error),
+    });
+    return null;
+  }
+}
+
+async function agentBrowserCaptureReady() {
+  const status = await agentBrowserBridgeStatus();
+  return bridgeStatusFresh(status);
+}
+
+async function externalBrowserBridgeCaptureReady() {
+  const status = await agentBrowserBridgeStatus();
+  if (!status || !bridgeStatusFresh(status)) {
+    return false;
+  }
+  const client = String(status.client || "").trim();
+  return client !== "" && client !== ELECTRON_BRIDGE_CLIENT;
+}
+
+function resetBridgeRegistration() {
+  bridgeId = null;
+}
+
 async function ensureBridge() {
   if (!BRIDGE_PUSH) {
     return null;
@@ -731,11 +991,143 @@ async function ensureBridge() {
   bridgeId = payload.bridge_id;
   bridgeLastOk = "registered";
   bridgeLastError = "";
+  if (await externalBrowserBridgeCaptureReady()) {
+    rendererStatus = {
+      ...rendererStatus,
+      sharing: true,
+      error: "",
+      hint: `External browser bridge already capture_ready for ${BRIDGE_SOURCE} — skipping Electron auto-resume to avoid repeated GNOME prompts`,
+    };
+    createTray();
+  } else {
+    scheduleAutoResumeCapture("bridge-register");
+  }
   return bridgeId;
 }
 
-function resetBridgeRegistration() {
-  bridgeId = null;
+function captureActiveNow() {
+  return Boolean(
+    mainCaptureTimer &&
+      rendererStatus.sharing &&
+      lastFrame &&
+      frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS,
+  );
+}
+
+function scheduleAutoResumeCapture(reason = "startup") {
+  if (!AUTO_RESUME_CAPTURE || USE_SYSTEM_PICKER || !mainCaptureAllowed()) {
+    return;
+  }
+  if (autoResumeStartupTimer) {
+    clearTimeout(autoResumeStartupTimer);
+  }
+  autoResumeStartupTimer = setTimeout(() => {
+    autoResumeStartupTimer = null;
+    maybeAutoResumeCapture(reason).catch((error) => {
+      logSession("warn", "auto-resume capture failed", {
+        reason,
+        error: String(error && error.message ? error.message : error),
+      });
+    });
+  }, AUTO_RESUME_DELAY_MS);
+}
+
+async function maybeAutoResumeCapture(reason = "startup") {
+  if (!AUTO_RESUME_CAPTURE || USE_SYSTEM_PICKER || !mainCaptureAllowed() || autoResumeInFlight) {
+    return { ok: false, skipped: true };
+  }
+  if (captureActiveNow()) {
+    return { ok: true, skipped: true, already_active: true };
+  }
+  if (await externalBrowserBridgeCaptureReady()) {
+    rendererStatus = {
+      ...rendererStatus,
+      sharing: true,
+      error: "",
+      hint: `External browser bridge is capture_ready for ${BRIDGE_SOURCE} — Electron auto-resume skipped`,
+    };
+    createTray();
+    return { ok: true, skipped: true, already_active: true, source: "external-browser-bridge" };
+  }
+  if (
+    autoResumeFailureCount >= AUTO_RESUME_MAX_FAILURES &&
+    reason !== "services-resume"
+  ) {
+    return {
+      ok: false,
+      skipped: true,
+      paused: true,
+      error:
+        "Auto-resume paused after repeated GNOME timeouts — click Grant via GNOME or Share monitor once (keep window focused)",
+    };
+  }
+  const now = Date.now();
+  if (autoResumeAttemptAt && now - autoResumeAttemptAt < AUTO_RESUME_INTERVAL_MS) {
+    return { ok: false, skipped: true, cooldown: true };
+  }
+  if (lastFailedCaptureAt && now - lastFailedCaptureAt < CAPTURE_FAIL_COOLDOWN_MS) {
+    return { ok: false, skipped: true, cooldown: true };
+  }
+  const preferredDisplay = resolvePreferredDisplay();
+  if (preferredDisplay) {
+    rendererStatus.sharedDisplayId = String(preferredDisplay.id);
+    rendererStatus.sharedDisplayLabel =
+      preferredDisplay.label || `Display ${preferredDisplay.id}`;
+  }
+  if (!rendererStatus.sharedDisplayId) {
+    return { ok: false, skipped: true, error: "no monitor selected" };
+  }
+
+  autoResumeInFlight = true;
+  autoResumeAttemptAt = now;
+  try {
+    if (reason === "startup" || reason === "bridge-register") {
+      openManager();
+      rendererStatus = {
+        ...rendererStatus,
+        sharing: false,
+        error: "",
+        hint: `Auto-resuming monitor ${rendererStatus.sharedDisplayLabel || rendererStatus.sharedDisplayId} for ${BRIDGE_SOURCE} — keep this window focused if GNOME prompts`,
+      };
+      createTray();
+    }
+    logSession("info", "auto-resume capture", {
+      reason,
+      displayId: rendererStatus.sharedDisplayId,
+      bridgeSource: BRIDGE_SOURCE,
+    });
+    const result = await startMainProcessCapture({
+      displayId: rendererStatus.sharedDisplayId,
+      displayLabel: rendererStatus.sharedDisplayLabel,
+      monitorOnly: true,
+      force: reason === "services-resume",
+    });
+    if (result && result.ok) {
+      autoResumeFailureCount = 0;
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send("share:capture-active", {
+          sharing: true,
+          captureMode: result.captureMode || "main-desktopCapturer",
+          autoResume: true,
+        });
+      }
+    } else if (result && !result.cooldown && !result.skipped) {
+      autoResumeFailureCount += 1;
+      rendererStatus = {
+        ...rendererStatus,
+        sharing: false,
+        error: String(result.error || bridgeLastError || "auto-resume capture failed"),
+        hint:
+          autoResumeFailureCount >= AUTO_RESUME_MAX_FAILURES
+            ? "Open Screen Recording settings → enable vdisplay share/Electron, then click Grant via GNOME or Share monitor (whole screen)"
+            : `Auto-resume attempt ${autoResumeFailureCount}/${AUTO_RESUME_MAX_FAILURES} failed — keep Electron focused and approve GNOME once`,
+      };
+      createTray();
+    }
+    return result || { ok: false };
+  } finally {
+    autoResumeInFlight = false;
+  }
 }
 
 async function heartbeatBridge() {
@@ -751,8 +1143,16 @@ async function heartbeatBridge() {
       monitors: [BRIDGE_SOURCE],
       fps: 2,
     });
-    bridgeLastOk = "heartbeat";
-    bridgeLastError = "";
+    bridgeLastHeartbeatOk = "heartbeat";
+    const ingestCooldownMs = Math.max(MAIN_CAPTURE_INTERVAL_MS, 1500);
+    if (
+      rendererStatus.sharing &&
+      lastFrame &&
+      frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS &&
+      Date.now() - bridgeLastIngestAt >= ingestCooldownMs
+    ) {
+      await ingestBridgeFrame();
+    }
   } catch (error) {
     const message = String(error && error.message ? error.message : error);
     if (/not registered/i.test(message)) {
@@ -766,8 +1166,7 @@ async function heartbeatBridge() {
           monitors: [BRIDGE_SOURCE],
           fps: 2,
         });
-        bridgeLastOk = "heartbeat";
-        bridgeLastError = "";
+        bridgeLastHeartbeatOk = "heartbeat";
         return;
       } catch (retryError) {
         bridgeLastError = String(retryError && retryError.message ? retryError.message : retryError);
@@ -778,20 +1177,117 @@ async function heartbeatBridge() {
   }
 }
 
-function stopMainProcessCapture() {
+function stopMainProcessCapture({ releaseFocus = true } = {}) {
   if (mainCaptureTimer) {
     clearInterval(mainCaptureTimer);
     mainCaptureTimer = null;
   }
   mainCaptureState = null;
-  lastCaptureDisplayMoveId = "";
-  releaseCaptureFocusLock();
+  mainCaptureInFlight = false;
+  mainCaptureFailureCount = 0;
+  if (releaseFocus) {
+    releaseCaptureFocusLock();
+  }
+}
+
+function pauseElectronCaptureForAgentBridge(reason = "agent-browser-bridge") {
+  if (mainCaptureTimer) {
+    clearInterval(mainCaptureTimer);
+    mainCaptureTimer = null;
+  }
+  mainCaptureInFlight = false;
+  rendererStatus = {
+    ...rendererStatus,
+    sharing: true,
+    error: "",
+    hint: `External browser bridge has fresh frames for ${BRIDGE_SOURCE} — Electron polling paused (${reason}) to avoid repeated GNOME prompts`,
+  };
+  createTray();
+}
+
+function markMainCaptureFailure(message) {
+  mainCaptureFailureCount += 1;
+  lastFailedCaptureAt = Date.now();
+  bridgeLastError = capturePermissionHint(message || "desktopCapturer capture failed");
+  // Stop the polling timer after a portal/capture failure — otherwise getDesktopSources
+  // fires every 500ms and spams GNOME Share dialogs on Wayland.
+  if (mainCaptureTimer) {
+    clearInterval(mainCaptureTimer);
+    mainCaptureTimer = null;
+  }
+  mainCaptureInFlight = false;
+  if (lastFrame && frameAgeMs() > MAIN_CAPTURE_MAX_FRAME_AGE_MS) {
+    lastFrame = null;
+    lastFrameMeta = {};
+    rendererStatus = {
+      ...rendererStatus,
+      sharing: false,
+      error: bridgeLastError,
+      activeSourceId: "",
+      activeSourceName: "",
+      hint: `Capture paused after failure — click Share monitor once (whole screen), or use Chrome bridge for ${BRIDGE_SOURCE}. Wait ${Math.ceil(CAPTURE_FAIL_COOLDOWN_MS / 1000)}s before retry to avoid GNOME prompt spam.`,
+    };
+    createTray();
+    heartbeatBridge();
+  }
 }
 
 async function captureMainProcessFrame() {
   if (!mainCaptureState) {
     return false;
   }
+  if (mainCaptureInFlight) {
+    return false;
+  }
+  if (await externalBrowserBridgeCaptureReady()) {
+    pauseElectronCaptureForAgentBridge("fresh external browser frames");
+    return true;
+  }
+  if (
+    mainCaptureFailureCount > 0 &&
+    lastFailedCaptureAt &&
+    Date.now() - lastFailedCaptureAt < CAPTURE_FAIL_COOLDOWN_MS
+  ) {
+    return false;
+  }
+  const now = Date.now();
+  const lastEnumerateAt = Number(mainCaptureState.lastEnumerateAt || 0);
+  const cachedSourceKey =
+    mainCaptureState.cachedSourceId ||
+    lastFrameMeta.sourceId ||
+    (mainCaptureState.displayId ? `display:${mainCaptureState.displayId}` : "");
+  const canReuseFrame =
+    Boolean(lastFrame) &&
+    Boolean(cachedSourceKey) &&
+    mainCaptureFailureCount === 0 &&
+    frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS &&
+    (IS_WAYLAND || now - lastEnumerateAt < MAIN_CAPTURE_REENUMERATE_MS);
+  if (canReuseFrame) {
+    if (!mainCaptureState.cachedSourceId && cachedSourceKey) {
+      mainCaptureState.cachedSourceId = cachedSourceKey;
+    }
+    lastFrameMeta = { ...lastFrameMeta, ts: now };
+    rendererStatus = {
+      ...rendererStatus,
+      sharing: true,
+      error: "",
+      activeSourceId: mainCaptureState.cachedSourceId,
+      activeSourceName: mainCaptureState.sourceName || rendererStatus.activeSourceName || "Entire screen",
+    };
+    createTray();
+    if (mainWindow) {
+      mainWindow.webContents.send("share:main-capture-frame", {
+        ok: true,
+        width: lastFrameMeta.width,
+        height: lastFrameMeta.height,
+        captureMode: "main-desktopCapturer",
+        reused: true,
+      });
+    }
+    await ingestBridgeFrame();
+    return true;
+  }
+  mainCaptureInFlight = true;
   const { displayId, displayLabel, sourceName } = mainCaptureState;
   let screenSources = [];
   try {
@@ -805,7 +1301,31 @@ async function captureMainProcessFrame() {
       MAIN_CAPTURE_TIMEOUT_MS,
     );
   } catch (error) {
-    bridgeLastError = capturePermissionHint(error && error.message ? error.message : error);
+    mainCaptureInFlight = false;
+    if (lastFrame && frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS) {
+      lastFrameMeta = { ...lastFrameMeta, ts: Date.now() };
+      rendererStatus = {
+        ...rendererStatus,
+        sharing: true,
+        error: "",
+        activeSourceId: mainCaptureState.cachedSourceId || rendererStatus.activeSourceId || "",
+        activeSourceName: mainCaptureState.sourceName || rendererStatus.activeSourceName || "Entire screen",
+      };
+      createTray();
+      if (mainWindow) {
+        mainWindow.webContents.send("share:main-capture-frame", {
+          ok: true,
+          width: lastFrameMeta.width,
+          height: lastFrameMeta.height,
+          captureMode: "main-desktopCapturer",
+          reused: true,
+          transient_error: String(error && error.message ? error.message : error),
+        });
+      }
+      await ingestBridgeFrame();
+      return true;
+    }
+    markMainCaptureFailure(error && error.message ? error.message : error);
     return false;
   }
   const displayKey = String(displayId || "");
@@ -815,11 +1335,20 @@ async function captureMainProcessFrame() {
         screenSources.find((source) => source.id.includes(displayKey)))) ||
     screenSources[0];
   if (!picked || !picked.thumbnail || picked.thumbnail.isEmpty()) {
-    bridgeLastError = "desktopCapturer returned no screen thumbnail";
+    mainCaptureInFlight = false;
+    if (lastFrame && frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS) {
+      lastFrameMeta = { ...lastFrameMeta, ts: Date.now() };
+      await ingestBridgeFrame();
+      return true;
+    }
+    markMainCaptureFailure("desktopCapturer returned no screen thumbnail");
     return false;
   }
   const size = picked.thumbnail.getSize();
   lastFrame = picked.thumbnail.toPNG();
+  mainCaptureFailureCount = 0;
+  mainCaptureState.cachedSourceId = picked.id || mainCaptureState.cachedSourceId || "";
+  mainCaptureState.lastEnumerateAt = Date.now();
   lastFrameMeta = {
     width: size.width,
     height: size.height,
@@ -836,6 +1365,7 @@ async function captureMainProcessFrame() {
     error: "",
     activeSourceId: picked.id,
     activeSourceName: picked.name || sourceName || "",
+    hint: `Monitor capture active for ${BRIDGE_SOURCE} (${displayLabel || displayId}) — do not click Share monitor again unless you press Stop first`,
   };
   createTray();
   if (mainWindow) {
@@ -847,11 +1377,47 @@ async function captureMainProcessFrame() {
     });
   }
   await ingestBridgeFrame();
+  mainCaptureInFlight = false;
   return true;
 }
 
 async function startMainProcessCapture(payload = {}) {
-  stopMainProcessCapture();
+  const force = Boolean(payload && payload.force);
+  if (force) {
+    autoResumeFailureCount = 0;
+  }
+  const now = Date.now();
+  if (
+    !force &&
+    lastFailedCaptureAt &&
+    now - lastFailedCaptureAt < CAPTURE_FAIL_COOLDOWN_MS &&
+    !mainCaptureTimer
+  ) {
+    const waitSec = Math.ceil((CAPTURE_FAIL_COOLDOWN_MS - (now - lastFailedCaptureAt)) / 1000);
+    return {
+      ok: false,
+      cooldown: true,
+      error: `Capture failed recently — wait ${waitSec}s or click Share monitor again to retry (avoids repeated GNOME prompts)`,
+    };
+  }
+  const nextDisplayId = String(payload.displayId || rendererStatus.sharedDisplayId || "");
+  if (
+    !force &&
+    mainCaptureTimer &&
+    mainCaptureState &&
+    rendererStatus.sharing &&
+    lastFrame &&
+    frameAgeMs() < MAIN_CAPTURE_MAX_FRAME_AGE_MS &&
+    String(mainCaptureState.displayId || "") === nextDisplayId
+  ) {
+    return {
+      ok: true,
+      skipped: true,
+      already_active: true,
+      captureMode: "main-desktopCapturer",
+    };
+  }
+  stopMainProcessCapture({ releaseFocus: false });
   if (!mainCaptureAllowed()) {
     return {
       ok: false,
@@ -861,19 +1427,28 @@ async function startMainProcessCapture(payload = {}) {
     };
   }
   captureFocusLock = true;
-  const focus = await ensureCaptureFocus({ lock: true });
+  const focus = await ensureCaptureFocus({ lock: true, force });
   mainCaptureState = {
-    displayId: String(payload.displayId || rendererStatus.sharedDisplayId || ""),
+    displayId: nextDisplayId,
     displayLabel: String(payload.displayLabel || rendererStatus.sharedDisplayLabel || ""),
     sourceId: String(payload.sourceId || rendererStatus.activeSourceId || ""),
     sourceName: String(payload.sourceName || rendererStatus.activeSourceName || ""),
+    cachedSourceId: "",
+    lastEnumerateAt: 0,
   };
   const ok = await captureMainProcessFrame();
   if (!ok) {
+    lastFailedCaptureAt = Date.now();
     stopMainProcessCapture();
     let hint = capturePermissionHint(bridgeLastError || "");
     if (IS_WAYLAND && /timed out/i.test(String(bridgeLastError || hint))) {
-      hint = `${hint} Restart without native Wayland: VDISPLAY_ELECTRON_OZONE_PLATFORM=x11 vdisplay electron-share start --instance ${INSTANCE_ID} --source ${BRIDGE_SOURCE} --port ${PORT}`;
+      const bridgeUrl = AGENT_URL
+        ? `${AGENT_URL}/api/web/browser-bridge?source=${encodeURIComponent(BRIDGE_SOURCE)}`
+        : "";
+      const bridgeHint = bridgeUrl
+        ? `Open Chrome/Chromium browser bridge: ${bridgeUrl}, click Share screen, select ${BRIDGE_SOURCE}, and keep the tab open.`
+        : "Start vdisplay-agent, then open the Chrome/Chromium browser bridge and share the target monitor.";
+      hint = `${hint} Electron desktopCapturer timed out in this GNOME/Wayland runtime. ${bridgeHint} Keep this Electron manager running for tray/status/window selection.`;
     }
     return {
       ok: false,
@@ -884,9 +1459,10 @@ async function startMainProcessCapture(payload = {}) {
   }
   mainCaptureTimer = setInterval(() => {
     captureMainProcessFrame().catch((error) => {
-      bridgeLastError = String(error && error.message ? error.message : error);
+      markMainCaptureFailure(error && error.message ? error.message : error);
     });
-  }, 500);
+  }, MAIN_CAPTURE_INTERVAL_MS);
+  lastFailedCaptureAt = 0;
   return { ok: true, captureMode: "main-desktopCapturer" };
 }
 
@@ -919,8 +1495,18 @@ async function ingestBridgeFrame() {
       seq: ++frameSeq,
       ...payload,
     });
-    bridgeLastOk = `ingest ${frameSeq}`;
+    bridgeLastIngestOk = `ingest ${frameSeq}`;
+    bridgeLastOk = bridgeLastIngestOk;
+    bridgeLastIngestAt = Date.now();
     bridgeLastError = "";
+    logSession("info", "bridge.ingest.ok", {
+      seq: frameSeq,
+      source: BRIDGE_SOURCE,
+      bytes: lastFrame.length,
+      width: lastFrameMeta.width,
+      height: lastFrameMeta.height,
+      displayId: payload.display_id,
+    });
   } catch (error) {
     const message = String(error && error.message ? error.message : error);
     if (/not registered/i.test(message)) {
@@ -932,15 +1518,39 @@ async function ingestBridgeFrame() {
           seq: ++frameSeq,
           ...payload,
         });
-        bridgeLastOk = `ingest ${frameSeq}`;
+        bridgeLastIngestOk = `ingest ${frameSeq}`;
+        bridgeLastOk = bridgeLastIngestOk;
+        bridgeLastIngestAt = Date.now();
         bridgeLastError = "";
+        logSession("info", "bridge.ingest.ok", {
+          seq: frameSeq,
+          source: BRIDGE_SOURCE,
+          retry: true,
+          bytes: lastFrame.length,
+          width: lastFrameMeta.width,
+          height: lastFrameMeta.height,
+          displayId: payload.display_id,
+        });
         return;
       } catch (retryError) {
         bridgeLastError = String(retryError && retryError.message ? retryError.message : retryError);
+        logSession("error", "bridge.ingest.error", {
+          source: BRIDGE_SOURCE,
+          retry: true,
+          error: bridgeLastError,
+        });
         return;
       }
     }
     bridgeLastError = message;
+    logSession("error", "bridge.ingest.error", {
+      source: BRIDGE_SOURCE,
+      error: bridgeLastError,
+      bytes: lastFrame.length,
+      width: lastFrameMeta.width,
+      height: lastFrameMeta.height,
+      displayId: payload.display_id,
+    });
   }
 }
 
@@ -1037,15 +1647,41 @@ function startHttpServer() {
         .catch((error) => json(res, 500, { ok: false, error: String(error) }));
       return;
     }
+    if (url.pathname === "/share/stop" && (req.method === "POST" || req.method === "GET")) {
+      stopMainProcessCapture();
+      lastFrame = null;
+      lastFrameMeta = {};
+      rendererStatus = {
+        ...rendererStatus,
+        sharing: false,
+        activeSourceId: "",
+        activeSourceName: "",
+        hint: "Monitor capture stopped",
+      };
+      logSession("info", "remote share stop", { reason: "services-resume" });
+      createTray();
+      const payload = statusPayload();
+      payload.capture_stop = { ok: true, reason: "services-resume" };
+      json(res, 200, payload);
+      return;
+    }
     if (url.pathname === "/share/main-capture" && (req.method === "POST" || req.method === "GET")) {
+      const forceRemote = url.searchParams.get("force") === "1";
+      if (!REMOTE_START_CAPTURE && !forceRemote) {
+        json(res, 409, {
+          ok: false,
+          remote_start_disabled: true,
+          hint:
+            "Remote /share/main-capture is disabled by default to avoid repeated GNOME permission prompts. Click Share monitor in the Electron window, pass ?force=1 from vdisplay services resume, or start with VDISPLAY_ELECTRON_REMOTE_START_CAPTURE=1.",
+        });
+        return;
+      }
       openManager();
-      ensureCaptureFocus({ lock: true })
-        .then(() =>
-          startMainProcessCapture({
-            displayId: url.searchParams.get("displayId") || rendererStatus.sharedDisplayId || "",
-            displayLabel: url.searchParams.get("displayLabel") || rendererStatus.sharedDisplayLabel || "",
-          }),
-        )
+      startMainProcessCapture({
+        displayId: url.searchParams.get("displayId") || rendererStatus.sharedDisplayId || "",
+        displayLabel: url.searchParams.get("displayLabel") || rendererStatus.sharedDisplayLabel || "",
+        force: url.searchParams.get("force") === "1",
+      })
         .then((payload) => json(res, payload && payload.ok ? 200 : 503, payload))
         .catch((error) => json(res, 500, { ok: false, error: String(error) }));
       return;
@@ -1151,9 +1787,10 @@ function installDisplayMediaHandler(forceSystemPicker) {
         const sourceId = pendingCaptureSourceId;
         pendingCaptureSourceId = null;
         await ensureCaptureFocus({ lock: true });
+        const wantWindow = String(sourceId || "").startsWith("window:");
         const sources = await getDesktopSources(
           {
-            types: ["screen", "window"],
+            types: wantWindow ? ["window", "screen"] : ["screen"],
             thumbnailSize: { width: 0, height: 0 },
             fetchWindowIcons: false,
           },
@@ -1164,10 +1801,16 @@ function installDisplayMediaHandler(forceSystemPicker) {
         const picked =
           (sourceId ? sources.find((source) => source.id === sourceId) : null) ||
           (displayId
-            ? sources.find((source) => String(source.display_id || "") === displayId) ||
+            ? sources.find(
+                (source) =>
+                  String(source.display_id || "") === displayId &&
+                  String(source.id || "").startsWith("screen:"),
+              ) ||
+              sources.find((source) => String(source.display_id || "") === displayId) ||
               sources.find((source) => String(source.id || "").includes(displayId))
             : null) ||
           sources.find((source) => String(source.id || "").startsWith("screen:")) ||
+          (wantWindow ? sources.find((source) => String(source.id || "").startsWith("window:")) : null) ||
           sources[0] ||
           null;
         if (!picked) {
@@ -1269,6 +1912,28 @@ function setAlwaysOnTop(value) {
   createTray();
 }
 
+function openScreenRecordingSettings() {
+  return new Promise((resolve) => {
+    const command =
+      process.env.VDISPLAY_ELECTRON_SCREEN_RECORDING_SETTINGS_CMD || "gnome-control-center";
+    const args = process.env.VDISPLAY_ELECTRON_SCREEN_RECORDING_SETTINGS_ARGS
+      ? String(process.env.VDISPLAY_ELECTRON_SCREEN_RECORDING_SETTINGS_ARGS)
+          .split(/\s+/)
+          .filter(Boolean)
+      : ["privacy"];
+    const child = spawn(command, args, { detached: true, stdio: "ignore" });
+    child.on("error", (error) => {
+      resolve({ ok: false, error: String(error && error.message ? error.message : error) });
+    });
+    child.unref();
+    resolve({
+      ok: true,
+      command: `${command} ${args.join(" ")}`,
+      hint: "In Privacy → Screen Recording, enable vdisplay share and/or Electron, then retry Share monitor",
+    });
+  });
+}
+
 function openManager() {
   if (!mainWindow) {
     createWindow();
@@ -1282,9 +1947,11 @@ function capturePermissionHint(errorMessage) {
   const focusHint =
     "Click the Electron Share window so it has focus, then retry Share — GNOME only shows the Screen Recording dialog for the focused app.";
   const settingsHint =
-    "If no GNOME dialog appeared, open Settings → Privacy → Screen Recording and enable Electron or vdisplay share.";
+    "Open Settings → Privacy → Screen Recording and enable vdisplay share and/or Electron.";
   const x11Hint =
-    "If capture keeps timing out on Wayland, restart with: VDISPLAY_ELECTRON_OZONE_PLATFORM=x11 vdisplay electron-share start ...";
+    OZONE_PLATFORM === "x11"
+      ? "You are already on x11 ozone — focus this window and approve the GNOME dialog, or pre-enable Screen Recording in Settings."
+      : "If capture keeps timing out on Wayland, restart with: VDISPLAY_ELECTRON_OZONE_PLATFORM=x11 vdisplay electron-share start ...";
   if (/timed out|access dialog|Only the focused app|fetch failed|associate portal window/i.test(base)) {
     let msg = base || focusHint;
     if (!msg.includes("GNOME only shows")) {
@@ -1293,7 +1960,7 @@ function capturePermissionHint(errorMessage) {
     if (!msg.includes("Screen Recording")) {
       msg = `${msg} ${settingsHint}`;
     }
-    if (IS_WAYLAND && !msg.includes("OZONE_PLATFORM=x11")) {
+    if (IS_WAYLAND && OZONE_PLATFORM !== "x11" && !msg.includes("OZONE_PLATFORM=x11")) {
       msg = `${msg} ${x11Hint}`;
     }
     return msg;
@@ -1356,10 +2023,30 @@ function moveWindowToSharedDisplay() {
   };
 }
 
-async function ensureCaptureFocus({ lock = false } = {}) {
+async function ensureCaptureFocus({ lock = false, force = false } = {}) {
   if (!mainWindow) {
     createWindow();
   }
+  const now = Date.now();
+  const targetDisplayId = String(rendererStatus.sharedDisplayId || "");
+  const recentlyFocused =
+    !force &&
+    now - lastEnsureCaptureFocusAt < ENSURE_CAPTURE_FOCUS_DEBOUNCE_MS &&
+    mainWindow &&
+    !mainWindow.isMinimized() &&
+    (!targetDisplayId || lastCaptureDisplayMoveId === targetDisplayId);
+  if (recentlyFocused) {
+    if (lock) {
+      captureFocusLock = true;
+    }
+    return {
+      ok: true,
+      focused: mainWindow.isFocused(),
+      locked: captureFocusLock,
+      debounced: true,
+    };
+  }
+  lastEnsureCaptureFocusAt = now;
   if (mainWindow.isMinimized()) {
     mainWindow.restore();
   }
@@ -1479,6 +2166,22 @@ ipcMain.handle("share:select-source", async (_event, payload) => {
         hint: `In the GNOME dialog, choose "${rendererStatus.sharedDisplayLabel}" and click Share`,
       };
     }
+    if (!USE_SYSTEM_PICKER) {
+      pendingCaptureSourceId = null;
+      installDisplayMediaHandler(false);
+      rendererStatus.activeSourceId = sourceId;
+      rendererStatus.activeSourceName = String(payload.sourceName || rendererStatus.sharedDisplayLabel);
+      createTray();
+      return {
+        ok: true,
+        sourceId,
+        captureMode: "main-desktopCapturer",
+        useMainCapture: true,
+        sharedDisplayId: rendererStatus.sharedDisplayId,
+        sharedDisplayLabel: rendererStatus.sharedDisplayLabel,
+        hint: "Click Share monitor once to capture the whole screen programmatically (no app picker).",
+      };
+    }
     try {
       const resolved = await resolveScreenSourceForDisplay(displayId);
       if (resolved) {
@@ -1497,7 +2200,17 @@ ipcMain.handle("share:select-source", async (_event, payload) => {
         };
       }
     } catch {
-      // Fall back to the GNOME portal picker below.
+      // Fall back to the GNOME portal picker only when explicitly enabled.
+    }
+    if (!USE_SYSTEM_PICKER) {
+      return {
+        ok: false,
+        error:
+          "Could not resolve monitor source programmatically. Keep Electron focused and click Share monitor once.",
+        captureMode: "programmatic",
+        sharedDisplayId: rendererStatus.sharedDisplayId,
+        sharedDisplayLabel: rendererStatus.sharedDisplayLabel,
+      };
     }
     pendingCaptureSourceId = null;
     installDisplayMediaHandler(true);
@@ -1559,6 +2272,8 @@ ipcMain.handle("share:stop-main-capture", () => {
 
 ipcMain.handle("share:ensure-capture-focus", async () => ensureCaptureFocus());
 
+ipcMain.handle("share:open-screen-recording-settings", async () => openScreenRecordingSettings());
+
 ipcMain.handle("share:prepare-system-picker", async () => {
   await ensureCaptureFocus();
   pendingCaptureSourceId = null;
@@ -1580,10 +2295,13 @@ ipcMain.handle("share:config", () => ({
   bridgeSource: BRIDGE_SOURCE,
   preferredBounds: preferredBoundsFromEnv(),
   autoStartCapture: AUTO_START_CAPTURE,
+  autoResumeCapture: AUTO_RESUME_CAPTURE,
+  captureRetryCooldownMs: CAPTURE_FAIL_COOLDOWN_MS,
   bridgePush: BRIDGE_PUSH,
   agentUrl: AGENT_URL,
   ozonePlatform: OZONE_PLATFORM,
     mainCaptureFallbackEnabled: mainCaptureAllowed(),
+  allowSourcePreviews: ALLOW_SOURCE_PREVIEWS,
   mode: windowMode,
   alwaysOnTop,
   displays: screen.getAllDisplays().map(serializeDisplay),
@@ -1623,11 +2341,58 @@ ipcMain.handle("share:set-target", (_event, targetLabel) => {
   return { targetLabel: rendererStatus.targetLabel };
 });
 
+ipcMain.handle("share:select-automation-target", (_event, payload) => {
+  const sourceId = String(payload && payload.sourceId ? payload.sourceId : "");
+  const sourceName = String(payload && payload.sourceName ? payload.sourceName : sourceId);
+  if (payload && payload.displayId) {
+    rendererStatus.sharedDisplayId = String(payload.displayId);
+  }
+  if (payload && payload.displayLabel) {
+    rendererStatus.sharedDisplayLabel = String(payload.displayLabel);
+  }
+  rendererStatus.activeSourceId = sourceId;
+  rendererStatus.activeSourceName = sourceName;
+  const targetLabel = String(
+    (payload && payload.targetLabel) || rendererStatus.targetLabel || INITIAL_TARGET_LABEL,
+  ).trim();
+  if (targetLabel) {
+    rendererStatus.targetLabel = targetLabel;
+  }
+  if (mainWindow) {
+    mainWindow.setTitle(`vdisplay share: ${INSTANCE_ID} - ${rendererStatus.targetLabel || INITIAL_TARGET_LABEL}`);
+  }
+  logSession("automation-target", rendererStatus.activeSourceName || rendererStatus.activeSourceId || "selected", {
+    sourceId: rendererStatus.activeSourceId,
+    sourceName: rendererStatus.activeSourceName,
+    sharedDisplayId: rendererStatus.sharedDisplayId,
+    sharedDisplayLabel: rendererStatus.sharedDisplayLabel,
+    targetLabel: rendererStatus.targetLabel,
+  });
+  createTray();
+  heartbeatBridge();
+  return {
+    ok: true,
+    activeSourceId: rendererStatus.activeSourceId,
+    activeSourceName: rendererStatus.activeSourceName,
+    sharedDisplayId: rendererStatus.sharedDisplayId,
+    sharedDisplayLabel: rendererStatus.sharedDisplayLabel,
+    targetLabel: rendererStatus.targetLabel,
+  };
+});
+
 ipcMain.handle("share:export-logs", () => exportSessionLogsMarkdown());
 
 ipcMain.on("share:renderer-log", (_event, payload) => {
+  const level = payload && payload.level ? String(payload.level) : "renderer";
+  if (level === "user-action") {
+    logUserAction(
+      payload && payload.message ? String(payload.message) : "renderer.user_action",
+      payload && payload.details ? payload.details : null,
+    );
+    return;
+  }
   logSession(
-    payload && payload.level ? String(payload.level) : "renderer",
+    level,
     payload && payload.message ? String(payload.message) : "",
     payload && payload.details ? payload.details : null,
   );
@@ -1695,6 +2460,7 @@ app.whenReady().then(() => {
   if (BRIDGE_PUSH) {
     heartbeatBridge();
     bridgeHeartbeatTimer = setInterval(heartbeatBridge, 2000);
+    scheduleAutoResumeCapture("startup");
   }
 });
 

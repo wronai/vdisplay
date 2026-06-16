@@ -130,6 +130,56 @@ def test_map_diff_service(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> No
     assert payload["summary"]["ok"] == 1
 
 
+def test_map_refresh_skips_write_when_refresh_required(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.application.services.map import map_refresh
+
+    png = _fake_png()
+    pack = _sample_pack(png)
+    pack.capture_meta = {"source": "DP-2", "rotation": "left"}
+    path = tmp_path / "map.json"
+    save_gui_map(path, pack)
+    before = path.read_text(encoding="utf-8")
+    monkeypatch.setattr(
+        "vdisplay.application.services.map._capture",
+        lambda **_k: (png, {"source": "HDMI-1", "rotation": "normal", "width": 400, "height": 200}),
+    )
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_png", lambda _png: [])
+
+    payload = map_refresh(map_path=str(path), monitor="HDMI-1")
+
+    assert payload["ok"] is False
+    assert payload["write_skipped"] is True
+    assert payload["diff"]["recommendation"] == "refresh_required"
+    assert payload["artifacts"] == {}
+    assert path.read_text(encoding="utf-8") == before
+
+
+def test_map_refresh_updates_monitor_contract_with_force(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    from vdisplay.application.services.map import map_refresh
+    from vdisplay.control.gui_map import load_gui_map
+
+    png = _fake_png()
+    pack = _sample_pack(png)
+    pack.monitor = "DP-2"
+    pack.rotation = "left"
+    pack.capture_meta = {"source": "DP-2", "rotation": "left"}
+    path = tmp_path / "map.json"
+    save_gui_map(path, pack)
+    monkeypatch.setattr(
+        "vdisplay.application.services.map._capture",
+        lambda **_k: (png, {"source": "HDMI-1", "rotation": "normal", "width": 400, "height": 200}),
+    )
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_png", lambda _png: [])
+
+    payload = map_refresh(map_path=str(path), monitor="HDMI-1", force=True)
+
+    assert payload.get("write_skipped") is not True
+    updated = load_gui_map(path)
+    assert updated.monitor == "HDMI-1"
+    assert updated.rotation == "normal"
+    assert updated.capture_meta.get("source") == "HDMI-1"
+
+
 def test_assess_map_drift_refresh_required_on_many_missing() -> None:
     from vdisplay.control.gui_map_diff import ElementDrift, GuiMapDiff
 

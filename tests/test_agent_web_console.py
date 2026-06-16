@@ -1,10 +1,26 @@
 from __future__ import annotations
 
 import base64
+import struct
+import zlib
 
 import pytest
 
-_PNG = b"\x89PNG\r\n\x1a\n" + b"w" * 128
+
+def _make_png(width: int = 2, height: int = 2, color: tuple[int, int, int] = (20, 40, 200)) -> bytes:
+    def chunk(kind: bytes, data: bytes) -> bytes:
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data) & 0xFFFFFFFF)
+
+    rows = b"".join(b"\x00" + bytes(color) * width for _ in range(height))
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        + chunk(b"IDAT", zlib.compress(rows))
+        + chunk(b"IEND", b"")
+    )
+
+
+_PNG = _make_png()
 
 
 def test_web_console_page(agent_client) -> None:
@@ -125,3 +141,12 @@ def test_web_pointer_click(agent_client, monkeypatch: pytest.MonkeyPatch) -> Non
     ).json()
     assert payload["ok"] is True
     assert payload["data"]["global_x"] == 100
+
+
+def test_browser_bridge_page_prefers_monitor_capture(agent_client) -> None:
+    client, _runtime = agent_client
+    res = client.get("/api/web/browser-bridge?source=HDMI-1")
+    assert res.status_code == 200
+    assert "displaySurface" in res.text
+    assert 'displaySurface: "monitor"' in res.text
+    assert "whole monitor" in res.text.lower()

@@ -12,6 +12,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlparse
 
 from ..exceptions import VDisplayError
 
@@ -26,6 +27,32 @@ def _app_dir() -> Path:
 
 def _run(cmd: list[str], *, env: dict[str, str] | None = None) -> int:
     return subprocess.call(cmd, cwd=str(_app_dir()), env=env)
+
+
+def _electron_bin() -> Path:
+    candidates = (
+        _app_dir() / "node_modules" / ".bin" / "electron",
+        _app_dir() / "node_modules" / "electron" / "dist" / "electron",
+    )
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    raise VDisplayError(
+        "Electron binary not found — run: vdisplay electron-share install"
+    )
+
+
+def _electron_command(env: dict[str, str]) -> list[str]:
+    return [
+        str(_electron_bin()),
+        "--no-sandbox",
+        "--disable-gpu",
+        "--disable-gpu-compositing",
+        "--disable-dev-shm-usage",
+        f"--gtk-version={env.get('VDISPLAY_ELECTRON_GTK_VERSION') or '3'}",
+        f"--ozone-platform={env.get('VDISPLAY_ELECTRON_OZONE_PLATFORM') or 'x11'}",
+        ".",
+    ]
 
 
 def _ensure_app_dir() -> None:
@@ -188,7 +215,7 @@ def _gnome_wayland_session() -> bool:
     if not wayland:
         return False
     desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").strip().lower()
-    return "gnome" in desktop or desktop.startswith("ubuntu")
+    return "gnome" in desktop or "ubuntu" in desktop or "unity" in desktop
 
 
 def _default_ozone_platform() -> str:
@@ -240,6 +267,12 @@ def _resolve_ozone_platform(args: argparse.Namespace) -> tuple[str, str | None]:
 def _start_env(args: argparse.Namespace) -> dict[str, str]:
     env = os.environ.copy()
     env.pop("ELECTRON_RUN_AS_NODE", None)
+    env.pop("GSETTINGS_SCHEMA_DIR", None)
+    env["XDG_DATA_DIRS"] = env.get(
+        "VDISPLAY_ELECTRON_XDG_DATA_DIRS",
+        "/usr/share/ubuntu:/usr/share/gnome:/usr/local/share:/usr/share:/var/lib/snapd/desktop",
+    )
+    env.setdefault("VDISPLAY_ELECTRON_GTK_VERSION", "3")
     env.setdefault("LIBVA_DRIVER_NAME", "none")
     ozone, override_note = _resolve_ozone_platform(args)
     env["VDISPLAY_ELECTRON_OZONE_PLATFORM"] = ozone
@@ -257,14 +290,48 @@ def _start_env(args: argparse.Namespace) -> dict[str, str]:
     env.update(_preferred_display_env_for_source(source))
     env["VDISPLAY_ELECTRON_SHARE_MODE"] = str(args.mode)
     env["VDISPLAY_ELECTRON_ALWAYS_ON_TOP"] = "0" if args.no_always_on_top else "1"
-    env["VDISPLAY_ELECTRON_SHARE_USE_SYSTEM_PICKER"] = (
-        "0" if getattr(args, "no_system_picker", False) else "1"
+    if getattr(args, "no_system_picker", False):
+        use_system_picker = False
+    elif getattr(args, "system_picker", False):
+        use_system_picker = True
+    else:
+        use_system_picker = os.environ.get("VDISPLAY_ELECTRON_SHARE_USE_SYSTEM_PICKER", "").strip() == "1"
+    env["VDISPLAY_ELECTRON_SHARE_USE_SYSTEM_PICKER"] = "1" if use_system_picker else "0"
+    env.setdefault("VDISPLAY_ELECTRON_ALLOW_SOURCE_PREVIEWS", "0")
+    unsafe_auto_capture = str(os.environ.get("VDISPLAY_ELECTRON_UNSAFE_AUTO_CAPTURE") or "").strip() == "1"
+    env["VDISPLAY_ELECTRON_UNSAFE_AUTO_CAPTURE"] = "1" if unsafe_auto_capture else "0"
+    env["VDISPLAY_ELECTRON_REMOTE_START_CAPTURE"] = (
+        "1"
+        if str(os.environ.get("VDISPLAY_ELECTRON_REMOTE_START_CAPTURE") or "").strip() == "1"
+        and str(os.environ.get("VDISPLAY_ELECTRON_ALLOW_REMOTE_START_CAPTURE") or "").strip() == "1"
+        and unsafe_auto_capture
+        else "0"
     )
     agent_url = _resolve_agent_url(args)
     if agent_url:
         env["VDISPLAY_ELECTRON_AGENT_URL"] = agent_url
         env["VDISPLAY_AGENT_URL"] = agent_url
-        env.setdefault("VDISPLAY_ELECTRON_AUTO_START_CAPTURE", "1")
+        parsed = urlparse(agent_url)
+        if parsed.hostname:
+            env["VDISPLAY_AGENT_HOST"] = str(parsed.hostname)
+        if parsed.port:
+            env["VDISPLAY_AGENT_PORT"] = str(parsed.port)
+        env["VDISPLAY_ELECTRON_AUTO_RESUME_CAPTURE"] = (
+            "1"
+            if str(os.environ.get("VDISPLAY_ELECTRON_AUTO_RESUME_CAPTURE") or "").strip() == "1"
+            and str(os.environ.get("VDISPLAY_ELECTRON_ALLOW_AUTO_RESUME_CAPTURE") or "").strip() == "1"
+            and unsafe_auto_capture
+            else "0"
+        )
+        env["VDISPLAY_ELECTRON_AUTO_START_CAPTURE"] = (
+            "1"
+            if str(os.environ.get("VDISPLAY_ELECTRON_AUTO_START_CAPTURE") or "").strip() == "1"
+            and str(os.environ.get("VDISPLAY_ELECTRON_ALLOW_AUTO_START_CAPTURE") or "").strip() == "1"
+            and unsafe_auto_capture
+            else "0"
+        )
+    else:
+        env["VDISPLAY_ELECTRON_AUTO_RESUME_CAPTURE"] = "0"
     if args.no_agent_bridge:
         env["VDISPLAY_ELECTRON_BRIDGE_PUSH"] = "0"
     if getattr(args, "close_quits", False):
@@ -292,11 +359,15 @@ def _print_start_hints(args: argparse.Namespace, env: dict[str, str] | None = No
         print(f"export VDISPLAY_ELECTRON_AGENT_URL={agent_url}", file=sys.stderr)
         print(f"# bridge source: {source}", file=sys.stderr)
         print(
-            f"# after sharing in Electron, check: curl -s {agent_url}/session/screencast/status | jq '.data | {{capture_ready, keeper_mode}}'",
+            f"# status: curl -s {agent_url}/session/screencast/status | jq '.data | {{capture_ready, keeper_mode}}'",
             file=sys.stderr,
         )
         print(
-            "# GNOME: keep the Electron window focused when clicking Share — portal rejects the dialog otherwise",
+            f"# optional fallback only if Electron capture fails: {agent_url}/api/web/browser-bridge?source={source}",
+            file=sys.stderr,
+        )
+        print(
+            "# GNOME: use one capture path at a time; default is Electron manager Share monitor",
             file=sys.stderr,
         )
     if ozone == "wayland" and _gnome_wayland_session():
@@ -306,7 +377,8 @@ def _print_start_hints(args: argparse.Namespace, env: dict[str, str] | None = No
         )
     if ozone == "x11":
         print(
-            "# x11 ozone: grant Settings → Privacy → Screen Recording for Electron/vdisplay share, then click Share",
+            "# x11 ozone: grant Settings → Privacy → Screen Recording for Electron, "
+            "pick a monitor in the grid, click Share monitor (whole screen — not an app)",
             file=sys.stderr,
         )
     if not agent_url:
@@ -336,7 +408,7 @@ def handle_start(args: argparse.Namespace) -> int:
     env = _start_env(args)
     _print_start_hints(args, env)
     try:
-        return _run(["npm", "start"], env=env)
+        return _run(_electron_command(env), env=env)
     except KeyboardInterrupt:
         print("vdisplay electron-share: interrupted", file=sys.stderr)
         return 130
@@ -436,7 +508,18 @@ def build_health_payload(
     bridge_meta = manager.get("browser_bridge") or {}
     frame = manager.get("frame") or {}
     monitor = (bridge_data.get("monitors") or {}).get(source) or {}
-    return {
+    registered_sources = [
+        str(item).strip()
+        for item in (bridge_data.get("sources") or bridge_meta.get("sources") or [])
+        if str(item).strip()
+    ]
+    electron_source = str(bridge_meta.get("source") or "").strip()
+    raw_last_ingest_ok = str(bridge_meta.get("last_ingest_ok") or "").strip()
+    raw_last_ok = str(bridge_meta.get("last_ok") or "").strip()
+    bridge_last_ok = raw_last_ingest_ok if raw_last_ingest_ok.startswith("ingest ") else ""
+    if not bridge_last_ok and raw_last_ok.startswith("ingest "):
+        bridge_last_ok = raw_last_ok
+    payload = {
         "ok": True,
         "share_url": manager.get("url"),
         "instance": manager.get("instance"),
@@ -449,12 +532,29 @@ def build_health_payload(
         "keeper_mode": screencast_data.get("keeper_mode") or bridge_data.get("keeper_mode"),
         "last_frame_age_ms": monitor.get("age_ms") or frame.get("age_ms"),
         "bridge_id": bridge_data.get("bridge_id") or bridge_meta.get("bridge_id"),
-        "bridge_last_ok": bridge_meta.get("last_ok"),
+        "bridge_last_ok": bridge_last_ok,
+        "bridge_lifecycle_ok": bridge_meta.get("last_lifecycle_ok") or bridge_meta.get("last_ok"),
+        "bridge_last_heartbeat_ok": bridge_meta.get("last_heartbeat_ok"),
         "bridge_last_error": bridge_meta.get("last_error"),
         "manager": manager,
         "browser_bridge": bridge_data,
         "screencast": screencast_data,
     }
+    if registered_sources and source not in registered_sources:
+        active = registered_sources[0]
+        payload["source_mismatch"] = {
+            "requested_source": source,
+            "registered_sources": registered_sources,
+            "electron_bridge_source": electron_source or None,
+            "message": (
+                f"Status requested for '{source}' but the active browser bridge is "
+                f"registered for {registered_sources}. Use the matching source everywhere."
+            ),
+        }
+        payload["browser_bridge_url"] = (
+            f"{agent_url.rstrip('/')}/api/web/browser-bridge?source={active}" if agent_url else None
+        )
+    return payload
 
 
 def handle_health(args: argparse.Namespace) -> int:
@@ -488,32 +588,65 @@ def handle_health(args: argparse.Namespace) -> int:
         payload["screencast_error"] = screencast_error
     if not payload.get("capture_ready") and not manager.get("sharing"):
         renderer_error = str((manager.get("renderer_status") or {}).get("error") or "")
-        bridge_url = f"{agent_url.rstrip('/')}/api/web/browser-bridge?source={source}" if agent_url else None
+        mismatch = payload.get("source_mismatch") if isinstance(payload.get("source_mismatch"), dict) else {}
+        active_source = str(
+            (mismatch.get("registered_sources") or [source])[0] if mismatch else source
+        ).strip() or source
+        bridge_url = payload.get("browser_bridge_url") or (
+            f"{agent_url.rstrip('/')}/api/web/browser-bridge?source={active_source}" if agent_url else None
+        )
         payload["browser_bridge_url"] = bridge_url
-        if "timed out" in renderer_error.lower() or "not supported" in renderer_error.lower():
+        if mismatch:
             payload["hint"] = (
-                "Electron capture is blocked in this Wayland runtime. "
-                f"Open Chrome/Chromium browser bridge: {bridge_url}"
+                f"{mismatch.get('message')} "
+                f"Restart services with the matching source, then use Electron Share monitor. "
+                f"Optional browser fallback only if Electron fails: {bridge_url}"
+            )
+        elif _frame_age_stale(payload.get("last_frame_age_ms")):
+            payload["hint"] = (
+                f"Frames are stale ({payload.get('last_frame_age_ms')}ms). "
+                f"Run: vdisplay services resume --source {source} --port {args.port} "
+                "or click Share monitor / Grant via GNOME in the Electron window"
+            )
+        elif "timed out" in renderer_error.lower() or "not supported" in renderer_error.lower():
+            payload["hint"] = (
+                "Electron capture is blocked or timed out. Click Share monitor once in the Electron manager "
+                f"and select whole monitor {active_source}; optional browser fallback only if Electron fails: {bridge_url}"
                 if bridge_url
-                else "Electron capture is blocked in this Wayland runtime. Start vdisplay-agent and open /api/web/browser-bridge."
+                else "Electron capture is blocked or timed out. Click Share monitor once in the Electron manager."
             )
         elif "requesting screen capture" in renderer_error.lower() or "gnome screen share" in renderer_error.lower():
             payload["hint"] = (
-                "Electron is still requesting capture. If it does not become capture_ready within 15s, "
-                f"use Chrome/Chromium browser bridge: {bridge_url}"
+                "Electron is still requesting capture. Approve the GNOME dialog once for the whole monitor; "
+                f"optional browser fallback only if Electron fails: {bridge_url}"
                 if bridge_url
-                else "Electron is still requesting capture. If it does not become capture_ready within 15s, start vdisplay-agent and open /api/web/browser-bridge."
+                else "Electron is still requesting capture. Approve the GNOME dialog once for the whole monitor."
             )
         else:
             payload["hint"] = (
-                "Electron has no shared frame yet. Use Share target, or on this Wayland runtime prefer "
-                f"Chrome/Chromium browser bridge: {bridge_url}"
+                f"Electron has no shared frame yet. Click Share monitor once in Electron and select whole monitor {active_source}; "
+                f"optional browser fallback only if Electron fails: {bridge_url}"
                 if bridge_url
-                else "Electron has no shared frame yet. Use Share target, or start vdisplay-agent and open /api/web/browser-bridge."
+                else f"Electron has no shared frame yet. Click Share monitor once in Electron and select whole monitor {active_source}."
             )
     elif not payload.get("capture_ready") and manager.get("sharing"):
-        payload["hint"] = "Sharing locally but agent not capture_ready — check agent URL and bridge ingest"
+        if _frame_age_stale(payload.get("last_frame_age_ms")):
+            payload["hint"] = (
+                f"Electron is sharing locally, but frames are stale ({payload.get('last_frame_age_ms')}ms). "
+                f"Run: vdisplay services resume --source {source} --port {args.port}"
+            )
+        else:
+            payload["hint"] = "Sharing locally but agent not capture_ready — check agent URL and bridge ingest"
     return _print_payload(payload)
+
+
+def _frame_age_stale(last_frame_age_ms: int | float | None, *, ttl_ms: float = 5000.0) -> bool:
+    if last_frame_age_ms is None:
+        return False
+    try:
+        return float(last_frame_age_ms) > ttl_ms
+    except (TypeError, ValueError):
+        return False
 
 
 def handle_bridge_status(args: argparse.Namespace) -> int:
@@ -540,11 +673,47 @@ def _manager_alive(args: argparse.Namespace) -> bool:
         return False
 
 
+def _manager_matches_args(args: argparse.Namespace, status: dict) -> bool:
+    if not isinstance(status, dict) or not status.get("ok"):
+        return False
+
+    bridge = status.get("browser_bridge") if isinstance(status.get("browser_bridge"), dict) else {}
+    renderer = status.get("renderer_status") if isinstance(status.get("renderer_status"), dict) else {}
+
+    requested_source = _resolve_source(args)
+    current_source = str(bridge.get("source") or status.get("source") or "").strip()
+    if current_source != requested_source:
+        return False
+
+    requested_instance = _resolve_instance(args)
+    current_instance = str(status.get("instance") or "").strip()
+    if current_instance and current_instance != requested_instance:
+        return False
+
+    requested_target = _resolve_target(args)
+    current_target = str(
+        status.get("targetLabel") or renderer.get("targetLabel") or ""
+    ).strip()
+    if current_target and current_target != requested_target:
+        return False
+
+    return True
+
+
+def _manager_reusable(args: argparse.Namespace) -> bool:
+    try:
+        status = _manager_get(args, "/status")
+    except VDisplayError:
+        return False
+    return _manager_matches_args(args, status)
+
+
 def build_prepare_payload(args: argparse.Namespace) -> dict:
     agent_url = _resolve_agent_url(args)
     source = _resolve_source(args)
     instance = _resolve_instance(args)
     target = _resolve_target(args)
+    bridge_url = f"{agent_url.rstrip('/')}/api/web/browser-bridge?source={source}" if agent_url else None
     payload: dict = {
         "ok": False,
         "source": source,
@@ -552,6 +721,7 @@ def build_prepare_payload(args: argparse.Namespace) -> dict:
         "target": target,
         "agent_url": agent_url or None,
         "share_url": _manager_url(args),
+        "browser_bridge_url": bridge_url,
     }
     if not agent_url:
         payload["hint"] = "Set VDISPLAY_AGENT_URL, then: VDISPLAY_AGENT_PORT=8766 vdisplay-agent serve"
@@ -604,13 +774,14 @@ def build_prepare_payload(args: argparse.Namespace) -> dict:
         return payload
 
     start_cmd = (
-        f"vdisplay electron-share start --instance {instance} --target {target} "
+        f"vdisplay electron-share up --instance {instance} --target {target} "
         f"--source {source} --port {args.port} --agent-url {agent_url}"
     )
     payload["steps"] = [
         start_cmd,
-        "Keep that terminal open, pick the IDE monitor in Electron, approve GNOME Share",
-        f"vdisplay electron-share health --port {args.port} --source {source} --agent-url {agent_url}",
+        f"In Electron manager click Share monitor and select whole monitor {source}",
+        f"Optional fallback only: open Chrome/Chromium browser bridge {bridge_url}",
+        f"vdisplay services status --source {source} --agent-url {agent_url} --port {args.port}",
         "koru autopilot prepare-vdisplay --ide jetbrains",
     ]
     manager_error = str(payload.get("manager_error") or "")
@@ -618,17 +789,19 @@ def build_prepare_payload(args: argparse.Namespace) -> dict:
     if manager and manager.get("sharing"):
         payload["hint"] = "Electron is sharing locally but agent is not capture_ready — check agent URL and ingest"
     elif manager:
-        payload["hint"] = "Electron manager is running — pick a monitor and approve GNOME Share"
+        payload["hint"] = (
+            f"Electron manager is running; click Share monitor once in Electron and "
+            f"select whole monitor {source}. Browser bridge is fallback only: {bridge_url}"
+        )
     elif manager_down and bridge_data.get("registered") and _bridge_heartbeat_stale(bridge_data):
         payload["bridge_stale"] = True
         payload["hint"] = (
             f"Electron manager on :{args.port} is not running; agent still has a stale bridge "
-            f"({bridge_data.get('bridge_id')}). In a dedicated terminal (keep it open): {start_cmd}"
+            f"({bridge_data.get('bridge_id')}). Start the background manager: {start_cmd}"
         )
     elif manager_down:
         payload["hint"] = (
-            f"Electron manager on :{args.port} is not reachable. Run in a dedicated terminal "
-            f"(keep it open): {start_cmd}"
+            f"Electron manager on :{args.port} is not reachable. Start the background manager: {start_cmd}"
         )
     else:
         payload["hint"] = f"Start Electron share: {start_cmd}"
@@ -637,16 +810,25 @@ def build_prepare_payload(args: argparse.Namespace) -> dict:
 
 def handle_up(args: argparse.Namespace) -> int:
     """Start Electron share in background when manager HTTP is down, then run prepare."""
-    if _manager_alive(args):
+    if _manager_reusable(args):
         return handle_prepare(args)
+    if _manager_alive(args):
+        try:
+            handle_stop(args)
+        except VDisplayError:
+            _stop_process_fallback(int(args.port))
+        if not _wait_port_closed(str(args.host), int(args.port)):
+            _stop_process_fallback(int(args.port))
+            _wait_port_closed(str(args.host), int(args.port))
 
     _ensure_app_dir()
     _npm_install_if_requested(args)
     env = _start_env(args)
     log_path = _app_dir() / f"electron-share-{args.port}.log"
+    command = _electron_command(env)
     with log_path.open("ab") as log_file:
         proc = subprocess.Popen(
-            ["npm", "start"],
+            command,
             cwd=str(_app_dir()),
             env=env,
             stdout=log_file,
@@ -708,9 +890,14 @@ def _add_runtime_args(parser: argparse.ArgumentParser) -> None:
         help="Disable default always-on-top manager window",
     )
     parser.add_argument(
+        "--system-picker",
+        action="store_true",
+        help="Use GNOME/Chromium system picker (opt-in; default shares whole monitor via grid)",
+    )
+    parser.add_argument(
         "--no-system-picker",
         action="store_true",
-        help="Use Electron source handler instead of Chromium/system picker where available",
+        help="Explicitly disable system picker (default since monitor-first flow)",
     )
     parser.add_argument(
         "--ozone-platform",

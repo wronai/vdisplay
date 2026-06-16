@@ -101,7 +101,8 @@ def _capture_host(store: SessionStore, body: dict[str, Any]) -> dict[str, Any]:
         if store.screencast is not None:
             session_svc.clear_screencast_capture_failure(store)
         return bridge_meta
-    if store.screencast is not None or not _electron_share_enabled():
+    electron_share_available = _electron_share_enabled()
+    if store.screencast is not None and not electron_share_available:
         _raise_if_wayland_screencast_keeper_missing(store)
     try:
         meta = capture_host_to_file(

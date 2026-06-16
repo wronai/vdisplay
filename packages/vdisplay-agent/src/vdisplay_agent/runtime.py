@@ -87,6 +87,9 @@ class AgentRuntime:
     def browser_bridge_status(self) -> dict[str, Any]:
         return browser_bridge.browser_bridge_status(self.store)
 
+    def clear_browser_bridge(self) -> dict[str, Any]:
+        return browser_bridge.clear_browser_bridge(self.store)
+
     def ingest_browser_frame(self, body: dict[str, Any]) -> dict[str, Any]:
         return browser_bridge.ingest_browser_frame(self.store, body)
 

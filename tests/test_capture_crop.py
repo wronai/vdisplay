@@ -47,3 +47,15 @@ def test_is_blank_png_detects_black() -> None:
     assert is_blank_png(black) is True
     colored = _make_png(32, 32, (20, 40, 200))
     assert is_blank_png(colored) is False
+
+
+def test_is_blank_png_detects_black_frame_with_thin_bright_strip() -> None:
+    from PIL import Image
+
+    image = Image.new("RGB", (256, 160), (0, 0, 0))
+    for x in range(image.width):
+        image.putpixel((x, 0), (64, 180, 64))
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+
+    assert is_blank_png(buf.getvalue()) is True
