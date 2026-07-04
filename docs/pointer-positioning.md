@@ -147,7 +147,39 @@ coordinate math shows up as a rising error rate, not a silent mis-click.
 
 ---
 
-## Validated solution: own uinput ABS device (`LinuxUinputAbsInput`)
+## Best solution: RemoteDesktop portal (`RemoteDesktopPortal`)
+
+**The sanctioned Wayland path — and it eliminates the coordinate-mapping problem
+entirely.** The freedesktop RemoteDesktop portal, linked to a ScreenCast stream,
+injects pointer motion and keystrokes in the STREAM's OWN coordinate space. So a
+frame grabbed from that same stream and the input share ONE coordinate system —
+no calibration, no opaque axis. Proven end-to-end: text typed AND submitted into
+a right-docked IDE chat input (Qoder).
+
+```
+p = RemoteDesktopPortal().open()          # GNOME dialog once; restore token persists
+png = p.grab_frame()                       # a frame from the portal's stream
+fx, fy = ocr_anchor(png)                    # locate the chat input in the frame
+sx, sy = p.frame_to_stream(fx, fy, frame_w=W, frame_h=H)   # buffer px -> logical
+p.type_into_input_verified(sx, sy, "hello", verify=..., submit=True)
+```
+
+Two things that matter:
+- **Frame buffer size ≠ stream logical size.** The grabbed PNG may be 2560×1600
+  while the stream's declared size (from `Start`) is 2048×1280;
+  `frame_to_stream` scales frame pixels to the logical space
+  `NotifyPointerMotionAbsolute` expects. Skipping this sends the pointer ~1.25×
+  too far and the keystrokes leak into whatever else has focus (a shell).
+- **Focus guard.** `type_into_input_verified` clicks, confirms the input is
+  actually focused (`verify(before, after)` on grabbed frames), and only THEN
+  types — so a drifted target can never leak keystrokes into the wrong window.
+
+Requires `vdisplay[portal]` (python-dbus + PyGObject + GStreamer/pipewiresrc) —
+the same stack the ScreenCast capture uses. Prefer this over ydotool/ABS on
+GNOME Wayland; ydotool and the uinput ABS device remain fallbacks where the
+portal is unavailable.
+
+## Fallback solution: own uinput ABS device (`LinuxUinputAbsInput`)
 
 Sequential testing settled it:
 
