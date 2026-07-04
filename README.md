@@ -49,6 +49,7 @@ vdisplay windows --apps-only
 | [GUI Map Pack](docs/guides/gui-map-pack.md) | [API / SDK](docs/reference/api.md) |
 | [Vision fallback](docs/guides/vision-fallback.md) | [DSL](docs/reference/dsl.md) · [REST](docs/reference/rest.md) · [MCP](docs/reference/mcp.md) |
 | [Chat-input targeting strategies](docs/chat-targeting-strategies.md) | |
+| [Pointer positioning on Wayland](docs/pointer-positioning.md) | |
 | [Agent broker](docs/guides/agent-broker.md) | |
 | [Browser](docs/guides/browser-control.md) · [Terminal](docs/guides/terminal-control.md) | |
 

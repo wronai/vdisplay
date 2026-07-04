@@ -575,6 +575,13 @@ class PointerAffine:
     source: str
     ok: bool
     samples: int = 0
+    # "known zero" anchor: the capture pixel the cursor clamps to when slammed
+    # into a screen corner, plus the ydotool command that reaches it. A reliable,
+    # UI-independent reference the caller can always re-establish.
+    anchor_corner: str | None = None
+    anchor_local: tuple[int, int] | None = None
+    anchor_command: tuple[int, int] | None = None
+    residual_px: float | None = None
 
     def global_for_local(self, lx: float, ly: float) -> tuple[int, int]:
         gx = (lx - self.bx) / (self.ax or 1.0)
@@ -586,7 +593,54 @@ class PointerAffine:
             "ax": round(self.ax, 5), "bx": round(self.bx, 2),
             "ay": round(self.ay, 5), "by": round(self.by, 2),
             "source": self.source, "ok": self.ok, "samples": self.samples,
+            "anchor_corner": self.anchor_corner,
+            "anchor_local": list(self.anchor_local) if self.anchor_local else None,
+            "anchor_command": list(self.anchor_command) if self.anchor_command else None,
+            "residual_px": round(self.residual_px, 1) if self.residual_px is not None else None,
         }
+
+
+# ydotool command far beyond any real screen, per corner: the compositor clamps
+# the pointer to that screen corner, giving a guaranteed known reference.
+_CORNER_COMMANDS: dict[str, tuple[int, int]] = {
+    "tl": (-1_000_000, -1_000_000),
+    "tr": (1_000_000, -1_000_000),
+    "bl": (-1_000_000, 1_000_000),
+    "br": (1_000_000, 1_000_000),
+}
+
+
+def park_at_corner(
+    source: str,
+    corner: str = "tl",
+    *,
+    move: MoveFn,
+    capture: CaptureFn,
+    settle: Callable[[], None] | None = None,
+) -> tuple[int, int] | None:
+    """Slam the pointer into a screen ``corner`` (the compositor clamps it there)
+    and return where it landed in capture pixels — the "known zero" reference.
+
+    Reading the pointer position is blocked on Wayland; ESTABLISHING a known one
+    by clamping to a corner is not. The corner is unambiguous (no UI element
+    sits exactly at a screen corner) so the move-and-diff detector locks onto
+    the cursor cleanly.
+    """
+    cmd = _CORNER_COMMANDS.get(corner, _CORNER_COMMANDS["tl"])
+    # baseline with the cursor at the OPPOSITE corner so the diff is clean
+    opp = {"tl": "br", "tr": "bl", "bl": "tr", "br": "tl"}[corner]
+    move(*_CORNER_COMMANDS[opp])
+    if settle is not None:
+        settle()
+    base = capture(source)
+    move(*cmd)
+    if settle is not None:
+        settle()
+    frame = capture(source)
+    if not base or not frame:
+        return None
+    found = find_cursor_by_quadrant(base, frame, expected_quadrant=corner)
+    return (found[0], found[1]) if found else None
 
 
 def detect_live_quadrants(
@@ -654,6 +708,7 @@ def calibrate_pointer_affine(
     avoid_live_quadrants: bool = True,
     probe_grid: tuple[int, int] | None = None,
     global_bounds: tuple[int, int, int, int] | None = None,
+    anchor_corner: str | None = "tl",
 ) -> PointerAffine:
     """Measure the ydotool→capture mapping ONCE with N+1 captures, then cache it.
 
@@ -715,7 +770,29 @@ def calibrate_pointer_affine(
         return PointerAffine(1.0, 0.0, 1.0, 0.0, source, ok=False, samples=used)
     ax, bx = _fit_affine_robust(gxs, lxs)
     ay, by = _fit_affine_robust(gys, lys)
-    return PointerAffine(ax, bx, ay, by, source, ok=True, samples=used)
+    aff = PointerAffine(ax, bx, ay, by, source, ok=True, samples=used)
+
+    # "known zero" anchor + validation: park at a corner (a guaranteed known
+    # reference reading can't give us on Wayland) and check the fitted affine
+    # predicts it. A large residual flags a bad calibration instead of a silent
+    # mis-click. The corner command is a clamped/saturated point, so it anchors
+    # + validates but is NOT fed into the linear fit.
+    if anchor_corner:
+        obs = park_at_corner(source, anchor_corner, move=move, capture=capture, settle=settle)
+        if obs is not None and bw and bh:
+            aff.anchor_corner = anchor_corner
+            aff.anchor_local = obs
+            aff.anchor_command = _CORNER_COMMANDS.get(anchor_corner)
+            # soft validation: the clamp command is saturated (its magnitude
+            # can't be a linear fit point), but the cursor MUST land in that
+            # corner's quadrant. residual = distance from the exact screen
+            # corner, a quality signal; wrong quadrant flags a bad calibration.
+            fx0, fy0, fx1, fy1 = _QUADRANTS[anchor_corner]
+            corner_px = (int(bw * (0 if fx0 == 0 else 1)), int(bh * (0 if fy0 == 0 else 1)))
+            aff.residual_px = math.hypot(obs[0] - corner_px[0], obs[1] - corner_px[1])
+            if quadrant_of_local(obs[0], obs[1], bw, bh) != anchor_corner:
+                aff.ok = False  # cursor didn't clamp to the expected corner
+    return aff
 
 
 class CoordinateValidationMonitor:
