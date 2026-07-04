@@ -1,5 +1,5 @@
 # goal.yaml - Goal configuration file
-# Generated: 2026-06-24 23:52:10
+# Generated: 2026-07-04 14:28:01
 # Documentation: https://github.com/wronai/goal#configuration
 #
 # This file configures Goal's behavior for:
@@ -23,8 +23,7 @@ versioning:
   files:
   - VERSION
   - pyproject.toml:version
-  - packages/vdisplay-electron-share/package.json:version
-  - packages/vdisplay-agent/src/vdisplay_agent/__init__.py:__version__
+  - venv/lib/python3.13/site-packages/cryptography/__init__.py:__version__
   bump_rules:
     patch: 10
     minor: 50
@@ -222,20 +221,6 @@ git:
     enabled: true
     prefix: v
     format: '{prefix}{version}'
-publishing:
-  enabled: true
-  registries:
-  - pypi
-  dry_run: false
-  fallback:
-    github_release:
-      enabled: true
-      owner: ''
-      repo: ''
-      repo_map: {}
-      token_env: GITHUB_TOKEN
-      skip_pypi_retries_on_block: true
-      asset_glob: dist/*
 strategies:
   python:
     test: pytest tests/ -v
@@ -527,3 +512,17 @@ code_parsers:
     - <!--
     - -->
     entity_pattern: ^#+\s+(.+)$
+publishing:
+  enabled: true
+  registries:
+  - pypi
+  dry_run: false
+  fallback:
+    github_release:
+      enabled: true
+      owner: ''
+      repo: ''
+      repo_map: {}
+      token_env: GITHUB_TOKEN
+      skip_pypi_retries_on_block: true
+      asset_glob: dist/*
