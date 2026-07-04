@@ -53,13 +53,37 @@ _REJECT_REASON_MARKERS = (
     "true target not",
 )
 
+# Unambiguous competing-IDE names — matched as whole words in the LLM reason.
 _WRONG_IDE_MARKERS_FOR_JETBRAINS = (
-    "cursor",
     "vscodium",
     "vscode",
     "code editor",
     "codium",
 )
+
+# "cursor" is ambiguous: the vision model routinely says "based on the text
+# cursor" / "the cursor and placeholder" when describing an input field — that
+# does NOT mean the Cursor IDE. Only treat it as the competing IDE when it
+# carries an app qualifier. Benign phrases (text/mouse/blinking cursor, cursor
+# position/blinking) must never trigger a rejection.
+# Reject "cursor" only with an explicit app qualifier — a bare "cursor" in the
+# reason is almost always the text/mouse cursor, not the Cursor IDE.
+_CURSOR_IDE_RE = re.compile(
+    r"\bcursor(?:'s)?\s+(?:ide|editor|window|app|application|chat|composer|sidebar)\b"
+    r"|\bin\s+cursor\b"
+    r"|\bcursor\s+ide\b",
+)
+
+
+def _reason_names_competing_ide(reason: str, *, canon: str) -> str | None:
+    if canon not in {"jetbrains", "pycharm", "idea"}:
+        return None
+    for marker in _WRONG_IDE_MARKERS_FOR_JETBRAINS:
+        if re.search(rf"\b{re.escape(marker)}\b", reason):
+            return marker
+    if _CURSOR_IDE_RE.search(reason):
+        return "cursor"
+    return None
 
 
 def llm_decision_rejects_chat_target(
@@ -75,10 +99,9 @@ def llm_decision_rejects_chat_target(
     for marker in _REJECT_REASON_MARKERS:
         if marker in reason:
             return f"LLM reason indicates no trustworthy chat target ({marker})"
-    if canon in {"jetbrains", "pycharm", "idea"}:
-        for marker in _WRONG_IDE_MARKERS_FOR_JETBRAINS:
-            if marker in reason:
-                return f"LLM target references {marker}, not JetBrains chat"
+    competing = _reason_names_competing_ide(reason, canon=canon)
+    if competing:
+        return f"LLM target references {competing}, not JetBrains chat"
     cc = decision.get("click_center") or {}
     try:
         x = int(cc.get("x", -1))

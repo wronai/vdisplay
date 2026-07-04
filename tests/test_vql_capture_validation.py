@@ -61,7 +61,10 @@ def test_jetbrains_capture_accepts_pycharm_window_title() -> None:
     assert out["ide_window_warning"] is None
 
 
-def test_jetbrains_capture_rejects_missing_window_title() -> None:
+def test_jetbrains_capture_rejects_missing_window_title(monkeypatch) -> None:
+    # vision-defer would suppress this reject; assert the baseline (vision off)
+    monkeypatch.delenv("KORU_VDISPLAY_LLM_VISION_DECISION", raising=False)
+    monkeypatch.delenv("VDISPLAY_VISION_CHAT_DETECT", raising=False)
     layers = [
         {
             "id": "window_0",
@@ -146,9 +149,27 @@ def test_competing_ide_never_deferred_even_under_vision(monkeypatch) -> None:
     assert out["capture_confirmed"] is False
 
 
-def test_missing_window_title_not_deferred_even_under_vision(monkeypatch) -> None:
-    # No window title at all → capture may have failed; never defer to vision.
+def test_missing_window_title_deferred_under_vision(monkeypatch) -> None:
+    # Unstable OCR (no window-title layer) on a multi-panel monitor: vision's own
+    # confidence guard is the safety net, so defer instead of hard-blocking.
     monkeypatch.setenv("KORU_VDISPLAY_LLM_VISION_DECISION", "1")
+    layers = [
+        {"id": "label_0", "kind": "label", "text": "Ask AI", "bbox": {"x": 10, "y": 10, "w": 40, "h": 12}},
+    ]
+    out = validate_vql_capture(
+        layers=layers,
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2560, "height": 1600}},
+    )
+    # under vision the VQL structure quality is not a gate (vision reads the PNG)
+    assert out["vision_deferred_window_mismatch"] is True
+    assert out["capture_confirmed"] is True
+    assert "ide_window_mismatch_deferred_to_vision" in out["reasons"]
+
+
+def test_missing_window_title_still_blocks_without_vision(monkeypatch) -> None:
+    monkeypatch.delenv("KORU_VDISPLAY_LLM_VISION_DECISION", raising=False)
+    monkeypatch.delenv("VDISPLAY_VISION_CHAT_DETECT", raising=False)
     layers = [
         {"id": "label_0", "kind": "label", "text": "Ask AI", "bbox": {"x": 10, "y": 10, "w": 40, "h": 12}},
     ]

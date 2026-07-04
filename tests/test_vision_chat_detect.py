@@ -186,3 +186,36 @@ def test_resolve_second_pass_accepts_guard_passing_coords(monkeypatch) -> None:
     assert out["target"]["click_center"]["x"] == 1230
     assert out["target"]["click_center"]["y"] == 643
     assert out["target"]["selection_method"] == "llm_vision_detect_2nd_pass"
+
+
+def test_cursor_word_in_reason_not_treated_as_cursor_ide():
+    """A vision reason describing 'the cursor and placeholder' (text cursor) must
+    NOT be rejected as the Cursor IDE — that false-positive blocked valid Qoder
+    detections in JetBrains."""
+    from vdisplay.control.vision_chat_detect import _reason_names_competing_ide
+
+    benign = [
+        "identified the input box based on the cursor and placeholder text",
+        "the text cursor is blinking in the input field",
+        "mouse cursor hovering over the composer",
+        "cursor position at the bottom of the chat",
+        "Qoder AI chat input in PyCharm",
+    ]
+    for r in benign:
+        assert _reason_names_competing_ide(r.lower(), canon="jetbrains") is None, r
+
+
+def test_explicit_cursor_ide_still_rejected():
+    from vdisplay.control.vision_chat_detect import _reason_names_competing_ide
+
+    for r in ["this is the Cursor IDE chat panel", "input box in Cursor editor", "in Cursor the composer"]:
+        assert _reason_names_competing_ide(r.lower(), canon="jetbrains") == "cursor", r
+
+
+def test_other_competing_ides_whole_word():
+    from vdisplay.control.vision_chat_detect import _reason_names_competing_ide
+
+    assert _reason_names_competing_ide("this looks like vscode chat", canon="jetbrains") == "vscode"
+    assert _reason_names_competing_ide("the vscodium composer", canon="jetbrains") == "vscodium"
+    # substring must not match inside another word
+    assert _reason_names_competing_ide("transcoded image", canon="jetbrains") is None
