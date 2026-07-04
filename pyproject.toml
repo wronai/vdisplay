@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.39"
+version = "0.1.40"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.11,<3.14"
 authors = [{name = "Tom"}, {name = "Tom Sapletta",email = "tom@sapletta.com"}]
 license = "Apache-2.0"
 dependencies = []
@@ -185,6 +185,6 @@ markers = [
     "live: Playwright tests against running vdisplay-agent (VDISPLAY_AGENT_URL)",
 ]
 filterwarnings = [
-    "ignore:Using `httpx` with `starlette.testclient`:DeprecationWarning",
+    "ignore:Using `httpx` with `starlette.testclient`",
     "ignore:on_event is deprecated:DeprecationWarning",
 ]

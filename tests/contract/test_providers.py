@@ -55,6 +55,9 @@ def test_provider_contract_surface(name: str) -> None:
 
 
 def test_rank_providers_returns_contract_scores(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Pin a GUI environment: this test ranks providers when everything is
+    # available; without DISPLAY (headless CI) atspi is legitimately demoted.
+    monkeypatch.setenv("DISPLAY", ":0")
     monkeypatch.setattr("vdisplay.control.scoring._atspi_ready", lambda: (True, "ok"))
     monkeypatch.setattr("vdisplay.control.scoring._browser_ready", lambda: (True, "ok"))
     monkeypatch.setattr("vdisplay.control.scoring._xdotool_ready", lambda: (True, "ok"))
