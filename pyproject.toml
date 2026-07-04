@@ -63,6 +63,10 @@ vision = [
     "Pillow>=10.0",
     "pytesseract>=0.3.10",
     "opencv-python>=4.8",
+    # coordinate-validation cursor detection (single-frame template match +
+    # move-and-diff) is numpy-only so it runs without the heavier opencv;
+    # opencv above remains the optional high-accuracy matchTemplate upgrade.
+    "numpy>=1.24",
 ]
 terminal = [
     "pyte>=0.8.1",
