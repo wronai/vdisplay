@@ -177,6 +177,42 @@ biggest precision win is shrinking what the model sees.
 
 ---
 
+## Coordinate-validation monitoring layer
+
+Targeting says *which capture pixel* to hit; **actuation** must then move the OS
+pointer there, and the capture→global mapping (`global_pointer_coords`)
+compounds unknowns — capture-vs-region scale, ydotool absolute-axis semantics,
+HiDPI, monitor offsets. When any is off the pointer lands on the wrong spot (or
+the wrong monitor). `vdisplay.capture.coordinate_validation` **measures** the
+mapping instead of trusting it (numpy-only; `opencv` optional for higher-accuracy
+matching):
+
+- **`locate_cursor_in_frame(png, template=…)`** — single-frame detection: find
+  the cursor (or any element) on ONE static screenshot via masked normalized
+  cross-correlation (`match_template`). Use when vdisplay only has an image to
+  identify a position on — no pointer movement. Verified on a real 2560×1600
+  capture (exact hit, score 1.0).
+- **`locate_cursor(source, at_global, …)`** — move-and-diff detection robust to
+  live content (terminals/animations): park the cursor off-source, capture, move
+  it to the probe, capture twice, and take the pixelwise **minimum of two
+  difference frames** — only the consistently-present cursor survives; a
+  box-sum peak picks the compact bright blob over diffuse background churn.
+- **`which_monitor_has_cursor(at_global, sources, …)`** — after a move, report
+  which monitor's capture shows the cursor: the safety check that the pointer is
+  on the IDE's screen, not a neighbour, before typing.
+- **`validate_pointer_mapping(target_local, meta, source, …)`** — move to the
+  computed global and measure the capture-space error; feeds the monitor.
+- **`converge_pointer_to_local(target_local, …)`** — closed-loop adaptive
+  positioning: nudge by `gain`×observed-error (converted to units via an
+  empirical `probe_pointer_scale`) until within tolerance. Precision through
+  adaptation, independent of every absolute-mapping unknown.
+- **`CoordinateValidationMonitor`** — append-only JSONL + summary (success rate,
+  mean/max error, off-monitor count, per-source) so mapping drift or a coord
+  regression surfaces as a rising error rate, not a silent mis-click.
+
+Prefer the closed loop on multi-monitor / HiDPI where the absolute mapping is
+unreliable; the single-frame detector when you only have a still screenshot.
+
 ## Assessing which strategy fired / why one fails
 
 `probe_chat_click_target()` returns full diagnostics — the raw LLM text,
