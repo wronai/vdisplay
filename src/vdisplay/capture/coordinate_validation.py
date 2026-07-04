@@ -491,12 +491,15 @@ def _single_diff_peak(
     thr: int = 40,
     win: int = 12,
     region: tuple[int, int, int, int] | None = None,
+    with_strength: bool = False,
 ):
     """Cursor position in ``frame`` vs a cursor-free ``base`` (one diff, fast).
 
     ``region`` = (x0, y0, x1, y1) restricts the diff to a sub-rectangle (a
     quadrant) — cheaper and immune to churn outside it. Coords returned are in
-    full-frame space.
+    full-frame space. With ``with_strength`` returns (x, y, strength) where
+    strength is the peak box-sum mean intensity — used to rank the real cursor
+    against background-churn false hits ACROSS monitors.
     """
     import numpy as np
 
@@ -528,7 +531,50 @@ def _single_diff_peak(
     wts = sub[sy, sx]
     cx = ox + px_ + float((sx * wts).sum() / wts.sum())
     cy = oy + py + float((sy * wts).sum() / wts.sum())
+    if with_strength:
+        strength = float(box.max()) / (win * win)
+        return int(round(cx)), int(round(cy)), strength
     return int(round(cx)), int(round(cy))
+
+
+def locate_cursor_across_monitors(
+    sources: list[str],
+    at_global: tuple[int, int],
+    *,
+    move: MoveFn,
+    capture: CaptureFn,
+    park_global: tuple[int, int] = (32000, 32000),
+    settle: Callable[[], None] | None = None,
+) -> tuple[str, int, int, float] | None:
+    """Which monitor the cursor is REALLY on after moving to ``at_global``.
+
+    With multiple monitors, a naive per-monitor diff reports a "cursor" on every
+    screen (each has its own background churn). This moves once, diffs each
+    monitor against a parked baseline, and returns the SINGLE strongest cursor
+    signal — (source, x, y, strength) — so background hits on the other monitors
+    are out-ranked. None if nothing is detected anywhere.
+    """
+    def _settle() -> None:
+        if settle is not None:
+            settle()
+
+    move(*park_global)
+    _settle()
+    bases = {s: capture(s) for s in sources}
+    move(*at_global)
+    _settle()
+    best: tuple[str, int, int, float] | None = None
+    for s in sources:
+        frame = capture(s)
+        if not bases.get(s) or not frame:
+            continue
+        got = _single_diff_peak(bases[s], frame, with_strength=True)
+        if got is None:
+            continue
+        x, y, strength = got
+        if best is None or strength > best[3]:
+            best = (s, x, y, strength)
+    return best
 
 
 def find_cursor_by_quadrant(
