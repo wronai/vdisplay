@@ -19,6 +19,25 @@ logger = logging.getLogger(__name__)
 
 _MIN_CONFIDENCE = 0.35
 
+# Minimum vertical position (fraction of image height) a JetBrains chat target
+# may sit at. The old 0.55 default assumed a *bottom-docked* AI chat panel and
+# rejected right-docked panels (Qoder, AI Assistant docked right) whose input
+# sits around the vertical middle. 0.25 still rejects clearly-wrong top targets
+# (menu bar, editor tabs) but accepts side panels. Override per-layout with
+# VDISPLAY_JB_CHAT_MIN_Y_FRAC.
+_JB_CHAT_MIN_Y_FRAC_DEFAULT = 0.25
+
+
+def _jb_chat_min_y_frac() -> float:
+    raw = (os.environ.get("VDISPLAY_JB_CHAT_MIN_Y_FRAC") or "").strip()
+    if not raw:
+        return _JB_CHAT_MIN_Y_FRAC_DEFAULT
+    try:
+        value = float(raw)
+    except ValueError:
+        return _JB_CHAT_MIN_Y_FRAC_DEFAULT
+    return min(max(value, 0.0), 1.0)
+
 _REJECT_REASON_MARKERS = (
     "could not find",
     "cannot find",
@@ -69,8 +88,14 @@ def llm_decision_rejects_chat_target(
     if img_w > 0 and img_h > 0:
         if x >= int(img_w * 0.97) and y >= int(img_h * 0.97):
             return "LLM coords are bottom-right corner fallback, not chat composer"
-        if canon in {"jetbrains", "pycharm", "idea"} and y < int(img_h * 0.55):
-            return f"LLM y={y} too high on screen for JetBrains bottom chat panel"
+        if canon in {"jetbrains", "pycharm", "idea"}:
+            min_y = int(img_h * _jb_chat_min_y_frac())
+            if y < min_y:
+                return (
+                    f"LLM y={y} above the chat input zone "
+                    f"(min y={min_y} = {_jb_chat_min_y_frac():.2f}·height); "
+                    f"raise VDISPLAY_JB_CHAT_MIN_Y_FRAC only if this is a false accept"
+                )
     return None
 
 
@@ -227,7 +252,7 @@ def detect_chat_click_target(
 
     x = max(0, min(int(cc["x"]), img_w - 1))
     y = max(0, min(int(cc["y"]), img_h - 1))
-    if canon in {"jetbrains", "pycharm", "idea"} and y < int(img_h * 0.55):
+    if canon in {"jetbrains", "pycharm", "idea"} and y < int(img_h * _jb_chat_min_y_frac()):
         fallback = None
         if ocr_candidates:
             fallback = (ocr_candidates[0] or {}).get("click_center")
@@ -319,7 +344,28 @@ def probe_chat_click_target(
         elif conf < _MIN_CONFIDENCE:
             out["error"] = f"confidence {conf} below minimum {_MIN_CONFIDENCE}"
         else:
-            out["error"] = "detect_chat_click_target rejected parsed coords (jetbrains y guard?)"
+            # Coords cleared the guard and confidence floor — the second-pass
+            # query succeeded where the first returned None. Accept them as the
+            # target instead of erroring (previous behaviour dropped a valid
+            # right-docked chat target).
+            cc = parsed["click_center"]
+            x = max(0, min(int(cc["x"]), img_w - 1))
+            y = max(0, min(int(cc["y"]), img_h - 1))
+            out["ok"] = True
+            out["target"] = {
+                "click_center": {
+                    "x": x,
+                    "y": y,
+                    "note": f"vision LLM detect (2nd pass): {str(parsed.get('reason', ''))[:80]}",
+                },
+                "id": "llm:chat-input",
+                "role": "input",
+                "llm_decision": parsed,
+                "llm_used": True,
+                "selection_method": "llm_vision_detect_2nd_pass",
+                "model": cfg.model,
+            }
+            out.pop("error", None)
     elif llm.get("ok"):
         out["error"] = "LLM response missing click_center JSON"
     else:
