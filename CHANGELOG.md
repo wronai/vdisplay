@@ -92,6 +92,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.44] - 2026-07-04
+
+### Docs
+- Update README.md
+
 ## [0.1.43] - 2026-07-04
 
 ### Docs
