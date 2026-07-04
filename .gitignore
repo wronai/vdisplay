@@ -1,5 +1,4 @@
 # Byte-compiled / optimized / DLL files
-.env.example
 .code2llm_cache/
 .idea/pyLspTools.xml
 .idea/
