@@ -16043,5 +16043,21 @@ tickets:
   files:
   - tests/test_dsl_browser_open.py
   dedupe_key: test-optimization:tests.test_dsl_browser_open:test_browser_open_e2e_local
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_browser_session.test_agent_browser_open_list_stop'
+  description: 'Test `tests.test_agent_browser_session.test_agent_browser_open_list_stop`
+    took 1.25s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_browser_session.py
+  dedupe_key: test-optimization:tests.test_agent_browser_session:test_agent_browser_open_list_stop
 applied: []
 skipped: []

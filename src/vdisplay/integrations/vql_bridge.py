@@ -554,8 +554,12 @@ def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
     return layers[:limit]
 
 
-def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> None:
-    """Warn when photo-VQL sidecar would have no click targets (missing imgl or empty scene)."""
+def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> dict[str, Any] | None:
+    """Warn when photo-VQL sidecar would have no click targets (missing imgl or empty scene).
+
+    Returns a degradation descriptor for the result payload, or None when layers exist
+    (or imgl is disabled and empty layers are expected).
+    """
     import warnings
 
     from .imgl_bridge import imgl_available, imgl_enabled
@@ -563,27 +567,26 @@ def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> None:
     render = (program.get("metadata") or {}).get("render_intent") or {}
     layers = _layers_for_capture_validation(program=program, render=render)
     if layers:
-        return
+        return None
     if not imgl_enabled():
-        return
+        return None
     if not imgl_available():
-        warnings.warn(
+        message = (
             "VDISPLAY_IMGL=1 but imgl is not installed — VQL sidecar will have empty layers. "
-            "Install: pip install -e \".[observe]\" (requires system tesseract-ocr)",
-            stacklevel=2,
+            "Install: pip install -e \".[observe]\" (requires system tesseract-ocr)"
         )
-        return
+        warnings.warn(message, stacklevel=2)
+        return {"degraded": True, "reason": "imgl-not-installed", "detail": message}
     if _extract_imgl_scene(ctx.imgl) is None and not ctx.imgl.get("ok"):
-        warnings.warn(
+        message = (
             "imgl installed but scene analysis failed or was skipped — VQL layers empty. "
-            f"imgl error={ctx.imgl.get('error') or 'unknown'}",
-            stacklevel=2,
+            f"imgl error={ctx.imgl.get('error') or 'unknown'}"
         )
-        return
-    warnings.warn(
-        "imgl scene produced zero actuation layers — photo VQL mouse targets unavailable",
-        stacklevel=2,
-    )
+        warnings.warn(message, stacklevel=2)
+        return {"degraded": True, "reason": "imgl-scene-failed", "detail": message}
+    message = "imgl scene produced zero actuation layers — photo VQL mouse targets unavailable"
+    warnings.warn(message, stacklevel=2)
+    return {"degraded": True, "reason": "imgl-empty-scene", "detail": message}
 
 
 def _maybe_add_map_targets(
@@ -649,7 +652,10 @@ def write_vql_artifacts(
         reverse["capture_validation"] = validation
         ctx.vql["capture_validation"] = validation
     ctx.vql["reverse"] = reverse
-    _warn_empty_vql_layers(ctx, program)
+    degradation = _warn_empty_vql_layers(ctx, program)
+    if degradation:
+        program.setdefault("metadata", {})["degradation"] = degradation
+        ctx.vql["degradation"] = degradation
 
     written: dict[str, str] = {}
     image = Path(ctx.image_path).expanduser()

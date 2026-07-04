@@ -22,9 +22,14 @@ def test_warn_empty_vql_layers_when_imgl_missing(monkeypatch: pytest.MonkeyPatch
 
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
-        _warn_empty_vql_layers(ctx, program)
+        degradation = _warn_empty_vql_layers(ctx, program)
 
     assert any("imgl is not installed" in str(w.message) for w in caught)
+    assert degradation == {
+        "degraded": True,
+        "reason": "imgl-not-installed",
+        "detail": degradation["detail"],
+    }
 
 
 def test_write_vql_warns_on_empty_layers(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
@@ -51,3 +56,12 @@ def test_write_vql_warns_on_empty_layers(monkeypatch: pytest.MonkeyPatch, tmp_pa
         write_vql_artifacts(ctx, vql_path=tmp_path / "shot.png.vql.json")
 
     assert any("imgl is not installed" in str(w.message) for w in caught)
+
+    # Degradation is machine-readable for consumers, not just a warning.
+    import json
+
+    program = json.loads((tmp_path / "shot.png.vql.json").read_text())
+    degradation = program["metadata"]["degradation"]
+    assert degradation["degraded"] is True
+    assert degradation["reason"] == "imgl-not-installed"
+    assert ctx.vql["degradation"]["reason"] == "imgl-not-installed"
