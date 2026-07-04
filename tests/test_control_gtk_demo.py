@@ -182,11 +182,19 @@ def test_gtk_demo_find_increment_button(gtk_demo_window: str) -> None:
 @pytest.mark.skipif(not _atspi_available(), reason="AT-SPI unavailable")
 @pytest.mark.skipif(not _display_available(), reason="DISPLAY unavailable")
 def test_gtk_demo_list_by_window_title(gtk_demo_window: str) -> None:
-    payload = controls_list(
-        backend="atspi",
-        max_depth=8,
-        **_app_selector(window_title=gtk_demo_window),
-    )
+    # The AT-SPI snapshot can transiently return an empty tree right after the
+    # readiness probe (cache settling under full-suite load), so poll briefly
+    # before asserting — same spirit as _wait_for_gtk_demo.
+    deadline = time.monotonic() + 10.0
+    while True:
+        payload = controls_list(
+            backend="atspi",
+            max_depth=8,
+            **_app_selector(window_title=gtk_demo_window),
+        )
+        if payload.get("count") or time.monotonic() >= deadline:
+            break
+        time.sleep(POLL_INTERVAL_S)
     assert payload["ok"] is True
     assert payload["count"] > 0
     names = {node.get("name") for node in payload["nodes"].values()}

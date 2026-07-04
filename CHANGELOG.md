@@ -92,6 +92,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.37] - 2026-07-04
+
+### Docs
+- Update README.md
+
+### Test
+- Update tests/e2e/test_agent_screencast_live.py
+- Update tests/test_control_gtk_demo.py
+
+### Other
+- Update .gitignore
+- Update .planfile/config.yaml
+- Update .planfile/sprints/current.yaml
+- Update project/planfile-tickets.yaml
+- Update ui.vql.json
+
 ## [0.1.36] - 2026-06-17
 
 ### Docs

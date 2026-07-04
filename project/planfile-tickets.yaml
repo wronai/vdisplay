@@ -15915,5 +15915,133 @@ tickets:
   files:
   - pyproject.toml
   dedupe_key: test-optimization:general:startup-overhead
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_atspi.test_controls_list_cli_integration'
+  description: 'Test `tests.test_control_atspi.test_controls_list_cli_integration`
+    took 2.85s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_atspi.py
+  dedupe_key: test-optimization:tests.test_control_atspi:test_controls_list_cli_integration
+- signal: slow_test_warning
+  title: 'Address slow test: tests.contract.test_descriptors.test_detect_platform_profile_host_environment_matches_display_stack'
+  description: 'Test `tests.contract.test_descriptors.test_detect_platform_profile_host_environment_matches_display_stack`
+    took 2.13s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/contract/test_descriptors.py
+  dedupe_key: test-optimization:tests.contract.test_descriptors:test_detect_platform_profile_host_environment_matches_display_stack
+- signal: slow_test_warning
+  title: 'Address slow test: tests.contract.test_descriptors.test_detect_platform_profile_has_os_family'
+  description: 'Test `tests.contract.test_descriptors.test_detect_platform_profile_has_os_family`
+    took 1.38s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/contract/test_descriptors.py
+  dedupe_key: test-optimization:tests.contract.test_descriptors:test_detect_platform_profile_has_os_family
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_set_value_verify'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_set_value_verify`
+    took 12.20s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_set_value_verify
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_list_by_window_title'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_list_by_window_title`
+    took 7.17s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_list_by_window_title
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_gtk_demo.test_gtk_demo_click_verify_label'
+  description: 'Test `tests.test_control_gtk_demo.test_gtk_demo_click_verify_label`
+    took 7.00s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_gtk_demo.py
+  dedupe_key: test-optimization:tests.test_control_gtk_demo:test_gtk_demo_click_verify_label
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_control_atspi.test_atspi_snapshot_lists_nodes'
+  description: 'Test `tests.test_control_atspi.test_atspi_snapshot_lists_nodes` took
+    1.03s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_control_atspi.py
+  dedupe_key: test-optimization:tests.test_control_atspi:test_atspi_snapshot_lists_nodes
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_dsl_browser_open.test_browser_open_e2e_local'
+  description: 'Test `tests.test_dsl_browser_open.test_browser_open_e2e_local` took
+    2.07s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_dsl_browser_open.py
+  dedupe_key: test-optimization:tests.test_dsl_browser_open:test_browser_open_e2e_local
 applied: []
 skipped: []
