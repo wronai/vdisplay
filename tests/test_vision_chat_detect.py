@@ -114,3 +114,75 @@ def test_resolve_chat_target_from_screenshot_on_empty_layers(
     )
     assert out is not None
     assert out["id"] == "llm:chat-input"
+
+
+def test_right_docked_chat_midscreen_accepted() -> None:
+    # Qoder / AI Assistant docked right: input sits ~40% down, must NOT be rejected.
+    reason = vision_chat_detect.llm_decision_rejects_chat_target(
+        {"click_center": {"x": 1230, "y": 643}, "confidence": 0.7, "reason": "chat input"},
+        ide="jetbrains",
+        img_w=2560,
+        img_h=1600,
+    )
+    assert reason is None
+
+
+def test_top_of_screen_target_still_rejected() -> None:
+    # A target in the top ~10% (menu bar / tabs) is still untrustworthy.
+    reason = vision_chat_detect.llm_decision_rejects_chat_target(
+        {"click_center": {"x": 1230, "y": 120}, "confidence": 0.7, "reason": "chat input"},
+        ide="jetbrains",
+        img_w=2560,
+        img_h=1600,
+    )
+    assert reason is not None
+    assert "above the chat input zone" in reason
+
+
+def test_jb_chat_min_y_frac_env_override(monkeypatch) -> None:
+    # Raising the floor to 0.55 rejects the mid-screen right-docked target again.
+    monkeypatch.setenv("VDISPLAY_JB_CHAT_MIN_Y_FRAC", "0.55")
+    reason = vision_chat_detect.llm_decision_rejects_chat_target(
+        {"click_center": {"x": 1230, "y": 643}, "confidence": 0.7, "reason": "chat input"},
+        ide="jetbrains",
+        img_w=2560,
+        img_h=1600,
+    )
+    assert reason is not None
+    assert "above the chat input zone" in reason
+
+
+def test_non_jetbrains_ide_not_subject_to_y_floor() -> None:
+    reason = vision_chat_detect.llm_decision_rejects_chat_target(
+        {"click_center": {"x": 100, "y": 50}, "confidence": 0.7, "reason": "chat input"},
+        ide="vscode",
+        img_w=2560,
+        img_h=1600,
+    )
+    assert reason is None
+
+
+def test_resolve_second_pass_accepts_guard_passing_coords(monkeypatch) -> None:
+    """When detect_chat_click_target returns None but the fallback LLM query
+    yields guard-passing, confident coords, resolve must accept them."""
+    import vdisplay.control.vision_chat_detect as vcd
+
+    monkeypatch.setattr(vcd, "vision_chat_detect_enabled", lambda **k: True)
+    monkeypatch.setattr(vcd, "detect_chat_click_target", lambda *a, **k: None)
+    monkeypatch.setattr(vcd, "_image_size_png", lambda png: (2560, 1600))
+    monkeypatch.setattr(
+        vcd,
+        "query_vision_llm",
+        lambda *a, **k: {"ok": True, "text": '{"click_center": {"x": 1230, "y": 643}, "confidence": 0.7, "reason": "chat input"}', "model": "m"},
+    )
+
+    class _Cfg:
+        api_key = "k"
+        model = "m"
+        enabled = True
+
+    out = vcd.probe_chat_click_target(b"\x89PNG", ide="jetbrains", settings=_Cfg())
+    assert out.get("ok") is True
+    assert out["target"]["click_center"]["x"] == 1230
+    assert out["target"]["click_center"]["y"] == 643
+    assert out["target"]["selection_method"] == "llm_vision_detect_2nd_pass"
