@@ -242,6 +242,34 @@ def validate_vql_structure(
     }
 
 
+def _vision_decision_enabled() -> bool:
+    truthy = {"1", "true", "yes", "on"}
+    for var in ("KORU_VDISPLAY_LLM_VISION_DECISION", "VDISPLAY_VISION_CHAT_DETECT"):
+        if (os.environ.get(var) or "").strip().lower() in truthy:
+            return True
+    return False
+
+
+def _warn_is_competing_ide(warn: dict[str, Any] | None) -> bool:
+    """True when the window title names a *different* IDE (never override)."""
+    if not warn:
+        return False
+    return bool(warn.get("competing_detected"))
+
+
+def _warn_is_vision_deferrable(warn: dict[str, Any] | None) -> bool:
+    """Only a *present* title that fails to match (editor breadcrumb / right-docked
+    chat panel) may defer to vision. A missing title means the capture itself may
+    have failed — never defer that; a competing IDE is never deferrable either."""
+    if not warn:
+        return False
+    if warn.get("reason") == "missing_window_title":
+        return False
+    if _warn_is_competing_ide(warn):
+        return False
+    return bool(warn.get("window_titles"))
+
+
 def validate_vql_capture(
     *,
     layers: list[dict[str, Any]],
@@ -258,13 +286,30 @@ def validate_vql_capture(
     body_false_positive = bool(body and warn is not None)
     chat = chat_composer_candidates(layers)
 
+    # When vision LLM will locate the chat input from the screenshot, a title
+    # that merely fails to say "PyCharm" (editor breadcrumb, or a right-docked
+    # Qoder/AI chat panel) is not a capture-confirmation blocker — the vision
+    # layer has its own confidence + geometry guards. A title naming a
+    # *competing* IDE still blocks: typing into the wrong IDE must never happen.
+    vision_deferred = bool(
+        _vision_decision_enabled()
+        and _warn_is_vision_deferrable(warn)
+    )
+    blocking_warn = None if vision_deferred else warn
+
     reasons: list[str] = list(structure.get("reasons") or [])
     if expected and warn is not None:
         reasons.append(str(warn.get("reason") or "ide_window_mismatch"))
+    if vision_deferred:
+        reasons.append("ide_window_mismatch_deferred_to_vision")
     if body_false_positive:
         reasons.append("body_mentions_target_ide_not_window_title")
 
-    capture_confirmed = expected not in {"", "auto"} and warn is None and structure.get("structure_ok", False)
+    capture_confirmed = (
+        expected not in {"", "auto"}
+        and blocking_warn is None
+        and structure.get("structure_ok", False)
+    )
     ok_for_drive = capture_confirmed and not body_false_positive
 
     return {
@@ -273,6 +318,7 @@ def validate_vql_capture(
         "ok_for_drive": ok_for_drive,
         "window_titles": titles,
         "ide_window_warning": warn,
+        "vision_deferred_window_mismatch": vision_deferred,
         "body_ide_mentions": body,
         "body_false_positive": body_false_positive,
         "chat_composer_candidates": chat,
