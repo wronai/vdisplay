@@ -260,50 +260,72 @@ def _header_fields(fields: tuple[int, ...]) -> dict[str, int]:
     }
 
 
+PixelReader = Callable[[bytes, int], tuple[int, int, int]]
+
+
+def _pixel_reader(bpp: int, depth: int, little_endian: bool) -> tuple[PixelReader, int]:
+    """Pick a (read_pixel(row, offset) → (r, g, b), bytes_per_pixel) pair once,
+    so the per-pixel loop carries no format branching."""
+    if bpp == 32:
+        if little_endian:
+            def read(row: bytes, off: int) -> tuple[int, int, int]:
+                b, g, r, _a = row[off : off + 4]
+                return r, g, b
+        else:
+            def read(row: bytes, off: int) -> tuple[int, int, int]:
+                _a, r, g, b = row[off : off + 4]
+                return r, g, b
+        return read, 4
+    if bpp == 24:
+        if little_endian:
+            def read(row: bytes, off: int) -> tuple[int, int, int]:
+                b, g, r = row[off : off + 3]
+                return r, g, b
+        else:
+            def read(row: bytes, off: int) -> tuple[int, int, int]:
+                r, g, b = row[off : off + 3]
+                return r, g, b
+        return read, 3
+    if bpp == 16 and depth == 16:
+        fmt = "<H" if little_endian else ">H"
+
+        def read(row: bytes, off: int) -> tuple[int, int, int]:
+            value = struct.unpack_from(fmt, row, off)[0]
+            return (
+                ((value >> 10) & 0x1F) * 255 // 31,
+                ((value >> 5) & 0x1F) * 255 // 31,
+                (value & 0x1F) * 255 // 31,
+            )
+
+        return read, 2
+    if bpp == 8 and depth == 8:
+        def read(row: bytes, off: int) -> tuple[int, int, int]:
+            index = row[off]
+            return index, index, index
+
+        return read, 1
+    raise VDisplayError(f"Unsupported XWD pixel format: depth={depth}, bpp={bpp}")
+
+
 def _decode_pixels(header: dict[str, int], pixels: bytes) -> bytes:
     width = header["pixmap_width"]
     height = header["pixmap_height"]
-    bpp = header["bits_per_pixel"]
-    depth = header["pixmap_depth"]
     stride = header["bytes_per_line"]
-    little_endian = header["byte_order"] == LSB_FIRST
+    read_pixel, step = _pixel_reader(
+        header["bits_per_pixel"],
+        header["pixmap_depth"],
+        header["byte_order"] == LSB_FIRST,
+    )
 
     rgb = bytearray(width * height * 3)
     out = 0
-
     for y in range(height):
         row_start = y * stride
         row = pixels[row_start : row_start + stride]
         x_offset = 0
         for _x in range(width):
-            if bpp == 32:
-                if little_endian:
-                    b, g, r, _a = row[x_offset : x_offset + 4]
-                else:
-                    _a, r, g, b = row[x_offset : x_offset + 4]
-                x_offset += 4
-            elif bpp == 24:
-                if little_endian:
-                    b, g, r = row[x_offset : x_offset + 3]
-                else:
-                    r, g, b = row[x_offset : x_offset + 3]
-                x_offset += 3
-            elif bpp == 16 and depth == 16:
-                value = struct.unpack_from("<H" if little_endian else ">H", row, x_offset)[0]
-                r = ((value >> 10) & 0x1F) * 255 // 31
-                g = ((value >> 5) & 0x1F) * 255 // 31
-                b = (value & 0x1F) * 255 // 31
-                x_offset += 2
-            elif bpp == 8 and depth == 8:
-                index = row[x_offset]
-                r = g = b = index
-                x_offset += 1
-            else:
-                raise VDisplayError(
-                    f"Unsupported XWD pixel format: depth={depth}, bpp={bpp}"
-                )
-
-            rgb[out : out + 3] = bytes((r, g, b))
+            rgb[out : out + 3] = bytes(read_pixel(row, x_offset))
+            x_offset += step
             out += 3
 
     return bytes(rgb)
