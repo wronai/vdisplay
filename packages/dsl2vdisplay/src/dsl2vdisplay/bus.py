@@ -37,21 +37,13 @@ LEGACY_COMMAND_VERBS = frozenset({"VIRTUAL_STOP", "LAUNCH"})
 
 
 def _dispatch_legacy(cmd: dict[str, Any], *, line: str) -> DslResult:
-    from dsl2vdisplay.handlers import command as ch
-
+    # VIRTUAL_STOP / LAUNCH have no DSL handler (never implemented); validate the
+    # envelope then report them as unsupported over this path.
     verb = str(cmd.get("verb", "")).upper()
     errors = validate_command_dict(cmd)
     if errors:
         return DslResult(ok=False, command=line, action=verb.lower(), error="; ".join(errors))
-
-    handlers = {
-        "VIRTUAL_STOP": getattr(ch, "handle_virtual_stop", None),
-        "LAUNCH": getattr(ch, "handle_launch", None),
-    }
-    handler = handlers.get(verb)
-    if handler is None:
-        return DslResult(ok=False, command=line, action=verb.lower(), error=f"unknown command verb: {verb}")
-    return handler(cmd, line=line)
+    return DslResult(ok=False, command=line, action=verb.lower(), error=f"unknown command verb: {verb}")
 
 
 def dispatch(envelope: str | dict[str, Any] | bytes) -> DslResult:
@@ -87,50 +79,14 @@ def dispatch(envelope: str | dict[str, Any] | bytes) -> DslResult:
     if verb not in QUERY_VERBS and verb not in COMMAND_VERBS:
         return DslResult(ok=False, command=line, action=verb.lower(), error=f"unknown verb: {verb}")
 
-    try:
-        from vdisplay.application.commands import CommandRequest
-        from vdisplay.application.executor import execute
+    # vdisplay is a hard dependency of dsl2vdisplay, so the application layer is
+    # always importable — route straight through the executor (the single
+    # contract). No local re-implementation fallback.
+    from vdisplay.application.commands import CommandRequest
+    from vdisplay.application.executor import execute
 
-        request = CommandRequest.from_dsl(cmd, line=line)
-        return execute(request).to_dsl_result()
-    except ImportError:
-        return _dispatch_fallback(cmd, line=line)
-
-
-def _dispatch_fallback(cmd: dict[str, Any], *, line: str) -> DslResult:
-    """Fallback when vdisplay application layer is unavailable."""
-    verb = str(cmd.get("verb", "")).upper()
-    if verb in QUERY_VERBS:
-        from dsl2vdisplay.handlers import query as qh
-
-        handlers = {
-            "HEALTH": qh.handle_health,
-            "INFO": qh.handle_info,
-            "OUTPUTS": qh.handle_outputs,
-            "MONITORS": qh.handle_monitors,
-            "WINDOWS": qh.handle_windows,
-            "ALL": qh.handle_all,
-            "CAPABILITIES": qh.handle_capabilities,
-            "VALIDATE": qh.handle_validate,
-        }
-        handler = handlers.get(verb)
-        if handler is None:
-            return DslResult(ok=False, command=line, action=verb.lower(), error=f"unknown query verb: {verb}")
-        return handler(cmd, line=line)
-
-    from dsl2vdisplay.handlers import command as ch
-
-    handlers = {
-        "SCREENSHOT": ch.handle_screenshot,
-        "VIRTUAL_START": ch.handle_virtual_start,
-        "MIRROR": ch.handle_mirror,
-        "ADOPT": ch.handle_adopt,
-        "RELEASE": ch.handle_release,
-    }
-    handler = handlers.get(verb)
-    if handler is None:
-        return DslResult(ok=False, command=line, action=verb.lower(), error=f"unknown command verb: {verb}")
-    return handler(cmd, line=line)
+    request = CommandRequest.from_dsl(cmd, line=line)
+    return execute(request).to_dsl_result()
 
 
 def execute_dsl_line(line: str) -> DslResult:
