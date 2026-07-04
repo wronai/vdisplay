@@ -48,6 +48,7 @@ vdisplay windows --apps-only
 | [Wayland control](docs/guides/wayland-control.md) | [CLI index](docs/reference/cli.md) |
 | [GUI Map Pack](docs/guides/gui-map-pack.md) | [API / SDK](docs/reference/api.md) |
 | [Vision fallback](docs/guides/vision-fallback.md) | [DSL](docs/reference/dsl.md) · [REST](docs/reference/rest.md) · [MCP](docs/reference/mcp.md) |
+| [Chat-input targeting strategies](docs/chat-targeting-strategies.md) | |
 | [Agent broker](docs/guides/agent-broker.md) | |
 | [Browser](docs/guides/browser-control.md) · [Terminal](docs/guides/terminal-control.md) | |
 
