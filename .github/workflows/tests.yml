@@ -35,11 +35,18 @@ jobs:
       - name: Install system tools
         run: |
           sudo apt-get update
-          # xrandr: monitor discovery expects the binary even when headless
-          sudo apt-get install -y x11-xserver-utils
+          # xrandr + a virtual X server: monitor discovery resolves to the
+          # :0/:1 socket (resolve_host_display ignores Xvfb-style :99), so
+          # Xvfb must sit on :0 for the runner.
+          sudo apt-get install -y x11-xserver-utils xvfb
           if [ "${{ matrix.extras }}" = "integrations" ]; then
             sudo apt-get install -y tesseract-ocr
           fi
+
+      - name: Start virtual display on :0
+        run: |
+          Xvfb :0 -screen 0 1920x1080x24 &
+          echo "DISPLAY=:0" >> "$GITHUB_ENV"
 
       - name: Install package (dev)
         run: |
