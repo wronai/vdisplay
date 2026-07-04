@@ -322,3 +322,39 @@ def test_find_cursor_by_quadrant_falls_through_order():
     frame = png(cursor=(40, 40))  # TL quadrant; expected wrongly given as 'tr'
     got = find_cursor_by_quadrant(base, frame, expected_quadrant="tr")
     assert got is not None and got[2] == "tl"
+
+
+def test_detect_live_quadrants_flags_the_churning_one():
+    from vdisplay.capture.coordinate_validation import detect_live_quadrants
+
+    state = {"t": 0}
+
+    def capture(_src):
+        arr = np.full((300, 400), 20, dtype=np.uint8)
+        state["t"] += 1
+        arr[220:280, 20:180] = (80 + state["t"] * 40) % 255  # BL churn
+        b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+        return b.getvalue()
+
+    live = detect_live_quadrants("DP-1", capture=capture)
+    assert "bl" in live
+    assert "tr" not in live
+
+
+def test_calibration_skips_probes_in_live_quadrant():
+    from vdisplay.capture.coordinate_validation import calibrate_pointer_affine
+
+    class TermDesktop(FakeDesktop):
+        def capture(self, _src):
+            base = super().capture(_src)
+            arr = np.asarray(Image.open(io.BytesIO(base)).convert("L")).copy()
+            self._tick += 1
+            arr[220:280, 20:180] = (90 + self._tick * 30) % 255  # BL 'terminal'
+            b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+            return b.getvalue()
+
+    d = TermDesktop(offset=(50, 30), scale=1.0, size=(400, 300))
+    aff = calibrate_pointer_affine("DP-1", move=d.move, capture=d.capture,
+                                   probe_grid=(3, 3), global_bounds=(60, 40, 360, 280))
+    assert aff.ok
+    assert 0.7 <= aff.ax <= 1.3 and 0.7 <= aff.ay <= 1.3

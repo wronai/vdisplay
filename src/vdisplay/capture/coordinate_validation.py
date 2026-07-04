@@ -589,6 +589,60 @@ class PointerAffine:
         }
 
 
+def detect_live_quadrants(
+    source: str,
+    *,
+    capture: CaptureFn,
+    settle: Callable[[], None] | None = None,
+    change_frac: float = 0.002,
+    thr: int = 30,
+) -> set[str]:
+    """Quadrants whose content changes on its own (a terminal/animation).
+
+    Two captures with NO pointer move; any quadrant with a meaningful diff is
+    "live". Calibration then avoids placing probes there so churn can't poison
+    the cursor detection.
+    """
+    import numpy as np
+
+    if settle is not None:
+        settle()
+    f1 = capture(source)
+    if settle is not None:
+        settle()
+    f2 = capture(source)
+    if not f1 or not f2:
+        return set()
+    a, w, h = _png_to_gray(f1)
+    b, _, _ = _png_to_gray(f2)
+    if a.shape != b.shape:
+        return set()
+    d = (np.abs(a - b) >= thr)
+    live: set[str] = set()
+    for quad in _QUADRANT_ORDER:
+        x0, y0, x1, y1 = _quadrant_box_px(quad, w, h)
+        cell = d[y0:y1, x0:x1]
+        if cell.size and cell.mean() >= change_frac:
+            live.add(quad)
+    return live
+
+
+def _fit_affine_robust(gs: list[float], ls: list[float]) -> tuple[float, float]:
+    """Least-squares slope/intercept with one round of residual outlier drop."""
+    import numpy as np
+
+    g = np.array(gs, float)
+    l = np.array(ls, float)
+    a, b = np.polyfit(g, l, 1)
+    if len(g) >= 4:
+        resid = np.abs(l - (a * g + b))
+        med = float(np.median(resid)) or 1.0
+        keep = resid <= 3.0 * med
+        if keep.sum() >= 2 and keep.sum() < len(g):
+            a, b = np.polyfit(g[keep], l[keep], 1)
+    return float(a), float(b)
+
+
 def calibrate_pointer_affine(
     source: str,
     *,
@@ -597,6 +651,9 @@ def calibrate_pointer_affine(
     probes: list[tuple[int, int]] | None = None,
     park_global: tuple[int, int] = (32000, 32000),
     settle: Callable[[], None] | None = None,
+    avoid_live_quadrants: bool = True,
+    probe_grid: tuple[int, int] | None = None,
+    global_bounds: tuple[int, int, int, int] | None = None,
 ) -> PointerAffine:
     """Measure the ydotool→capture mapping ONCE with N+1 captures, then cache it.
 
@@ -606,45 +663,59 @@ def calibrate_pointer_affine(
     solve the axis-aligned affine local = a·global + b. All future clicks reuse
     the cached affine open-loop — zero captures per click.
     """
-    import numpy as np
-
     def _settle() -> None:
         if settle is not None:
             settle()
 
-    probes = probes or [(900, 700), (2600, 700), (900, 1900), (2600, 1900)]
+    # Which capture quadrants have live content? Avoid probing into them.
+    live = detect_live_quadrants(source, capture=capture, settle=settle) if avoid_live_quadrants else set()
+
+    # Build a probe grid spread across the global space; each probe is tagged
+    # with the capture quadrant it is expected to land in (orientation-preserving
+    # rough correspondence). Drop probes whose expected quadrant is live.
+    if probes is None:
+        gx0, gy0, gx1, gy1 = global_bounds or (700, 500, 2800, 2000)
+        nx, ny = probe_grid or (3, 3)
+        cxg, cyg = (gx0 + gx1) / 2, (gy0 + gy1) / 2
+        probes = []
+        for iy in range(ny):
+            for ix in range(nx):
+                px = int(gx0 + (gx1 - gx0) * (ix / max(1, nx - 1)))
+                py = int(gy0 + (gy1 - gy0) * (iy / max(1, ny - 1)))
+                probes.append((px, py))
+    else:
+        cxg = (min(p[0] for p in probes) + max(p[0] for p in probes)) / 2
+        cyg = (min(p[1] for p in probes) + max(p[1] for p in probes)) / 2
+
+    def _expected_quad(gx: int, gy: int, bw: int, bh: int) -> str:
+        return quadrant_of_local(0 if gx < cxg else bw, 0 if gy < cyg else bh, bw or 1, bh or 1)
+
     move(*park_global)
     _settle()
     base = capture(source)
-    bshape = _png_to_gray(base)[1:] if base else (0, 0)
-    bw, bh = bshape
-    # each probe sits in a known quadrant of the probe grid; detect the cursor
-    # ONLY in that quadrant of the capture so a live region elsewhere (terminal)
-    # can't hijack the peak, and the diff is ~4x cheaper.
-    xs = [p[0] for p in probes]
-    ys = [p[1] for p in probes]
-    midx = (min(xs) + max(xs)) / 2 if xs else 0
-    midy = (min(ys) + max(ys)) / 2 if ys else 0
-    gxs, lxs, gys, lys = [], [], [], []
+    bw, bh = (_png_to_gray(base)[1:] if base else (0, 0))
+
+    gxs, lxs, gys, lys, used = [], [], [], [], 0
     for gx, gy in probes:
+        quad = _expected_quad(gx, gy, bw, bh) if bw and bh else None
+        if quad is not None and quad in live:
+            continue  # skip probes that would land in a live (noisy) quadrant
         move(gx, gy)
         _settle()
         frame = capture(source)
-        quad = quadrant_of_local(
-            0 if gx < midx else bw, 0 if gy < midy else bh, bw or 1, bh or 1
-        )
-        region = _quadrant_box_px(quad, bw, bh) if bw and bh else None
+        region = _quadrant_box_px(quad, bw, bh) if (quad and bw and bh) else None
         found = _single_diff_peak(base, frame, region=region)
         if found is None:
             continue
         lx, ly = found
         gxs.append(gx); lxs.append(lx)
         gys.append(gy); lys.append(ly)
-    if len(gxs) < 2:
-        return PointerAffine(1.0, 0.0, 1.0, 0.0, source, ok=False, samples=len(gxs))
-    ax, bx = np.polyfit(np.array(gxs, float), np.array(lxs, float), 1)
-    ay, by = np.polyfit(np.array(gys, float), np.array(lys, float), 1)
-    return PointerAffine(float(ax), float(bx), float(ay), float(by), source, ok=True, samples=len(gxs))
+        used += 1
+    if used < 2:
+        return PointerAffine(1.0, 0.0, 1.0, 0.0, source, ok=False, samples=used)
+    ax, bx = _fit_affine_robust(gxs, lxs)
+    ay, by = _fit_affine_robust(gys, lys)
+    return PointerAffine(ax, bx, ay, by, source, ok=True, samples=used)
 
 
 class CoordinateValidationMonitor:
