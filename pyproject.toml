@@ -26,6 +26,7 @@ sampler = ["Pillow>=10.0"]
 dev = [
     "pytest>=8.0",
     "Pillow>=10.0",
+    "numpy>=1.24",
     "fastapi>=0.110",
     "httpx>=0.27",
     "goal>=2.1.0",
@@ -115,6 +116,7 @@ where = ["src"]
 dev = [
     "pytest>=8.0",
     "Pillow>=10.0",
+    "numpy>=1.24",
     "fastapi>=0.110",
     "httpx>=0.27",
     "uvicorn>=0.27",
