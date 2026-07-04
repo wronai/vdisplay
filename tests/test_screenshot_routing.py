@@ -59,6 +59,9 @@ def test_resolve_screenshot_routing_virtual_display_override(monkeypatch: pytest
 
 def test_local_screenshot_handler_uses_host_for_source(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DISPLAY", ":0")
+    # Pin monitor discovery: the source-monitor validation queries xrandr for
+    # real, and this machine/CI runner need not have a DP-1 output.
+    monkeypatch.setattr("vdisplay.discovery.list_monitors", lambda *_a, **_k: [{"name": "DP-1"}])
     calls: list[dict] = []
 
     def fake_local(**kwargs):
@@ -81,6 +84,9 @@ def test_local_screenshot_handler_uses_host_for_source(monkeypatch: pytest.Monke
 
 def test_agent_screenshot_handler_uses_host_for_source(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("DISPLAY", ":0")
+    # Pin monitor discovery: the source-monitor validation queries xrandr for
+    # real, and this machine/CI runner need not have a DP-1 output.
+    monkeypatch.setattr("vdisplay.discovery.list_monitors", lambda *_a, **_k: [{"name": "DP-1"}])
     calls: list[dict] = []
 
     class FakeClient:

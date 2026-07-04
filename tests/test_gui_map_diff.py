@@ -170,6 +170,12 @@ def test_map_refresh_updates_monitor_contract_with_force(tmp_path: Path, monkeyp
         lambda **_k: (png, {"source": "HDMI-1", "rotation": "normal", "width": 400, "height": 200}),
     )
     monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_png", lambda _png: [])
+    # _monitor_rotation queries xrandr for real; pin it so the assertion does
+    # not depend on this machine's outputs.
+    monkeypatch.setattr(
+        "vdisplay.discovery.list_monitors",
+        lambda *_a, **_k: [{"name": "HDMI-1", "rotation": "normal"}],
+    )
 
     payload = map_refresh(map_path=str(path), monitor="HDMI-1", force=True)
 

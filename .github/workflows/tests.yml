@@ -38,7 +38,8 @@ jobs:
           # xrandr + a virtual X server: monitor discovery resolves to the
           # :0/:1 socket (resolve_host_display ignores Xvfb-style :99), so
           # Xvfb must sit on :0 for the runner.
-          sudo apt-get install -y x11-xserver-utils xvfb
+          # x11-apps ships xwd, required by the virtual-display Xvfb backend
+          sudo apt-get install -y x11-xserver-utils xvfb x11-apps
           if [ "${{ matrix.extras }}" = "integrations" ]; then
             sudo apt-get install -y tesseract-ocr
           fi
