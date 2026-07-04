@@ -16107,5 +16107,21 @@ tickets:
   files:
   - tests/test_agent_tasks.py
   dedupe_key: test-optimization:tests.test_agent_tasks:test_virtual_session_registers_task
+- signal: slow_test_warning
+  title: 'Address slow test: tests.e2e.test_web_console_playwright.test_monitor_click_posts_pointer_api'
+  description: 'Test `tests.e2e.test_web_console_playwright.test_monitor_click_posts_pointer_api`
+    took 0.60s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/e2e/test_web_console_playwright.py
+  dedupe_key: test-optimization:tests.e2e.test_web_console_playwright:test_monitor_click_posts_pointer_api
 applied: []
 skipped: []

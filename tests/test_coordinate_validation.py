@@ -7,9 +7,10 @@ from __future__ import annotations
 
 import io
 
-import numpy as np
 import pytest
-from PIL import Image
+
+np = pytest.importorskip("numpy")
+Image = pytest.importorskip("PIL.Image")
 
 from vdisplay.capture.coordinate_validation import (
     CoordinateValidationMonitor,
