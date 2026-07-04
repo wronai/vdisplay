@@ -26,6 +26,7 @@ from typing import Any
 _BTN_LEFT = 272  # linux/input-event-codes BTN_LEFT
 _KEYSYM_RETURN = 0xFF0D
 _KEYSYM_BACKSPACE = 0xFF08
+_KEYSYM_CONTROL_L = 0xFFE3
 
 
 class RemoteDesktopError(RuntimeError):
@@ -229,8 +230,20 @@ class RemoteDesktopPortal:
         for ch in text:
             self.key(ord(ch))  # ASCII keysym == char code for basic Latin
 
-    def submit(self) -> None:
-        self.key(_KEYSYM_RETURN)
+    def key_combo(self, modifier_keysym: int, keysym: int) -> None:
+        """Press modifier, press+release key, release modifier (e.g. Ctrl+Enter)."""
+        self._rd.NotifyKeyboardKeysym(self._session, {}, self._i32(modifier_keysym), self._u32(1))
+        self._rd.NotifyKeyboardKeysym(self._session, {}, self._i32(keysym), self._u32(1))
+        self._rd.NotifyKeyboardKeysym(self._session, {}, self._i32(keysym), self._u32(0))
+        self._rd.NotifyKeyboardKeysym(self._session, {}, self._i32(modifier_keysym), self._u32(0))
+
+    def submit(self, *, mode: str = "enter") -> None:
+        """Send the chat message. mode='enter' (Return) or 'ctrl-enter' (Ctrl+Enter,
+        which is how Qoder and several IDE chats submit)."""
+        if mode == "ctrl-enter":
+            self.key_combo(_KEYSYM_CONTROL_L, _KEYSYM_RETURN)
+        else:
+            self.key(_KEYSYM_RETURN)
 
     def click_focuses_input(self, sx: int, sy: int, *, verify) -> bool:
         """Move+click at stream (sx, sy), then confirm the click actually
@@ -256,7 +269,7 @@ class RemoteDesktopPortal:
 
     def type_into_input_verified(
         self, sx: int, sy: int, text: str, *, verify, submit: bool = False,
-        clear_first: bool = False, clear_count: int = 200,
+        clear_first: bool = False, clear_count: int = 200, submit_mode: str = "enter",
     ) -> bool:
         """Focus-guarded type: only types (and optionally submits) if the click
         is confirmed to have focused the input. ``clear_first`` empties the input
@@ -272,7 +285,7 @@ class RemoteDesktopPortal:
         self.type_text(text)
         if submit:
             time.sleep(0.2)
-            self.submit()
+            self.submit(mode=submit_mode)
         return True
 
     def clear_input(self, count: int = 64) -> None:
