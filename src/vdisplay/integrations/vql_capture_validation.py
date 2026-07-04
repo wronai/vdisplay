@@ -258,16 +258,17 @@ def _warn_is_competing_ide(warn: dict[str, Any] | None) -> bool:
 
 
 def _warn_is_vision_deferrable(warn: dict[str, Any] | None) -> bool:
-    """Only a *present* title that fails to match (editor breadcrumb / right-docked
-    chat panel) may defer to vision. A missing title means the capture itself may
-    have failed — never defer that; a competing IDE is never deferrable either."""
+    """Defer any *non-competing* title mismatch to the vision layer.
+
+    Covers both a present-but-non-matching title (editor breadcrumb / a
+    right-docked Qoder/AI chat panel) and a missing title (unstable OCR on
+    multi-panel monitors). The vision chat detector runs its own confidence +
+    geometry guards, so a genuinely blank/failed capture still fails there. A
+    title that names a *competing* IDE is never deferrable — typing a JetBrains
+    prompt into Cursor must never happen."""
     if not warn:
         return False
-    if warn.get("reason") == "missing_window_title":
-        return False
-    if _warn_is_competing_ide(warn):
-        return False
-    return bool(warn.get("window_titles"))
+    return not _warn_is_competing_ide(warn)
 
 
 def validate_vql_capture(
@@ -305,10 +306,16 @@ def validate_vql_capture(
     if body_false_positive:
         reasons.append("body_mentions_target_ide_not_window_title")
 
+    # Vision reads the raw screenshot, not the VQL layer structure, so when the
+    # title mismatch is deferred to vision the VQL structure quality is not a
+    # gate either — a multi-panel monitor (editor + right-docked chat) commonly
+    # yields degraded layers. The vision detector's own confidence guard is the
+    # safety net for a genuinely blank/failed capture.
+    structure_ok = bool(structure.get("structure_ok", False)) or vision_deferred
     capture_confirmed = (
         expected not in {"", "auto"}
         and blocking_warn is None
-        and structure.get("structure_ok", False)
+        and structure_ok
     )
     ok_for_drive = capture_confirmed and not body_false_positive
 
