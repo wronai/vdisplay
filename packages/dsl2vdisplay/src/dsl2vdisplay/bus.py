@@ -6,33 +6,12 @@ from dsl2vdisplay.grammar import parse_line, split_command, to_text
 from dsl2vdisplay.result import DslResult
 from dsl2vdisplay.schema_registry import validate_command_dict
 
-QUERY_VERBS = frozenset({
-    "HEALTH",
-    "INFO",
-    "OUTPUTS",
-    "MONITORS",
-    "WINDOWS",
-    "ALL",
-    "CAPABILITIES",
-    "VALIDATE",
-    "CONTROLS_LIST",
-    "CONTROLS_FIND",
-    "DIAGNOSE_CONTROL",
-})
-COMMAND_VERBS = frozenset({
-    "SCREENSHOT",
-    "VIRTUAL_START",
-    "VIRTUAL_STOP",
-    "LAUNCH",
-    "MIRROR",
-    "ADOPT",
-    "RELEASE",
-    "CONTROL_CLICK",
-    "CONTROL_FOCUS",
-    "CONTROL_SET_VALUE",
-    "TERMINAL_OPEN",
-    "BROWSER_OPEN",
-})
+# Single source of truth: the verb catalogs live in vdisplay's command model
+# (CommandVerb is a StrEnum, so string membership works directly). Re-listing
+# them here previously drifted — bus.py's COMMAND_VERBS was missing
+# SCREENCAST_START/STOP. vdisplay is a hard dependency, so importing is safe.
+from vdisplay.application.commands.verbs import COMMAND_VERBS, QUERY_VERBS
+
 LEGACY_COMMAND_VERBS = frozenset({"VIRTUAL_STOP", "LAUNCH"})
 
 
