@@ -79,6 +79,13 @@ uinput = [
     # space we own, unlike ydotool's opaque one on multi-monitor HiDPI
     "evdev>=1.6",
 ]
+portal = [
+    # RemoteDesktop portal input (RemoteDesktopPortal) — the sanctioned Wayland
+    # path: mouse+keyboard in the ScreenCast stream's own coordinate space.
+    # Needs python-dbus + PyGObject + GStreamer (usually distro-provided).
+    "dbus-python>=1.3",
+    "PyGObject>=3.42",
+]
 agent = [
     "vdisplay-agent",
     "fastapi>=0.110",
