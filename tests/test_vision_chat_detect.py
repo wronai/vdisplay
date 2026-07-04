@@ -26,6 +26,9 @@ def test_vision_chat_detect_enabled_with_explicit_flag(monkeypatch: pytest.Monke
 def test_detect_chat_click_target_parses_json(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("VDISPLAY_VISION_CHAT_DETECT", "1")
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-test")
+    # exercises the full-image parse path; keep crop cascade + OCR anchor away
+    monkeypatch.setenv("VDISPLAY_VISION_CROP_PASSES", "off")
+    monkeypatch.setattr(vision_chat_detect, "ocr_anchor_chat_target", lambda png, **k: None)
 
     monkeypatch.setattr(
         vision_chat_detect,
@@ -219,3 +222,125 @@ def test_other_competing_ides_whole_word():
     assert _reason_names_competing_ide("the vscodium composer", canon="jetbrains") == "vscodium"
     # substring must not match inside another word
     assert _reason_names_competing_ide("transcoded image", canon="jetbrains") is None
+
+
+def _mk_png(w=200, h=100):
+    import io
+    from PIL import Image
+
+    img = Image.new("RGB", (w, h), (20, 20, 20))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def test_ocr_anchor_hits_placeholder(monkeypatch):
+    import vdisplay.control.vision_chat_detect as vcd
+    from vdisplay.control.models import ControlBounds
+    from vdisplay.control.vision_ocr import OcrTextBox
+
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_available", lambda: (True, "ok"))
+    monkeypatch.setattr(
+        "vdisplay.control.vision_ocr.ocr_png",
+        lambda png, **k: [
+            OcrTextBox(text="Plan", bounds=ControlBounds(x=1500, y=540, width=40, height=16), confidence=90.0),
+            OcrTextBox(text="autonomously...", bounds=ControlBounds(x=1600, y=540, width=120, height=16), confidence=88.0),
+        ],
+    )
+    t = vcd.ocr_anchor_chat_target(_mk_png(), ide="jetbrains")
+    assert t is not None
+    assert t["selection_method"] == "ocr_anchor_chat_placeholder"
+    assert t["click_center"]["x"] == 1660  # bbox center of the placeholder word
+    assert t["llm_decision"]["confidence"] >= 0.9
+
+
+def test_crop_cascade_order_and_offset(monkeypatch):
+    import vdisplay.control.vision_chat_detect as vcd
+
+    monkeypatch.setenv("VDISPLAY_VISION_CHAT_DETECT", "1")
+    monkeypatch.setattr(vcd, "vision_chat_detect_enabled", lambda **k: True)
+    monkeypatch.setattr(vcd, "ocr_anchor_chat_target", lambda png, **k: None)
+
+    png = _mk_png(400, 200)
+    calls = []
+
+    def fake_llm(img, prompt, settings=None):
+        calls.append(vcd._image_size_png(img))
+        # succeed only on the 2nd crop pass (q_tr: 200x100)
+        if len(calls) == 2:
+            return {"ok": True, "text": '{"click_center": {"x": 10, "y": 60}, "confidence": 0.9, "reason": "chat input"}', "model": "m"}
+        return {"ok": True, "text": '{"click_center": {"x": 1, "y": 1}, "confidence": 0.1, "reason": "unsure"}', "model": "m"}
+
+    monkeypatch.setattr(vcd, "query_vision_llm", fake_llm)
+    hit = vcd.detect_chat_click_target(png, ide="jetbrains", source="DP-1")
+    assert hit is not None
+    # q_tr crop of 400x200 starts at (200, 0) → offset added back
+    assert hit["click_center"]["x"] == 210
+    assert hit["click_center"]["y"] == 60
+    assert hit["selection_method"] == "llm_vision_detect_q_tr"
+    assert hit["crop_offset"]["pass"] == "q_tr"
+    # early exit: right_half missed (low conf), q_tr hit, no further calls
+    assert len(calls) == 2
+
+
+def test_crop_cascade_disabled_via_env(monkeypatch):
+    import vdisplay.control.vision_chat_detect as vcd
+
+    monkeypatch.setenv("VDISPLAY_VISION_CROP_PASSES", "off")
+    assert vcd._crop_pass_names() == []
+
+
+def test_crop_region_offsets():
+    import vdisplay.control.vision_chat_detect as vcd
+
+    png = _mk_png(400, 200)
+    for name, (dx, dy, w, h) in {
+        "right_half": (200, 0, 200, 200),
+        "q_tr": (200, 0, 200, 100),
+        "q_br": (200, 100, 200, 100),
+        "q_bl": (0, 100, 200, 100),
+        "q_tl": (0, 0, 200, 100),
+    }.items():
+        crop_png, gx, gy = vcd._crop_region(png, name)
+        assert (gx, gy) == (dx, dy), name
+        assert vcd._image_size_png(crop_png) == (w, h), name
+
+
+def test_ocr_anchor_prefers_placeholder_over_panel_title(monkeypatch):
+    """'Qoder' also names the panel title bar (top strip); the distinctive
+    placeholder token must win regardless of OCR reading order."""
+    import vdisplay.control.vision_chat_detect as vcd
+    from vdisplay.control.models import ControlBounds
+    from vdisplay.control.vision_ocr import OcrTextBox
+
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_available", lambda: (True, "ok"))
+    monkeypatch.setattr(vcd, "_image_size_png", lambda png: (2048, 1280))
+    monkeypatch.setattr(
+        "vdisplay.control.vision_ocr.ocr_png",
+        lambda png, **k: [
+            # panel title first in reading order (top strip)
+            OcrTextBox(text="Qoder", bounds=ControlBounds(x=1430, y=72, width=60, height=16), confidence=95.0),
+            OcrTextBox(text="autonomously...", bounds=ControlBounds(x=1570, y=698, width=120, height=16), confidence=88.0),
+        ],
+    )
+    t = vcd.ocr_anchor_chat_target(b"png", ide="jetbrains")
+    assert t is not None
+    assert "autonomously" in t["ocr_text"]
+    assert t["click_center"]["y"] == 706
+
+
+def test_ocr_anchor_brand_token_skipped_in_top_strip(monkeypatch):
+    import vdisplay.control.vision_chat_detect as vcd
+    from vdisplay.control.models import ControlBounds
+    from vdisplay.control.vision_ocr import OcrTextBox
+
+    monkeypatch.setattr("vdisplay.control.vision_ocr.ocr_available", lambda: (True, "ok"))
+    monkeypatch.setattr(vcd, "_image_size_png", lambda png: (2048, 1280))
+    monkeypatch.setattr(
+        "vdisplay.control.vision_ocr.ocr_png",
+        lambda png, **k: [
+            OcrTextBox(text="Qoder", bounds=ControlBounds(x=1430, y=72, width=60, height=16), confidence=95.0),
+        ],
+    )
+    # only a title-bar brand hit → no anchor (better fall through to crops/LLM)
+    assert vcd.ocr_anchor_chat_target(b"png", ide="jetbrains") is None
