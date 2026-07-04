@@ -452,6 +452,201 @@ def converge_pointer_to_local(
     return ConvergenceResult(False, len(trace), best_local, best_err, (gx, gy), trace)
 
 
+# Quadrants of a frame, clockwise from top-right (chat panels dock right), as
+# fractional boxes (x0, y0, x1, y1). Analysing ONE quadrant is ~4x cheaper than
+# the whole frame AND isolates cursor detection from churn (a live terminal) in
+# a DIFFERENT quadrant — the single biggest robustness+speed win.
+_QUADRANTS: dict[str, tuple[float, float, float, float]] = {
+    "tr": (0.5, 0.0, 1.0, 0.5),
+    "br": (0.5, 0.5, 1.0, 1.0),
+    "bl": (0.0, 0.5, 0.5, 1.0),
+    "tl": (0.0, 0.0, 0.5, 0.5),
+}
+# Order to try, most-probable first: right-docked chat panels live on the right.
+_QUADRANT_ORDER = ("tr", "br", "bl", "tl")
+
+
+def quadrant_of_local(x: int, y: int, w: int, h: int) -> str:
+    """Which quadrant capture pixel (x, y) falls in."""
+    right = x >= w * 0.5
+    bottom = y >= h * 0.5
+    if right and not bottom:
+        return "tr"
+    if right and bottom:
+        return "br"
+    if not right and bottom:
+        return "bl"
+    return "tl"
+
+
+def _quadrant_box_px(quadrant: str, w: int, h: int) -> tuple[int, int, int, int]:
+    fx0, fy0, fx1, fy1 = _QUADRANTS[quadrant]
+    return int(w * fx0), int(h * fy0), int(w * fx1), int(h * fy1)
+
+
+def _single_diff_peak(
+    base_png: bytes,
+    frame_png: bytes,
+    *,
+    thr: int = 40,
+    win: int = 12,
+    region: tuple[int, int, int, int] | None = None,
+):
+    """Cursor position in ``frame`` vs a cursor-free ``base`` (one diff, fast).
+
+    ``region`` = (x0, y0, x1, y1) restricts the diff to a sub-rectangle (a
+    quadrant) — cheaper and immune to churn outside it. Coords returned are in
+    full-frame space.
+    """
+    import numpy as np
+
+    base, w, h = _png_to_gray(base_png)
+    frame, _, _ = _png_to_gray(frame_png)
+    if base.shape != frame.shape:
+        return None
+    ox, oy = 0, 0
+    if region is not None:
+        x0, y0, x1, y1 = region
+        ox, oy = max(0, x0), max(0, y0)
+        base = base[oy:y1, ox:x1]
+        frame = frame[oy:y1, ox:x1]
+        if base.size == 0:
+            return None
+    d = np.abs(frame - base).astype(np.float64)
+    d[d < thr] = 0.0
+    if not d.any():
+        return None
+    integ = np.pad(d.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
+    box = integ[win:, win:] - integ[:-win, win:] - integ[win:, :-win] + integ[:-win, :-win]
+    if box.size == 0:
+        return None
+    py, px_ = np.unravel_index(int(np.argmax(box)), box.shape)
+    sub = d[py:py + win, px_:px_ + win]
+    sy, sx = np.nonzero(sub)
+    if sy.size == 0:
+        return None
+    wts = sub[sy, sx]
+    cx = ox + px_ + float((sx * wts).sum() / wts.sum())
+    cy = oy + py + float((sy * wts).sum() / wts.sum())
+    return int(round(cx)), int(round(cy))
+
+
+def find_cursor_by_quadrant(
+    base_png: bytes,
+    frame_png: bytes,
+    *,
+    expected_quadrant: str | None = None,
+    thr: int = 40,
+) -> tuple[int, int, str] | None:
+    """Locate the cursor one quadrant at a time, most-probable first.
+
+    Implements the "analyse a single quarter, follow the cursor" strategy:
+    never diff the whole frame at once. Try ``expected_quadrant`` first (where
+    the cursor was just commanded), then the rest in dock-order; return the
+    first quadrant with a clean peak. ~4x cheaper per quadrant, and a live
+    region in another quadrant is simply never looked at. Returns
+    (x, y, quadrant) in full-frame coords.
+    """
+    _, w, h = _png_to_gray(frame_png)
+    order: list[str] = []
+    if expected_quadrant in _QUADRANTS:
+        order.append(expected_quadrant)
+    order.extend(q for q in _QUADRANT_ORDER if q not in order)
+    for quad in order:
+        region = _quadrant_box_px(quad, w, h)
+        found = _single_diff_peak(base_png, frame_png, thr=thr, region=region)
+        if found is not None:
+            return found[0], found[1], quad
+    return None
+
+
+@dataclass
+class PointerAffine:
+    """Measured axis-aligned mapping capture-pixel → ydotool-global for a source.
+
+    global = (local - bx)/ax  is the inverse used to aim; stored forward as
+    local = ax*global + bx so it's easy to validate.
+    """
+
+    ax: float
+    bx: float
+    ay: float
+    by: float
+    source: str
+    ok: bool
+    samples: int = 0
+
+    def global_for_local(self, lx: float, ly: float) -> tuple[int, int]:
+        gx = (lx - self.bx) / (self.ax or 1.0)
+        gy = (ly - self.by) / (self.ay or 1.0)
+        return int(round(gx)), int(round(gy))
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "ax": round(self.ax, 5), "bx": round(self.bx, 2),
+            "ay": round(self.ay, 5), "by": round(self.by, 2),
+            "source": self.source, "ok": self.ok, "samples": self.samples,
+        }
+
+
+def calibrate_pointer_affine(
+    source: str,
+    *,
+    move: MoveFn,
+    capture: CaptureFn,
+    probes: list[tuple[int, int]] | None = None,
+    park_global: tuple[int, int] = (32000, 32000),
+    settle: Callable[[], None] | None = None,
+) -> PointerAffine:
+    """Measure the ydotool→capture mapping ONCE with N+1 captures, then cache it.
+
+    Fast alternative to per-click closed-loop: park the cursor off-source for a
+    clean base (1 capture), move to each probe global and diff against the base
+    (1 capture each) to observe the cursor's capture pixel, then least-squares
+    solve the axis-aligned affine local = a·global + b. All future clicks reuse
+    the cached affine open-loop — zero captures per click.
+    """
+    import numpy as np
+
+    def _settle() -> None:
+        if settle is not None:
+            settle()
+
+    probes = probes or [(900, 700), (2600, 700), (900, 1900), (2600, 1900)]
+    move(*park_global)
+    _settle()
+    base = capture(source)
+    bshape = _png_to_gray(base)[1:] if base else (0, 0)
+    bw, bh = bshape
+    # each probe sits in a known quadrant of the probe grid; detect the cursor
+    # ONLY in that quadrant of the capture so a live region elsewhere (terminal)
+    # can't hijack the peak, and the diff is ~4x cheaper.
+    xs = [p[0] for p in probes]
+    ys = [p[1] for p in probes]
+    midx = (min(xs) + max(xs)) / 2 if xs else 0
+    midy = (min(ys) + max(ys)) / 2 if ys else 0
+    gxs, lxs, gys, lys = [], [], [], []
+    for gx, gy in probes:
+        move(gx, gy)
+        _settle()
+        frame = capture(source)
+        quad = quadrant_of_local(
+            0 if gx < midx else bw, 0 if gy < midy else bh, bw or 1, bh or 1
+        )
+        region = _quadrant_box_px(quad, bw, bh) if bw and bh else None
+        found = _single_diff_peak(base, frame, region=region)
+        if found is None:
+            continue
+        lx, ly = found
+        gxs.append(gx); lxs.append(lx)
+        gys.append(gy); lys.append(ly)
+    if len(gxs) < 2:
+        return PointerAffine(1.0, 0.0, 1.0, 0.0, source, ok=False, samples=len(gxs))
+    ax, bx = np.polyfit(np.array(gxs, float), np.array(lxs, float), 1)
+    ay, by = np.polyfit(np.array(gys, float), np.array(lys, float), 1)
+    return PointerAffine(float(ax), float(bx), float(ay), float(by), source, ok=True, samples=len(gxs))
+
+
 class CoordinateValidationMonitor:
     """Append-only record + summary of mapping validations (the monitoring layer).
 

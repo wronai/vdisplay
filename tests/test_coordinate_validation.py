@@ -204,3 +204,121 @@ def test_single_frame_none_when_absent():
 
     blank = _frame_with_cursor(120, 100, -999, -999)  # no cursor drawn on-frame
     assert locate_cursor_in_frame(blank, "DP-1", threshold=0.6) is None
+
+
+def test_calibrate_pointer_affine_recovers_mapping():
+    from vdisplay.capture.coordinate_validation import calibrate_pointer_affine
+
+    # desktop: local = (global - offset)/scale ; so global = scale*local + offset
+    # forward affine local = a*global + b with a=1/scale, b=-offset/scale
+    d = FakeDesktop(offset=(120, 60), scale=2.0, size=(400, 300))
+    aff = calibrate_pointer_affine("DP-1", move=d.move, capture=d.capture,
+                                   probes=[(300, 200), (600, 200), (300, 500), (600, 500)])
+    assert aff.ok and aff.samples >= 2
+    # invert a global back to local and confirm round-trip
+    gx, gy = aff.global_for_local(150, 100)  # want cursor at capture (150,100)
+    # applying the desktop: observed local = (g-offset)/scale
+    obs_x = (gx - 120) / 2.0
+    obs_y = (gy - 60) / 2.0
+    assert abs(obs_x - 150) <= 8 and abs(obs_y - 100) <= 8
+
+
+def test_calibrate_fails_gracefully_when_cursor_never_seen():
+    from vdisplay.capture.coordinate_validation import calibrate_pointer_affine
+
+    d = FakeDesktop(offset=(9000, 9000), scale=1.0, size=(400, 300))  # probes land off-capture
+    aff = calibrate_pointer_affine("DP-1", move=d.move, capture=d.capture,
+                                   probes=[(10, 10), (20, 20)])
+    assert not aff.ok
+
+
+def test_quadrant_of_local():
+    from vdisplay.capture.coordinate_validation import quadrant_of_local
+    assert quadrant_of_local(300, 50, 400, 300) == "tr"
+    assert quadrant_of_local(300, 250, 400, 300) == "br"
+    assert quadrant_of_local(50, 250, 400, 300) == "bl"
+    assert quadrant_of_local(50, 50, 400, 300) == "tl"
+
+
+def test_single_diff_peak_region_isolates_noise():
+    from vdisplay.capture.coordinate_validation import _single_diff_peak, _quadrant_box_px
+
+    # base: clean. frame: cursor in TR quadrant + a big noisy band in the BL.
+    def png(cursor=None, noise=False):
+        arr = np.full((300, 400), 20, dtype=np.uint8)
+        if noise:
+            arr[200:260, 20:180] = 200  # churn in BL quadrant
+        if cursor:
+            cx, cy = cursor
+            arr[cy:cy + 12, cx:cx + 10] = 240
+        buf = io.BytesIO(); Image.fromarray(arr, "L").save(buf, format="PNG")
+        return buf.getvalue()
+
+    base = png()
+    frame = png(cursor=(300, 60), noise=True)
+    # full-frame diff might be pulled toward the large noise band; the TR
+    # quadrant region isolates the cursor cleanly
+    tr = _quadrant_box_px("tr", 400, 300)
+    got = _single_diff_peak(base, frame, region=tr)
+    assert got is not None
+    assert abs(got[0] - 305) <= 8 and abs(got[1] - 66) <= 8
+
+
+def test_calibrate_isolates_terminal_noise_via_quadrants():
+    from vdisplay.capture.coordinate_validation import calibrate_pointer_affine
+
+    class NoisyDesktop(FakeDesktop):
+        def capture(self, _src):
+            # inject a constant-location bright band (a 'terminal') in the BL
+            # quadrant that a naive full-frame diff would lock onto
+            import numpy as _np
+            base = super().capture(_src)
+            arr = _np.asarray(Image.open(io.BytesIO(base)).convert("L")).copy()
+            self._tick += 1
+            arr[220:280, 20:180] = (100 + self._tick * 20) % 255
+            b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+            return b.getvalue()
+
+    d = NoisyDesktop(offset=(100, 50), scale=1.0, size=(400, 300))
+    aff = calibrate_pointer_affine("DP-1", move=d.move, capture=d.capture,
+                                   probes=[(150, 100), (350, 100), (150, 250), (350, 250)])
+    assert aff.ok
+    # slopes must be ~1.0 (scale 1), NOT collapsed to 0 by the noise band
+    assert 0.7 <= aff.ax <= 1.3
+    assert 0.7 <= aff.ay <= 1.3
+
+
+def test_find_cursor_by_quadrant_expected_first():
+    from vdisplay.capture.coordinate_validation import find_cursor_by_quadrant
+
+    def png(cursor=None):
+        arr = np.full((300, 400), 20, dtype=np.uint8)
+        if cursor:
+            cx, cy = cursor
+            arr[cy:cy + 12, cx:cx + 10] = 240
+        b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+        return b.getvalue()
+
+    base = png()
+    frame = png(cursor=(300, 250))  # BR quadrant
+    got = find_cursor_by_quadrant(base, frame, expected_quadrant="br")
+    assert got is not None
+    assert got[2] == "br"
+    assert abs(got[0] - 305) <= 8 and abs(got[1] - 256) <= 8
+
+
+def test_find_cursor_by_quadrant_falls_through_order():
+    from vdisplay.capture.coordinate_validation import find_cursor_by_quadrant
+
+    def png(cursor=None):
+        arr = np.full((300, 400), 20, dtype=np.uint8)
+        if cursor:
+            cx, cy = cursor
+            arr[cy:cy + 12, cx:cx + 10] = 240
+        b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+        return b.getvalue()
+
+    base = png()
+    frame = png(cursor=(40, 40))  # TL quadrant; expected wrongly given as 'tr'
+    got = find_cursor_by_quadrant(base, frame, expected_quadrant="tr")
+    assert got is not None and got[2] == "tl"
