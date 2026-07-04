@@ -43,6 +43,12 @@ def register(sub: argparse._SubParsersAction) -> None:
 
     show_parser = session_sub.add_parser("show", help="Show session README or JSON")
     show_parser.add_argument(
+        "session_slug",
+        nargs="?",
+        metavar="SESSION_ID",
+        help="Session folder name under --root (alternative to --dir)",
+    )
+    show_parser.add_argument(
         "--dir",
         dest="session_dir",
         help="Session directory (default: latest under --root)",
@@ -62,10 +68,20 @@ def register(sub: argparse._SubParsersAction) -> None:
 
     export_parser = session_sub.add_parser("export", help="Export session directory as zip")
     export_parser.add_argument(
+        "session_slug",
+        nargs="?",
+        metavar="SESSION_ID",
+        help="Session folder name under --root (alternative to --dir)",
+    )
+    export_parser.add_argument(
         "--dir",
         dest="session_dir",
-        required=True,
         help="Session directory to export",
+    )
+    export_parser.add_argument(
+        "--root",
+        default=".vdisplay",
+        help="Search root when --dir is omitted",
     )
     export_parser.add_argument(
         "--output",
@@ -78,6 +94,12 @@ def register(sub: argparse._SubParsersAction) -> None:
     reprocess_parser = session_sub.add_parser(
         "reprocess",
         help="Re-extract diagnostics from stored step results and refresh projections",
+    )
+    reprocess_parser.add_argument(
+        "session_slug",
+        nargs="?",
+        metavar="SESSION_ID",
+        help="Session folder name under --root (alternative to --dir)",
     )
     reprocess_parser.add_argument(
         "--dir",
@@ -159,6 +181,16 @@ def _resolve_session_dir(args: argparse.Namespace) -> Path:
             raise SystemExit(f"error: not a session directory: {path}")
         return path
 
+    slug = getattr(args, "session_slug", None)
+    if slug:
+        root = Path(getattr(args, "root", ".vdisplay")).expanduser()
+        if not root.is_absolute():
+            root = Path.cwd() / root
+        path = root / slug
+        if not (path / "session.json").is_file():
+            raise SystemExit(f"error: no session '{slug}' under {root}")
+        return path
+
     explicit = os.environ.get("VDISPLAY_SESSION_DIR", "").strip()
     if explicit:
         path = Path(explicit).expanduser()
@@ -236,12 +268,10 @@ def handle_show(args: argparse.Namespace) -> int:
 def handle_export(args: argparse.Namespace) -> int:
     from ..application.session_recorder import export_session_zip
 
-    session_dir = Path(args.session_dir).expanduser()
-    if not session_dir.is_absolute():
-        session_dir = Path.cwd() / session_dir
-    if not (session_dir / "session.json").is_file():
-        print(f"error: not a session directory: {session_dir}", file=sys.stderr)
+    if not getattr(args, "session_dir", None) and not getattr(args, "session_slug", None):
+        print("error: pass SESSION_ID or --dir", file=sys.stderr)
         return 1
+    session_dir = _resolve_session_dir(args)
     output = export_session_zip(session_dir, Path(args.output))
     print_json({"ok": True, "session_dir": str(session_dir), "zip": str(output.resolve())})
     return 0

@@ -43,6 +43,9 @@ def register_routes(
             },
         )
 
+    # Conventional k8s/uptime-checker spelling.
+    app.get("/healthz", include_in_schema=False)(health)
+
     @app.get("/version")
     async def version(authorization: str | None = Header(default=None)) -> dict[str, Any]:
         check_auth(authorization)
