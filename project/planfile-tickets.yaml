@@ -16091,5 +16091,21 @@ tickets:
   files:
   - tests/test_linux_xvfb_integration.py
   dedupe_key: test-optimization:tests.test_linux_xvfb_integration:test_virtual_display_screenshot
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_agent_tasks.test_virtual_session_registers_task'
+  description: 'Test `tests.test_agent_tasks.test_virtual_session_registers_task`
+    took 0.51s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_agent_tasks.py
+  dedupe_key: test-optimization:tests.test_agent_tasks:test_virtual_session_registers_task
 applied: []
 skipped: []
