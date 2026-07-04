@@ -428,3 +428,50 @@ def test_locate_cursor_across_monitors_ranks_real_cursor():
                                          move=move, capture=capture, park_global=(0, 0))
     assert best is not None
     assert best[0] == "DP-1"
+
+
+def test_reject_stuck_observations_drops_static_feature():
+    """Real hardware data: 4 distinct ABS commands stuck to the same pixel
+    (2352,74) — a static corner UI feature, not the cursor. Must be dropped."""
+    from vdisplay.capture.coordinate_validation import _reject_stuck_observations
+
+    probes = [(500, 900), (1500, 900), (2500, 900), (3500, 900),
+              (2500, 1700), (3500, 1700)]
+    obs = [(316, 166), (941, 166), (2352, 74), (2352, 74),
+           (2352, 74), (2352, 74)]
+    keep = _reject_stuck_observations(probes, obs)
+    assert set(keep) == {0, 1}  # only the two distinct-pixel samples survive
+
+
+def test_calibration_recovers_clean_slope_from_real_data(monkeypatch):
+    """The 16 live ABS->DP-1 samples (4 of them the stuck static feature) must
+    calibrate to the true ~0.625 compositor scale once stuck points are dropped."""
+    import numpy as np
+    from vdisplay.capture import coordinate_validation as cv
+
+    samples = {
+        (500, 900): (316, 166), (500, 1700): (316, 666), (500, 2500): (311, 1144), (500, 3100): (311, 1530),
+        (1500, 900): (941, 166), (1500, 1700): (941, 666), (1500, 2500): (936, 1144), (1500, 3100): (941, 1540),
+        (2500, 900): (2352, 74), (2500, 1700): (2352, 74), (2500, 2500): (1561, 1144), (2500, 3100): (1561, 1530),
+        (3500, 900): (2352, 74), (3500, 1700): (2352, 74), (3500, 2500): (2186, 1144), (3500, 3100): (2186, 1530),
+    }
+    probe_list = list(samples.keys())
+    obs_list = [samples[p] for p in probe_list]
+    keep = cv._reject_stuck_observations(probe_list, obs_list)
+    gxs = [probe_list[i][0] for i in keep]; lxs = [obs_list[i][0] for i in keep]
+    gys = [probe_list[i][1] for i in keep]; lys = [obs_list[i][1] for i in keep]
+    ax, bx = cv._fit_affine_robust(gxs, lxs)
+    ay, by = cv._fit_affine_robust(gys, lys)
+    assert 0.60 <= ax <= 0.65, ax
+    assert 0.60 <= ay <= 0.65, ay
+    # the 4 stuck points are gone
+    assert len(keep) == 12
+
+
+def test_uinput_abs_input_import_and_availability():
+    from vdisplay.input.linux_uinput_abs import LinuxUinputAbsInput
+
+    ok, reason = LinuxUinputAbsInput.available()
+    assert isinstance(ok, bool) and isinstance(reason, str)
+    dev = LinuxUinputAbsInput(abs_max_x=8416, abs_max_y=7680)
+    assert dev._abs_max_x == 8416 and dev._abs_max_y == 7680

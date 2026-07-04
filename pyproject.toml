@@ -74,6 +74,11 @@ terminal = [
     "pexpect>=4.9",
     "wcwidth>=0.2.13",
 ]
+uinput = [
+    # deterministic absolute virtual pointer (LinuxUinputAbsInput) — an input
+    # space we own, unlike ydotool's opaque one on multi-monitor HiDPI
+    "evdev>=1.6",
+]
 agent = [
     "vdisplay-agent",
     "fastapi>=0.110",
