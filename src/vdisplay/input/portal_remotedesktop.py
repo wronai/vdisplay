@@ -54,8 +54,31 @@ class RemoteDesktopPortal:
         self._sc = None
         self._n = 0
 
+    @staticmethod
+    def _bootstrap_deps() -> None:
+        # make system dbus/gi importable from any venv (same mechanism the
+        # ScreenCast capture uses) so this works from e.g. koru's venv.
+        try:
+            from ..capture.portal_screencast import _ensure_portal_deps
+            _ensure_portal_deps()
+        except Exception:
+            pass
+
+    @staticmethod
+    def available() -> tuple[bool, str]:
+        RemoteDesktopPortal._bootstrap_deps()
+        try:
+            import dbus  # noqa: F401
+            import gi
+            gi.require_version("Gst", "1.0")
+            from gi.repository import GLib, Gst  # noqa: F401
+        except Exception as exc:  # pragma: no cover - env probe
+            return False, f"portal deps unavailable ({exc})"
+        return True, "RemoteDesktop portal input available"
+
     # ---- lifecycle -------------------------------------------------------
     def open(self, *, timeout_s: float = 60.0) -> "RemoteDesktopPortal":
+        self._bootstrap_deps()
         import dbus
         from dbus.mainloop.glib import DBusGMainLoop
         from gi.repository import GLib
@@ -231,13 +254,21 @@ class RemoteDesktopPortal:
         except Exception:
             return False
 
-    def type_into_input_verified(self, sx: int, sy: int, text: str, *, verify, submit: bool = False) -> bool:
+    def type_into_input_verified(
+        self, sx: int, sy: int, text: str, *, verify, submit: bool = False,
+        clear_first: bool = False, clear_count: int = 200,
+    ) -> bool:
         """Focus-guarded type: only types (and optionally submits) if the click
-        is confirmed to have focused the input. Returns whether it typed."""
+        is confirmed to have focused the input. ``clear_first`` empties the input
+        (backspaces) before typing so pre-existing text doesn't accumulate.
+        Returns whether it typed."""
         import time
 
         if not self.click_focuses_input(sx, sy, verify=verify):
             return False
+        if clear_first:
+            self.clear_input(clear_count)
+            time.sleep(0.2)
         self.type_text(text)
         if submit:
             time.sleep(0.2)
