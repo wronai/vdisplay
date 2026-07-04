@@ -32,9 +32,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install system OCR
-        if: matrix.extras == 'integrations'
-        run: sudo apt-get update && sudo apt-get install -y tesseract-ocr
+      - name: Install system tools
+        run: |
+          sudo apt-get update
+          # xrandr: monitor discovery expects the binary even when headless
+          sudo apt-get install -y x11-xserver-utils
+          if [ "${{ matrix.extras }}" = "integrations" ]; then
+            sudo apt-get install -y tesseract-ocr
+          fi
 
       - name: Install package (dev)
         run: |
