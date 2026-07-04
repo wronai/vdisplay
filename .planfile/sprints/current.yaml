@@ -2257,3 +2257,28 @@ sprint:
       status: open
       sync: {}
       updated_at: '2026-06-11T17:03:02.757705Z'
+    STARTER-046:
+      acceptance_criteria: []
+      blocked_by: []
+      blocks: []
+      created_at: '2026-07-03T20:25:21.940497Z'
+      description: semcod/koru STARTER-562 will move VQL sidecar parsing, pointer/coordinate
+        math and monitor topology (~2k lines, currently koru/integrations/vdisplay_client.py
+        + photo_vql_*) into vdisplay. Design and land the target API surface here
+        FIRST (vdisplay.vql load/parse, geometry transforms, monitor equivalence/ordering)
+        so the koru move is mechanical instead of a two-repo iteration.
+      files: []
+      history: []
+      id: STARTER-046
+      labels:
+      - api
+      name: Stable vdisplay.vql / geometry / monitors API for the koru migration
+      priority: high
+      source:
+        context: {}
+        timestamp: '2026-07-03T20:25:21.926761Z'
+        tool: claude-session
+      sprint: current
+      status: open
+      sync: {}
+      updated_at: '2026-07-03T20:25:21.940502Z'

@@ -233,3 +233,8 @@ __marimo__/
 
 # vdisplay session audit trails (local)
 .vdisplay/
+
+# machine-local generated snapshots
+local.dev.txt
+**/local.dev.txt
+*.fast.json
