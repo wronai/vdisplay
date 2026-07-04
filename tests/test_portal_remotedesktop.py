@@ -11,11 +11,15 @@ import types
 
 import pytest
 
-# stub `dbus` so _u32/_i32 don't require the real module
-_dbus_stub = types.SimpleNamespace(UInt32=lambda v: ("u32", v), Int32=lambda v: ("i32", v))
-sys.modules.setdefault("dbus", _dbus_stub)
-
 from vdisplay.input.portal_remotedesktop import RemoteDesktopPortal
+
+
+@pytest.fixture(autouse=True)
+def _stub_dbus(monkeypatch):
+    """Stub `dbus` for the duration of each test only (auto-restored), so
+    _u32/_i32 work without the real module and nothing leaks to other tests."""
+    stub = types.SimpleNamespace(UInt32=lambda v: ("u32", v), Int32=lambda v: ("i32", v))
+    monkeypatch.setitem(sys.modules, "dbus", stub)
 
 
 class _RecordingRD:
