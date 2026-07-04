@@ -16123,5 +16123,53 @@ tickets:
   files:
   - tests/e2e/test_web_console_playwright.py
   dedupe_key: test-optimization:tests.e2e.test_web_console_playwright:test_monitor_click_posts_pointer_api
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_dsl_terminal_open.test_dispatch_terminal_open_local'
+  description: 'Test `tests.test_dsl_terminal_open.test_dispatch_terminal_open_local`
+    took 1.14s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_dsl_terminal_open.py
+  dedupe_key: test-optimization:tests.test_dsl_terminal_open:test_dispatch_terminal_open_local
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_coordinate_validation.test_locate_cursor_in_single_static_frame'
+  description: 'Test `tests.test_coordinate_validation.test_locate_cursor_in_single_static_frame`
+    took 0.92s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_coordinate_validation.py
+  dedupe_key: test-optimization:tests.test_coordinate_validation:test_locate_cursor_in_single_static_frame
+- signal: slow_test_warning
+  title: 'Address slow test: tests.test_coordinate_validation.test_single_frame_detection_over_live_background'
+  description: 'Test `tests.test_coordinate_validation.test_single_frame_detection_over_live_background`
+    took 0.91s to run.
+
+
+    Optimize its setup, mock slow external dependencies, or refactor its logic to
+    reduce overall test suite execution time.'
+  priority: medium
+  labels:
+  - llm-ready
+  - test-optimization
+  - slow-test
+  files:
+  - tests/test_coordinate_validation.py
+  dedupe_key: test-optimization:tests.test_coordinate_validation:test_single_frame_detection_over_live_background
 applied: []
 skipped: []
