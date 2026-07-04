@@ -24,7 +24,8 @@ def test_dispatch_monitors_via_agent(monkeypatch: pytest.MonkeyPatch) -> None:
 
     monkeypatch.setattr("vdisplay.application.handlers.agent.agent_client_required", lambda: FakeClient())
 
-    result = dispatch_via_agent({"verb": "MONITORS"}, line="MONITORS")
+    with pytest.warns(DeprecationWarning, match="dispatch_via_agent is deprecated"):
+        result = dispatch_via_agent({"verb": "MONITORS"}, line="MONITORS")
     assert result.ok is True
     assert result.action == "monitors"
     assert result.data["monitor_count"] == 1

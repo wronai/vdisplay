@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "vdisplay-agent"
 version = "0.2.0"
 description = "Local vdisplay broker — single install, many client apps via IPC"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]

@@ -52,8 +52,14 @@ def auto_install_package(
     pip_args: list[str] | None = None,
     post_install: list[list[str]] | None = None,
 ) -> None:
+    import os
     import sys
-    
+
+    if os.environ.get("VDISPLAY_AUTO_INSTALL", "").strip().lower() in {"0", "false", "no"}:
+        raise RuntimeError(
+            f"{package_name} is not installed and auto-install is disabled (VDISPLAY_AUTO_INSTALL=0)"
+        )
+
     print(f"vdisplay: auto-installing dependency {package_name}...", file=sys.stderr)
     args = [sys.executable, "-m", "pip", "install", "-q"]
     if pip_args:
