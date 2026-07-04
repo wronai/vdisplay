@@ -88,3 +88,74 @@ def test_body_ide_mentions_ignores_window_layer() -> None:
     ]
     mentions = body_ide_mentions(ide="jetbrains", layers=layers)
     assert any("PyCharm" in item for item in mentions)
+
+
+def _editor_breadcrumb_layers():
+    # DP-1: PyCharm editor breadcrumb on the left, no "PyCharm" in the window title
+    return [
+        {
+            "id": "window_0",
+            "kind": "window",
+            "text": "koru – main.py – Current File",
+            "bbox": {"x": 0, "y": 0, "w": 2560, "h": 1600},
+        }
+    ]
+
+
+def test_non_competing_title_deferred_to_vision_when_enabled(monkeypatch) -> None:
+    monkeypatch.setenv("KORU_VDISPLAY_LLM_VISION_DECISION", "1")
+    out = validate_vql_capture(
+        layers=_editor_breadcrumb_layers(),
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2560, "height": 1600}},
+    )
+    assert out["vision_deferred_window_mismatch"] is True
+    assert out["capture_confirmed"] is True
+    assert out["ok_for_drive"] is True
+    assert "ide_window_mismatch_deferred_to_vision" in out["reasons"]
+
+
+def test_non_competing_title_still_blocks_without_vision(monkeypatch) -> None:
+    monkeypatch.delenv("KORU_VDISPLAY_LLM_VISION_DECISION", raising=False)
+    monkeypatch.delenv("VDISPLAY_VISION_CHAT_DETECT", raising=False)
+    out = validate_vql_capture(
+        layers=_editor_breadcrumb_layers(),
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2560, "height": 1600}},
+    )
+    assert out["vision_deferred_window_mismatch"] is False
+    assert out["capture_confirmed"] is False
+
+
+def test_competing_ide_never_deferred_even_under_vision(monkeypatch) -> None:
+    monkeypatch.setenv("KORU_VDISPLAY_LLM_VISION_DECISION", "1")
+    layers = [
+        {
+            "id": "window_0",
+            "kind": "window",
+            "text": "project - ts - Cursor",
+            "bbox": {"x": 0, "y": 0, "w": 2560, "h": 1600},
+        }
+    ]
+    out = validate_vql_capture(
+        layers=layers,
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2560, "height": 1600}},
+    )
+    assert out["vision_deferred_window_mismatch"] is False
+    assert out["capture_confirmed"] is False
+
+
+def test_missing_window_title_not_deferred_even_under_vision(monkeypatch) -> None:
+    # No window title at all → capture may have failed; never defer to vision.
+    monkeypatch.setenv("KORU_VDISPLAY_LLM_VISION_DECISION", "1")
+    layers = [
+        {"id": "label_0", "kind": "label", "text": "Ask AI", "bbox": {"x": 10, "y": 10, "w": 40, "h": 12}},
+    ]
+    out = validate_vql_capture(
+        layers=layers,
+        ide="jetbrains",
+        reverse={"canvas": {"width": 2560, "height": 1600}},
+    )
+    assert out["vision_deferred_window_mismatch"] is False
+    assert out["capture_confirmed"] is False
