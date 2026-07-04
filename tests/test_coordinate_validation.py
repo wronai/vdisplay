@@ -393,3 +393,38 @@ def test_calibration_records_corner_anchor():
     assert aff.anchor_corner == "tl"
     assert aff.anchor_local is not None
     assert aff.anchor_command == (-1_000_000, -1_000_000)
+
+
+def test_locate_cursor_across_monitors_ranks_real_cursor():
+    """With 3 monitors, background churn produces a diff hit on every screen;
+    the arbiter must pick the SINGLE strongest (the real cursor)."""
+    from vdisplay.capture.coordinate_validation import locate_cursor_across_monitors
+
+    class Mon:
+        def __init__(self, has_cursor, churn):
+            self.has_cursor = has_cursor
+            self.churn = churn
+            self.t = 0
+
+        def frame(self):
+            arr = np.full((300, 400), 20, dtype=np.uint8)
+            self.t += 1
+            if self.churn:
+                arr[50:56, 50:56] = (40 + self.t * 10) % 90
+            if self.has_cursor and self.t >= 2:
+                arr[150:162, 200:210] = 245
+            b = io.BytesIO(); Image.fromarray(arr, "L").save(b, format="PNG")
+            return b.getvalue()
+
+    mons = {"HDMI-1": Mon(False, True), "DP-1": Mon(True, True), "DP-2": Mon(False, True)}
+
+    def move(x, y):
+        pass
+
+    def capture(s):
+        return mons[s].frame()
+
+    best = locate_cursor_across_monitors(["HDMI-1", "DP-1", "DP-2"], (5000, 5000),
+                                         move=move, capture=capture, park_global=(0, 0))
+    assert best is not None
+    assert best[0] == "DP-1"
