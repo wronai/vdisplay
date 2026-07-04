@@ -358,3 +358,38 @@ def test_calibration_skips_probes_in_live_quadrant():
                                    probe_grid=(3, 3), global_bounds=(60, 40, 360, 280))
     assert aff.ok
     assert 0.7 <= aff.ax <= 1.3 and 0.7 <= aff.ay <= 1.3
+
+
+def test_park_at_corner_returns_known_reference():
+    from vdisplay.capture.coordinate_validation import park_at_corner
+
+    # desktop clamps huge commands to [0,size]; TL corner -> capture ~(0,0)
+    class ClampDesktop(FakeDesktop):
+        def _cursor_local(self):
+            lx = max(0, min(self.size[0] - 1, (self.pointer[0] - self.offset[0]) / self.scale))
+            ly = max(0, min(self.size[1] - 1, (self.pointer[1] - self.offset[1]) / self.scale))
+            return lx, ly
+
+    d = ClampDesktop(offset=(0, 0), scale=1.0, size=(400, 300))
+    obs = park_at_corner("DP-1", "tl", move=d.move, capture=d.capture)
+    assert obs is not None
+    assert obs[0] <= 20 and obs[1] <= 20  # near the top-left corner
+
+
+def test_calibration_records_corner_anchor():
+    from vdisplay.capture.coordinate_validation import calibrate_pointer_affine
+
+    class ClampDesktop(FakeDesktop):
+        def _cursor_local(self):
+            lx = max(0, min(self.size[0] - 1, (self.pointer[0] - self.offset[0]) / self.scale))
+            ly = max(0, min(self.size[1] - 1, (self.pointer[1] - self.offset[1]) / self.scale))
+            return lx, ly
+
+    d = ClampDesktop(offset=(40, 20), scale=1.0, size=(400, 300))
+    aff = calibrate_pointer_affine("DP-1", move=d.move, capture=d.capture,
+                                   probe_grid=(3, 3), global_bounds=(60, 40, 360, 280),
+                                   anchor_corner="tl")
+    assert aff.ok
+    assert aff.anchor_corner == "tl"
+    assert aff.anchor_local is not None
+    assert aff.anchor_command == (-1_000_000, -1_000_000)
