@@ -727,6 +727,30 @@ def detect_live_quadrants(
     return live
 
 
+def _reject_stuck_observations(
+    probes: list[tuple[int, int]], obs: list[tuple[int, int]], *, tol: int = 6
+) -> list[int]:
+    """Indices of trustworthy samples, dropping static-feature false positives.
+
+    Measured on real hardware: several distinct probe commands "stuck" to the
+    exact same capture pixel with identical strength — the detector had locked
+    onto a static UI feature (a corner element), not the cursor. Any observed
+    position shared by 2+ DISTINCT probe commands is such an artifact; drop them.
+    """
+    from collections import defaultdict
+
+    buckets: dict[tuple[int, int], list[int]] = defaultdict(list)
+    for i, (ox, oy) in enumerate(obs):
+        buckets[(round(ox / tol), round(oy / tol))].append(i)
+    keep: list[int] = []
+    for _key, idxs in buckets.items():
+        distinct_cmds = {probes[i] for i in idxs}
+        if len(distinct_cmds) >= 2:
+            continue  # same pixel from different commands -> static feature
+        keep.extend(idxs)
+    return sorted(keep)
+
+
 def _fit_affine_robust(gs: list[float], ls: list[float]) -> tuple[float, float]:
     """Least-squares slope/intercept with one round of residual outlier drop."""
     import numpy as np
@@ -796,7 +820,8 @@ def calibrate_pointer_affine(
     base = capture(source)
     bw, bh = (_png_to_gray(base)[1:] if base else (0, 0))
 
-    gxs, lxs, gys, lys, used = [], [], [], [], 0
+    sample_probes: list[tuple[int, int]] = []
+    sample_obs: list[tuple[int, int]] = []
     for gx, gy in probes:
         quad = _expected_quad(gx, gy, bw, bh) if bw and bh else None
         if quad is not None and quad in live:
@@ -808,10 +833,15 @@ def calibrate_pointer_affine(
         found = _single_diff_peak(base, frame, region=region)
         if found is None:
             continue
-        lx, ly = found
-        gxs.append(gx); lxs.append(lx)
-        gys.append(gy); lys.append(ly)
-        used += 1
+        sample_probes.append((gx, gy))
+        sample_obs.append((found[0], found[1]))
+    # drop static-feature false positives (distinct commands -> same pixel)
+    keep = _reject_stuck_observations(sample_probes, sample_obs)
+    gxs = [sample_probes[i][0] for i in keep]
+    gys = [sample_probes[i][1] for i in keep]
+    lxs = [sample_obs[i][0] for i in keep]
+    lys = [sample_obs[i][1] for i in keep]
+    used = len(keep)
     if used < 2:
         return PointerAffine(1.0, 0.0, 1.0, 0.0, source, ok=False, samples=used)
     ax, bx = _fit_affine_robust(gxs, lxs)

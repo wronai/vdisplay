@@ -147,15 +147,40 @@ coordinate math shows up as a rising error rate, not a silent mis-click.
 
 ---
 
-## Alternatives considered
+## Validated solution: own uinput ABS device (`LinuxUinputAbsInput`)
 
-- **Own uinput ABSOLUTE device.** Create a virtual pointer via `/dev/uinput`
-  with `ABS_X/ABS_Y` over a fixed range mapped to the screen — then *we* own the
-  mapping and absolute positioning is fully deterministic (what tablets do).
-  Cleanest long-term, but requires device setup and permissions; deferred
-  because ydotool is already absolute and the affine calibration removes its
-  opacity. **This is the recommended next step if ydotool's mapping ever proves
-  unstable.**
+Sequential testing settled it:
+
+- **ydotool geometric (0-65535 over the desktop bbox): failed.** The predicted
+  command for a DP-1 target landed the cursor on HDMI-1. ydotool's coordinate
+  space on this 3-monitor HiDPI desktop is opaque and non-linear over the bbox.
+- **Own uinput ABS device: works — 16px accuracy.** A virtual absolute pointer
+  we create via `/dev/uinput` (`vdisplay[uinput]`, python-evdev) has a
+  coordinate space WE define. The compositor maps it with a fixed **linear**
+  transform, recovered by a one-time single-monitor calibration:
+  `calibrate_pointer_affine("DP-1", …)` → `ax≈0.624, ay≈0.620` (the HiDPI
+  scale). Commanding the predicted `ABS(2375, 2001)` for the Qoder input landed
+  the cursor at capture `(1483, 832)` — **16px** from the `(1484, 848)` target.
+
+Two fixes made it reliable:
+
+1. **Reject "stuck" static features in calibration** (`_reject_stuck_observations`).
+   On real hardware 4 of 16 probes stuck to the exact same pixel `(2352, 74)`
+   with identical strength — the detector had locked onto a static corner UI
+   element, not the cursor. Any pixel shared by 2+ distinct probe commands is
+   dropped; the fit then recovered the clean 0.624 slope (residual collapsed
+   from ~249px to near zero).
+2. **Region-guide the verifying detection.** The same static corner sits in the
+   `tr` quadrant; a dock-order-first search returns it. Detecting in the
+   TARGET's quadrant (`br` for the Qoder input) skips it and finds the real
+   cursor.
+
+**Recommendation:** use `LinuxUinputAbsInput` + a cached per-monitor affine on
+multi-monitor HiDPI where ydotool's mapping is unreliable. Single-monitor
+calibration (capture only the IDE's monitor) is both faster (1 capture/probe)
+and immune to the cross-monitor false-positive problem.
+
+### Alternatives also considered
 - **Corner-clamp + pure relative motion.** If the injector were relative, park
   at a corner (known origin) and issue pixel deltas. Not needed here — ydotool
   is absolute — but the corner-anchor above reuses the same "known zero" idea.
