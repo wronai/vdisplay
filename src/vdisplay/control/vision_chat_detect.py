@@ -197,6 +197,123 @@ def _task_hint(canon: str) -> tuple[str, str]:
     )
 
 
+# Distinctive chat-input placeholder tokens per IDE family. Matched against
+# word-level OCR; the placeholder sits INSIDE the input box, so its bbox center
+# is a safe deterministic click point (no LLM pixel-precision involved).
+_CHAT_PLACEHOLDER_TOKENS: dict[str, tuple[str, ...]] = {
+    "jetbrains": ("autonomously", "qoder"),  # Qoder: "Plan and build autonomously"
+    "cursor": ("anything",),
+    "windsurf": ("anything",),
+    "vscode": ("copilot",),
+    "auto": ("autonomously",),
+}
+
+
+def ocr_anchor_chat_target(png: bytes, *, ide: str = "auto") -> dict[str, Any] | None:
+    """Deterministic chat-input target from the OCR bbox of its placeholder text.
+
+    Vision LLMs describe the input correctly but return imprecise pixel coords
+    on dense multi-panel screenshots (measured: ~800px off). Tesseract reports
+    the placeholder's exact bbox — clicking its center lands inside the input.
+    """
+    try:
+        from .vision_ocr import ocr_available, ocr_png
+    except ImportError:
+        return None
+    ok, _reason = ocr_available()
+    if not ok:
+        return None
+    canon = _canonical_ide(ide)
+    tokens = _CHAT_PLACEHOLDER_TOKENS.get(canon) or _CHAT_PLACEHOLDER_TOKENS["auto"]
+    try:
+        boxes = ocr_png(png, min_confidence=40.0)
+    except Exception:
+        return None
+    _w, img_h = _image_size_png(png)
+    # token priority beats OCR reading order: "autonomously" appears only in
+    # the input placeholder, while a brand token ("Qoder") also names the
+    # panel title bar at the top — skip brand hits in the top strip.
+    for token in tokens:
+        for box in boxes:
+            text = (box.text or "").strip().lower()
+            if not text or token not in text:
+                continue
+            if token in {"qoder", "copilot"} and box.bounds.y < int(img_h * 0.15):
+                continue
+            if True:
+                bounds = box.bounds
+                x = int(bounds.x + bounds.width / 2)
+                y = int(bounds.y + bounds.height / 2)
+                return {
+                    "click_center": {
+                        "x": x,
+                        "y": y,
+                        "note": f"ocr anchor: placeholder {box.text!r}",
+                    },
+                    "id": "ocr:chat-placeholder",
+                    "role": "input",
+                    "selection_method": "ocr_anchor_chat_placeholder",
+                    "ocr_text": box.text,
+                    "llm_used": False,
+                    # downstream verification reads llm_decision.confidence;
+                    # a literal placeholder-bbox hit is as verified as it gets
+                    "llm_decision": {
+                        "confidence": 0.95,
+                        "reason": f"ocr placeholder anchor {box.text!r}",
+                        "source": "ocr_anchor",
+                        "click_center": {"x": x, "y": y},
+                    },
+                }
+    return None
+
+
+# Crop cascade: send SMALL regions to the vision LLM in turns instead of one
+# dense full-monitor screenshot. Measured on a 2048px multi-panel capture the
+# model described the chat input correctly but missed its pixel position by
+# ~800px; on a crop the same model is precise. Order: right half first (chat
+# panels dock right), then quadrants clockwise from top-right. Each miss costs
+# one LLM call; the first accepted hit wins and the crop offset is added back.
+_DEFAULT_CROP_PASSES = "right_half,q_tr,q_br,q_bl,q_tl"
+
+
+def _crop_pass_names() -> list[str]:
+    raw = (os.environ.get("VDISPLAY_VISION_CROP_PASSES") or _DEFAULT_CROP_PASSES).strip()
+    if raw.lower() in {"0", "off", "none", "false"}:
+        return []
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def _crop_region(png: bytes, name: str) -> tuple[bytes, int, int] | None:
+    """Crop ``name`` region; return (crop_png, dx, dy) or None when unavailable."""
+    try:
+        import io
+
+        from PIL import Image
+    except ImportError:
+        return None
+    regions = {
+        "right_half": (0.5, 0.0, 1.0, 1.0),
+        "q_tr": (0.5, 0.0, 1.0, 0.5),
+        "q_br": (0.5, 0.5, 1.0, 1.0),
+        "q_bl": (0.0, 0.5, 0.5, 1.0),
+        "q_tl": (0.0, 0.0, 0.5, 0.5),
+    }
+    frac = regions.get(name)
+    if frac is None:
+        return None
+    try:
+        with Image.open(io.BytesIO(png)) as img:
+            w, h = img.size
+            left, top = int(w * frac[0]), int(h * frac[1])
+            right, bottom = int(w * frac[2]), int(h * frac[3])
+            crop = img.crop((left, top, right, bottom))
+            buf = io.BytesIO()
+            crop.save(buf, format="PNG")
+            return buf.getvalue(), left, top
+    except Exception:
+        return None
+
+
 def detect_chat_click_target(
     png: bytes,
     *,
@@ -206,12 +323,60 @@ def detect_chat_click_target(
     map_hint: dict[str, Any] | None = None,
     capture_title: str | None = None,
     settings: VisionLlmSettings | None = None,
+    _crop_pass: bool = False,
 ) -> dict[str, Any] | None:
     """Return chat input click_center from a full-monitor PNG via OpenRouter vision."""
     if not vision_chat_detect_enabled(settings=settings):
         return None
     if not png:
         return None
+
+    if not _crop_pass:
+        anchored = ocr_anchor_chat_target(png, ide=ide)
+        if anchored is not None:
+            logger.info(
+                "vision_chat_detect ocr_anchor ide=%s source=%s x=%s y=%s text=%r",
+                _canonical_ide(ide),
+                source,
+                anchored["click_center"]["x"],
+                anchored["click_center"]["y"],
+                anchored.get("ocr_text"),
+            )
+            return anchored
+        # crop cascade in turns (small payloads, better pixel precision);
+        # the full-image query below is the last resort only
+        for pass_name in _crop_pass_names():
+            region = _crop_region(png, pass_name)
+            if region is None:
+                continue
+            crop_png, dx, dy = region
+            hit = detect_chat_click_target(
+                crop_png,
+                ide=ide,
+                source=source,
+                capture_title=capture_title,
+                settings=settings,
+                _crop_pass=True,
+            )
+            if hit is None:
+                continue
+            cc = dict(hit.get("click_center") or {})
+            cc["x"] = int(cc.get("x", 0)) + dx
+            cc["y"] = int(cc.get("y", 0)) + dy
+            hit["click_center"] = cc
+            hit["selection_method"] = f"llm_vision_detect_{pass_name}"
+            hit["crop_offset"] = {"dx": dx, "dy": dy, "pass": pass_name}
+            decision = hit.get("llm_decision")
+            if isinstance(decision, dict) and isinstance(decision.get("click_center"), dict):
+                decision["click_center"] = {"x": cc["x"], "y": cc["y"]}
+            logger.info(
+                "vision_chat_detect crop_hit pass=%s ide=%s x=%s y=%s",
+                pass_name,
+                _canonical_ide(ide),
+                cc["x"],
+                cc["y"],
+            )
+            return hit
 
     cfg = settings or vision_llm_settings()
     canon = _canonical_ide(ide)
