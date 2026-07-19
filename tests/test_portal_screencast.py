@@ -379,6 +379,24 @@ def test_portal_session_env_status_requires_dbus(monkeypatch: pytest.MonkeyPatch
     assert "DBUS_SESSION_BUS_ADDRESS" in hint
 
 
+def test_reset_screencast_consent_stops_session_and_clears_token(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    from vdisplay.capture import portal_screencast as mod
+
+    token = tmp_path / "restore-token"
+    token.write_text("saved", encoding="utf-8")
+    monkeypatch.setattr(mod, "_RESTORE_TOKEN_FILE", token)
+    monkeypatch.setattr(mod, "stop_screencast_session", lambda: {"ok": True, "stopped": True})
+
+    assert mod.reset_screencast_consent() == {
+        "ok": True,
+        "stopped": True,
+        "token_cleared": True,
+    }
+    assert not token.exists()
+
+
 def test_from_portal_payload_requires_session_path() -> None:
     with pytest.raises(VDisplayError, match="session_path"):
         PortalScreenCastSession.from_portal_payload({})

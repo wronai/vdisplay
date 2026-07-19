@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vdisplay"
-version = "0.1.54"
+version = "0.1.55"
 description = "Cross-platform virtual display orchestration with virtual and mirror sessions"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
@@ -25,6 +25,7 @@ pillow = ["Pillow>=10.0"]
 sampler = ["Pillow>=10.0"]
 dev = [
     "pytest>=8.0",
+    "jsonschema>=4.0",
     "Pillow>=10.0",
     "numpy>=1.24",
     "fastapi>=0.110",
@@ -124,9 +125,13 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+vdisplay = ["data/*.json"]
+
 [dependency-groups]
 dev = [
     "pytest>=8.0",
+    "jsonschema>=4.0",
     "Pillow>=10.0",
     "numpy>=1.24",
     "fastapi>=0.110",

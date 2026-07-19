@@ -40,6 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Public `vdisplay.screen-observation.v1` contract with packaged JSON Schema,
+  canonical provenance hash, payload hash, wire round-trip and legacy
+  descriptor adapter.
+- Dependency-free capture primitives for PNG dimensions, RGB thumbnail
+  scaling, black-frame detection and bounded capture-scale resolution.
+- Public persistent ScreenCast lifecycle and consent-reset API for
+  orchestrators; portal session ownership remains in VDisplay.
 - **Web console** (`/web`) — multi-monitor dashboard in vdisplay-agent: overview, frame API, screencast/sampler controls, replay executor for CONTROL_* audit steps
 - **`capture/coordinate_map.py`** — unified desktop ↔ PNG coordinate mapping (re-exported from `input/coords`)
 - **`application/replay.py`** — replay `.vdisplay` session steps; web console background jobs
@@ -91,6 +98,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.55] - 2026-07-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_portal_screencast.py
+- Update tests/test_public_screen_truth_api.py
+- Update tests/test_screen_observation.py
+
+### Other
+- Update src/vdisplay/data/screen-observation-v1.schema.json
 
 ## [0.1.54] - 2026-07-19
 
@@ -1473,4 +1494,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update .code2llm_cache/exceptions_1780992406000000000_148.pkl
 - Update .code2llm_cache/goal_1780992565350071766_12249.pkl
 - ... and 32 more files
-

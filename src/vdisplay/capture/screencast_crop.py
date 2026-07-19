@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import io
 from pathlib import Path
 from typing import Any
 
 from ..exceptions import VDisplayError
 from .linux_xwd import _crop_png, _is_wayland_session, is_blank_png
+from .observation import png_dimensions
 from .portal_screencast import (
     get_active_screencast,
     invalidate_screencast_session,
@@ -21,17 +21,6 @@ from .screencast_stream_matching import (
     screencast_stream_map,
     session_has_multiple_streams,
 )
-
-
-def png_dimensions(png: bytes) -> tuple[int, int]:
-    try:
-        from PIL import Image
-
-        with Image.open(io.BytesIO(png)) as image:
-            return image.width, image.height
-    except Exception:
-        return 0, 0
-
 
 def build_screencast_crop_meta(
     session: Any,
