@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -83,7 +82,7 @@ def _try_imgl_scene(ctx: ScreenContext) -> dict[str, Any] | None:
     capture = ctx.capture
     width = int(capture.get("width") or 0)
     height = int(capture.get("height") or 0)
-    layers = _build_imgl_layers(ctx.imgl)
+    layers = build_imgl_layers(ctx.imgl)
     if not layers:
         return None
     return {
@@ -524,7 +523,7 @@ def _extend_element_layers(
             layers.append(item)
 
 
-def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
+def build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
     """Build actuation layers from imgl scene data (windows+elements+ocr)."""
     limit = get_runtime_options().vql.layer_export_limit
     scene = _extract_imgl_scene(imgl)
@@ -552,6 +551,11 @@ def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
         if item:
             layers.append(item)
     return layers[:limit]
+
+
+def _build_imgl_layers(imgl: dict[str, Any]) -> list[dict[str, Any]]:
+    """Backward-compatible private alias for pre-public-API consumers."""
+    return build_imgl_layers(imgl)
 
 
 def _warn_empty_vql_layers(ctx: ScreenContext, program: dict[str, Any]) -> dict[str, Any] | None:
@@ -627,7 +631,7 @@ def _enrich_render_intent(ctx: ScreenContext, descriptor: dict[str, Any]) -> dic
     enriched.setdefault("scene_class", _resolve_scene_class(ctx.imgl) or "ui_screenshot")
 
     if not enriched.get("layers"):
-        enriched["layers"] = _build_imgl_layers(ctx.imgl)
+        enriched["layers"] = build_imgl_layers(ctx.imgl)
 
     if enriched.get("layers") and not enriched.get("ui_elements"):
         enriched["ui_elements"] = _layers_to_ui_elements(enriched["layers"])

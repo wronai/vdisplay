@@ -6,6 +6,7 @@ from .coordinate_map import (
 )
 from .linux_xwd import capture_display_png, is_blank_png, xwd_bytes_to_png
 from .providers.engine import capture_full_png, capture_region_png, list_capture_providers
+from .screencast_crop import resolve_multi_stream_region
 
 __all__ = [
     "capture_display_png",
@@ -19,5 +20,6 @@ __all__ = [
     "global_region_to_capture_local",
     "is_blank_png",
     "list_capture_providers",
+    "resolve_multi_stream_region",
     "xwd_bytes_to_png",
 ]

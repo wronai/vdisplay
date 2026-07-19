@@ -17,7 +17,6 @@ from .portal_screencast import (
 )
 from .screencast_keeper import keeper_manages_session, request_keeper_capture
 from .screencast_stream_matching import (
-    assign_screencast_streams_to_monitors,
     screencast_stream_index_for_monitor,
     screencast_stream_map,
     session_has_multiple_streams,
@@ -173,12 +172,12 @@ def _maybe_crop_screencast_png(
     return png, crop_region, region_local
 
 
-def _resolve_multi_stream_region(
+def resolve_multi_stream_region(
     session: Any,
     stream_idx: int,
     monitor: dict[str, Any] | None,
 ) -> dict[str, Any] | None:
-    """Return the best region dict for a multi-stream session."""
+    """Return the best canonical region for a stream in a multi-stream session."""
     if monitor is not None:
         region = screencast_stream_region_for_index(session, stream_idx)
         if region is None:
@@ -203,6 +202,15 @@ def _resolve_multi_stream_region(
     return None
 
 
+def _resolve_multi_stream_region(
+    session: Any,
+    stream_idx: int,
+    monitor: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Backward-compatible private alias for pre-public-API consumers."""
+    return resolve_multi_stream_region(session, stream_idx, monitor)
+
+
 def _build_screencast_extra(
     session: Any,
     stream_idx: int,
@@ -219,7 +227,7 @@ def _build_screencast_extra(
     if multi_stream:
         extra["method"] = "portal-screencast+stream"
         extra["screencast_multi_stream"] = True
-        stream_region = _resolve_multi_stream_region(session, stream_idx, monitor)
+        stream_region = resolve_multi_stream_region(session, stream_idx, monitor)
         if stream_region is not None:
             extra["region"] = stream_region
             extra["screencast_stream"] = True
