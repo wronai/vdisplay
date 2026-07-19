@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wron.ai/schemas/vdisplay/coordinate-map-v1.schema.json",
+  "title": "VDisplay Coordinate Map v1",
+  "description": "Canonical mapping between desktop-global and capture-frame-local coordinates.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "source",
+    "coordinate_space",
+    "capture_width",
+    "capture_height",
+    "region",
+    "rotation",
+    "mapping_source",
+    "coordinate_map_hash"
+  ],
+  "properties": {
+    "schema": {"const": "vdisplay.coordinate-map.v1"},
+    "source": {"type": "string"},
+    "coordinate_space": {"const": "capture_frame_local"},
+    "capture_width": {"type": "integer", "minimum": 1},
+    "capture_height": {"type": "integer", "minimum": 1},
+    "region": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["x", "y", "width", "height"],
+          "properties": {
+            "x": {"type": "integer"},
+            "y": {"type": "integer"},
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1}
+          }
+        }
+      ]
+    },
+    "rotation": {"type": "string"},
+    "mapping_source": {"enum": ["capture_local", "capture_region", "monitor"]},
+    "coordinate_map_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,4 +1,12 @@
 from .host import capture_all_monitors, capture_host_png, capture_host_to_file
+from .coordinate_contract import (
+    COORDINATE_MAP_V1,
+    CaptureCoordinateMap,
+    canonicalize_capture_meta,
+    compile_capture_coordinate_map,
+    coordinate_map_v1_schema,
+)
+from .coordinate_live import resolve_live_capture_meta
 from .coordinate_map import (
     global_point_to_capture_local,
     global_pointer_coords,
@@ -48,12 +56,17 @@ from .screencast_crop import resolve_multi_stream_region
 
 __all__ = [
     "capture_display_png",
+    "COORDINATE_MAP_V1",
+    "CaptureCoordinateMap",
     "capture_all_monitors",
     "capture_full_png",
     "capture_host_png",
     "capture_host_to_file",
     "capture_portal_png",
     "capture_region_png",
+    "canonicalize_capture_meta",
+    "compile_capture_coordinate_map",
+    "coordinate_map_v1_schema",
     "downscale_rgb_nearest",
     "BlackFrameError",
     "CliToolsObservationProvider",
@@ -82,6 +95,7 @@ __all__ = [
     "reset_screencast_consent",
     "resolve_capture_scale",
     "resolve_multi_stream_region",
+    "resolve_live_capture_meta",
     "screen_observation_v1_schema",
     "screen_observation_from_png",
     "capture_observations_with_fallback",
