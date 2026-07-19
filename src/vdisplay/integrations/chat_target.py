@@ -17,24 +17,6 @@ from .vql_capture_validation import (
 )
 
 
-def _layers_to_ui_elements(layers: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    out: list[dict[str, Any]] = []
-    for layer in layers:
-        if not isinstance(layer, dict):
-            continue
-        cc = layer.get("click_center") or layer.get("center")
-        out.append(
-            {
-                "id": layer.get("id"),
-                "role": layer.get("role") or layer.get("kind"),
-                "label": layer.get("label") or layer.get("text"),
-                "bounds": layer.get("bounds") or layer.get("bbox"),
-                "click_center": cc,
-            }
-        )
-    return out
-
-
 def _chat_input_candidates(layers: list[dict[str, Any]], *, limit: int = 8) -> list[dict[str, Any]]:
     candidates: list[dict[str, Any]] = []
     for layer in layers:

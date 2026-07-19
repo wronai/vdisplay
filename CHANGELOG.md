@@ -50,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Typed `ObservationProvider` protocol, ordered fallback result/failure model,
   and reusable MSS, native CLI, portal Screenshot and portal ScreenCast
   providers. The caller supplies policy order; VDisplay owns capture mechanics.
+- Public pure `normalize_vql_ui_elements` adapter for deterministic conversion
+  of VQL/IMGL `elements`, `layers`, nested program and render-intent payloads.
 - **Web console** (`/web`) — multi-monitor dashboard in vdisplay-agent: overview, frame API, screencast/sampler controls, replay executor for CONTROL_* audit steps
 - **`capture/coordinate_map.py`** — unified desktop ↔ PNG coordinate mapping (re-exported from `input/coords`)
 - **`application/replay.py`** — replay `.vdisplay` session steps; web console background jobs
@@ -101,6 +103,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.57] - 2026-07-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_vql_normalize.py
 
 ## [0.1.56] - 2026-07-19
 
