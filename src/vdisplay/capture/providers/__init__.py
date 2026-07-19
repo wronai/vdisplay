@@ -1,3 +1,45 @@
 from .engine import capture_region_png, capture_full_png, list_capture_providers
+from .observation import (
+    MonitorSpec,
+    ObservationBatch,
+    ObservationProvider,
+    ObservationProviderChainError,
+    ObservationProviderFailure,
+    ProviderAvailability,
+    capture_observations_with_fallback,
+    coerce_screen_observation,
+    screen_observation_from_png,
+)
+from .observation_builtin import (
+    BlackFrameError,
+    CliToolsObservationProvider,
+    GrimObservationProvider,
+    MssObservationProvider,
+    PortalScreenCastObservationProvider,
+    PortalScreenshotObservationProvider,
+    command_candidates,
+    run_png_command,
+)
 
-__all__ = ["capture_full_png", "capture_region_png", "list_capture_providers"]
+__all__ = [
+    "BlackFrameError",
+    "CliToolsObservationProvider",
+    "GrimObservationProvider",
+    "MonitorSpec",
+    "MssObservationProvider",
+    "ObservationBatch",
+    "ObservationProvider",
+    "ObservationProviderChainError",
+    "ObservationProviderFailure",
+    "PortalScreenCastObservationProvider",
+    "PortalScreenshotObservationProvider",
+    "ProviderAvailability",
+    "capture_full_png",
+    "capture_observations_with_fallback",
+    "capture_region_png",
+    "coerce_screen_observation",
+    "command_candidates",
+    "list_capture_providers",
+    "run_png_command",
+    "screen_observation_from_png",
+]
