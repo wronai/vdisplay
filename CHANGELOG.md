@@ -40,6 +40,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Versioned deterministic `vdisplay.coordinate-map.v1` contract, canonical
+  capture-metadata normalization and live capture snapshot resolver.
 - Public `vdisplay.screen-observation.v1` contract with packaged JSON Schema,
   canonical provenance hash, payload hash, wire round-trip and legacy
   descriptor adapter.
@@ -103,6 +105,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.58] - 2026-07-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_coordinate_contract.py
+
+### Other
+- Update src/vdisplay/data/coordinate-map-v1.schema.json
 
 ## [0.1.57] - 2026-07-19
 
