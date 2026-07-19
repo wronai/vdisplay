@@ -6,6 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .vql_normalize import normalize_vql_ui_elements
+
 from ..application.env_defaults import env_flag
 from .imgl_bridge import imgl_available
 from .screen_context import ScreenContext
@@ -250,17 +252,7 @@ def _layers_for_capture_validation(
 
 
 def _layers_to_ui_elements(layers: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    return [
-        {
-            "id": layer.get("id"),
-            "role": layer.get("kind") or layer.get("role"),
-            "label": layer.get("text") or layer.get("label"),
-            "bounds": layer.get("bbox") or layer.get("bounds"),
-            "click_center": layer.get("click_center") or layer.get("center"),
-        }
-        for layer in layers
-        if isinstance(layer, dict)
-    ]
+    return normalize_vql_ui_elements(layers)
 
 
 def _attach_capture_validation(
