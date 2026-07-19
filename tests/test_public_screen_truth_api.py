@@ -4,7 +4,14 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from vdisplay.capture import resolve_multi_stream_region
+from vdisplay.capture import (
+    PortalScreenCastSession,
+    get_active_screencast,
+    reset_screencast_consent,
+    resolve_multi_stream_region,
+    start_screencast_session,
+    stop_screencast_session,
+)
 from vdisplay.input import monitor_by_name
 from vdisplay.integrations import build_imgl_layers
 
@@ -71,3 +78,11 @@ def test_build_imgl_layers_is_public() -> None:
             "click_center": {"x": 50, "y": 40},
         }
     ]
+
+
+def test_screencast_lifecycle_is_public() -> None:
+    assert PortalScreenCastSession is not None
+    assert callable(get_active_screencast)
+    assert callable(start_screencast_session)
+    assert callable(stop_screencast_session)
+    assert callable(reset_screencast_consent)

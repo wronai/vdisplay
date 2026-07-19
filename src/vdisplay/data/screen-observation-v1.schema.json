@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wron.ai/schemas/vdisplay/screen-observation-v1.schema.json",
+  "title": "VDisplay Screen Observation v1",
+  "description": "Deterministic wire record for one captured screen frame and its stable provenance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "frame_id",
+    "monitor_id",
+    "captured_at",
+    "mime",
+    "width",
+    "height",
+    "native_width",
+    "native_height",
+    "output",
+    "provider",
+    "capture_meta",
+    "payload_sha256",
+    "observation_hash"
+  ],
+  "properties": {
+    "schema": {"const": "vdisplay.screen-observation.v1"},
+    "frame_id": {"type": "string"},
+    "monitor_id": {"type": "integer"},
+    "captured_at": {"type": "string"},
+    "mime": {"type": "string", "minLength": 1},
+    "width": {"type": "integer", "minimum": 0},
+    "height": {"type": "integer", "minimum": 0},
+    "native_width": {"type": "integer", "minimum": 0},
+    "native_height": {"type": "integer", "minimum": 0},
+    "output": {"type": "string"},
+    "provider": {"type": "string"},
+    "capture_meta": {"type": "object"},
+    "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observation_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "payload_base64": {"type": "string", "contentEncoding": "base64"}
+  }
+}

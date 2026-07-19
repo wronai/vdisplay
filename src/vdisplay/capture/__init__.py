@@ -5,6 +5,22 @@ from .coordinate_map import (
     global_region_to_capture_local,
 )
 from .linux_xwd import capture_display_png, is_blank_png, xwd_bytes_to_png
+from .observation import (
+    SCREEN_OBSERVATION_V1,
+    ScreenObservation,
+    ScreenObservationV1,
+    png_dimensions,
+    screen_observation_v1_schema,
+)
+from .pixels import downscale_rgb_nearest, resolve_capture_scale, rgb_mostly_black
+from .portal_screencast import (
+    PortalScreenCastSession,
+    get_active_screencast,
+    portal_session_env_status,
+    reset_screencast_consent,
+    start_screencast_session,
+    stop_screencast_session,
+)
 from .providers.engine import capture_full_png, capture_region_png, list_capture_providers
 from .screencast_crop import resolve_multi_stream_region
 
@@ -15,11 +31,25 @@ __all__ = [
     "capture_host_png",
     "capture_host_to_file",
     "capture_region_png",
+    "downscale_rgb_nearest",
+    "SCREEN_OBSERVATION_V1",
+    "ScreenObservation",
+    "ScreenObservationV1",
+    "PortalScreenCastSession",
     "global_pointer_coords",
     "global_point_to_capture_local",
     "global_region_to_capture_local",
+    "get_active_screencast",
     "is_blank_png",
     "list_capture_providers",
+    "png_dimensions",
+    "portal_session_env_status",
+    "reset_screencast_consent",
+    "resolve_capture_scale",
     "resolve_multi_stream_region",
+    "screen_observation_v1_schema",
+    "start_screencast_session",
+    "stop_screencast_session",
+    "rgb_mostly_black",
     "xwd_bytes_to_png",
 ]

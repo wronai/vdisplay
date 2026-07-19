@@ -55,6 +55,17 @@ def _load_restore_token() -> str | None:
         return None
 
 
+def clear_screencast_restore_token() -> bool:
+    """Remove persisted portal consent so the next start asks the user again."""
+    try:
+        _RESTORE_TOKEN_FILE.unlink()
+    except FileNotFoundError:
+        return False
+    except OSError as exc:
+        raise VDisplayError(f"cannot clear ScreenCast restore token: {exc}") from exc
+    return True
+
+
 def _purge_stale_screencast_sessions() -> None:
     for path in list(_KNOWN_SESSION_PATHS):
         _close_screencast_session(path)
@@ -536,6 +547,17 @@ def stop_screencast_session() -> dict[str, Any]:
     if session is None:
         return {"ok": True, "stopped": False}
     return session.stop()
+
+
+def reset_screencast_consent() -> dict[str, Any]:
+    """Stop the active session and clear its persisted portal restore token."""
+    stopped = stop_screencast_session()
+    token_cleared = clear_screencast_restore_token()
+    return {
+        "ok": True,
+        "stopped": bool(stopped.get("stopped")),
+        "token_cleared": token_cleared,
+    }
 
 
 def _is_retryable_screencast_error(error: str | None) -> bool:
