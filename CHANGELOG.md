@@ -92,6 +92,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
 
+## [0.1.54] - 2026-07-19
+
+### Docs
+- Update .planfile/artifacts/openrouter/STARTER-002.md
+- Update .planfile/artifacts/openrouter/STARTER-006.md
+- Update .planfile/artifacts/openrouter/STARTER-007.md
+- Update .planfile/artifacts/openrouter/STARTER-008.md
+- Update .planfile/artifacts/openrouter/STARTER-046.md
+- Update README.md
+
+### Test
+- Update tests/test_public_screen_truth_api.py
+
+### Other
+- Update .koru/event-store.jsonl
+- Update .koru/events/observability.jsonl
+- Update .planfile/sprints/current.yaml
+
 ## [0.1.53] - 2026-07-04
 
 ### Docs
