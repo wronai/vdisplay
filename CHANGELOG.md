@@ -47,6 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   scaling, black-frame detection and bounded capture-scale resolution.
 - Public persistent ScreenCast lifecycle and consent-reset API for
   orchestrators; portal session ownership remains in VDisplay.
+- Typed `ObservationProvider` protocol, ordered fallback result/failure model,
+  and reusable MSS, native CLI, portal Screenshot and portal ScreenCast
+  providers. The caller supplies policy order; VDisplay owns capture mechanics.
 - **Web console** (`/web`) — multi-monitor dashboard in vdisplay-agent: overview, frame API, screencast/sampler controls, replay executor for CONTROL_* audit steps
 - **`capture/coordinate_map.py`** — unified desktop ↔ PNG coordinate mapping (re-exported from `input/coords`)
 - **`application/replay.py`** — replay `.vdisplay` session steps; web console background jobs
@@ -98,6 +101,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `control/vision_llm.py` — OpenRouter vision LLM (`VDISPLAY_VISION_LLM_*`); fallback verify after OCR/anchor fail
 - Verifier vision LLM fallback after failed `ocr_contains` / `anchor_visible`
 - Optional screenshot enrichment via `img2nl_enrich` when `VDISPLAY_VISION_LLM_MODE=enrich|both`
+
+## [0.1.56] - 2026-07-19
+
+### Docs
+- Update CHANGELOG.md
+- Update README.md
+
+### Test
+- Update tests/test_observation_providers.py
 
 ## [0.1.55] - 2026-07-19
 
