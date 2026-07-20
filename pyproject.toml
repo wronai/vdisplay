@@ -51,7 +51,7 @@ control = [
 auto = [
     "PyYAML>=6.0",
     "dsl2vdisplay",
-    "planfile>=0.1.103",
+    "planfile>=0.1.117",
     "imgl",
 ]
 browser = [
